@@ -1,48 +1,50 @@
 #include "axi.h"
-#include "serialInterface.h"
-#include <string.h>
-// send a connect message
+//
 int connect(void)
 {
-	char connectCommand[] = "$CC*00\r\n";
-	char writeData[32] = {0};
-	char readData[32] = {0};
+    // printf("connect called");
 
-	// printf("write data array: %s\n", writeData);
+    char connectCommand[] = "$CC*00\r\n";
+    char writeData[32] = {0};
+    char readData[32] = {0};
 
-	int ser = serialOpen("/dev/ttyUSB0");
+    printf("write data array: %s\n", writeData);
 
-	if (ser == -1)
-	{
-		serialClose(ser);
-		return -1;
-	}
+    int ser = serOpen("/dev/ttyUSB0");
+    if (ser == -1)
+    {
+        close(ser);
+        printf("Error opening serial port");
+        return -1;
+    }
 
-	strcpy(writeData, connectCommand);
+    strcpy(writeData, connectCommand);
 
-	int err = serialWrite(ser, writeData, strlen(writeData));
+    int err = serWrite(ser, writeData, strlen(writeData));
+    usleep(1000); //
 
-	// usleep(1000); // 1ms
-	serialSleep();
+    if (err != 0)
+    {
+        printf("serWrite error\n");
+        return -1;
+    }
 
-	if (err != 0)
-	{
-		return -1;
-	}
+    err = serRead(ser, readData, sizeof(readData));
+    if (err != 0)
+    {
+        printf("serRead error\n");
+        return -1;
+    }
 
-	err = serialRead(ser, readData, sizeof(readData));
-	if (err != 0)
-	{
-		return -1;
-	}
+    close(ser);
 
-	serialClose(ser);
+    if (isChecksumCorrect(readData) != 0)
+    {
+        printf("connect check sum wrong\n");
+        return -1;
+    }
 
-	if (isChecksumCorrect(readData) != 0)
-	{
-		// perror("connect check sum wrong");
-		return -1;
-	}
+    printf("Connect Success\n");
 
-	return 0;
+    return 0;
 }

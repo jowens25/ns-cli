@@ -1,7 +1,8 @@
 
 
 #include "axi.h"
-//
+#include <string.h>
+
 int isWriteResponse(char *message)
 {
     if (strncmp("$WR", message, 3) == 0)

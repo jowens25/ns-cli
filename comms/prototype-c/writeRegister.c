@@ -1,5 +1,8 @@
 
 #include "axi.h"
+#include <stdint.h>
+#include <string.h>
+#include "serialInterface.h"
 
 int writeRegister(int64_t addr, int64_t *data)
 {
@@ -10,10 +13,10 @@ int writeRegister(int64_t addr, int64_t *data)
     char hexData[32] = {0};
     char hexChecksum[3] = {0};
 
-    int ser = serOpen("/dev/ttyUSB0");
+    int ser = serialOpen("/dev/ttyUSB0");
     if (ser == -1)
     {
-        close(ser);
+        serialClose(ser);
         printf("Error opening serial port");
         return -1;
     }
@@ -31,35 +34,35 @@ int writeRegister(int64_t addr, int64_t *data)
 
     strcat(writeData, hexData);
 
-    // printf("write data array: %s\n", writeData);
+    printf("write data array: %s\n", writeData);
 
     char checksum = calculateChecksum(writeData);
-    sprintf(hexChecksum, "%02X", checksum); // convert to hex string
+    sprintf(hexChecksum, "%02x", checksum); // convert to hex string
     strcat(writeData, "*");
 
     strcat(writeData, hexChecksum);
     strcat(writeData, "\r\n");
 
-    // printf("write data array: %s\n", writeData);
+    printf("write data array: %s\n", writeData);
 
     // send message
-    int err = serWrite(ser, writeData, strlen(writeData));
+    int err = serialWrite(ser, writeData, strlen(writeData));
     if (err != 0)
     {
-        printf("serWrite error");
+        printf("serialWrite error");
         return -1;
     }
 
-    usleep(1000);
+    serialSleep();
     // receive message
-    err = serRead(ser, readData, sizeof(readData));
+    err = serialRead(ser, readData, sizeof(readData));
     if (err != 0)
     {
-        printf("serRead error");
+        printf("serialRead error");
         return -1;
     }
     // close
-    close(ser);
+    serialClose(ser);
 
     if (isErrorResponse(readData))
     {

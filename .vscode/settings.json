@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "stdint.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "config.h": "c",
+        "axi.h": "c",
+        "compare": "c",
+        "cstdint": "c"
     }
 }

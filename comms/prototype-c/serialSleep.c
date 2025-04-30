@@ -2,5 +2,5 @@
 void serialSleep(void)
 {
 
-    usleep(1000);
+    usleep(10000);
 }

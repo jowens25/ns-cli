@@ -1,16 +1,18 @@
 
 #include "axi.h"
-
-int writeRegister(int64_t addr, int64_t *data)
+#include <stdint.h>
+#include <string.h>
+#include "serialInterface.h"
+int readRegister(int64_t addr, int64_t *data)
 {
     char writeData[32] = {0};
     char readData[32] = {0};
     // char tempData[32] = {0};
     char hexAddr[32] = {0};
-    char hexData[32] = {0};
+    // char hexData[32] = {0};
     char hexChecksum[3] = {0};
 
-    int ser = serOpen("/dev/ttyUSB0");
+    int ser = serialOpen("/dev/ttyUSB0");
     if (ser == -1)
     {
         close(ser);
@@ -19,43 +21,36 @@ int writeRegister(int64_t addr, int64_t *data)
     }
 
     // build message
-    strcat(writeData, "$WC,");
+    strcat(writeData, "$RC,");
 
     sprintf(hexAddr, "0x%08lx", addr); // convert to hex string
 
     strcat(writeData, hexAddr);
-
-    strcat(writeData, ",");
-
-    sprintf(hexData, "0x%08lx", *data);
-
-    strcat(writeData, hexData);
-
-    // printf("write data array: %s\n", writeData);
+    printf("write data array: %s\n", writeData);
 
     char checksum = calculateChecksum(writeData);
-    sprintf(hexChecksum, "%02X", checksum); // convert to hex string
+    sprintf(hexChecksum, "%02x", checksum); // convert to hex string
     strcat(writeData, "*");
 
     strcat(writeData, hexChecksum);
     strcat(writeData, "\r\n");
 
-    // printf("write data array: %s\n", writeData);
+    printf("write data array: %s\n", writeData);
 
     // send message
-    int err = serWrite(ser, writeData, strlen(writeData));
+    int err = serialWrite(ser, writeData, strlen(writeData));
     if (err != 0)
     {
-        printf("serWrite error");
+        printf("serialWrite error");
         return -1;
     }
 
     usleep(1000);
     // receive message
-    err = serRead(ser, readData, sizeof(readData));
+    err = serialRead(ser, readData, sizeof(readData));
     if (err != 0)
     {
-        printf("serRead error");
+        printf("serialRead error");
         return -1;
     }
     // close
@@ -67,9 +62,9 @@ int writeRegister(int64_t addr, int64_t *data)
         return -1;
     }
 
-    if (!isWriteResponse(readData))
+    if (!isReadResponse(readData))
     {
-        printf("missing write response");
+        printf("missing read response");
         return -1;
     }
 
@@ -79,7 +74,7 @@ int writeRegister(int64_t addr, int64_t *data)
         return -1;
     }
 
-    printf("writeRegister");
+    printf("readRegister");
 
     return 0;
 }

@@ -1,6 +1,7 @@
 
 #include "axi.h"
-//
+#include <string.h>
+
 int isErrorResponse(char *message)
 {
     if (strncmp("$ER", message, 3) == 0)

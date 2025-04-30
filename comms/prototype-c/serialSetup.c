@@ -9,7 +9,7 @@ int serialSetup(int fd)
 
     if (tcgetattr(fd, &tty) != 0)
     {
-        perror("tcgetattr");
+        printf("tcgetattr");
         close(fd);
         return -1;
     }
@@ -22,7 +22,7 @@ int serialSetup(int fd)
     tty.c_lflag = 0;
     tty.c_oflag = 0;
     tty.c_cc[VMIN] = 0;
-    tty.c_cc[VTIME] = 0.001; // .10 second timeout
+    tty.c_cc[VTIME] = 0.1; // .10 second timeout
 
     tty.c_iflag &= ~(IXON | IXOFF | IXANY);
     tty.c_cflag |= (CLOCAL | CREAD);
@@ -31,7 +31,7 @@ int serialSetup(int fd)
 
     if (tcsetattr(fd, TCSANOW, &tty) != 0)
     {
-        perror("tcsetattr");
+        printf("tcsetattr");
         close(fd);
         return -1;
     }
