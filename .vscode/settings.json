@@ -5,6 +5,7 @@
         "config.h": "c",
         "axi.h": "c",
         "compare": "c",
-        "cstdint": "c"
+        "cstdint": "c",
+        "coreconfig.h": "c"
     }
 }

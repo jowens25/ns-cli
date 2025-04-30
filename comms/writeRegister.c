@@ -46,7 +46,7 @@ int writeRegister(int64_t addr, int64_t *data)
     int err = serWrite(ser, writeData, strlen(writeData));
     if (err != 0)
     {
-        printf("serWrite error");
+        printf("serWrite error\n");
         return -1;
     }
 
@@ -55,7 +55,7 @@ int writeRegister(int64_t addr, int64_t *data)
     err = serRead(ser, readData, sizeof(readData));
     if (err != 0)
     {
-        printf("serRead error");
+        printf("serRead error\n");
         return -1;
     }
     // close
@@ -63,23 +63,23 @@ int writeRegister(int64_t addr, int64_t *data)
 
     if (isErrorResponse(readData))
     {
-        printf("error response");
+        printf("error response\n");
         return -1;
     }
 
     if (!isWriteResponse(readData))
     {
-        printf("missing write response");
+        printf("missing write response\n");
         return -1;
     }
 
     if (isChecksumCorrect(readData))
     {
-        printf("wrong checksum");
+        printf("wrong checksum\n");
         return -1;
     }
 
-    printf("writeRegister");
+    printf("writeRegister\n");
 
     return 0;
 }
