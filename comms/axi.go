@@ -12,7 +12,7 @@ func RunConnect() {
 
 	out := C.CString("00000000000000000000000000000000")
 
-	disabled := C.CString("disable")
+	enabled := C.CString("enable")
 
 	//enabled := C.CString("enable")
 
@@ -21,7 +21,7 @@ func RunConnect() {
 	C.readStatus(out, 32)
 	println("status: ", C.GoString(out))
 
-	C.writeStatus(disabled, 32)
+	C.writeStatus(enabled, 32)
 
 	C.readStatus(out, 32)
 	println("status: ", C.GoString(out))

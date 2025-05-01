@@ -9,7 +9,7 @@ int64_t temp_data = 0x00000000;
 
 int readStatus(char *status, size_t size)
 {
-    /// readConfig();
+    readConfig();
 
     // enabled
     if (0 == readRegister(cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low + Ucm_NtpServer_ControlReg, &temp_data))
@@ -38,7 +38,7 @@ int readStatus(char *status, size_t size)
 
 int writeStatus(char *status, size_t size)
 {
-    // readConfig();
+    readConfig();
     //  printf("NTP STATUS SET TO: %s|\n", status);
 
     if (0 == strncmp(status, "enable", size))
