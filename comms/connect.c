@@ -13,8 +13,8 @@ int connect(void)
     int ser = serOpen("/dev/ttyUSB0");
     if (ser == -1)
     {
-        close(ser);
-        printf("Error opening serial port");
+
+        printf("Error opening serial port \n");
         return -1;
     }
 

@@ -7,34 +7,28 @@ package axi
 #include "ntpServer.h"
 */
 import "C"
-import "unsafe"
 
 func RunConnect() {
 
-	cs := C.CString("disable")
-	defer C.free(unsafe.Pointer(cs))
+	out := C.CString("00000000000000000000000000000000")
 
-	out := C.CString("")
-	defer C.free(unsafe.Pointer(out))
+	disabled := C.CString("disable")
+
+	//enabled := C.CString("enable")
 
 	C.connect()
 
-	C.readStatus(out)
-	println(*out)
+	C.readStatus(out, 32)
+	println("status: ", C.GoString(out))
 
-	C.writeStatus(cs)
+	C.writeStatus(disabled, 32)
 
-	C.readStatus(out)
-	println(*out)
+	C.readStatus(out, 32)
+	println("status: ", C.GoString(out))
 
-	//C.connect()
-	//
-	//C.readConfig()
-	//
-	//println("end of read config")
-	//C.CString
-	//
-	//C.readStatus(temp_data)
-	//
-	//print(temp_data)
+	//defer C.free(unsafe.Pointer(disabled))
+
+	//defer C.free(unsafe.Pointer(enabled))
+	//defer C.free(unsafe.Pointer(out))
+
 }

@@ -13,8 +13,8 @@ int readRegister(int64_t addr, int64_t *data)
     int ser = serOpen("/dev/ttyUSB0");
     if (ser == -1)
     {
-        close(ser);
-        printf("Error opening serial port");
+
+        printf("Error opening serial port\n");
         return -1;
     }
 
@@ -56,7 +56,7 @@ int readRegister(int64_t addr, int64_t *data)
 
     if (isErrorResponse(readData))
     {
-        printf("error response");
+        printf("error response: %s", readData);
         return -1;
     }
 

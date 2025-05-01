@@ -23,7 +23,7 @@
 #define Ucm_NtpServer_UtcInfoControlReg 0x00000100
 #define Ucm_NtpServer_UtcInfoReg 0x0000010
 
-int readStatus(char *status);
-int writeStatus(char *status);
+int readStatus(char *status, size_t size);
+int writeStatus(char *status, size_t size);
 
 #endif // NTP_SERVER_H
