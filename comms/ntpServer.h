@@ -23,7 +23,12 @@
 #define Ucm_NtpServer_UtcInfoControlReg 0x00000100
 #define Ucm_NtpServer_UtcInfoReg 0x0000010
 
-int readStatus(char *status, size_t size);
+int readNtpServerStatus(char *status, size_t size);
+int readNtpServerInstanceNumber(char *status, size_t size);
+int readNtpServerIpMode(char *ipMode, size_t size);
+int readNtpServerIpAddress(char *ipMode, size_t size);
+int readNtpServerMacAddress(char *macAddr, size_t size);
+
 int writeStatus(char *status, size_t size);
 
 #endif // NTP_SERVER_H

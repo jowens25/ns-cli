@@ -7,28 +7,30 @@ package axi
 #include "ntpServer.h"
 */
 import "C"
+import "unsafe"
 
 func RunConnect() {
 
 	out := C.CString("00000000000000000000000000000000")
 
-	enabled := C.CString("enable")
-
-	//enabled := C.CString("enable")
-
+	C.connect()
 	C.connect()
 
-	C.readStatus(out, 32)
+	C.readNtpServerStatus(out, 32)
 	println("status: ", C.GoString(out))
 
-	C.writeStatus(enabled, 32)
+	C.readNtpServerInstanceNumber(out, 32)
+	println("instance #: ", C.GoString(out))
 
-	C.readStatus(out, 32)
-	println("status: ", C.GoString(out))
+	C.readNtpServerIpMode(out, 32)
+	println("ip mode: ", C.GoString(out))
 
-	//defer C.free(unsafe.Pointer(disabled))
+	C.readNtpServerIpAddress(out, 32)
+	println("ip addr: ", C.GoString(out))
 
-	//defer C.free(unsafe.Pointer(enabled))
-	//defer C.free(unsafe.Pointer(out))
+	C.readNtpServerMacAddress(out, 32)
+	println("mac addr: ", C.GoString(out))
+
+	defer C.free(unsafe.Pointer(out))
 
 }
