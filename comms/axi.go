@@ -24,12 +24,14 @@ func RunConnect() {
 
 	C.readNtpServerIpMode(out, 32)
 	println("ip mode: ", C.GoString(out))
-
 	C.readNtpServerIpAddress(out, 32)
 	println("ip addr: ", C.GoString(out))
 
 	C.readNtpServerMacAddress(out, 32)
 	println("mac addr: ", C.GoString(out))
+
+	C.readNtpServerStatus(out, 32)
+	println("vlan status: ", C.GoString(out))
 
 	defer C.free(unsafe.Pointer(out))
 

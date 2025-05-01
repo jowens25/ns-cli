@@ -28,6 +28,7 @@ int readNtpServerInstanceNumber(char *status, size_t size);
 int readNtpServerIpMode(char *ipMode, size_t size);
 int readNtpServerIpAddress(char *ipMode, size_t size);
 int readNtpServerMacAddress(char *macAddr, size_t size);
+int readNtpServerVlanStatus(char *vlanStatus, size_t size);
 
 int writeStatus(char *status, size_t size);
 
