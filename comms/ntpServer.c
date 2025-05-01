@@ -47,23 +47,14 @@ int readNtpServerMacAddress(char *macAddr, size_t size)
     // temp_string.clear();
     if (0 == readRegister(temp_addr + Ucm_NtpServer_ConfigMac1Reg, &temp_data))
     {
-        // temp_string.append(QString("%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
         temp_mac[0] = ((temp_data >> 0) & 0x000000FF);
         temp_mac[1] = ((temp_data >> 8) & 0x000000FF);
         temp_mac[2] = ((temp_data >> 16) & 0x000000FF);
         temp_mac[3] = ((temp_data >> 24) & 0x000000FF);
-        // temp_string.append(":");
-        // temp_string.append(QString("%1").arg(((temp_data >> 8) & 0x000000FF), 2, 16, QLatin1Char('0')));
-        // temp_string.append(":");
-        // temp_string.append(QString("%1").arg(((temp_data >> 16) & 0x000000FF), 2, 16, QLatin1Char('0')));
-        // temp_string.append(":");
-        // temp_string.append(QString("%1").arg(((temp_data >> 24) & 0x000000FF), 2, 16, QLatin1Char('0')));
-        // temp_string.append(":");
+
         if (0 == readRegister(temp_addr + Ucm_NtpServer_ConfigMac2Reg, &temp_data))
         {
-            // temp_string.append(QString("%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
-            // temp_string.append(":");
-            // temp_string.append(QString("%1").arg(((temp_data >> 8) & 0x000000FF), 2, 16, QLatin1Char('0')));
+
             temp_mac[4] = ((temp_data >> 0) & 0x000000FF);
             temp_mac[5] = ((temp_data >> 8) & 0x000000FF);
 
@@ -126,36 +117,16 @@ int readNtpServerVlanAddress(char *vlanAddr, size_t size)
 
     if (0 == readRegister(temp_addr + Ucm_NtpServer_ConfigVlanReg, &temp_data))
     {
-        if ((temp_data & 0x00010000) == 0)
-        {
-            // ui->NtpServerVlanEnableCheckBox->setChecked(false);
-            // snprintf(vlanStatus, "disabled", size);
-        }
-        else
-        {
-            // ui->NtpServerVlanEnableCheckBox->setChecked(true);
-            // snprintf(vlanStatus, "enabled", size);
-        }
 
         temp_data &= 0x0000FFFF;
-        snprintf(vlanAddr, size, "%lx", temp_data);
+        snprintf(vlanAddr, size, "0x%04lx", temp_data);
 
         // ui->NtpServerVlanValue->setText(QString("0x%1").arg(temp_data, 4, 16, QLatin1Char('0')));
     }
     else
     {
         snprintf(vlanAddr, size, "%s", "NA");
-
-        // ui->NtpServerVlanEnableCheckBox->setChecked(false);
-        // ui->NtpServerVlanValue->setText("NA");
     }
-}
-// read Ntp Server Instance Number ======================================================
-int readNtpServerInstanceNumber(char *instanceNumber, size_t size)
-{
-    readConfig();
-
-    snprintf(instanceNumber, size, "%ld", cores[Ucm_CoreConfig_NtpServerCoreType].core_instance_nr);
 }
 
 // read Ntp Server IP MODE ======================================================
@@ -164,7 +135,7 @@ int readNtpServerIpMode(char *ipMode, size_t size)
     temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
 
     temp_data = 0x00000000;
-    snprintf(ipMode, size, "%s", "NA");
+    snprintf(ipMode, size, "%s", "err");
     // mode & server config
     if (0 == readRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
     {
@@ -184,13 +155,182 @@ int readNtpServerIpMode(char *ipMode, size_t size)
     else
     {
         snprintf(ipMode, size, "%s", "NA");
-
-        // ipMode = "NA"; // IPv4 IPv6 NA
-
         return -1;
     }
 
     return 0;
+}
+
+// read Ntp Server Unicast mode ======================================================
+int readNtpServerUnicastMode(char *mode, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_data = 0x00000000;
+    snprintf(mode, size, "%s", "err");
+    if (0 == readRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
+    {
+        if (((temp_data) & 0x00000010) == 0)
+        {
+            snprintf(mode, size, "%s", "disabled");
+        }
+        else
+        {
+            snprintf(mode, size, "%s", "enabled");
+        }
+    }
+    else
+    {
+        snprintf(mode, size, "%s", "disabled");
+        return -1;
+    }
+    return 0;
+}
+
+// read Ntp Server Multicast mode ======================================================
+int readNtpServerMulticastMode(char *mode, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_data = 0x00000000;
+    snprintf(mode, size, "%s", "err");
+    if (0 == readRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
+    {
+        if (((temp_data) & 0x00000020) == 0)
+        {
+            snprintf(mode, size, "%s", "disabled");
+        }
+        else
+        {
+            snprintf(mode, size, "%s", "enabled");
+        }
+    }
+    else
+    {
+        snprintf(mode, size, "%s", "disabled");
+        return -1;
+    }
+    return 0;
+}
+
+// read Ntp Server Broadcast mode ======================================================
+int readNtpServerBroadcastMode(char *mode, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_data = 0x00000000;
+    snprintf(mode, size, "%s", "err");
+    if (0 == readRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
+    {
+        if (((temp_data) & 0x00000040) == 0)
+        {
+            snprintf(mode, size, "%s", "disabled");
+        }
+        else
+        {
+            snprintf(mode, size, "%s", "enabled");
+        }
+    }
+    else
+    {
+        snprintf(mode, size, "%s", "disabled");
+        return -1;
+    }
+    return 0;
+}
+
+// read Ntp Server Precision mode ======================================================
+int readNtpServerPrecisionValue(char *value, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_data = 0x00000000;
+    snprintf(value, size, "%s", "err");
+    if (0 == readRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
+    {
+        // ui->NtpServerPrecisionValue->setText(QString::number((char)((temp_data >> 8) & 0x000000FF)));
+        snprintf(value, size, "%d", (char)((temp_data >> 8) & 0x000000FF));
+    }
+    else
+    {
+        snprintf(value, size, "%s", "NA");
+        return -1;
+    }
+    return 0;
+}
+// read Ntp Server PollIntervalValue mode ======================================================
+int readNtpServerPollIntervalValue(char *value, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_data = 0x00000000;
+    snprintf(value, size, "%s", "err");
+    if (0 == readRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
+    {
+        // ui->NtpServerPrecisionValue->setText(QString::number((char)((temp_data >> 8) & 0x000000FF)));
+        snprintf(value, size, "%ld", ((temp_data >> 16) & 0x000000FF));
+    }
+    else
+    {
+        snprintf(value, size, "%s", "NA");
+        return -1;
+    }
+    return 0;
+}
+
+// read Ntp Server Stratum value mode ======================================================
+int readNtpServerStratumValue(char *value, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_data = 0x00000000;
+    snprintf(value, size, "%s", "err");
+    if (0 == readRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
+    {
+        // ui->NtpServerPrecisionValue->setText(QString::number((char)((temp_data >> 8) & 0x000000FF)));
+        snprintf(value, size, "%ld", ((temp_data >> 24) & 0x000000FF));
+    }
+    else
+    {
+        snprintf(value, size, "%s", "NA");
+        return -1;
+    }
+    return 0;
+}
+
+int readNtpServerReferenceId(char *refId, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_data = 0x00000000;
+    snprintf(refId, size, "%s", "err");
+
+    char temp_refid[4] = {0};
+
+    // reference id
+    // temp_string.clear();
+    if (0 == readRegister(temp_addr + Ucm_NtpServer_ConfigReferenceIdReg, &temp_data))
+    {
+        // temp_string.append(temp_refid[0] = (QChar)((temp_data >> 24) & 0x000000FF));
+        // temp_string.append(temp_refid[0] = (QChar)((temp_data >> 16) & 0x000000FF));
+        // temp_string.append(temp_refid[0] = (QChar)((temp_data >> 8) & 0x000000FF));
+        // temp_string.append(temp_refid[0] = (QChar)((temp_data >> 0) & 0x000000FF));
+        //
+        temp_refid[0] = (char)((temp_data >> 24) & 0x000000FF);
+        temp_refid[1] = (char)((temp_data >> 16) & 0x000000FF);
+        temp_refid[2] = (char)((temp_data >> 8) & 0x000000FF);
+        temp_refid[3] = (char)((temp_data >> 0) & 0x000000FF);
+        snprintf(refId, size, "%c%c%c%c", temp_refid[0], temp_refid[1], temp_refid[2], temp_refid[3]);
+
+        // ui->NtpServerReferenceIdValue->setText(temp_string); // TODO
+    }
+    else
+    {
+        snprintf(refId, size, "%s", "NA");
+
+        // ui->NtpServerReferenceIdValue->setText("NA");
+    }
+}
+
+// read Ntp Server Instance Number ======================================================
+int readNtpServerInstanceNumber(char *instanceNumber, size_t size)
+{
+    readConfig();
+
+    snprintf(instanceNumber, size, "%ld", cores[Ucm_CoreConfig_NtpServerCoreType].core_instance_nr);
 }
 
 // read NtpServer IP ADDRESS ======================================================

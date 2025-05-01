@@ -29,6 +29,14 @@ int readNtpServerIpMode(char *ipMode, size_t size);
 int readNtpServerIpAddress(char *ipMode, size_t size);
 int readNtpServerMacAddress(char *macAddr, size_t size);
 int readNtpServerVlanStatus(char *vlanStatus, size_t size);
+int readNtpServerVlanAddress(char *vlanStatus, size_t size);
+int readNtpServerUnicastMode(char *mode, size_t size);
+int readNtpServerMulticastMode(char *mode, size_t size);
+int readNtpServerBroadcastMode(char *mode, size_t size);
+int readNtpServerPrecisionValue(char *value, size_t size);
+int readNtpServerPollIntervalValue(char *value, size_t size);
+int readNtpServerStratumValue(char *value, size_t size);
+int readNtpServerReferenceId(char *value, size_t size);
 
 int writeStatus(char *status, size_t size);
 
