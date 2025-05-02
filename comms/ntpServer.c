@@ -955,12 +955,101 @@ int readNtpServerInstanceNumber(char *instanceNumber, size_t size)
 
     snprintf(instanceNumber, size, "%ld", cores[Ucm_CoreConfig_NtpServerCoreType].core_instance_nr);
 }
-//
-//
-//============================================ write it boi
-//
-//
 
+//========================================//========================================//========================================//
+//========================================//========================================//========================================//
+//========================================//========================================//========================================//
+//========================================//========================================//========================================//
+//========================================//========================================//========================================//
+//========================================//========================================//========================================//
+//========================================//========================================//========================================//
+//========================================//========================================//========================================//
+//========================================//========================================//========================================//
+//========================================//========================================//========================================//
+//========================================//========================================//========================================//
+//========================================//========================================//========================================//
+//========================================//========================================//========================================//
+//========================================//========================================//========================================//
+
+int writeNtpServerMacAddress(char *addr, size_t size)
+{ // mac
+    readConfig();
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    // int j = 0;
+    long temp_mac = 0;
+    for (int i = 0, j = 0; i < size; i++)
+    {
+        if (addr[i] != ':')
+        {
+            addr[j] = addr[i];
+            j++;
+        }
+
+        if (addr[i] == '\0')
+        {
+            break;
+        }
+    }
+
+    temp_mac = strtol(addr, NULL, 16);
+
+    temp_data = 0x00000000;
+    temp_data |= (temp_mac >> 16) & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= (temp_mac >> 24) & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= (temp_mac >> 32) & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= (temp_mac >> 40) & 0x000000FF;
+
+    if (0 == writeRegister(temp_addr + Ucm_NtpServer_ConfigMac1Reg, &temp_data))
+    {
+        // temp_string.append(QString("%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+        // temp_string.append(":");
+        // temp_string.append(QString("%1").arg(((temp_data >> 8) & 0x000000FF), 2, 16, QLatin1Char('0')));
+        // temp_string.append(":");
+        // temp_string.append(QString("%1").arg(((temp_data >> 16) & 0x000000FF), 2, 16, QLatin1Char('0')));
+        // temp_string.append(":");
+        // temp_string.append(QString("%1").arg(((temp_data >> 24) & 0x000000FF), 2, 16, QLatin1Char('0')));
+        // temp_string.append(":");
+
+        temp_data = 0x00000000;
+        temp_data |= (temp_mac >> 0) & 0x000000FF;
+        temp_data = temp_data << 8;
+        temp_data |= (temp_mac >> 8) & 0x000000FF;
+
+        if (0 == writeRegister(temp_addr + Ucm_NtpServer_ConfigMac2Reg, &temp_data))
+        {
+            // temp_string.append(QString("%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+            // temp_string.append(":");
+            // temp_string.append(QString("%1").arg(((temp_data >> 8) & 0x000000FF), 2, 16, QLatin1Char('0')));
+
+            temp_data = 0x00000004; // write
+            if (0 == writeRegister(temp_addr + Ucm_NtpServer_ConfigControlReg, &temp_data))
+            {
+                /// ui->NtpServerMacValue->setText(temp_string);
+                // write success
+                return 0;
+            }
+            else
+            {
+                // ui->NtpServerMacValue->setText("NA");
+                return -1;
+            }
+        }
+        else
+        {
+            // ui->NtpServerMacValue->setText("NA");
+            return -1;
+        }
+    }
+    else
+    {
+        // ui->NtpServerMacValue->setText("NA");
+        return -1;
+    }
+}
+//
 int writeStatus(char *status, size_t size)
 {
     readConfig();
