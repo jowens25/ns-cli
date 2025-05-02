@@ -15,7 +15,7 @@ func test_unicast() {
 	C.connect()
 	C.readConfig()
 	out := C.CString("00000000000000000000000000000000")
-	in := C.CString("enabled")
+	in := C.CString("disabled")
 
 	C.readNtpServerUnicastMode(out, 32)
 	println("unicast mode: ", C.GoString(out))
@@ -29,10 +29,53 @@ func test_unicast() {
 	defer C.free(unsafe.Pointer(out))
 
 }
+func test_multicast() {
+	C.connect()
+	C.connect()
+	C.readConfig()
+	out := C.CString("00000000000000000000000000000000")
+	in := C.CString("enabled")
+
+	C.readNtpServerMulticastMode(out, 32)
+	println("multicast mode: ", C.GoString(out))
+
+	C.writeNtpServerMulticastMode(in, 32)
+
+	C.readNtpServerMulticastMode(out, 32)
+	println("multicast mode: ", C.GoString(out))
+
+	defer C.free(unsafe.Pointer(in))
+	defer C.free(unsafe.Pointer(out))
+
+}
+
+func test_broadcast() {
+	C.connect()
+	C.connect()
+	C.readConfig()
+	out := C.CString("00000000000000000000000000000000")
+	in := C.CString("disabled")
+
+	C.readNtpServerBroadcastMode(out, 32)
+	println("Broadcast mode: ", C.GoString(out))
+
+	C.writeNtpServerBroadcastMode(in, 32)
+
+	C.readNtpServerBroadcastMode(out, 32)
+	println("Broadcast mode: ", C.GoString(out))
+
+	defer C.free(unsafe.Pointer(in))
+	defer C.free(unsafe.Pointer(out))
+
+}
 
 func RunConnect() {
 
 	test_unicast()
+
+	test_multicast()
+
+	test_broadcast()
 
 	//C.readNtpServerStatus(out, 32)
 	//println("status: ", C.GoString(out))
