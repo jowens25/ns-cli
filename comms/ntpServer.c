@@ -839,6 +839,115 @@ int readNtpServerUtcOffsetValue(char *value, size_t size)
     return 0;
 }
 
+int readNtpServerRequestsValue(char *value, size_t size)
+{
+    temp_data = 0x00000000;
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    snprintf(value, size, "%s", "err");
+    if (0 == readRegister(temp_addr + Ucm_NtpServer_CountReqReg, &temp_data))
+    {
+        // ui->NtpServerRequestsValue->setText(QString::number(temp_data));
+        snprintf(value, size, "%ld", temp_data);
+    }
+    else
+    {
+        // ui->NtpServerRequestsValue->setText("NA");
+        snprintf(value, size, "%s", "NA");
+    }
+
+    return 0;
+}
+int readNtpServerResponsesValue(char *value, size_t size)
+{
+    temp_data = 0x00000000;
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    snprintf(value, size, "%s", "err");
+    if (0 == readRegister(temp_addr + Ucm_NtpServer_CountRespReg, &temp_data))
+    {
+        // ui->NtpServerRequestsValue->setText(QString::number(temp_data));
+        snprintf(value, size, "%ld", temp_data);
+    }
+    else
+    {
+        // ui->NtpServerRequestsValue->setText("NA");
+        snprintf(value, size, "%s", "NA");
+    }
+
+    return 0;
+}
+int readNtpServerRequestsDroppedValue(char *value, size_t size)
+{
+    temp_data = 0x00000000;
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    snprintf(value, size, "%s", "err");
+    if (0 == readRegister(temp_addr + Ucm_NtpServer_CountReqDroppedReg, &temp_data))
+    {
+        // ui->NtpServerRequestsValue->setText(QString::number(temp_data));
+        snprintf(value, size, "%ld", temp_data);
+    }
+    else
+    {
+        // ui->NtpServerRequestsValue->setText("NA");
+        snprintf(value, size, "%s", "NA");
+    }
+
+    return 0;
+}
+int readNtpServerBroadcastsValue(char *value, size_t size)
+{
+    temp_data = 0x00000000;
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    snprintf(value, size, "%s", "err");
+    if (0 == readRegister(temp_addr + Ucm_NtpServer_CountBroadcastReg, &temp_data))
+    {
+        // ui->NtpServerRequestsValue->setText(QString::number(temp_data));
+        snprintf(value, size, "%ld", temp_data);
+    }
+    else
+    {
+        // ui->NtpServerRequestsValue->setText("NA");
+        snprintf(value, size, "%s", "NA");
+    }
+
+    return 0;
+}
+int readNtpServerClearCountersStatus(char *status, size_t size)
+{
+    temp_data = 0x00000000;
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    if (0 == readRegister(temp_addr + Ucm_NtpServer_CountControlReg, &temp_data))
+    {
+        if ((temp_data & 0x00000001) == 0)
+        {
+            snprintf(status, size, "%s", "disable");
+        }
+        else
+        {
+            snprintf(status, size, "%s", "enable");
+        }
+    }
+    else
+    {
+        snprintf(status, size, "%s", "disable");
+    }
+    return 0;
+}
+int readNtpServerVersion(char *value, size_t size)
+{
+    // version
+    if (0 == readRegister(temp_addr + Ucm_NtpServer_VersionReg, &temp_data))
+    {
+        // ui->NtpServerVersionValue->setText(QString("0x%1").arg(temp_data, 8, 16, QLatin1Char('0')));
+        snprintf(value, size, "0x%lx", temp_data);
+    }
+    else
+    {
+        snprintf(value, size, "%s", "NA");
+    }
+
+    return 0;
+}
+
 // read Ntp Server Instance Number ======================================================
 int readNtpServerInstanceNumber(char *instanceNumber, size_t size)
 {

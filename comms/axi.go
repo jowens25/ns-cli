@@ -71,6 +71,19 @@ func RunConnect() {
 	C.readNtpServerUtcOffsetValue(out, 32)
 	println("Utc Offset Value: ", C.GoString(out))
 
+	C.readNtpServerRequestsValue(out, 32)
+	println("Requests Value: ", C.GoString(out))
+	C.readNtpServerResponsesValue(out, 32)
+	println("Responses Value: ", C.GoString(out))
+	C.readNtpServerRequestsDroppedValue(out, 32)
+	println("Requests Dropped Value: ", C.GoString(out))
+	C.readNtpServerBroadcastsValue(out, 32)
+	println("Broadcasts Value: ", C.GoString(out))
+	C.readNtpServerClearCountersStatus(out, 32)
+	println("Clear Counters Status: ", C.GoString(out))
+	C.readNtpServerVersion(out, 32)
+	println("Version: ", C.GoString(out))
+
 	defer C.free(unsafe.Pointer(out))
 
 }
