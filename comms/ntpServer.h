@@ -23,21 +23,33 @@
 #define Ucm_NtpServer_UtcInfoControlReg 0x00000100
 #define Ucm_NtpServer_UtcInfoReg 0x00000104
 
-int readNtpServerStatus(char *status, size_t size);
-int readNtpServerInstanceNumber(char *status, size_t size);
-int readNtpServerIpMode(char *ipMode, size_t size);
-int readNtpServerIpAddress(char *ipMode, size_t size);
-int readNtpServerMacAddress(char *macAddr, size_t size);
-int readNtpServerVlanStatus(char *vlanStatus, size_t size);
-int readNtpServerVlanAddress(char *vlanStatus, size_t size);
-int readNtpServerUnicastMode(char *mode, size_t size);
-int readNtpServerMulticastMode(char *mode, size_t size);
-int readNtpServerBroadcastMode(char *mode, size_t size);
-int readNtpServerPrecisionValue(char *value, size_t size);
-int readNtpServerPollIntervalValue(char *value, size_t size);
-int readNtpServerStratumValue(char *value, size_t size);
-int readNtpServerReferenceId(char *value, size_t size);
-int readNtpServerSmearingStatus(char *status, size_t size);
+int readNtpServerStatus(char *status, size_t size);              // Ntp Server Status
+int readNtpServerInstanceNumber(char *status, size_t size);      // Ntp Server InstanceNumber
+int readNtpServerIpMode(char *ipMode, size_t size);              // Ntp Server IpMode
+int readNtpServerIpAddress(char *ipMode, size_t size);           // Ntp Server IpAddress
+int readNtpServerMacAddress(char *macAddr, size_t size);         // Ntp Server MacAddress
+int readNtpServerVlanStatus(char *vlanStatus, size_t size);      // Ntp Server VlanStatus
+int readNtpServerVlanAddress(char *vlanStatus, size_t size);     // Ntp Server VlanAddress
+int readNtpServerUnicastMode(char *mode, size_t size);           // Ntp Server UnicastMode
+int readNtpServerMulticastMode(char *mode, size_t size);         // Ntp Server MulticastMode
+int readNtpServerBroadcastMode(char *mode, size_t size);         // Ntp Server BroadcastMode
+int readNtpServerPrecisionValue(char *value, size_t size);       // Ntp Server PrecisionValue
+int readNtpServerPollIntervalValue(char *value, size_t size);    // Ntp Server PollIntervalValue
+int readNtpServerStratumValue(char *value, size_t size);         // Ntp Server StratumValue
+int readNtpServerReferenceId(char *value, size_t size);          // Ntp Server ReferenceId
+int readNtpServerSmearingStatus(char *status, size_t size);      // Ntp Server SmearingStatus
+int readNtpServerLeap61Progress(char *progress, size_t size);    // Ntp Server Leap61Progress
+int readNtpServerLeap59Progress(char *progress, size_t size);    // Ntp Server Leap59Progress
+int readNtpServerLeap61Status(char *status, size_t size);        // Ntp Server Leap61Status
+int readNtpServerLeap59Status(char *status, size_t size);        // Ntp Server Leap59Status
+int readNtpServerUtcOffsetStatus(char *status, size_t size);     // Ntp Server UtcOffsetStatus
+int readNtpServerUtcOffsetValue(char *value, size_t size);       // Ntp Server UtcOffsetValue
+int readNtpServerRequestsValue(char *value, size_t size);        // Ntp Server RequestsValue
+int readNtpServerResponsesValue(char *value, size_t size);       // Ntp Server ResponsesValue
+int readNtpServerRequestsDroppedValue(char *value, size_t size); // Ntp Server RequestsDroppedValue
+int readNtpServerBroadcastsValue(char *value, size_t size);      // Ntp Server BroadcastsValue
+int readNtpServerClearCountersStatus(char *value, size_t size);  // Ntp Server ClearCountersStatus
+int readNtpServerVersion(char *value, size_t size);              // Ntp Server Version
 
 int writeStatus(char *status, size_t size);
 

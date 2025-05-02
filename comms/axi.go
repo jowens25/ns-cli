@@ -53,10 +53,23 @@ func RunConnect() {
 	println("stratum value: ", C.GoString(out))
 
 	C.readNtpServerReferenceId(out, 32)
-	println("ref id: ", C.GoString(out))
+	println("Reference Id Value: ", C.GoString(out))
 
 	C.readNtpServerSmearingStatus(out, 32)
-	println("smearing: ", C.GoString(out))
+	println("Smearing Status: ", C.GoString(out))
+
+	C.readNtpServerLeap61Progress(out, 32)
+	println("Leap 61 Progress: ", C.GoString(out))
+	C.readNtpServerLeap59Progress(out, 32)
+	println("Leap 59 Progress: ", C.GoString(out))
+	C.readNtpServerLeap61Status(out, 32)
+	println("Leap 61 Status: ", C.GoString(out))
+	C.readNtpServerLeap59Status(out, 32)
+	println("Leap 59 Status: ", C.GoString(out))
+	C.readNtpServerUtcOffsetStatus(out, 32)
+	println("Utc Offset Status: ", C.GoString(out))
+	C.readNtpServerUtcOffsetValue(out, 32)
+	println("Utc Offset Value: ", C.GoString(out))
 
 	defer C.free(unsafe.Pointer(out))
 
