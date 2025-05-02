@@ -21,7 +21,7 @@
 #define Ucm_NtpServer_ConfigIpv63Reg 0x000000A0
 #define Ucm_NtpServer_ConfigReferenceIdReg 0x000000A4
 #define Ucm_NtpServer_UtcInfoControlReg 0x00000100
-#define Ucm_NtpServer_UtcInfoReg 0x0000010
+#define Ucm_NtpServer_UtcInfoReg 0x00000104
 
 int readNtpServerStatus(char *status, size_t size);
 int readNtpServerInstanceNumber(char *status, size_t size);
@@ -37,6 +37,7 @@ int readNtpServerPrecisionValue(char *value, size_t size);
 int readNtpServerPollIntervalValue(char *value, size_t size);
 int readNtpServerStratumValue(char *value, size_t size);
 int readNtpServerReferenceId(char *value, size_t size);
+int readNtpServerSmearingStatus(char *status, size_t size);
 
 int writeStatus(char *status, size_t size);
 

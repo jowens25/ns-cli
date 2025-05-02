@@ -320,17 +320,11 @@ int readNtpServerReferenceId(char *refId, size_t size)
     else
     {
         snprintf(refId, size, "%s", "NA");
-
+        return 0;
         // ui->NtpServerReferenceIdValue->setText("NA");
     }
-}
 
-// read Ntp Server Instance Number ======================================================
-int readNtpServerInstanceNumber(char *instanceNumber, size_t size)
-{
-    readConfig();
-
-    snprintf(instanceNumber, size, "%ld", cores[Ucm_CoreConfig_NtpServerCoreType].core_instance_nr);
+    return -1;
 }
 
 // read NtpServer IP ADDRESS ======================================================
@@ -340,6 +334,7 @@ int readNtpServerIpAddress(char *ipAddr, size_t size)
     int64_t temp_ip = 0;
 
     char ipMode[size];
+    snprintf(ipAddr, size, "%s", "err");
 
     readNtpServerIpMode(ipMode, size);
 
@@ -469,6 +464,74 @@ int readNtpServerIpAddress(char *ipAddr, size_t size)
     }
 }
 
+int readNtpServerSmearingStatus(char *status, size_t size)
+{
+    // utc info
+    snprintf(status, size, "%s", "err");
+
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    // utc info
+    temp_data = 0x40000000;
+    if (0 == writeRegister(temp_addr + Ucm_NtpServer_UtcInfoControlReg, &temp_data))
+    {
+        printf("temp data1: 0x%lx\n", temp_data);
+
+        for (int i = 0; i < 10; i++)
+        {
+            if (0 == readRegister(temp_addr + Ucm_NtpServer_UtcInfoControlReg, &temp_data))
+            {
+                printf("temp data2: 0x%lx\n", temp_data);
+
+                if ((temp_data & 0x80000000) != 0)
+                {
+                    if (0 == readRegister(temp_addr + Ucm_NtpServer_UtcInfoReg, &temp_data))
+                    {
+
+                        printf("temp data3: 0x%lx\n", temp_data);
+
+                        if ((temp_data & 0x00000100) == 0)
+                        {
+                            // snprintf(status, size, "%s", "err disabled");
+                            snprintf(status, size, "%lx", temp_data);
+                        }
+                        else
+                        {
+                            snprintf(status, size, "%s", "enabled");
+                        }
+                    }
+                    else
+                    {
+                        snprintf(status, size, "%s", "disabled");
+                    }
+                    break;
+                }
+                else if (i == 9)
+                {
+                    snprintf(status, size, "%s", "err: read did not complete");
+                    return -1;
+                }
+            }
+            else
+            {
+                snprintf(status, size, "%s", "disabled");
+            }
+        }
+    }
+    else
+    {
+        snprintf(status, size, "%s", "disabled");
+    }
+
+    return 0;
+}
+
+// read Ntp Server Instance Number ======================================================
+int readNtpServerInstanceNumber(char *instanceNumber, size_t size)
+{
+    readConfig();
+
+    snprintf(instanceNumber, size, "%ld", cores[Ucm_CoreConfig_NtpServerCoreType].core_instance_nr);
+}
 //
 //
 //============================================ write it boi

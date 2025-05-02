@@ -55,6 +55,9 @@ func RunConnect() {
 	C.readNtpServerReferenceId(out, 32)
 	println("ref id: ", C.GoString(out))
 
+	C.readNtpServerSmearingStatus(out, 32)
+	println("smearing: ", C.GoString(out))
+
 	defer C.free(unsafe.Pointer(out))
 
 }
