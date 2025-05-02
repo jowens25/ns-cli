@@ -10,27 +10,29 @@ package axi
 import "C"
 import "unsafe"
 
-func RunConnect() {
-
-	out := C.CString("00000000000000000000000000000000")
-
+func test_unicast() {
 	C.connect()
 	C.connect()
 	C.readConfig()
-	// read mac
-	C.readNtpServerMacAddress(out, 32)
-	println("Mac Address: ", C.GoString(out))
+	out := C.CString("00000000000000000000000000000000")
+	in := C.CString("enabled")
 
-	// write mac
-	in := C.CString("AA:BB:CC:DD:EE:FF")
-	C.writeNtpServerMacAddress(in, 32)
+	C.readNtpServerUnicastMode(out, 32)
+	println("unicast mode: ", C.GoString(out))
 
-	// read mac
-	C.readNtpServerMacAddress(out, 32)
-	println("Mac Address: ", C.GoString(out))
+	C.writeNtpServerUnicastMode(in, 32)
+
+	C.readNtpServerUnicastMode(out, 32)
+	println("unicast mode: ", C.GoString(out))
 
 	defer C.free(unsafe.Pointer(in))
 	defer C.free(unsafe.Pointer(out))
+
+}
+
+func RunConnect() {
+
+	test_unicast()
 
 	//C.readNtpServerStatus(out, 32)
 	//println("status: ", C.GoString(out))

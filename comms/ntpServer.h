@@ -26,7 +26,7 @@
 int readNtpServerStatus(char *status, size_t size);              // Ntp Server Status
 int readNtpServerInstanceNumber(char *status, size_t size);      // Ntp Server InstanceNumber
 int readNtpServerIpMode(char *ipMode, size_t size);              // Ntp Server IpMode
-int readNtpServerIpAddress(char *ipMode, size_t size);           // Ntp Server IpAddress
+int readNtpServerIpAddress(char *ipAddr, size_t size);           // Ntp Server IpAddress
 int readNtpServerMacAddress(char *macAddr, size_t size);         // Ntp Server MacAddress
 int readNtpServerVlanStatus(char *vlanStatus, size_t size);      // Ntp Server VlanStatus
 int readNtpServerVlanAddress(char *vlanStatus, size_t size);     // Ntp Server VlanAddress
@@ -52,7 +52,9 @@ int readNtpServerClearCountersStatus(char *value, size_t size);  // Ntp Server C
 int readNtpServerVersion(char *value, size_t size);              // Ntp Server Version
 
 int writeNtpServerMacAddress(char *addr, size_t size);
-
+int writeNtpServerVlanStatus(char *status, size_t size);
+int writeNtpServerVlanAddress(char *value, size_t size);
+int writeNtpServerUnicastMode(char *mode, size_t size);
 int writeStatus(char *status, size_t size);
 
 #endif // NTP_SERVER_H
