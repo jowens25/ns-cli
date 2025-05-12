@@ -74,7 +74,7 @@ func ListNtpProperties() {
 	C.connect()
 	C.readConfig()
 
-	out := C.CString("00000000000000000000000000000000")
+	out := C.CString("0000000000000000000000000000000000000000000000000000000000000000")
 	var size C.size_t = 64
 
 	err := C.readNtpServerStatus(out, size)
@@ -136,7 +136,48 @@ func ListNtpProperties() {
 
 	err = C.readNtpServerLeap59Progress(out, size)
 	println("Leap 59 Progress: ", C.GoString(out))
-	println("Leap 59 Progress ERROR: ", err)
+	//println("Leap 59 Progress ERROR: ", err)
+
+	err = C.readNtpServerLeap61Status(out, size)
+	println("Leap 61 Status: ", C.GoString(out))
+	//println("Leap 61 Status ERROR: ", err)
+
+	err = C.readNtpServerLeap59Status(out, size)
+	println("Leap 59 Status: ", C.GoString(out))
+	//println("Leap 59 Status ERROR: ", err)
+
+	err = C.readNtpServerUtcOffsetStatus(out, size)
+	println("UTC OFFSET Status: ", C.GoString(out))
+	//println("UTC OFFSET Status ERROR: ", err)
+
+	err = C.readNtpServerUtcOffsetValue(out, size)
+	println("UTC OFFSET Value: ", C.GoString(out))
+	//println("UTC OFFSET Value ERROR: ", err)
+
+	err = C.readNtpServerRequestsValue(out, size)
+	println("REQUESTS Value: ", C.GoString(out))
+	//println("REQUESTS Value ERROR: ", err)
+
+	err = C.readNtpServerResponsesValue(out, size)
+	println("RESPONSES Value: ", C.GoString(out))
+	//println("RESPONSES Value ERROR: ", err)
+
+	err = C.readNtpServerRequestsDroppedValue(out, size)
+	println("Requests Dropped Value", C.GoString(out))
+	//println("Requests Dropped Value ERROR: ", err)
+	err = C.readNtpServerBroadcastsValue(out, size)
+	println("Broadcasts Value", C.GoString(out))
+	//println("Broadcasts Value ERROR: ", err)
+	err = C.readNtpServerClearCountersStatus(out, size)
+	println("Clear Counters Status", C.GoString(out))
+	//println("Clear Counters Status ERROR: ", err)
+	err = C.readNtpServerVersion(out, size)
+	println("Version", C.GoString(out))
+	//println("Version ERROR: ", err)
+	err = C.readNtpServerInstanceNumber(out, size)
+	println("InstanceNumber", C.GoString(out))
+	println("InstanceNumber ERROR: ", err)
+	//
 	defer C.free(unsafe.Pointer(out))
 }
 
