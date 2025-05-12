@@ -1,12 +1,12 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
 
+	"github.com/jowens25/axi"
 	"github.com/spf13/cobra"
 )
 
@@ -21,12 +21,19 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		listMode, _ := cmd.Flags().GetBool("list")
+
+		if listMode {
+			axi.ListNtpProperties()
+		}
+
 		fmt.Println("ntp called")
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(ntpCmd)
+	ntpCmd.Flags().BoolP("list", "l", false, "list ntp properties and values")
 
 	// Here you will define your flags and configuration settings.
 

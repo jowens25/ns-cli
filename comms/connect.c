@@ -8,7 +8,7 @@ int connect(void)
     char writeData[32] = {0};
     char readData[32] = {0};
 
-    printf("write data array: %s\n", writeData);
+    // printf("write data array: %s\n", writeData);
 
     int ser = serOpen("/dev/ttyUSB0");
     if (ser == -1)
@@ -44,7 +44,7 @@ int connect(void)
         return -1;
     }
 
-    printf("Connect Success\n");
+    printf("Connect: Success\n");
 
     return 0;
 }

@@ -69,6 +69,77 @@ func test_broadcast() {
 
 }
 
+func ListNtpProperties() {
+	C.connect()
+	C.connect()
+	C.readConfig()
+
+	out := C.CString("00000000000000000000000000000000")
+	var size C.size_t = 64
+
+	err := C.readNtpServerStatus(out, size)
+	println("STATUS: ", C.GoString(out))
+	//println("STATUS ERROR: ", err)
+	err = C.readNtpServerMacAddress(out, size)
+	println("MAC ADDRESS: ", C.GoString(out))
+	//println("MAC ADDRESS ERROR: ", err)
+	err = C.readNtpServerVlanStatus(out, size)
+	println("VLAN STATUS: ", C.GoString(out))
+	//println("VLAN STATUS ERROR: ", err)
+
+	err = C.readNtpServerVlanAddress(out, size)
+	println("VLAN ADDRESS: ", C.GoString(out))
+	//println("VLAN ADDRESS ERROR: ", err)
+
+	err = C.readNtpServerIpMode(out, size)
+	println("IP MODE: ", C.GoString(out))
+	//println("IP MODE ERROR: ", err)
+
+	err = C.readNtpServerUnicastMode(out, size)
+	println("UNICAST MODE: ", C.GoString(out))
+	//println("UNICAST MODE ERROR: ", err)
+
+	err = C.readNtpServerMulticastMode(out, size)
+	println("MULTICAST MODE: ", C.GoString(out))
+	//println("MULTICAST MODE ERROR: ", err)
+
+	err = C.readNtpServerBroadcastMode(out, size)
+	println("BROADCAST MODE: ", C.GoString(out))
+	//println("BROADCAST MODE ERROR: ", err)
+
+	err = C.readNtpServerPrecisionValue(out, size)
+	println("PRECISION VALUE: ", C.GoString(out))
+	//println("PRECISION VALUE ERROR: ", err)
+
+	err = C.readNtpServerPollIntervalValue(out, size)
+	println("POLL INTERVAL VALUE: ", C.GoString(out))
+	//println("POLL INTERVAL VALUE ERROR: ", err)
+
+	err = C.readNtpServerStratumValue(out, size)
+	println("STRATUM VALUE: ", C.GoString(out))
+	//println("STRATUM VALUE ERROR: ", err)
+
+	err = C.readNtpServerReferenceId(out, size)
+	println("REFERENCE ID VALUE: ", C.GoString(out))
+	//println("REFERENCE ID VALUE ERROR: ", err)
+
+	err = C.readNtpServerIpAddress(out, size)
+	println("IP ADDRESS: ", C.GoString(out))
+	//println("IP ADDRESS ERROR: ", err)
+
+	err = C.readNtpServerSmearingStatus(out, size)
+	println("Smearing Status: ", C.GoString(out))
+	//println("Smearing Status ERROR: ", err)
+	err = C.readNtpServerLeap61Progress(out, size)
+	println("Leap 61 Progress: ", C.GoString(out))
+	//println("Leap 61 Progress ERROR: ", err)
+
+	err = C.readNtpServerLeap59Progress(out, size)
+	println("Leap 59 Progress: ", C.GoString(out))
+	println("Leap 59 Progress ERROR: ", err)
+	defer C.free(unsafe.Pointer(out))
+}
+
 func RunConnect() {
 
 	test_unicast()
