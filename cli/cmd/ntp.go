@@ -8,6 +8,7 @@ import (
 
 	"github.com/jowens25/axi"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 // ntpCmd represents the ntp command
@@ -21,13 +22,19 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		listMode, _ := cmd.Flags().GetBool("list")
 
-		if listMode {
-			axi.ListNtpProperties()
-		}
+		cmd.Flags().Visit(func(f *pflag.Flag) {
 
-		fmt.Println("ntp called")
+			switch f.Name {
+			case "list":
+				axi.ListNtpProperties()
+			case "ip":
+				fmt.Println("ip flag called")
+			default:
+				fmt.Println("Please pass the ntp command a valid flag")
+			}
+		})
+
 	},
 }
 

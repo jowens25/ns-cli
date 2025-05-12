@@ -51,9 +51,12 @@ int readNtpServerBroadcastsValue(char *value, size_t size);      // Ntp Server B
 int readNtpServerClearCountersStatus(char *value, size_t size);  // Ntp Server ClearCountersStatus
 int readNtpServerVersion(char *value, size_t size);              // Ntp Server Version
 
-int writeNtpServerMacAddress(char *addr, size_t size);    // Ntp Server MacAddress
-int writeNtpServerVlanStatus(char *status, size_t size);  // Ntp Server VlanStatus
-int writeNtpServerVlanAddress(char *value, size_t size);  // Ntp Server VlanAddress
+int writeNtpServerMacAddress(char *addr, size_t size);   // Ntp Server MacAddress
+int writeNtpServerVlanStatus(char *status, size_t size); // Ntp Server VlanStatus
+int writeNtpServerVlanAddress(char *value, size_t size); // Ntp Server VlanAddress
+int writeNtpServerIpMode(char *mode, size_t size);       // Ntp Server Ip Mode
+int writeNtpServerIpAddress(char *addr, size_t size);
+
 int writeNtpServerUnicastMode(char *mode, size_t size);   // Ntp Server UnicastMode
 int writeNtpServerMulticastMode(char *mode, size_t size); // Ntp Server MulticastMode
 int writeNtpServerBroadcastMode(char *mode, size_t size); // Ntp Server BroadcastMode
@@ -72,6 +75,7 @@ int writeNtpServerUtcOffsetValue(char *value, size_t size);   // Ntp Server UtcO
 int writeNtpServerClearCountersStatus(char *value, size_t size); // Ntp Server ClearCountersStatus
 // int writeNtpServerVersion(char *value, size_t size);              // Ntp Server Version
 
-int writeStatus(char *status, size_t size);
-
+int writeNtpServerStatus(char *status, size_t size);
+int to16(char *currentAddress, char *addressByteArray, size_t size);
+int to4(char *currentAddress, char *addressByteArray, size_t size);
 #endif // NTP_SERVER_H

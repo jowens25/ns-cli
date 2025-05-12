@@ -303,7 +303,6 @@ int readNtpServerIpAddress(char *ipAddr, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
     int64_t temp_ip = 0;
-    // temp_data = 0x00000000;
     char ipMode[size];
 
     int err = readNtpServerIpMode(ipMode, size);
@@ -314,104 +313,99 @@ int readNtpServerIpAddress(char *ipAddr, size_t size)
         return -1;
     }
 
-    if (0 == strncmp(ipMode, "IPv4", size))
+    // if (0 == strncmp(ipMode, "IPv4", size))
+    //{
+    //     if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpReg, &temp_data))
+    //     {
+    //         snprintf(ipAddr, size, "%s", "err");
+    //         return -1;
+    //     }
+    //     temp_ip = 0x00000000;
+    //     temp_ip |= (temp_data >> 0) & 0x000000FF;
+    //     temp_ip = temp_ip << 8;
+    //     temp_ip |= (temp_data >> 8) & 0x000000FF;
+    //     temp_ip = temp_ip << 8;
+    //     temp_ip |= (temp_data >> 16) & 0x000000FF;
+    //     temp_ip = temp_ip << 8;
+    //     temp_ip |= (temp_data >> 24) & 0x000000FF;
+    //
+    //    unsigned char ip_bytes[4];
+    //    ip_bytes[0] = temp_ip & 0xFF;
+    //    ip_bytes[1] = (temp_ip >> 8) & 0xFF;
+    //    ip_bytes[2] = (temp_ip >> 16) & 0xFF;
+    //    ip_bytes[3] = (temp_ip >> 24) & 0xFF;
+    //
+    //    // check if the data is in hex??
+    //
+    //    snprintf(ipAddr, size, "%d.%d.%d.%d", ip_bytes[3], ip_bytes[2], ip_bytes[1], ip_bytes[0]);
+    //}
+    ////else if (0 == strncmp(ipMode, "IPv6", size))
+    //{
+    unsigned char temp_ip6[16];
+    // temp_string.clear();
+    if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpReg, &temp_data))
     {
-        // temp_string.clear();
-        if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpReg, &temp_data))
-        {
-            snprintf(ipAddr, size, "%s", "err");
-            return -1;
-        }
-        temp_ip = 0x00000000;
-        temp_ip |= (temp_data >> 0) & 0x000000FF;
-        temp_ip = temp_ip << 8;
-        temp_ip |= (temp_data >> 8) & 0x000000FF;
-        temp_ip = temp_ip << 8;
-        temp_ip |= (temp_data >> 16) & 0x000000FF;
-        temp_ip = temp_ip << 8;
-        temp_ip |= (temp_data >> 24) & 0x000000FF;
-
-        unsigned char ip_bytes[4];
-        ip_bytes[0] = temp_ip & 0xFF;
-        ip_bytes[1] = (temp_ip >> 8) & 0xFF;
-        ip_bytes[2] = (temp_ip >> 16) & 0xFF;
-        ip_bytes[3] = (temp_ip >> 24) & 0xFF;
-
-        snprintf(ipAddr, size, "%d.%d.%d.%d", ip_bytes[3], ip_bytes[2], ip_bytes[1], ip_bytes[0]);
+        snprintf(ipAddr, size, "%s", "err0-3");
+        return -1;
     }
-    else if (0 == strncmp(ipMode, "IPv6", size))
+    temp_ip6[0] = (temp_data >> 0) & 0x000000FF;
+    temp_ip6[1] = (temp_data >> 8) & 0x000000FF;
+    temp_ip6[2] = (temp_data >> 16) & 0x000000FF;
+    temp_ip6[3] = (temp_data >> 24) & 0x000000FF;
+
+    if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpv61Reg, &temp_data))
     {
-        unsigned char temp_ip6[16];
-        // temp_string.clear();
-        if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpReg, &temp_data))
-        {
-            snprintf(ipAddr, size, "%s", "err0-3");
-            return -1;
-        }
-        temp_ip6[0] = (temp_data >> 0) & 0x000000FF;
-        temp_ip6[1] = (temp_data >> 8) & 0x000000FF;
-        temp_ip6[2] = (temp_data >> 16) & 0x000000FF;
-        temp_ip6[3] = (temp_data >> 24) & 0x000000FF;
-
-        if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpv61Reg, &temp_data))
-        {
-            snprintf(ipAddr, size, "%s", "err4-7");
-            return -1;
-        }
-        temp_ip6[4] = (temp_data >> 0) & 0x000000FF;
-        temp_ip6[5] = (temp_data >> 8) & 0x000000FF;
-        temp_ip6[6] = (temp_data >> 16) & 0x000000FF;
-        temp_ip6[7] = (temp_data >> 24) & 0x000000FF;
-
-        if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpv62Reg, &temp_data))
-        {
-            snprintf(ipAddr, size, "%s", "err8-11");
-            return -1;
-        }
-        temp_ip6[8] = (temp_data >> 0) & 0x000000FF;
-        temp_ip6[9] = (temp_data >> 8) & 0x000000FF;
-        temp_ip6[10] = (temp_data >> 16) & 0x000000FF;
-        temp_ip6[11] = (temp_data >> 24) & 0x000000FF;
-
-        if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpv63Reg, &temp_data))
-        {
-            snprintf(ipAddr, size, "%s", "err12-15");
-            return -1;
-        }
-        temp_ip6[12] = (temp_data >> 0) & 0x000000FF;
-        temp_ip6[13] = (temp_data >> 8) & 0x000000FF;
-        temp_ip6[14] = (temp_data >> 16) & 0x000000FF;
-        temp_ip6[15] = (temp_data >> 24) & 0x000000FF;
-
-        snprintf(ipAddr, size, "%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x",
-                 temp_ip6[0],
-                 temp_ip6[1],
-                 temp_ip6[2],
-                 temp_ip6[3],
-                 temp_ip6[4],
-                 temp_ip6[5],
-                 temp_ip6[6],
-                 temp_ip6[7],
-                 temp_ip6[8],
-                 temp_ip6[9],
-                 temp_ip6[10],
-                 temp_ip6[11],
-                 temp_ip6[12],
-                 temp_ip6[13],
-                 temp_ip6[14],
-                 temp_ip6[15]);
-        // printf("ip addr: %s ", ipAddr);
-
-        // this is ugly like your mom
-        // temp_string = QHostAddress(temp_ip6).toString();
-
-        // ui->NtpServerIpValue->setText(temp_string);
+        snprintf(ipAddr, size, "%s", "err4-7");
+        return -1;
     }
-    else
+    temp_ip6[4] = (temp_data >> 0) & 0x000000FF;
+    temp_ip6[5] = (temp_data >> 8) & 0x000000FF;
+    temp_ip6[6] = (temp_data >> 16) & 0x000000FF;
+    temp_ip6[7] = (temp_data >> 24) & 0x000000FF;
+
+    if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpv62Reg, &temp_data))
     {
-        // ui->NtpServerIpValue->setText("NA");
-        snprintf(ipAddr, size, "%s", "NA");
+        snprintf(ipAddr, size, "%s", "err8-11");
+        return -1;
     }
+    temp_ip6[8] = (temp_data >> 0) & 0x000000FF;
+    temp_ip6[9] = (temp_data >> 8) & 0x000000FF;
+    temp_ip6[10] = (temp_data >> 16) & 0x000000FF;
+    temp_ip6[11] = (temp_data >> 24) & 0x000000FF;
+
+    if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpv63Reg, &temp_data))
+    {
+        snprintf(ipAddr, size, "%s", "err12-15");
+        return -1;
+    }
+    temp_ip6[12] = (temp_data >> 0) & 0x000000FF;
+    temp_ip6[13] = (temp_data >> 8) & 0x000000FF;
+    temp_ip6[14] = (temp_data >> 16) & 0x000000FF;
+    temp_ip6[15] = (temp_data >> 24) & 0x000000FF;
+
+    snprintf(ipAddr, size, "%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x",
+             temp_ip6[0],
+             temp_ip6[1],
+             temp_ip6[2],
+             temp_ip6[3],
+             temp_ip6[4],
+             temp_ip6[5],
+             temp_ip6[6],
+             temp_ip6[7],
+             temp_ip6[8],
+             temp_ip6[9],
+             temp_ip6[10],
+             temp_ip6[11],
+             temp_ip6[12],
+             temp_ip6[13],
+             temp_ip6[14],
+             temp_ip6[15]);
+    //}
+    // else
+    //{
+    //     snprintf(ipAddr, size, "%s", "NA");
+    //     return -1;
+    // }
 
     return 0;
 }
@@ -888,40 +882,28 @@ int writeNtpServerMacAddress(char *addr, size_t size)
     temp_data = temp_data << 8;
     temp_data |= (temp_mac >> 40) & 0x000000FF;
 
-    if (0 == writeRegister(temp_addr + Ucm_NtpServer_ConfigMac1Reg, &temp_data))
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigMac1Reg, &temp_data))
     {
-
-        temp_data = 0x00000000;
-        temp_data |= (temp_mac >> 0) & 0x000000FF;
-        temp_data = temp_data << 8;
-        temp_data |= (temp_mac >> 8) & 0x000000FF;
-
-        if (0 == writeRegister(temp_addr + Ucm_NtpServer_ConfigMac2Reg, &temp_data))
-        {
-
-            temp_data = 0x00000004; // write
-            if (0 == writeRegister(temp_addr + Ucm_NtpServer_ConfigControlReg, &temp_data))
-            {
-                // write success
-                return 0;
-            }
-            else
-            {
-                // ui->NtpServerMacValue->setText("NA");
-                return -1;
-            }
-        }
-        else
-        {
-            // ui->NtpServerMacValue->setText("NA");
-            return -1;
-        }
-    }
-    else
-    {
-        // ui->NtpServerMacValue->setText("NA");
         return -1;
     }
+
+    temp_data = 0x00000000;
+    temp_data |= (temp_mac >> 0) & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= (temp_mac >> 8) & 0x000000FF;
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigMac2Reg, &temp_data))
+    {
+        return -1;
+    }
+
+    temp_data = 0x00000004; // write
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigControlReg, &temp_data))
+    {
+        return -1;
+    }
+    // write success
+    return 0;
 }
 
 int writeNtpServerVlanStatus(char *status, size_t size)
@@ -995,9 +977,163 @@ int writeNtpServerVlanAddress(char *value, size_t size)
     return 0;
 }
 
+int writeNtpServerIpMode(char *mode, const size_t size)
+{
+    char currentAddress[size];
+    int err = readNtpServerIpAddress(currentAddress, size);
+    if (err != 0)
+    {
+        return -1;
+    }
+
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
+    {
+        return -1;
+    }
+
+    if (0 == strncmp(mode, "IPv4", size))
+    {
+        temp_data &= ~0x00000002;
+        temp_data |= 0x00000001;
+    }
+    else if (0 == strncmp(mode, "IPv6", size))
+    {
+        temp_data &= ~0x00000001;
+        temp_data |= 0x01000002;
+    }
+    else
+    {
+        return -1;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
+    {
+        // failed to update config
+        return -1;
+    }
+    temp_data = 0x00000001;
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigControlReg, &temp_data))
+    {
+        // failed to update config control reg
+        return -1;
+    }
+    // printf("current IP address: %s\n", tempIpAddress);
+
+    if (writeNtpServerIpAddress(currentAddress, size) != 0)
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+int writeNtpServerIpAddress(char *temp_ip, size_t size)
+{
+    char currentMode[size];
+    // long temp_ip[size];
+    printf("in coming ip addr: %s \n", temp_ip);
+
+    if (0 != readNtpServerIpMode(currentMode, size))
+    {
+        return -1;
+    }
+
+    if (0 == strncmp(currentMode, "IPv4", size))
+    {
+        printf("ipv4 mode\n");
+        temp_data = 0x00000000;
+        temp_data |= (temp_ip[3]) & 0x000000FF;
+        temp_data = temp_data << 8;
+        temp_data |= (temp_ip[2]) & 0x000000FF;
+        temp_data = temp_data << 8;
+        temp_data |= (temp_ip[1]) & 0x000000FF;
+        temp_data = temp_data << 8;
+        temp_data |= (temp_ip[0]) & 0x000000FF;
+
+        if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigIpReg, &temp_data))
+        {
+            return -1;
+        }
+        temp_data = 0x00000008; // write
+        if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigControlReg, &temp_data))
+        {
+            return -1;
+        }
+        // ui->NtpServerIpValue->setText(temp_string);
+    }
+
+    else if (0 == strncmp(currentMode, "IPv6", size))
+    {
+
+        temp_data = 0x00000000;
+        temp_data |= temp_ip[3] & 0x000000FF;
+        temp_data = temp_data << 8;
+        temp_data |= temp_ip[2] & 0x000000FF;
+        temp_data = temp_data << 8;
+        temp_data |= temp_ip[1] & 0x000000FF;
+        temp_data = temp_data << 8;
+        temp_data |= temp_ip[0] & 0x000000FF;
+
+        if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigIpReg, &temp_data))
+        {
+            return -1;
+        }
+        temp_data = 0x00000000;
+        temp_data |= temp_ip[7] & 0x000000FF;
+        temp_data = temp_data << 8;
+        temp_data |= temp_ip[6] & 0x000000FF;
+        temp_data = temp_data << 8;
+        temp_data |= temp_ip[5] & 0x000000FF;
+        temp_data = temp_data << 8;
+        temp_data |= temp_ip[4] & 0x000000FF;
+
+        if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigIpv61Reg, &temp_data))
+        {
+            return -2;
+        }
+        temp_data = 0x00000000;
+        temp_data |= temp_ip[11] & 0x000000FF;
+        temp_data = temp_data << 8;
+        temp_data |= temp_ip[10] & 0x000000FF;
+        temp_data = temp_data << 8;
+        temp_data |= temp_ip[9] & 0x000000FF;
+        temp_data = temp_data << 8;
+        temp_data |= temp_ip[8] & 0x000000FF;
+
+        if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigIpv62Reg, &temp_data))
+        {
+            return -3;
+        }
+        temp_data = 0x00000000;
+        temp_data |= temp_ip[15] & 0x000000FF;
+        temp_data = temp_data << 8;
+        temp_data |= temp_ip[14] & 0x000000FF;
+        temp_data = temp_data << 8;
+        temp_data |= temp_ip[13] & 0x000000FF;
+        temp_data = temp_data << 8;
+        temp_data |= temp_ip[12] & 0x000000FF;
+
+        if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigIpv63Reg, &temp_data))
+        {
+            return -4;
+        }
+        temp_data = 0x00000008; // write
+        if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigControlReg, &temp_data))
+        {
+            return -5;
+        }
+        // ui->NtpServerIpValue->setText(temp_string);
+    }
+
+    return 0;
+}
 int writeNtpServerUnicastMode(char *mode, size_t size)
 {
-    temp_addr = temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
 
     temp_data = 0x00000000;
 
@@ -1144,6 +1280,41 @@ int writeNtpServerUtcOffsetValue(char *value, size_t size)
 }
 int writeNtpServerClearCountersStatus(char *value, size_t size)
 {
+}
+
+int to16(char *currentAddress, char *addressByteArray, size_t size)
+{
+    char *token;
+    char byte[3];
+    for (int i = 0; i < size; i += 2)
+    {
+
+        token = (i == 0) ? strtok(currentAddress, ":") : strtok(NULL, ":");
+        if (token == NULL)
+            break;
+
+        // Extract first two characters
+        strncpy(byte, token, 2);
+        byte[2] = '\0';
+        addressByteArray[i] = strtol(byte, NULL, 16);
+
+        // Extract next two characters
+        strncpy(byte, token + 2, 2);
+        byte[2] = '\0';
+        addressByteArray[i + 1] = strtol(byte, NULL, 16);
+    }
+}
+
+int to4(char *currentAddress, char *addressByteArray, size_t size)
+{
+    char *token;
+    for (int i = 0; i < size; i++)
+    {
+        token = (i == 0) ? strtok(currentAddress, ".") : strtok(NULL, ".");
+        if (token == NULL)
+            break;
+        addressByteArray[i] = strtol(token, NULL, 10);
+    }
 }
 
 //
