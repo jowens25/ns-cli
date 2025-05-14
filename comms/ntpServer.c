@@ -7,6 +7,17 @@
 int64_t ntplow;
 int64_t temp_data = 0x00000000;
 long temp_addr = 0x00000000;
+
+int hasNtpServer(char *in, size_t size)
+{
+    if (Ucm_CoreConfig_NtpServerCoreType != cores[Ucm_CoreConfig_NtpServerCoreType].core_type)
+    {
+
+        return -1;
+    }
+
+    return 0;
+}
 // read Ntp Server Status ======================================================
 int readNtpServerStatus(char *status, size_t size)
 {
@@ -810,6 +821,8 @@ int readNtpServerClearCountersStatus(char *status, size_t size)
 int readNtpServerVersion(char *value, size_t size)
 {
     // version
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+
     if (0 != readRegister(temp_addr + Ucm_NtpServer_VersionReg, &temp_data))
     {
         snprintf(value, size, "%s", "NA");
