@@ -7,6 +7,8 @@ import (
 	"fmt"
 
 	"github.com/jowens25/axi"
+	//"github.com/jowens25/axi"
+
 	"github.com/spf13/cobra"
 )
 
@@ -23,8 +25,15 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("ip called from ", cmd.Parent().Name())
 
-		axi.ToggleNtpIpMode(args[0])
-		//axi.SetNtpIpAddress(args[0])
+		//axi.ToggleNtpIpMode(args[0])
+		//axi.SetNtpIpAddress(args[1])
+		//axi.SetNtpReferenceId(args[0])
+		// axi.SetNtpSmearingStatus(args[0])
+		//axi.SetNtpLeap61Status(args[0])
+		//axi.SetNtpLeap59Status(args[0])
+		//axi.SetNtpOffsetStatus(args[0])
+		//axi.SetNtpOffsetValue(args[0])
+		axi.ClearNtpCounters(args[0])
 	},
 }
 

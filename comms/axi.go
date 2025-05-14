@@ -155,3 +155,101 @@ func SetNtpIpAddress(addr string) {
 	defer C.free(unsafe.Pointer(in))
 
 }
+
+func SetNtpReferenceId(id string) {
+	C.connect()
+
+	C.readConfig()
+	fmt.Println("this is the id you are trying to use: ", id)
+	in := C.CString(id)
+	var size C.size_t = 64
+	err := C.writeNtpServerReferenceIdValue(in, size)
+
+	println("err: ", err)
+	defer C.free(unsafe.Pointer(in))
+
+}
+
+func SetNtpSmearingStatus(status string) {
+	C.connect()
+
+	C.readConfig()
+	fmt.Println("this is the status you are trying to use: ", status)
+	in := C.CString(status)
+	var size C.size_t = 64
+	err := C.writeNtpServerUtcSmearingStatus(in, size)
+
+	println("err: ", err)
+	defer C.free(unsafe.Pointer(in))
+
+}
+
+func SetNtpLeap61Status(status string) {
+	C.connect()
+
+	C.readConfig()
+	fmt.Println("this is the leap status you are trying to use: ", status)
+	in := C.CString(status)
+	var size C.size_t = 64
+	err := C.writeNtpServerLeap61Status(in, size)
+
+	println("err: ", err)
+	defer C.free(unsafe.Pointer(in))
+
+}
+
+func SetNtpLeap59Status(status string) {
+	C.connect()
+
+	C.readConfig()
+	fmt.Println("this is the leap 59 status you are trying to use: ", status)
+	in := C.CString(status)
+	var size C.size_t = 64
+	err := C.writeNtpServerLeap59Status(in, size)
+
+	println("err: ", err)
+	defer C.free(unsafe.Pointer(in))
+
+}
+
+func SetNtpOffsetStatus(status string) {
+	C.connect()
+
+	C.readConfig()
+	fmt.Println("this is the offset status you are trying to use: ", status)
+	in := C.CString(status)
+	var size C.size_t = 64
+	err := C.writeNtpServerUtcOffsetStatus(in, size)
+
+	println("err: ", err)
+	defer C.free(unsafe.Pointer(in))
+
+}
+
+func SetNtpOffsetValue(value string) {
+	C.connect()
+
+	C.readConfig()
+	fmt.Println("this is the offset status you are trying to use: ", value)
+	in := C.CString(value)
+	var size C.size_t = 64
+	err := C.writeNtpServerUtcOffsetValue(in, size)
+
+	println("err: ", err)
+	defer C.free(unsafe.Pointer(in))
+
+}
+
+func ClearNtpCounters(value string) {
+	C.connect()
+
+	C.readConfig()
+	fmt.Println("this is the offset status you are trying to use: ", value)
+	in := C.CString(value)
+	var size C.size_t = 64
+	err := C.writeNtpServerClearCountersStatus(in, size)
+
+	println("err: ", err)
+	defer C.free(unsafe.Pointer(in))
+
+}

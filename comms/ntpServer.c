@@ -313,99 +313,97 @@ int readNtpServerIpAddress(char *ipAddr, size_t size)
         return -1;
     }
 
-    // if (0 == strncmp(ipMode, "IPv4", size))
-    //{
-    //     if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpReg, &temp_data))
-    //     {
-    //         snprintf(ipAddr, size, "%s", "err");
-    //         return -1;
-    //     }
-    //     temp_ip = 0x00000000;
-    //     temp_ip |= (temp_data >> 0) & 0x000000FF;
-    //     temp_ip = temp_ip << 8;
-    //     temp_ip |= (temp_data >> 8) & 0x000000FF;
-    //     temp_ip = temp_ip << 8;
-    //     temp_ip |= (temp_data >> 16) & 0x000000FF;
-    //     temp_ip = temp_ip << 8;
-    //     temp_ip |= (temp_data >> 24) & 0x000000FF;
-    //
-    //    unsigned char ip_bytes[4];
-    //    ip_bytes[0] = temp_ip & 0xFF;
-    //    ip_bytes[1] = (temp_ip >> 8) & 0xFF;
-    //    ip_bytes[2] = (temp_ip >> 16) & 0xFF;
-    //    ip_bytes[3] = (temp_ip >> 24) & 0xFF;
-    //
-    //    // check if the data is in hex??
-    //
-    //    snprintf(ipAddr, size, "%d.%d.%d.%d", ip_bytes[3], ip_bytes[2], ip_bytes[1], ip_bytes[0]);
-    //}
-    ////else if (0 == strncmp(ipMode, "IPv6", size))
-    //{
-    unsigned char temp_ip6[16];
-    // temp_string.clear();
-    if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpReg, &temp_data))
+    if (0 == strncmp(ipMode, "IPv4", size))
     {
-        snprintf(ipAddr, size, "%s", "err0-3");
+        if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpReg, &temp_data))
+        {
+            snprintf(ipAddr, size, "%s", "err");
+            return -1;
+        }
+        temp_ip = 0x00000000;
+        temp_ip |= (temp_data >> 0) & 0x000000FF;
+        temp_ip = temp_ip << 8;
+        temp_ip |= (temp_data >> 8) & 0x000000FF;
+        temp_ip = temp_ip << 8;
+        temp_ip |= (temp_data >> 16) & 0x000000FF;
+        temp_ip = temp_ip << 8;
+        temp_ip |= (temp_data >> 24) & 0x000000FF;
+
+        unsigned char ip_bytes[4];
+        ip_bytes[0] = temp_ip & 0xFF;
+        ip_bytes[1] = (temp_ip >> 8) & 0xFF;
+        ip_bytes[2] = (temp_ip >> 16) & 0xFF;
+        ip_bytes[3] = (temp_ip >> 24) & 0xFF;
+
+        snprintf(ipAddr, size, "%d.%d.%d.%d", ip_bytes[3], ip_bytes[2], ip_bytes[1], ip_bytes[0]);
+    }
+    else if (0 == strncmp(ipMode, "IPv6", size))
+    {
+        unsigned char temp_ip6[16];
+        // temp_string.clear();
+        if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpReg, &temp_data))
+        {
+            snprintf(ipAddr, size, "%s", "err0-3");
+            return -1;
+        }
+        temp_ip6[0] = (temp_data >> 0) & 0x000000FF;
+        temp_ip6[1] = (temp_data >> 8) & 0x000000FF;
+        temp_ip6[2] = (temp_data >> 16) & 0x000000FF;
+        temp_ip6[3] = (temp_data >> 24) & 0x000000FF;
+
+        if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpv61Reg, &temp_data))
+        {
+            snprintf(ipAddr, size, "%s", "err4-7");
+            return -1;
+        }
+        temp_ip6[4] = (temp_data >> 0) & 0x000000FF;
+        temp_ip6[5] = (temp_data >> 8) & 0x000000FF;
+        temp_ip6[6] = (temp_data >> 16) & 0x000000FF;
+        temp_ip6[7] = (temp_data >> 24) & 0x000000FF;
+
+        if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpv62Reg, &temp_data))
+        {
+            snprintf(ipAddr, size, "%s", "err8-11");
+            return -1;
+        }
+        temp_ip6[8] = (temp_data >> 0) & 0x000000FF;
+        temp_ip6[9] = (temp_data >> 8) & 0x000000FF;
+        temp_ip6[10] = (temp_data >> 16) & 0x000000FF;
+        temp_ip6[11] = (temp_data >> 24) & 0x000000FF;
+
+        if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpv63Reg, &temp_data))
+        {
+            snprintf(ipAddr, size, "%s", "err12-15");
+            return -1;
+        }
+        temp_ip6[12] = (temp_data >> 0) & 0x000000FF;
+        temp_ip6[13] = (temp_data >> 8) & 0x000000FF;
+        temp_ip6[14] = (temp_data >> 16) & 0x000000FF;
+        temp_ip6[15] = (temp_data >> 24) & 0x000000FF;
+
+        snprintf(ipAddr, size, "%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x",
+                 temp_ip6[0],
+                 temp_ip6[1],
+                 temp_ip6[2],
+                 temp_ip6[3],
+                 temp_ip6[4],
+                 temp_ip6[5],
+                 temp_ip6[6],
+                 temp_ip6[7],
+                 temp_ip6[8],
+                 temp_ip6[9],
+                 temp_ip6[10],
+                 temp_ip6[11],
+                 temp_ip6[12],
+                 temp_ip6[13],
+                 temp_ip6[14],
+                 temp_ip6[15]);
+    }
+    else
+    {
+        snprintf(ipAddr, size, "%s", "NA");
         return -1;
     }
-    temp_ip6[0] = (temp_data >> 0) & 0x000000FF;
-    temp_ip6[1] = (temp_data >> 8) & 0x000000FF;
-    temp_ip6[2] = (temp_data >> 16) & 0x000000FF;
-    temp_ip6[3] = (temp_data >> 24) & 0x000000FF;
-
-    if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpv61Reg, &temp_data))
-    {
-        snprintf(ipAddr, size, "%s", "err4-7");
-        return -1;
-    }
-    temp_ip6[4] = (temp_data >> 0) & 0x000000FF;
-    temp_ip6[5] = (temp_data >> 8) & 0x000000FF;
-    temp_ip6[6] = (temp_data >> 16) & 0x000000FF;
-    temp_ip6[7] = (temp_data >> 24) & 0x000000FF;
-
-    if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpv62Reg, &temp_data))
-    {
-        snprintf(ipAddr, size, "%s", "err8-11");
-        return -1;
-    }
-    temp_ip6[8] = (temp_data >> 0) & 0x000000FF;
-    temp_ip6[9] = (temp_data >> 8) & 0x000000FF;
-    temp_ip6[10] = (temp_data >> 16) & 0x000000FF;
-    temp_ip6[11] = (temp_data >> 24) & 0x000000FF;
-
-    if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigIpv63Reg, &temp_data))
-    {
-        snprintf(ipAddr, size, "%s", "err12-15");
-        return -1;
-    }
-    temp_ip6[12] = (temp_data >> 0) & 0x000000FF;
-    temp_ip6[13] = (temp_data >> 8) & 0x000000FF;
-    temp_ip6[14] = (temp_data >> 16) & 0x000000FF;
-    temp_ip6[15] = (temp_data >> 24) & 0x000000FF;
-
-    snprintf(ipAddr, size, "%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x",
-             temp_ip6[0],
-             temp_ip6[1],
-             temp_ip6[2],
-             temp_ip6[3],
-             temp_ip6[4],
-             temp_ip6[5],
-             temp_ip6[6],
-             temp_ip6[7],
-             temp_ip6[8],
-             temp_ip6[9],
-             temp_ip6[10],
-             temp_ip6[11],
-             temp_ip6[12],
-             temp_ip6[13],
-             temp_ip6[14],
-             temp_ip6[15]);
-    //}
-    // else
-    //{
-    //     snprintf(ipAddr, size, "%s", "NA");
-    //     return -1;
-    // }
 
     return 0;
 }
@@ -996,13 +994,18 @@ int writeNtpServerIpMode(char *mode, const size_t size)
 
     if (0 == strncmp(mode, "IPv4", size))
     {
-        temp_data &= ~0x00000002;
+        temp_data &= ~0x01000002;
         temp_data |= 0x00000001;
     }
     else if (0 == strncmp(mode, "IPv6", size))
     {
+        char ipv6Address[size];
+        printf("current address: %s\n", currentAddress);
+
         temp_data &= ~0x00000001;
         temp_data |= 0x01000002;
+
+        printf("IPv6 address: %s\n", ipv6Address);
     }
     else
     {
@@ -1023,114 +1026,265 @@ int writeNtpServerIpMode(char *mode, const size_t size)
     }
     // printf("current IP address: %s\n", tempIpAddress);
 
-    if (writeNtpServerIpAddress(currentAddress, size) != 0)
+    if (0 != writeNtpServerIpAddress(currentAddress, size))
     {
-        return -1;
+        return -160555;
     }
 
     return 0;
 }
-
-int writeNtpServerIpAddress(char *temp_ip, size_t size)
+int writeNtpServerIpAddress(char *ipAddress, size_t size)
 {
     char currentMode[size];
-    // long temp_ip[size];
-    printf("in coming ip addr: %s \n", temp_ip);
 
     if (0 != readNtpServerIpMode(currentMode, size))
     {
+        printf("failed to read current mode\n");
         return -1;
     }
 
     if (0 == strncmp(currentMode, "IPv4", size))
     {
-        printf("ipv4 mode\n");
-        temp_data = 0x00000000;
-        temp_data |= (temp_ip[3]) & 0x000000FF;
-        temp_data = temp_data << 8;
-        temp_data |= (temp_ip[2]) & 0x000000FF;
-        temp_data = temp_data << 8;
-        temp_data |= (temp_ip[1]) & 0x000000FF;
-        temp_data = temp_data << 8;
-        temp_data |= (temp_ip[0]) & 0x000000FF;
-
-        if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigIpReg, &temp_data))
+        if (0 != ipv4_addr_to_register_value(ipAddress, size))
         {
-            return -1;
-        }
-        temp_data = 0x00000008; // write
-        if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigControlReg, &temp_data))
-        {
-            return -1;
-        }
-        // ui->NtpServerIpValue->setText(temp_string);
-    }
-
-    else if (0 == strncmp(currentMode, "IPv6", size))
-    {
-
-        temp_data = 0x00000000;
-        temp_data |= temp_ip[3] & 0x000000FF;
-        temp_data = temp_data << 8;
-        temp_data |= temp_ip[2] & 0x000000FF;
-        temp_data = temp_data << 8;
-        temp_data |= temp_ip[1] & 0x000000FF;
-        temp_data = temp_data << 8;
-        temp_data |= temp_ip[0] & 0x000000FF;
-
-        if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigIpReg, &temp_data))
-        {
-            return -1;
-        }
-        temp_data = 0x00000000;
-        temp_data |= temp_ip[7] & 0x000000FF;
-        temp_data = temp_data << 8;
-        temp_data |= temp_ip[6] & 0x000000FF;
-        temp_data = temp_data << 8;
-        temp_data |= temp_ip[5] & 0x000000FF;
-        temp_data = temp_data << 8;
-        temp_data |= temp_ip[4] & 0x000000FF;
-
-        if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigIpv61Reg, &temp_data))
-        {
-            return -2;
-        }
-        temp_data = 0x00000000;
-        temp_data |= temp_ip[11] & 0x000000FF;
-        temp_data = temp_data << 8;
-        temp_data |= temp_ip[10] & 0x000000FF;
-        temp_data = temp_data << 8;
-        temp_data |= temp_ip[9] & 0x000000FF;
-        temp_data = temp_data << 8;
-        temp_data |= temp_ip[8] & 0x000000FF;
-
-        if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigIpv62Reg, &temp_data))
-        {
-            return -3;
-        }
-        temp_data = 0x00000000;
-        temp_data |= temp_ip[15] & 0x000000FF;
-        temp_data = temp_data << 8;
-        temp_data |= temp_ip[14] & 0x000000FF;
-        temp_data = temp_data << 8;
-        temp_data |= temp_ip[13] & 0x000000FF;
-        temp_data = temp_data << 8;
-        temp_data |= temp_ip[12] & 0x000000FF;
-
-        if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigIpv63Reg, &temp_data))
-        {
+            printf("failed to write ipv4 crap\n");
             return -4;
         }
-        temp_data = 0x00000008; // write
-        if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigControlReg, &temp_data))
-        {
-            return -5;
-        }
-        // ui->NtpServerIpValue->setText(temp_string);
     }
-
+    else if (0 == strncmp(currentMode, "IPv6", size))
+    {
+        ipv6_addr_to_register_value(ipAddress, size);
+    }
+    else
+    {
+        return -6;
+    }
     return 0;
 }
+
+int ipv4_addr_to_register_value(char *ipAddress, size_t size)
+{
+    long temp_ip[4] = {0};
+
+    if (strchr(ipAddress, '.'))
+    { // ipv4
+        printf("ipv4 case \n");
+
+        char *token;
+        for (int i = 0; i < 4; i++)
+        {
+            token = (i == 0) ? strtok(ipAddress, ".") : strtok(NULL, ".");
+            if (token == NULL)
+                break;
+            temp_ip[i] = strtol(token, NULL, 10);
+        }
+    }
+
+    else if (strchr(ipAddress, ':'))
+    {
+        // temp_ip[0] = 0;
+        // temp_ip[1] = 0;
+        // temp_ip[2] = 0;
+        // temp_ip[3] = 0;
+
+        ipAddress = ipAddress + 25;
+
+        char *token;
+        char byte[3];
+        for (int i = 0; i < 4; i += 2)
+        {
+
+            if (i == 0)
+            {
+                token = strtok(ipAddress, ":"); // grabs first token
+                printf("first token: %s\n", token);
+                if (0 == strncmp(token, "ffff", 5))
+                {
+                    token = strtok(NULL, ":");
+                    printf("ffff so it is a mapped ipv4\n");
+                }
+                else
+                {
+                    printf("not ffff, not mapped so exit\n");
+                    temp_ip[0] = 0;
+                    temp_ip[1] = 0;
+                    temp_ip[2] = 0;
+                    temp_ip[3] = 0;
+                    break;
+                }
+            }
+            else
+            {
+                token = strtok(NULL, ":");
+            }
+
+            if (token == NULL)
+                break;
+
+            printf("token: %s \n", token);
+            // Extract first two characters
+            strncpy(byte, token, 2);
+
+            snprintf(byte, 3, "%2s", token);
+
+            printf("byte: %s \n", byte);
+
+            temp_ip[i] = strtol(byte, NULL, 16);
+
+            // Extract next two characters
+            snprintf(byte, 3, "%2s", token + 2);
+            printf("byte: %s \n", byte);
+
+            temp_ip[i + 1] = strtol(byte, NULL, 16);
+        }
+    }
+    else
+    {
+        printf("big fat else\n");
+        return -1;
+    }
+    temp_data = 0x00000000;
+    temp_data |= (temp_ip[3]) & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= (temp_ip[2]) & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= (temp_ip[1]) & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= (temp_ip[0]) & 0x000000FF;
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigIpReg, &temp_data))
+    {
+        printf("failed to write config \n");
+        return -1;
+    }
+    temp_data = 0x00000008; // write
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigControlReg, &temp_data))
+    {
+        printf("failed to write control \n");
+        return -1;
+    }
+    return 0;
+}
+int ipv6_addr_to_register_value(char *ipAddress, size_t size)
+{
+    long temp_ip[16] = {0};
+
+    if (strchr(ipAddress, ':'))
+    { // ipv4
+        char *token;
+        char *err;
+        char byte[3];
+        for (int i = 0; i < size; i += 2)
+        {
+
+            token = (i == 0) ? strtok(ipAddress, ":") : strtok(NULL, ":");
+            if (token == NULL)
+                break;
+
+            // Extract first two characters
+            strncpy(byte, token, 2);
+            byte[2] = '\0';
+            temp_ip[i] = strtol(byte, &err, 16);
+            if (err == token || *err != '\0')
+            {
+                return -1;
+            }
+
+            // Extract next two characters
+            strncpy(byte, token + 2, 2);
+            byte[2] = '\0';
+            temp_ip[i + 1] = strtol(byte, &err, 16);
+            if (err == token || *err != '\0')
+            {
+                return -1;
+            }
+        }
+    }
+
+    else if (strchr(ipAddress, '.'))
+    {
+        char *token;
+        char *err;
+        for (int i = 12; i < 16; i++)
+        {
+            token = (i == 12) ? strtok(ipAddress, ".") : strtok(NULL, ".");
+            if (token == NULL)
+                break;
+            temp_ip[i] = strtol(token, &err, 10);
+
+            if (err == token || *err != '\0')
+            {
+                return -1;
+            }
+        }
+        temp_ip[10] = 0x000000FF;
+        temp_ip[11] = 0x000000FF;
+    }
+    else
+    {
+        return -1;
+    }
+
+    temp_data = 0x00000000;
+    temp_data |= temp_ip[3] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[2] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[1] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[0] & 0x000000FF;
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigIpReg, &temp_data))
+    {
+        return -1;
+    }
+    temp_data = 0x00000000;
+    temp_data |= temp_ip[7] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[6] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[5] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[4] & 0x000000FF;
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigIpv61Reg, &temp_data))
+    {
+        return -2;
+    }
+    temp_data = 0x00000000;
+    temp_data |= temp_ip[11] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[10] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[9] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[8] & 0x000000FF;
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigIpv62Reg, &temp_data))
+    {
+        return -3;
+    }
+    temp_data = 0x00000000;
+    temp_data |= temp_ip[15] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[14] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[13] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[12] & 0x000000FF;
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigIpv63Reg, &temp_data))
+    {
+        return -4;
+    }
+    temp_data = 0x00000008; // write
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigControlReg, &temp_data))
+    {
+        return -5;
+    }
+    return 0;
+}
+
 int writeNtpServerUnicastMode(char *mode, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
@@ -1166,7 +1320,7 @@ int writeNtpServerUnicastMode(char *mode, size_t size)
 
 int writeNtpServerMulticastMode(char *mode, size_t size)
 {
-    temp_addr = temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
 
     temp_data = 0x00000000;
 
@@ -1196,7 +1350,7 @@ int writeNtpServerMulticastMode(char *mode, size_t size)
 }
 int writeNtpServerBroadcastMode(char *mode, size_t size)
 {
-    temp_addr = temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
 
     temp_data = 0x00000000;
 
@@ -1231,10 +1385,10 @@ int writeNtpServerBroadcastMode(char *mode, size_t size)
 
 int writeNtpServerPrecisionValue(char *value, size_t size)
 {
-    temp_addr = temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
 
     temp_data = 0x00000000;
-
+    char *err;
     long temp_precision = 0;
 
     if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
@@ -1242,14 +1396,21 @@ int writeNtpServerPrecisionValue(char *value, size_t size)
         return -1;
     }
 
-    temp_precision = strtol(value, NULL, 16);
+    temp_precision = strtol(value, &err, 16);
+
+    if (err == value || *err != '\0')
+    {
+        return -1;
+    }
     temp_data &= ~((0xFFFFFFFF & 0x000000FF) << 8);
     temp_data |= ((temp_precision & 0x000000FF) << 8);
 
     if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
     {
-        temp_data = 0x00000001;
+        return -1;
     }
+
+    temp_data = 0x00000001;
 
     if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigControlReg, &temp_data))
     {
@@ -1259,69 +1420,301 @@ int writeNtpServerPrecisionValue(char *value, size_t size)
 
 int writeNtpServerStratumValue(char *value, size_t size)
 {
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_data = 0x00000000;
+    char *err;
+    long temp_stratum = 0;
+
+    if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
+    {
+        return -1;
+    }
+
+    temp_stratum = strtol(value, &err, 16);
+
+    if (err == value || *err != '\0')
+    {
+        return -1;
+    }
+    temp_data &= ~((0xFFFFFFFF & 0x000000FF) << 24);
+    temp_data |= ((temp_stratum & 0x000000FF) << 24);
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
+    {
+        return -1;
+    }
+    temp_data = 0x00000001;
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigControlReg, &temp_data))
+    {
+        return -1;
+    }
+    return 0;
 }
-int writeNtpServerReferenceIdValue(char *value, size_t size)
+int writeNtpServerReferenceIdValue(char *referenceId, size_t size)
 {
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_data = 0x00000000;
+    char *token;
+    char referenceOptions[91] = "NTP,NULL,LOCL,CESM,RBDM,PPS,IRIG,ACTS,USNO,PTB,TDF,DCF,MSF,WWV,WWVB,WWVH,CHU,LORC,OMEG,GPS";
+
+    for (int i = 0; i < size; i++) // num of ref options 20 + 1
+    {
+        token = (i == 0) ? strtok(referenceOptions, ",") : strtok(NULL, ",");
+        if (token == NULL)
+        {
+            return -1;
+        }
+
+        if (0 == strncmp(token, referenceId, strlen(referenceId)))
+        {
+            break;
+        }
+    }
+
+    if (1 == strlen(referenceId))
+    {
+        temp_data |= referenceId[0];
+        temp_data = temp_data << 24;
+    }
+    else if (2 == strlen(referenceId))
+    {
+        temp_data |= referenceId[0];
+        temp_data = temp_data << 8;
+        temp_data |= referenceId[1];
+        temp_data = temp_data << 16;
+    }
+    else if (3 == strlen(referenceId))
+    {
+        temp_data |= referenceId[0];
+        temp_data = temp_data << 8;
+        temp_data |= referenceId[1];
+        temp_data = temp_data << 8;
+        temp_data |= referenceId[2];
+        temp_data = temp_data << 8;
+    }
+    else if (4 == strlen(referenceId))
+    {
+        temp_data |= referenceId[0];
+        temp_data = temp_data << 8;
+        temp_data |= referenceId[1];
+        temp_data = temp_data << 8;
+        temp_data |= referenceId[2];
+        temp_data = temp_data << 8;
+        temp_data |= referenceId[3];
+    }
+    else
+    {
+        return -1;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigReferenceIdReg, &temp_data))
+    {
+        return -1;
+    }
+    temp_data = 0x00000010;
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigControlReg, &temp_data))
+    {
+        return -1;
+    }
+    return 0;
 }
 int writeNtpServerUtcSmearingStatus(char *status, size_t size)
 {
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_NtpServer_UtcInfoReg, &temp_data))
+    {
+        return -1;
+    }
+
+    temp_data &= ~0x00000100; // Clear bit (using NOT + AND)
+    if (0 == strcmp(status, "enabled"))
+    {
+        temp_data |= 0x00000100;
+    }
+    else if (0 == strcmp(status, "disabled"))
+    {
+        temp_data |= 0x00000000;
+    }
+    else
+    {
+        return -1;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_UtcInfoReg, &temp_data))
+    {
+        return -1;
+    }
+    temp_data = 0x00000003;
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_UtcInfoControlReg, &temp_data))
+    {
+        return -1;
+    }
+    return 0;
 }
 int writeNtpServerLeap61Status(char *status, size_t size)
 {
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_NtpServer_UtcInfoReg, &temp_data))
+    {
+        return -1;
+    }
+
+    temp_data &= ~0x00000800; // Clear bit (using NOT + AND)
+    if (0 == strcmp(status, "enabled"))
+    {
+        temp_data |= 0x00000800;
+    }
+    else if (0 == strcmp(status, "disabled"))
+    {
+        temp_data |= 0x00000000;
+    }
+    else
+    {
+        return -1;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_UtcInfoReg, &temp_data))
+    {
+        return -1;
+    }
+    temp_data = 0x00000003;
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_UtcInfoControlReg, &temp_data))
+    {
+        return -1;
+    }
+    return 0;
 }
 int writeNtpServerLeap59Status(char *status, size_t size)
 {
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_NtpServer_UtcInfoReg, &temp_data))
+    {
+        return -1;
+    }
+
+    temp_data &= ~0x00001000; // Clear bit (using NOT + AND)
+    if (0 == strcmp(status, "enabled"))
+    {
+        temp_data |= 0x00001000;
+    }
+    else if (0 == strcmp(status, "disabled"))
+    {
+        temp_data |= 0x00000000;
+    }
+    else
+    {
+        return -1;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_UtcInfoReg, &temp_data))
+    {
+        return -1;
+    }
+    temp_data = 0x00000003;
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_UtcInfoControlReg, &temp_data))
+    {
+        return -1;
+    }
+    return 0;
 }
 int writeNtpServerUtcOffsetStatus(char *status, size_t size)
 {
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_NtpServer_UtcInfoReg, &temp_data))
+    {
+        return -1;
+    }
+
+    temp_data &= ~0x00002000; // Clear bit (using NOT + AND)
+    if (0 == strcmp(status, "enabled"))
+    {
+        temp_data |= 0x00002000;
+    }
+    else if (0 == strcmp(status, "disabled"))
+    {
+        temp_data |= 0x00000000;
+    }
+    else
+    {
+        return -1;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_UtcInfoReg, &temp_data))
+    {
+        return -1;
+    }
+    temp_data = 0x00000003;
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_UtcInfoControlReg, &temp_data))
+    {
+        return -1;
+    }
+    return 0;
 }
 int writeNtpServerUtcOffsetValue(char *value, size_t size)
 {
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_data = 0x00000000;
+    long temp_value = 0;
+    char *err;
+    if (0 != readRegister(temp_addr + Ucm_NtpServer_UtcInfoReg, &temp_data))
+    {
+        return -1;
+    }
+
+    temp_data &= 0x0000FFFF;
+
+    temp_value = strtol(value, &err, 10);
+
+    if (err == value || *err != '\0')
+    {
+        return -1;
+    }
+
+    temp_data |= ((temp_value & 0x0000FFFF) << 16);
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_UtcInfoReg, &temp_data))
+    {
+        return -1;
+    }
+    temp_data = 0x00000003;
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_UtcInfoControlReg, &temp_data))
+    {
+        return -1;
+    }
+    return 0;
 }
 int writeNtpServerClearCountersStatus(char *value, size_t size)
 {
-}
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_data = 0x00000000;
+    temp_data |= 0x00000001; // clear 'em!
 
-int to16(char *currentAddress, char *addressByteArray, size_t size)
-{
-    char *token;
-    char byte[3];
-    for (int i = 0; i < size; i += 2)
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_CountControlReg, &temp_data))
     {
-
-        token = (i == 0) ? strtok(currentAddress, ":") : strtok(NULL, ":");
-        if (token == NULL)
-            break;
-
-        // Extract first two characters
-        strncpy(byte, token, 2);
-        byte[2] = '\0';
-        addressByteArray[i] = strtol(byte, NULL, 16);
-
-        // Extract next two characters
-        strncpy(byte, token + 2, 2);
-        byte[2] = '\0';
-        addressByteArray[i + 1] = strtol(byte, NULL, 16);
+        return -1;
     }
-}
-
-int to4(char *currentAddress, char *addressByteArray, size_t size)
-{
-    char *token;
-    for (int i = 0; i < size; i++)
-    {
-        token = (i == 0) ? strtok(currentAddress, ".") : strtok(NULL, ".");
-        if (token == NULL)
-            break;
-        addressByteArray[i] = strtol(token, NULL, 10);
-    }
+    return 0;
 }
 
 //
 int writeStatus(char *status, size_t size)
 {
-    // readConfig();
-    //   printf("NTP STATUS SET TO: %s|\n", status);
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
 
     if (0 == strncmp(status, "enable", size))
     {
@@ -1335,19 +1728,14 @@ int writeStatus(char *status, size_t size)
 
     else
     {
-        printf("PLEASE ENTER A VALID STATUS\n");
-        temp_data = 0x00000000;
+        return -1;
+        // printf("PLEASE ENTER A VALID STATUS\n");
+        // temp_data = 0x00000000;
     }
 
-    if (0 == writeRegister(cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low + Ucm_NtpServer_ControlReg, &temp_data))
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ControlReg, &temp_data))
     {
-        printf("write reg success\n");
-
-        // showNtpServerSTATUS()
-    }
-    else
-    {
-        // log.Fatal(" VERBOSE ERROR WRITING NTP")
+        return -1;
     }
 
     return 0;

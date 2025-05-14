@@ -74,8 +74,13 @@ int writeNtpServerUtcOffsetValue(char *value, size_t size);   // Ntp Server UtcO
 
 int writeNtpServerClearCountersStatus(char *value, size_t size); // Ntp Server ClearCountersStatus
 // int writeNtpServerVersion(char *value, size_t size);              // Ntp Server Version
+int ipv4toipv6(char *ipv4Address, char *ipv6Address, size_t size);
+int ipv4_addr_to_register_value(char *ipAddress, size_t size);
+int ipv6_addr_to_register_value(char *ipAddress, size_t size);
 
+int ipv6toipv4(char *address, size_t size);
 int writeNtpServerStatus(char *status, size_t size);
-int to16(char *currentAddress, char *addressByteArray, size_t size);
-int to4(char *currentAddress, char *addressByteArray, size_t size);
+int ipAddressToByteArray(char *ipAddress, long *addressByteArray, size_t size);
+int to4(char *ipv6, size_t size);
+int to16(char *ipv4, size_t size);
 #endif // NTP_SERVER_H
