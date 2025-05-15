@@ -3,11 +3,11 @@
 
 int readRegister(int64_t addr, int64_t *data)
 {
-    char writeData[32] = {0};
-    char readData[32] = {0};
+    char writeData[64] = {0};
+    char readData[64] = {0};
     // char tempData[32] = {0};
-    char hexAddr[32] = {0};
-    char hexData[32] = {0};
+    char hexAddr[64] = {0};
+    char hexData[64] = {0};
     char hexChecksum[3] = {0};
 
     int ser = serOpen("/dev/ttyUSB0");
@@ -48,7 +48,7 @@ int readRegister(int64_t addr, int64_t *data)
     err = serRead(ser, readData, sizeof(readData));
     if (err != 0)
     {
-        printf("serRead error");
+        printf("read - serRead error\n");
         return -1;
     }
     // close
@@ -56,19 +56,19 @@ int readRegister(int64_t addr, int64_t *data)
 
     if (isErrorResponse(readData))
     {
-        printf("error response: %s", readData);
+        printf("error response: %s \n", readData);
         return -1;
     }
 
     if (!isReadResponse(readData))
     {
-        printf("missing read response");
+        printf("missing read response\n");
         return -1;
     }
 
     if (isChecksumCorrect(readData))
     {
-        printf("wrong checksum");
+        printf("read reg - wrong checksum\n");
         return -1;
     }
 

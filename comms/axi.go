@@ -18,6 +18,7 @@ import (
 //}
 
 func ReadNtpServerVersion() string {
+	C.connect()
 
 	C.connect()
 
@@ -33,6 +34,59 @@ func ReadNtpServerVersion() string {
 	//
 	defer C.free(unsafe.Pointer(out))
 	return C.GoString(out)
+}
+
+func ReadNtpServerInstance() string {
+	C.connect()
+
+	C.connect()
+
+	C.readConfig()
+
+	out := C.CString("0000000000000000000000000000000000000000000000000000000000000000")
+	var size C.size_t = 64
+
+	err := C.readNtpServerInstanceNumber(out, size)
+	println("Instance", C.GoString(out))
+
+	println("Instance ERROR: ", err)
+	//
+	defer C.free(unsafe.Pointer(out))
+	return C.GoString(out)
+}
+
+func ReadNtpServerMacAddress() string {
+	C.connect()
+	C.connect()
+
+	C.readConfig()
+
+	out := C.CString("0000000000000000000000000000000000000000000000000000000000000000")
+	var size C.size_t = 64
+
+	err := C.readNtpServerMacAddress(out, size)
+	println("Mac Addr", C.GoString(out))
+
+	println("mac addr ERROR: ", err)
+	//
+	defer C.free(unsafe.Pointer(out))
+	return C.GoString(out)
+}
+
+func WriteNtpServerMacAddress(macAddr string) {
+	C.connect()
+	C.connect()
+
+	C.readConfig()
+
+	var size C.size_t = 64
+	in := C.CString(macAddr)
+
+	err := C.writeNtpServerMacAddress(in, size)
+
+	println("write mac addr ERROR: ", err)
+
+	defer C.free(unsafe.Pointer(in))
 }
 
 func ListNtpProperties() {

@@ -5,9 +5,14 @@
 int serRead(int ser, char data[], size_t dataLength)
 {
     int numRead = read(ser, data, 64);
-    if (numRead <= 0)
+    if (numRead < 0)
     {
-        printf("serial read error");
+        printf("serial read error\n");
+        return -1;
+    }
+    else if (numRead == 0)
+    {
+        printf("serRead EOF error\n");
         return -1;
     }
 

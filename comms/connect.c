@@ -5,8 +5,8 @@ int connect(void)
     // printf("connect called");
 
     char connectCommand[] = "$CC*00\r\n";
-    char writeData[32] = {0};
-    char readData[32] = {0};
+    char writeData[64] = {0};
+    char readData[64] = {0};
 
     // printf("write data array: %s\n", writeData);
 
@@ -32,7 +32,7 @@ int connect(void)
     err = serRead(ser, readData, sizeof(readData));
     if (err != 0)
     {
-        printf("serRead error\n");
+        printf("connect - serRead error\n");
         return -1;
     }
 
@@ -40,6 +40,7 @@ int connect(void)
 
     if (isChecksumCorrect(readData) != 0)
     {
+        printf("connect readData: %s\n", readData);
         printf("connect check sum wrong\n");
         return -1;
     }

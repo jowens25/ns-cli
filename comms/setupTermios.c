@@ -30,7 +30,7 @@ int setupTermios(int fd)
 
     if (tcsetattr(fd, TCSANOW, &tty) != 0)
     {
-        printf("tcsetattr");
+        printf("tcsetattr error? \n");
         close(fd);
         return -1;
     }

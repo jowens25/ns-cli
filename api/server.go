@@ -26,7 +26,7 @@ func RunServers() {
 	// NTP Server routes
 	apiMux.HandleFunc("/api/v1/ntp-server/version", NtpVersionHandler)
 	apiMux.HandleFunc("/api/v1/ntp-server/instance", NtpInstanceHandler)
-	apiMux.HandleFunc("/api/v1/ntp-server/mac", NtpMacHandler)
+	apiMux.HandleFunc("/api/v1/ntp-server/mac", NtpMacAddressHandler)
 	apiMux.HandleFunc("/api/v1/ntp-server/vlan", NtpVlanHandler)
 
 	// PTP OC routes

@@ -3,11 +3,11 @@
 
 int writeRegister(int64_t addr, int64_t *data)
 {
-    char writeData[32] = {0};
-    char readData[32] = {0};
+    char writeData[64] = {0};
+    char readData[64] = {0};
     // char tempData[32] = {0};
-    char hexAddr[32] = {0};
-    char hexData[32] = {0};
+    char hexAddr[64] = {0};
+    char hexData[64] = {0};
     char hexChecksum[3] = {0};
 
     int ser = serOpen("/dev/ttyUSB0");
@@ -55,7 +55,7 @@ int writeRegister(int64_t addr, int64_t *data)
     err = serRead(ser, readData, sizeof(readData));
     if (err != 0)
     {
-        printf("serRead error\n");
+        printf("write - serRead error\n");
         return -1;
     }
     // close

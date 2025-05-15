@@ -21,25 +21,26 @@ func NtpInstanceHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	respondJSON(w, map[string]string{"instance": "ntp0"})
+	respondJSON(w, map[string]string{"instance": axi.ReadNtpServerInstance()})
 }
 
-func NtpMacHandler(w http.ResponseWriter, r *http.Request) {
+func NtpMacAddressHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		respondJSON(w, map[string]string{"mac": "00:11:22:33:44:55"})
-	case http.MethodPost:
-		// Parse POST data (could be JSON or form-data)
-		type MacData struct {
-			Mac string `json:"mac"`
-		}
-		var data MacData
-		if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
-			http.Error(w, "Invalid JSON", http.StatusBadRequest)
-			return
-		}
-		// Save mac somewhere...
-		respondJSON(w, map[string]string{"status": "MAC updated", "mac": data.Mac})
+		respondJSON(w, map[string]string{"mac": axi.ReadNtpServerMacAddress()})
+	//case http.MethodPost:
+	//	// Parse POST data (could be JSON or form-data)
+	//	type MacData struct {
+	//		Mac string `json:"mac"`
+	//	}
+	//	var data MacData
+	//	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+	//		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+	//		return
+	//	}
+	//	axi.WriteNtpServerMacAddress(data.Mac)
+	//	// Save mac somewhere...
+	//	respondJSON(w, map[string]string{"status": "MAC updated", "mac": data.Mac})
 	default:
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
@@ -81,6 +82,7 @@ func corsMiddleware(next http.Handler) http.Handler {
 			"http://10.1.10.93:29020": true,
 			"http://10.1.10.93:8000":  true,
 			"http://localhost:32930":  true,
+			"http://localhost:55975":  true,
 		}
 
 		if allowedOrigins[origin] {
