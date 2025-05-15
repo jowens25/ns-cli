@@ -72,18 +72,58 @@ func ReadNtpServerMacAddress() string {
 }
 
 func WriteNtpServerMacAddress(macAddr string) {
-	C.connect()
+	mutex.Lock()
+
 	C.connect()
 
 	C.readConfig()
 
-	var size C.size_t = 64
+	size := C.size_t(64)
 	in := C.CString(macAddr)
 
 	err := C.writeNtpServerMacAddress(in, size)
 
-	println("write mac addr ERROR: ", err)
+	if err != 0 {
+		println("write mac addr ERROR: ", err)
+	}
 
+	defer C.free(unsafe.Pointer(in))
+}
+
+func ReadNtpServerVlanAddress() string {
+	mutex.Lock()
+
+	C.connect()
+
+	C.readConfig()
+
+	size := C.size_t(64)
+	out := (*C.char)(C.calloc(size, 1)) // size elements of 1 byte each
+
+	C.readNtpServerVlanAddress(out, size)
+
+	defer C.free(unsafe.Pointer(out))
+	mutex.Unlock()
+	println("finished up reading vlan..")
+	return C.GoString(out)
+}
+
+func WriteNtpServerVlanAddress(vlanAddr string) {
+	mutex.Lock()
+
+	C.connect()
+
+	C.readConfig()
+
+	size := C.size_t(64)
+	in := C.CString(vlanAddr)
+
+	err := C.writeNtpServerVlanAddress(in, size)
+
+	if err != 0 {
+		println("write vlan addr ERROR: ", err)
+	}
+	println("finishing up writing vlan...")
 	defer C.free(unsafe.Pointer(in))
 }
 

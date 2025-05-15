@@ -964,7 +964,7 @@ int writeNtpServerVlanAddress(char *value, size_t size)
 
     if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigVlanReg, &temp_data))
     {
-        return -1; // read current settings fails
+        return -2; // read current settings fails
     }
 
     temp_vlan = strtol(value, NULL, 16);
@@ -973,16 +973,16 @@ int writeNtpServerVlanAddress(char *value, size_t size)
 
     temp_data |= temp_vlan;
 
-    if (0 == writeRegister(temp_addr + Ucm_NtpServer_ConfigVlanReg, &temp_data))
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigVlanReg, &temp_data))
     {
-        return -1;
+        return -3;
     }
 
     temp_data = 0x00000002;
 
     if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigControlReg, &temp_data))
     {
-        return -1; // failed to write control reg
+        return -4; // failed to write control reg
     }
 
     return 0;

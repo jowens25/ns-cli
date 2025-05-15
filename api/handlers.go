@@ -38,20 +38,20 @@ func NtpMacAddressHandler(w http.ResponseWriter, r *http.Request) {
 
 		switch r.Method {
 		case http.MethodGet:
-			respondJSON(w, map[string]string{"macAddr": axi.ReadNtpServerMacAddress()})
-		//case http.MethodPost:
-		//	// Parse POST data (could be JSON or form-data)
-		//	type MacData struct {
-		//		Mac string `json:"mac"`
-		//	}
-		//	var data MacData
-		//	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
-		//		http.Error(w, "Invalid JSON", http.StatusBadRequest)
-		//		return
-		//	}
-		//	axi.WriteNtpServerMacAddress(data.Mac)
-		//	// Save mac somewhere...
-		//	respondJSON(w, map[string]string{"status": "MAC updated", "mac": data.Mac})
+			respondJSON(w, map[string]string{"mac": axi.ReadNtpServerMacAddress()})
+		case http.MethodPost:
+			// Parse POST data (could be JSON or form-data)
+			type MacData struct {
+				Mac string `json:"mac"`
+			}
+			var data MacData
+			if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+				http.Error(w, "Invalid JSON", http.StatusBadRequest)
+				return
+			}
+			axi.WriteNtpServerMacAddress(data.Mac)
+			// Save mac somewhere...
+			respondJSON(w, map[string]string{"status": "MAC updated", "mac": data.Mac})
 		default:
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		}
@@ -59,10 +59,12 @@ func NtpMacAddressHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func NtpVlanHandler(w http.ResponseWriter, r *http.Request) {
+func NtpVlanAddressHandler(w http.ResponseWriter, r *http.Request) {
+
+	println("ntp vlan addr handler....")
 	switch r.Method {
 	case http.MethodGet:
-		respondJSON(w, map[string]string{"vlan": "100"})
+		respondJSON(w, map[string]string{"vlan": axi.ReadNtpServerVlanAddress()})
 	case http.MethodPost:
 		type VlanData struct {
 			Vlan string `json:"vlan"`
@@ -73,10 +75,13 @@ func NtpVlanHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		// Save vlan...
+		axi.WriteNtpServerVlanAddress(data.Vlan)
+
 		respondJSON(w, map[string]string{"status": "VLAN updated", "vlan": data.Vlan})
 	default:
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
+
 }
 
 func respondJSON(w http.ResponseWriter, payload interface{}) {
