@@ -23,6 +23,8 @@ extern struct termios tty;
 int connect(void);
 
 int serOpen(char fileDescriptor[]);
+int serClose(int fileDescriptor);
+
 int serRead(int ser, char data[], size_t dataLength);
 int serWrite(int ser, char data[], size_t dataLength);
 

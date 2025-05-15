@@ -18,7 +18,7 @@ void readConfig(void)
             if ((i == 0) && ((((temp_data >> 16) & 0x0000FFFF) != Ucm_CoreConfig_ConfSlaveCoreType) || (((temp_data >> 0) & 0x0000FFFF) != 1)))
             {
 
-                printf("ERROR: not a conf block at the address expected \n");
+                printf("ERROR: not a conf block at the address expected: %d\n", i);
                 break;
             }
             else if (temp_data == 0)

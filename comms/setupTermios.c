@@ -21,7 +21,7 @@ int setupTermios(int fd)
     tty.c_lflag = 0;
     tty.c_oflag = 0;
     tty.c_cc[VMIN] = 0;
-    tty.c_cc[VTIME] = 0.001; // .10 second timeout
+    tty.c_cc[VTIME] = 1; // .10 second timeout
 
     tty.c_iflag &= ~(IXON | IXOFF | IXANY);
     tty.c_cflag |= (CLOCAL | CREAD);
@@ -31,6 +31,8 @@ int setupTermios(int fd)
     if (tcsetattr(fd, TCSANOW, &tty) != 0)
     {
         printf("tcsetattr error? \n");
+        perror("tcsetattr");
+
         close(fd);
         return -1;
     }

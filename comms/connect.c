@@ -36,7 +36,7 @@ int connect(void)
         return -1;
     }
 
-    close(ser);
+    serClose(ser);
 
     if (isChecksumCorrect(readData) != 0)
     {

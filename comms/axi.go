@@ -10,6 +10,7 @@ package axi
 import "C"
 import (
 	"fmt"
+	"sync"
 	"unsafe"
 )
 
@@ -17,59 +18,56 @@ import (
 //	C.readConfig()
 //}
 
+var mutex sync.Mutex
+
 func ReadNtpServerVersion() string {
-	C.connect()
+	mutex.Lock()
 
 	C.connect()
 
 	C.readConfig()
 
-	out := C.CString("0000000000000000000000000000000000000000000000000000000000000000")
-	var size C.size_t = 64
+	size := C.size_t(64)
+	out := (*C.char)(C.calloc(size, 1)) // size elements of 1 byte each
 
-	err := C.readNtpServerVersion(out, size)
-	println("Version", C.GoString(out))
+	C.readNtpServerVersion(out, size)
 
-	println("VERSION ERROR: ", err)
-	//
 	defer C.free(unsafe.Pointer(out))
+	mutex.Unlock()
 	return C.GoString(out)
 }
 
 func ReadNtpServerInstance() string {
-	C.connect()
+	mutex.Lock()
 
 	C.connect()
 
 	C.readConfig()
 
-	out := C.CString("0000000000000000000000000000000000000000000000000000000000000000")
-	var size C.size_t = 64
+	size := C.size_t(64)
+	out := (*C.char)(C.calloc(size, 1)) // size elements of 1 byte each
 
-	err := C.readNtpServerInstanceNumber(out, size)
-	println("Instance", C.GoString(out))
+	C.readNtpServerInstanceNumber(out, size)
 
-	println("Instance ERROR: ", err)
-	//
 	defer C.free(unsafe.Pointer(out))
+	mutex.Unlock()
 	return C.GoString(out)
 }
 
 func ReadNtpServerMacAddress() string {
-	C.connect()
+	mutex.Lock()
+
 	C.connect()
 
 	C.readConfig()
 
-	out := C.CString("0000000000000000000000000000000000000000000000000000000000000000")
-	var size C.size_t = 64
+	size := C.size_t(64)
+	out := (*C.char)(C.calloc(size, 1)) // size elements of 1 byte each
 
-	err := C.readNtpServerMacAddress(out, size)
-	println("Mac Addr", C.GoString(out))
+	C.readNtpServerMacAddress(out, size)
 
-	println("mac addr ERROR: ", err)
-	//
 	defer C.free(unsafe.Pointer(out))
+	mutex.Unlock()
 	return C.GoString(out)
 }
 

@@ -59,7 +59,7 @@ int writeRegister(int64_t addr, int64_t *data)
         return -1;
     }
     // close
-    close(ser);
+    serClose(ser);
 
     if (isErrorResponse(readData))
     {

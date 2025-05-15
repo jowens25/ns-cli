@@ -8,42 +8,55 @@ import (
 )
 
 func NtpVersionHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-		return
+	{ // add this func to the func queue
+
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		respondJSON(w, map[string]string{"version": axi.ReadNtpServerVersion()})
 	}
 
-	respondJSON(w, map[string]string{"version": axi.ReadNtpServerVersion()})
 }
 
 func NtpInstanceHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-		return
+
+	{
+
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		respondJSON(w, map[string]string{"instance": axi.ReadNtpServerInstance()})
 	}
-	respondJSON(w, map[string]string{"instance": axi.ReadNtpServerInstance()})
+
 }
 
 func NtpMacAddressHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		respondJSON(w, map[string]string{"mac": axi.ReadNtpServerMacAddress()})
-	//case http.MethodPost:
-	//	// Parse POST data (could be JSON or form-data)
-	//	type MacData struct {
-	//		Mac string `json:"mac"`
-	//	}
-	//	var data MacData
-	//	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
-	//		http.Error(w, "Invalid JSON", http.StatusBadRequest)
-	//		return
-	//	}
-	//	axi.WriteNtpServerMacAddress(data.Mac)
-	//	// Save mac somewhere...
-	//	respondJSON(w, map[string]string{"status": "MAC updated", "mac": data.Mac})
-	default:
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+
+	{
+
+		switch r.Method {
+		case http.MethodGet:
+			respondJSON(w, map[string]string{"macAddr": axi.ReadNtpServerMacAddress()})
+		//case http.MethodPost:
+		//	// Parse POST data (could be JSON or form-data)
+		//	type MacData struct {
+		//		Mac string `json:"mac"`
+		//	}
+		//	var data MacData
+		//	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+		//		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		//		return
+		//	}
+		//	axi.WriteNtpServerMacAddress(data.Mac)
+		//	// Save mac somewhere...
+		//	respondJSON(w, map[string]string{"status": "MAC updated", "mac": data.Mac})
+		default:
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		}
 	}
+
 }
 
 func NtpVlanHandler(w http.ResponseWriter, r *http.Request) {
