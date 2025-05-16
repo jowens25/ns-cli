@@ -90,16 +90,36 @@ func NtpIpAddressHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		respondJSON(w, map[string]string{"ip-address": axi.ReadNtpServerIpAddress()})
 	case http.MethodPost:
-		type VlanData struct {
+		type IpData struct {
 			Vlan string `json:"ip-address"`
 		}
-		var data VlanData
+		var data IpData
 		if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
 			http.Error(w, "Invalid JSON", http.StatusBadRequest)
 			return
 		}
 		axi.WriteNtpServerIpAddress(data.Vlan)
 		respondJSON(w, map[string]string{"status": "IP updated", "ip-address": data.Vlan})
+	default:
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+func NtpIpModeHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		respondJSON(w, map[string]string{"ip-mode": axi.ReadNtpServerIpMode()})
+	case http.MethodPost:
+		type IpData struct {
+			Vlan string `json:"ip-mode"`
+		}
+		var data IpData
+		if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+			http.Error(w, "Invalid JSON", http.StatusBadRequest)
+			return
+		}
+		axi.WriteNtpServerIpMode(data.Vlan)
+		respondJSON(w, map[string]string{"status": "IP updated", "ip-mode": data.Vlan})
 	default:
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}

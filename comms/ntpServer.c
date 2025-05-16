@@ -1002,7 +1002,7 @@ int writeNtpServerIpMode(char *mode, const size_t size)
 
     if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
     {
-        return -1;
+        return -2;
     }
 
     if (0 == strncmp(mode, "IPv4", size))
@@ -1022,26 +1022,26 @@ int writeNtpServerIpMode(char *mode, const size_t size)
     }
     else
     {
-        return -1;
+        return -3;
     }
 
     if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
     {
         // failed to update config
-        return -1;
+        return -4;
     }
     temp_data = 0x00000001;
 
     if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigControlReg, &temp_data))
     {
         // failed to update config control reg
-        return -1;
+        return -5;
     }
     // printf("current IP address: %s\n", tempIpAddress);
 
     if (0 != writeNtpServerIpAddress(currentAddress, size))
     {
-        return -160555;
+        return -6;
     }
 
     return 0;

@@ -158,6 +158,32 @@ func WriteNtpServerIpAddress(ipAddr string) {
 	defer C.free(unsafe.Pointer(in))
 }
 
+func ReadNtpServerIpMode() string {
+	size := C.size_t(64)
+	out := (*C.char)(C.calloc(size, 1))
+	mutex.Lock()
+	C.connect()
+	C.readConfig()
+	C.readNtpServerIpMode(out, size)
+	mutex.Unlock()
+	defer C.free(unsafe.Pointer(out))
+	return C.GoString(out)
+}
+
+func WriteNtpServerIpMode(ipMode string) {
+	size := C.size_t(64)
+	in := C.CString(ipMode)
+	mutex.Lock()
+	C.connect()
+	C.readConfig()
+	err := C.writeNtpServerIpMode(in, size)
+	if err != 0 {
+		println("write ip mode ERROR: ", err)
+	}
+	mutex.Unlock()
+	defer C.free(unsafe.Pointer(in))
+}
+
 func ListNtpProperties() {
 
 	C.connect()
