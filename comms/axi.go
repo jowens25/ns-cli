@@ -183,7 +183,6 @@ func WriteNtpServerIpMode(ipMode string) {
 	mutex.Unlock()
 	defer C.free(unsafe.Pointer(in))
 }
-
 func ListNtpProperties() {
 
 	C.connect()
