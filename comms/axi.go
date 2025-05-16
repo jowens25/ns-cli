@@ -55,75 +55,106 @@ func ReadNtpServerInstance() string {
 }
 
 func ReadNtpServerMacAddress() string {
-	mutex.Lock()
-
-	C.connect()
-
-	C.readConfig()
-
 	size := C.size_t(64)
-	out := (*C.char)(C.calloc(size, 1)) // size elements of 1 byte each
-
+	out := (*C.char)(C.calloc(size, 1))
+	mutex.Lock()
+	C.connect()
+	C.readConfig()
 	C.readNtpServerMacAddress(out, size)
-
 	defer C.free(unsafe.Pointer(out))
 	mutex.Unlock()
 	return C.GoString(out)
 }
 
 func WriteNtpServerMacAddress(macAddr string) {
-	mutex.Lock()
-
-	C.connect()
-
-	C.readConfig()
-
 	size := C.size_t(64)
 	in := C.CString(macAddr)
-
+	mutex.Lock() // lock
+	C.connect()
+	C.readConfig()
 	err := C.writeNtpServerMacAddress(in, size)
-
 	if err != 0 {
 		println("write mac addr ERROR: ", err)
 	}
-
 	defer C.free(unsafe.Pointer(in))
+	mutex.Unlock() // unlock
 }
 
 func ReadNtpServerVlanAddress() string {
-	mutex.Lock()
-
-	C.connect()
-
-	C.readConfig()
-
 	size := C.size_t(64)
-	out := (*C.char)(C.calloc(size, 1)) // size elements of 1 byte each
-
+	out := (*C.char)(C.calloc(size, 1))
+	mutex.Lock()
+	C.connect()
+	C.readConfig()
 	C.readNtpServerVlanAddress(out, size)
-
-	defer C.free(unsafe.Pointer(out))
 	mutex.Unlock()
-	println("finished up reading vlan..")
+	defer C.free(unsafe.Pointer(out))
 	return C.GoString(out)
 }
 
 func WriteNtpServerVlanAddress(vlanAddr string) {
-	mutex.Lock()
-
-	C.connect()
-
-	C.readConfig()
-
 	size := C.size_t(64)
 	in := C.CString(vlanAddr)
-
+	mutex.Lock()
+	C.connect()
+	C.readConfig()
 	err := C.writeNtpServerVlanAddress(in, size)
-
 	if err != 0 {
 		println("write vlan addr ERROR: ", err)
 	}
-	println("finishing up writing vlan...")
+	mutex.Unlock()
+	defer C.free(unsafe.Pointer(in))
+}
+
+func ReadNtpServerVlanStatus() string {
+	size := C.size_t(64)
+	out := (*C.char)(C.calloc(size, 1))
+	mutex.Lock()
+	C.connect()
+	C.readConfig()
+	C.readNtpServerVlanStatus(out, size)
+	defer C.free(unsafe.Pointer(out))
+	mutex.Unlock()
+	return C.GoString(out)
+}
+
+func WriteNtpServerVlanStatus(vlanAddr string) {
+	size := C.size_t(64)
+	in := C.CString(vlanAddr)
+	mutex.Lock()
+	C.connect()
+	C.readConfig()
+	err := C.writeNtpServerVlanStatus(in, size)
+	if err != 0 {
+		println("write vlan status ERROR: ", err)
+	}
+	defer C.free(unsafe.Pointer(in))
+	mutex.Unlock()
+}
+
+func ReadNtpServerIpAddress() string {
+	size := C.size_t(64)
+	out := (*C.char)(C.calloc(size, 1))
+	mutex.Lock()
+	C.connect()
+	C.readConfig()
+	C.readNtpServerIpAddress(out, size)
+	mutex.Unlock()
+	defer C.free(unsafe.Pointer(out))
+	return C.GoString(out)
+}
+
+func WriteNtpServerIpAddress(ipAddr string) {
+	size := C.size_t(64)
+	in := C.CString(ipAddr)
+	mutex.Lock()
+	C.connect()
+	C.readConfig()
+	err := C.writeNtpServerIpAddress(in, size)
+	if err != 0 {
+		println("write vlan addr ERROR: ", err)
+	}
+	mutex.Unlock()
 	defer C.free(unsafe.Pointer(in))
 }
 
