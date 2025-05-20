@@ -27,9 +27,9 @@ to quickly create a Cobra application.`,
 
 			switch f.Name {
 			case "list":
-				axi.ListNtpProperties()
+				//axi.ListNtpProperties()
 			case "version":
-				axi.ReadNtpServerVersion()
+				axi.ReadNtpServer("version")
 			case "ip":
 				fmt.Println("ip flag called")
 			default:

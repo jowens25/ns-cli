@@ -33,7 +33,8 @@ to quickly create a Cobra application.`,
 		//axi.SetNtpLeap59Status(args[0])
 		//axi.SetNtpOffsetStatus(args[0])
 		//axi.SetNtpOffsetValue(args[0])
-		axi.ClearNtpCounters(args[0])
+		//axi.ClearNtpCounters(args[0])
+		axi.WriteNtpServer("clearcounters", args[0])
 	},
 }
 

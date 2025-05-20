@@ -920,39 +920,45 @@ int writeNtpServerMacAddress(char *addr, size_t size)
 int writeNtpServerVlanStatus(char *status, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
-    temp_data &= 0x0000FFFF;
-    long currentSettings = 0;
-    char *currentStatus;
+    temp_data = 0x00000000;
 
-    if (0 != readRegister(temp_addr, &currentSettings))
+    if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigVlanReg, &temp_data))
     {
         return -1;
     }
-    currentSettings &= 0x0000FFFF;
 
-    temp_data = 0x00000000 | currentSettings;
+    temp_data &= 0x0000FFFF;
 
     if (0 == strncmp(status, "enabled", size))
     {
-        temp_data = 0x00010000 | currentSettings;
+        temp_data = 0x00010000 | temp_data;
+    }
+    else if (0 == strncmp(status, "disabled", size))
+    {
+        temp_data = 0x00000000 | temp_data; // disable
+    }
+    else
+    {
+        return -2;
     }
 
     if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigVlanReg, &temp_data))
     {
-        return -1;
+        return -3;
     }
 
     temp_data = 0x00000002;
     if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigControlReg, &temp_data))
     {
-        return -1;
+        return -4;
     }
 
     return 0;
 }
 int writeNtpServerVlanAddress(char *value, size_t size)
 {
-    // readConfig();
+    // return -1;
+    //  readConfig();
     if (strlen(value) > 6)
     {
         return -1;
@@ -1317,7 +1323,7 @@ int writeNtpServerUnicastMode(char *mode, size_t size)
     }
     temp_data |= 0x000000010;
 
-    if (0 == writeRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
     {
         return -1;
     }
@@ -1417,6 +1423,41 @@ int writeNtpServerPrecisionValue(char *value, size_t size)
     }
     temp_data &= ~((0xFFFFFFFF & 0x000000FF) << 8);
     temp_data |= ((temp_precision & 0x000000FF) << 8);
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
+    {
+        return -1;
+    }
+
+    temp_data = 0x00000001;
+
+    if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigControlReg, &temp_data))
+    {
+        return -1;
+    }
+}
+
+int writeNtpServerPollIntervalValue(char *value, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+
+    temp_data = 0x00000000;
+    char *err;
+    long temp_precision = 0;
+
+    if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
+    {
+        return -1;
+    }
+
+    temp_precision = strtol(value, &err, 16);
+
+    if (err == value || *err != '\0')
+    {
+        return -1;
+    }
+    temp_data &= ~((0xFFFFFFFF & 0x000000FF) << 16);
+    temp_data |= ((temp_precision & 0x000000FF) << 16);
 
     if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
     {

@@ -56,22 +56,18 @@ int writeNtpServerVlanStatus(char *status, size_t size); // Ntp Server VlanStatu
 int writeNtpServerVlanAddress(char *value, size_t size); // Ntp Server VlanAddress
 int writeNtpServerIpMode(char *mode, size_t size);       // Ntp Server Ip Mode
 int writeNtpServerIpAddress(char *addr, size_t size);
-
-int writeNtpServerUnicastMode(char *mode, size_t size);   // Ntp Server UnicastMode
-int writeNtpServerMulticastMode(char *mode, size_t size); // Ntp Server MulticastMode
-int writeNtpServerBroadcastMode(char *mode, size_t size); // Ntp Server BroadcastMode
-
-int writeNtpServerPrecisionValue(char *value, size_t size);     // Ntp Server PrecisionValue
-int writeNtpServerPollIntervalValue(char *value, size_t size);  // Ntp Server PollIntervalValue
-int writeNtpServerStratumValue(char *value, size_t size);       // Ntp Server StratumValue
-int writeNtpServerReferenceIdValue(char *value, size_t size);   // Ntp Server ReferenceIdValue
-int writeNtpServerUtcSmearingStatus(char *status, size_t size); // Ntp Server UtcSmearingStatus
-
-int writeNtpServerLeap61Status(char *status, size_t size);    // Ntp Server Leap61Status
-int writeNtpServerLeap59Status(char *status, size_t size);    // Ntp Server Leap59Status
-int writeNtpServerUtcOffsetStatus(char *status, size_t size); // Ntp Server UtcOffsetStatus
-int writeNtpServerUtcOffsetValue(char *value, size_t size);   // Ntp Server UtcOffsetValue
-
+int writeNtpServerUnicastMode(char *mode, size_t size);          // Ntp Server UnicastMode
+int writeNtpServerMulticastMode(char *mode, size_t size);        // Ntp Server MulticastMode
+int writeNtpServerBroadcastMode(char *mode, size_t size);        // Ntp Server BroadcastMode
+int writeNtpServerPrecisionValue(char *value, size_t size);      // Ntp Server PrecisionValue
+int writeNtpServerPollIntervalValue(char *value, size_t size);   // Ntp Server PollIntervalValue
+int writeNtpServerStratumValue(char *value, size_t size);        // Ntp Server StratumValue
+int writeNtpServerReferenceIdValue(char *value, size_t size);    // Ntp Server ReferenceIdValue
+int writeNtpServerUtcSmearingStatus(char *status, size_t size);  // Ntp Server UtcSmearingStatus
+int writeNtpServerLeap61Status(char *status, size_t size);       // Ntp Server Leap61Status
+int writeNtpServerLeap59Status(char *status, size_t size);       // Ntp Server Leap59Status
+int writeNtpServerUtcOffsetStatus(char *status, size_t size);    // Ntp Server UtcOffsetStatus
+int writeNtpServerUtcOffsetValue(char *value, size_t size);      // Ntp Server UtcOffsetValue
 int writeNtpServerClearCountersStatus(char *value, size_t size); // Ntp Server ClearCountersStatus
 // int writeNtpServerVersion(char *value, size_t size);              // Ntp Server Version
 int ipv4toipv6(char *ipv4Address, char *ipv6Address, size_t size);

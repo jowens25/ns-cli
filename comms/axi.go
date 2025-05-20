@@ -14,412 +14,243 @@ import (
 	"unsafe"
 )
 
-//func ReadConfig() {
-//	C.readConfig()
-//}
+type NtpServerStruct struct {
+	Status               string
+	InstanceNumber       string
+	IpMode               string
+	IpAddress            string
+	MacAddress           string
+	VlanStatus           string
+	VlanAddress          string
+	UnicastMode          string
+	MulticastMode        string
+	BroadcastMode        string
+	PrecisionValue       string
+	PollIntervalValue    string
+	StratumValue         string
+	ReferenceId          string
+	SmearingStatus       string
+	Leap61Progress       string
+	Leap59Progress       string
+	Leap61Status         string
+	Leap59Status         string
+	UtcOffsetStatus      string
+	UtcOffsetValue       string
+	RequestsValue        string
+	ResponsesValue       string
+	RequestsDroppedValue string
+	BroadcastsValue      string
+	ClearCountersStatus  string
+	Version              string
+}
+
+var NtpServer = NtpServerStruct{
+	Status:               "status",
+	InstanceNumber:       "instance",
+	IpMode:               "ip-mode",
+	IpAddress:            "ip-address",
+	MacAddress:           "mac-address",
+	VlanStatus:           "vlan-status",
+	VlanAddress:          "vlan-address",
+	UnicastMode:          "unicast",
+	MulticastMode:        "multicast",
+	BroadcastMode:        "broadcast",
+	PrecisionValue:       "precision",
+	PollIntervalValue:    "poll-interval",
+	StratumValue:         "stratum",
+	ReferenceId:          "reference-id",
+	SmearingStatus:       "smearing-status",
+	Leap61Progress:       "leap61-progress",
+	Leap59Progress:       "leap59-progress",
+	Leap61Status:         "leap61-status",
+	Leap59Status:         "leap59-status",
+	UtcOffsetStatus:      "utc-offset-status",
+	UtcOffsetValue:       "utc-offset",
+	RequestsValue:        "requests",
+	ResponsesValue:       "responses",
+	RequestsDroppedValue: "requestsdropped",
+	BroadcastsValue:      "broadcasts",
+	ClearCountersStatus:  "clearcounters",
+	Version:              "version",
+}
 
 var mutex sync.Mutex
 
-func ReadNtpServerVersion() string {
-	mutex.Lock()
+const size = C.size_t(64)
 
-	C.connect()
+func ReadNtpServer(property string) string {
 
-	C.readConfig()
-
-	size := C.size_t(64)
-	out := (*C.char)(C.calloc(size, 1)) // size elements of 1 byte each
-
-	C.readNtpServerVersion(out, size)
-
-	defer C.free(unsafe.Pointer(out))
-	mutex.Unlock()
-	return C.GoString(out)
-}
-
-func ReadNtpServerInstance() string {
-	mutex.Lock()
-
-	C.connect()
-
-	C.readConfig()
-
-	size := C.size_t(64)
-	out := (*C.char)(C.calloc(size, 1)) // size elements of 1 byte each
-
-	C.readNtpServerInstanceNumber(out, size)
-
-	defer C.free(unsafe.Pointer(out))
-	mutex.Unlock()
-	return C.GoString(out)
-}
-
-func ReadNtpServerMacAddress() string {
-	size := C.size_t(64)
 	out := (*C.char)(C.calloc(size, 1))
 	mutex.Lock()
 	C.connect()
 	C.readConfig()
-	C.readNtpServerMacAddress(out, size)
-	defer C.free(unsafe.Pointer(out))
-	mutex.Unlock()
-	return C.GoString(out)
-}
+	switch property {
+	case NtpServer.Status:
+		C.readNtpServerStatus(out, size)
+	case NtpServer.InstanceNumber:
+		C.readNtpServerInstanceNumber(out, size)
+	case NtpServer.IpMode:
+		C.readNtpServerIpMode(out, size)
+	case NtpServer.IpAddress:
+		C.readNtpServerIpAddress(out, size)
+	case NtpServer.MacAddress:
+		C.readNtpServerMacAddress(out, size)
+	case NtpServer.VlanStatus:
+		C.readNtpServerVlanStatus(out, size)
+	case NtpServer.VlanAddress:
+		C.readNtpServerVlanAddress(out, size)
+	case NtpServer.UnicastMode:
+		C.readNtpServerUnicastMode(out, size)
+	case NtpServer.MulticastMode:
+		C.readNtpServerMulticastMode(out, size)
+	case NtpServer.BroadcastMode:
+		C.readNtpServerBroadcastMode(out, size)
+	case NtpServer.PrecisionValue:
+		C.readNtpServerPrecisionValue(out, size)
+	case NtpServer.PollIntervalValue:
+		C.readNtpServerPollIntervalValue(out, size)
+	case NtpServer.StratumValue:
+		C.readNtpServerStratumValue(out, size)
+	case NtpServer.ReferenceId:
+		C.readNtpServerReferenceId(out, size)
+	case NtpServer.SmearingStatus:
+		C.readNtpServerSmearingStatus(out, size)
+	case NtpServer.Leap61Progress:
+		C.readNtpServerLeap61Progress(out, size)
+	case NtpServer.Leap59Progress:
+		C.readNtpServerLeap59Progress(out, size)
+	case NtpServer.Leap61Status:
+		C.readNtpServerLeap61Status(out, size)
+	case NtpServer.Leap59Status:
+		C.readNtpServerLeap59Status(out, size)
+	case NtpServer.UtcOffsetStatus:
+		C.readNtpServerUtcOffsetStatus(out, size)
+	case NtpServer.UtcOffsetValue:
+		C.readNtpServerUtcOffsetValue(out, size)
+	case NtpServer.RequestsValue:
+		C.readNtpServerRequestsValue(out, size)
+	case NtpServer.ResponsesValue:
+		C.readNtpServerResponsesValue(out, size)
+	case NtpServer.RequestsDroppedValue:
+		C.readNtpServerRequestsDroppedValue(out, size)
+	case NtpServer.BroadcastsValue:
+		C.readNtpServerBroadcastsValue(out, size)
+	case NtpServer.ClearCountersStatus:
+		C.readNtpServerClearCountersStatus(out, size)
+	case NtpServer.Version:
+		C.readNtpServerVersion(out, size)
 
-func WriteNtpServerMacAddress(macAddr string) {
-	size := C.size_t(64)
-	in := C.CString(macAddr)
-	mutex.Lock() // lock
-	C.connect()
-	C.readConfig()
-	err := C.writeNtpServerMacAddress(in, size)
-	if err != 0 {
-		println("write mac addr ERROR: ", err)
+	default:
+		fmt.Println("no such property")
 	}
-	defer C.free(unsafe.Pointer(in))
-	mutex.Unlock() // unlock
-}
-
-func ReadNtpServerVlanAddress() string {
-	size := C.size_t(64)
-	out := (*C.char)(C.calloc(size, 1))
-	mutex.Lock()
-	C.connect()
-	C.readConfig()
-	C.readNtpServerVlanAddress(out, size)
-	mutex.Unlock()
-	defer C.free(unsafe.Pointer(out))
-	return C.GoString(out)
-}
-
-func WriteNtpServerVlanAddress(vlanAddr string) {
-	size := C.size_t(64)
-	in := C.CString(vlanAddr)
-	mutex.Lock()
-	C.connect()
-	C.readConfig()
-	err := C.writeNtpServerVlanAddress(in, size)
-	if err != 0 {
-		println("write vlan addr ERROR: ", err)
-	}
-	mutex.Unlock()
-	defer C.free(unsafe.Pointer(in))
-}
-
-func ReadNtpServerVlanStatus() string {
-	size := C.size_t(64)
-	out := (*C.char)(C.calloc(size, 1))
-	mutex.Lock()
-	C.connect()
-	C.readConfig()
-	C.readNtpServerVlanStatus(out, size)
-	defer C.free(unsafe.Pointer(out))
-	mutex.Unlock()
-	return C.GoString(out)
-}
-
-func WriteNtpServerVlanStatus(vlanAddr string) {
-	size := C.size_t(64)
-	in := C.CString(vlanAddr)
-	mutex.Lock()
-	C.connect()
-	C.readConfig()
-	err := C.writeNtpServerVlanStatus(in, size)
-	if err != 0 {
-		println("write vlan status ERROR: ", err)
-	}
-	defer C.free(unsafe.Pointer(in))
-	mutex.Unlock()
-}
-
-func ReadNtpServerIpAddress() string {
-	size := C.size_t(64)
-	out := (*C.char)(C.calloc(size, 1))
-	mutex.Lock()
-	C.connect()
-	C.readConfig()
-	C.readNtpServerIpAddress(out, size)
 	mutex.Unlock()
 	defer C.free(unsafe.Pointer(out))
 	return C.GoString(out)
 }
 
-func WriteNtpServerIpAddress(ipAddr string) {
-	size := C.size_t(64)
-	in := C.CString(ipAddr)
-	mutex.Lock()
-	C.connect()
-	C.readConfig()
-	err := C.writeNtpServerIpAddress(in, size)
-	if err != 0 {
-		println("write vlan addr ERROR: ", err)
-	}
-	mutex.Unlock()
-	defer C.free(unsafe.Pointer(in))
-}
+func WriteNtpServer(property string, value string) {
 
-func ReadNtpServerIpMode() string {
-	size := C.size_t(64)
-	out := (*C.char)(C.calloc(size, 1))
-	mutex.Lock()
-	C.connect()
-	C.readConfig()
-	C.readNtpServerIpMode(out, size)
-	mutex.Unlock()
-	defer C.free(unsafe.Pointer(out))
-	return C.GoString(out)
-}
-
-func WriteNtpServerIpMode(ipMode string) {
-	size := C.size_t(64)
-	in := C.CString(ipMode)
-	mutex.Lock()
-	C.connect()
-	C.readConfig()
-	err := C.writeNtpServerIpMode(in, size)
-	if err != 0 {
-		println("write ip mode ERROR: ", err)
-	}
-	mutex.Unlock()
-	defer C.free(unsafe.Pointer(in))
-}
-func ListNtpProperties() {
-
-	C.connect()
-
-	C.readConfig()
-
-	out := C.CString("0000000000000000000000000000000000000000000000000000000000000000")
-	var size C.size_t = 64
-
-	err := C.readNtpServerStatus(out, size)
-	////println("STATUS: ", C.GoString(out))
-	//////println("STATUS ERROR: ", err)
-	/////err = C.readNtpServerMacAddress(out, size)
-	/////println("MAC ADDRESS: ", C.GoString(out))
-	///////println("MAC ADDRESS ERROR: ", err)
-	/////err = C.readNtpServerVlanStatus(out, size)
-	/////println("VLAN STATUS: ", C.GoString(out))
-	///////println("VLAN STATUS ERROR: ", err)
-	/////
-	/////err = C.readNtpServerVlanAddress(out, size)
-	/////println("VLAN ADDRESS: ", C.GoString(out))
-	///////println("VLAN ADDRESS ERROR: ", err)
-	/////
-	/////err = C.readNtpServerIpMode(out, size)
-	/////println("IP MODE: ", C.GoString(out))
-	///////println("IP MODE ERROR: ", err)
-	/////
-	/////err = C.readNtpServerUnicastMode(out, size)
-	/////println("UNICAST MODE: ", C.GoString(out))
-	///////println("UNICAST MODE ERROR: ", err)
-	/////
-	/////err = C.readNtpServerMulticastMode(out, size)
-	/////println("MULTICAST MODE: ", C.GoString(out))
-	///////println("MULTICAST MODE ERROR: ", err)
-	/////
-	/////err = C.readNtpServerBroadcastMode(out, size)
-	/////println("BROADCAST MODE: ", C.GoString(out))
-	///////println("BROADCAST MODE ERROR: ", err)
-
-	///err = C.readNtpServerPrecisionValue(out, size)
-	///println("PRECISION VALUE: ", C.GoString(out))
-	/////println("PRECISION VALUE ERROR: ", err)
-	///
-	///err = C.readNtpServerPollIntervalValue(out, size)
-	///println("POLL INTERVAL VALUE: ", C.GoString(out))
-	/////println("POLL INTERVAL VALUE ERROR: ", err)
-	///
-	///err = C.readNtpServerStratumValue(out, size)
-	///println("STRATUM VALUE: ", C.GoString(out))
-	/////println("STRATUM VALUE ERROR: ", err)
-	///
-	///err = C.readNtpServerReferenceId(out, size)
-	///println("REFERENCE ID VALUE: ", C.GoString(out))
-	/////println("REFERENCE ID VALUE ERROR: ", err)
-	///
-	///err = C.readNtpServerIpAddress(out, size)
-	///println("IP ADDRESS: ", C.GoString(out))
-	/////println("IP ADDRESS ERROR: ", err)
-	///
-	///err = C.readNtpServerSmearingStatus(out, size)
-	///println("Smearing Status: ", C.GoString(out))
-	/////println("Smearing Status ERROR: ", err)
-	///err = C.readNtpServerLeap61Progress(out, size)
-	///println("Leap 61 Progress: ", C.GoString(out))
-	/////println("Leap 61 Progress ERROR: ", err)
-	///
-	///err = C.readNtpServerLeap59Progress(out, size)
-	///println("Leap 59 Progress: ", C.GoString(out))
-	/////println("Leap 59 Progress ERROR: ", err)
-	///
-	///err = C.readNtpServerLeap61Status(out, size)
-	///println("Leap 61 Status: ", C.GoString(out))
-	/////println("Leap 61 Status ERROR: ", err)
-	///
-	///err = C.readNtpServerLeap59Status(out, size)
-	///println("Leap 59 Status: ", C.GoString(out))
-	/////println("Leap 59 Status ERROR: ", err)
-	///
-	///err = C.readNtpServerUtcOffsetStatus(out, size)
-	///println("UTC OFFSET Status: ", C.GoString(out))
-	/////println("UTC OFFSET Status ERROR: ", err)
-	///
-	///err = C.readNtpServerUtcOffsetValue(out, size)
-	///println("UTC OFFSET Value: ", C.GoString(out))
-	//println("UTC OFFSET Value ERROR: ", err)
-
-	/////////////err = C.readNtpServerRequestsValue(out, size)
-	/////////////println("REQUESTS Value: ", C.GoString(out))
-	///////////////println("REQUESTS Value ERROR: ", err)
-	/////////////
-	/////////////err = C.readNtpServerResponsesValue(out, size)
-	/////////////println("RESPONSES Value: ", C.GoString(out))
-	///////////////println("RESPONSES Value ERROR: ", err)
-	/////////////
-	/////////////err = C.readNtpServerRequestsDroppedValue(out, size)
-	/////////////println("Requests Dropped Value", C.GoString(out))
-	///////////////println("Requests Dropped Value ERROR: ", err)
-	/////////////err = C.readNtpServerBroadcastsValue(out, size)
-	/////////////println("Broadcasts Value", C.GoString(out))
-	///////////////println("Broadcasts Value ERROR: ", err)
-	/////////////err = C.readNtpServerClearCountersStatus(out, size)
-	/////////////println("Clear Counters Status", C.GoString(out))
-	//println("Clear Counters Status ERROR: ", err)
-	err = C.readNtpServerVersion(out, size)
-	println("Version", C.GoString(out))
-	//println("Version ERROR: ", err)
-	//err = C.readNtpServerInstanceNumber(out, size)
-	//println("InstanceNumber", C.GoString(out))
-	println("InstanceNumber ERROR: ", err)
-	//
-	defer C.free(unsafe.Pointer(out))
-}
-
-func ToggleNtpIpMode(addr string) {
-	C.connect()
-
-	C.readConfig()
-
-	in := C.CString(addr)
-	var size C.size_t = 64
-	//ListNtpProperties()
-	err := C.writeNtpServerIpMode(in, size)
-	//ListNtpProperties()
-
-	println("err: ", err)
-	defer C.free(unsafe.Pointer(in))
-
-}
-
-func SetNtpIpAddress(addr string) {
-	C.connect()
-
-	C.readConfig()
-	fmt.Println("this is the ip you are trying to use: ", addr)
-	in := C.CString(addr)
-	var size C.size_t = 64
-	err := C.writeNtpServerIpAddress(in, size)
-
-	println("err: ", err)
-	defer C.free(unsafe.Pointer(in))
-
-}
-
-func SetNtpReferenceId(id string) {
-	C.connect()
-
-	C.readConfig()
-	fmt.Println("this is the id you are trying to use: ", id)
-	in := C.CString(id)
-	var size C.size_t = 64
-	err := C.writeNtpServerReferenceIdValue(in, size)
-
-	println("err: ", err)
-	defer C.free(unsafe.Pointer(in))
-
-}
-
-func SetNtpSmearingStatus(status string) {
-	C.connect()
-
-	C.readConfig()
-	fmt.Println("this is the status you are trying to use: ", status)
-	in := C.CString(status)
-	var size C.size_t = 64
-	err := C.writeNtpServerUtcSmearingStatus(in, size)
-
-	println("err: ", err)
-	defer C.free(unsafe.Pointer(in))
-
-}
-
-func SetNtpLeap61Status(status string) {
-	C.connect()
-
-	C.readConfig()
-	fmt.Println("this is the leap status you are trying to use: ", status)
-	in := C.CString(status)
-	var size C.size_t = 64
-	err := C.writeNtpServerLeap61Status(in, size)
-
-	println("err: ", err)
-	defer C.free(unsafe.Pointer(in))
-
-}
-
-func SetNtpLeap59Status(status string) {
-	C.connect()
-
-	C.readConfig()
-	fmt.Println("this is the leap 59 status you are trying to use: ", status)
-	in := C.CString(status)
-	var size C.size_t = 64
-	err := C.writeNtpServerLeap59Status(in, size)
-
-	println("err: ", err)
-	defer C.free(unsafe.Pointer(in))
-
-}
-
-func SetNtpOffsetStatus(status string) {
-	C.connect()
-
-	C.readConfig()
-	fmt.Println("this is the offset status you are trying to use: ", status)
-	in := C.CString(status)
-	var size C.size_t = 64
-	err := C.writeNtpServerUtcOffsetStatus(in, size)
-
-	println("err: ", err)
-	defer C.free(unsafe.Pointer(in))
-
-}
-
-func SetNtpOffsetValue(value string) {
-	C.connect()
-
-	C.readConfig()
-	fmt.Println("this is the offset status you are trying to use: ", value)
 	in := C.CString(value)
-	var size C.size_t = 64
-	err := C.writeNtpServerUtcOffsetValue(in, size)
 
-	println("err: ", err)
-	defer C.free(unsafe.Pointer(in))
-
-}
-
-func ClearNtpCounters(value string) {
+	mutex.Lock()
 	C.connect()
-
 	C.readConfig()
-	fmt.Println("this is the offset status you are trying to use: ", value)
-	in := C.CString(value)
-	var size C.size_t = 64
-	err := C.writeNtpServerClearCountersStatus(in, size)
+	switch property {
 
-	println("err: ", err)
+	case NtpServer.MacAddress:
+		err := C.writeNtpServerMacAddress(in, size)
+		if err != 0 {
+			fmt.Println("writeNtpServerMacAddress ERROR: ", err)
+		}
+	case NtpServer.VlanStatus:
+		err := C.writeNtpServerVlanStatus(in, size)
+		if err != 0 {
+			fmt.Println("writeNtpServerVlanStatus ERROR: ", err)
+		}
+	case NtpServer.VlanAddress:
+		err := C.writeNtpServerVlanAddress(in, size)
+		if err != 0 {
+			fmt.Println("writeNtpServerVlanAddress ERROR: ", err)
+		}
+	case NtpServer.IpMode:
+		err := C.writeNtpServerIpMode(in, size)
+		if err != 0 {
+			fmt.Println("writeNtpServerIpMode ERROR: ", err)
+		}
+	case NtpServer.IpAddress:
+		err := C.writeNtpServerIpAddress(in, size)
+		if err != 0 {
+			fmt.Println("writeNtpServerIpAddress ERROR: ", err)
+		}
+	case NtpServer.UnicastMode:
+		err := C.writeNtpServerUnicastMode(in, size)
+		if err != 0 {
+			fmt.Println("writeNtpServerUnicastMode ERROR: ", err)
+		}
+	case NtpServer.MulticastMode:
+		err := C.writeNtpServerMulticastMode(in, size)
+		if err != 0 {
+			fmt.Println("writeNtpServerMulticastMode ERROR: ", err)
+		}
+	case NtpServer.BroadcastMode:
+		err := C.writeNtpServerBroadcastMode(in, size)
+		if err != 0 {
+			fmt.Println("writeNtpServerBroadcastMode ERROR: ", err)
+		}
+	case NtpServer.PrecisionValue:
+		err := C.writeNtpServerPrecisionValue(in, size)
+		if err != 0 {
+			fmt.Println("writeNtpServerPrecisionValue ERROR: ", err)
+		}
+	case NtpServer.PollIntervalValue:
+		err := C.writeNtpServerPollIntervalValue(in, size)
+		if err != 0 {
+			fmt.Println("writeNtpServerPollIntervalValue ERROR: ", err)
+		}
+	case NtpServer.StratumValue:
+		err := C.writeNtpServerStratumValue(in, size)
+		if err != 0 {
+			fmt.Println("writeNtpServerStratumValue ERROR: ", err)
+		}
+	case NtpServer.ReferenceId:
+		err := C.writeNtpServerReferenceIdValue(in, size)
+		if err != 0 {
+			fmt.Println("writeNtpServerReferenceIdValue ERROR: ", err)
+		}
+	case NtpServer.SmearingStatus:
+		err := C.writeNtpServerUtcSmearingStatus(in, size)
+		if err != 0 {
+			fmt.Println("writeNtpServerUtcSmearingStatus ERROR: ", err)
+		}
+	case NtpServer.Leap61Status:
+		err := C.writeNtpServerLeap61Status(in, size)
+		if err != 0 {
+			fmt.Println("writeNtpServerLeap61Status ERROR: ", err)
+		}
+	case NtpServer.Leap59Status:
+		err := C.writeNtpServerLeap59Status(in, size)
+		if err != 0 {
+			fmt.Println("writeNtpServerLeap59Status ERROR: ", err)
+		}
+	case NtpServer.UtcOffsetStatus:
+		err := C.writeNtpServerUtcOffsetStatus(in, size)
+		if err != 0 {
+			fmt.Println("writeNtpServerUtcOffsetStatus ERROR: ", err)
+		}
+	case NtpServer.UtcOffsetValue:
+		err := C.writeNtpServerUtcOffsetValue(in, size)
+		if err != 0 {
+			fmt.Println("writeNtpServerUtcOffsetValue ERROR: ", err)
+		}
+	case NtpServer.ClearCountersStatus:
+		err := C.writeNtpServerClearCountersStatus(in, size)
+		if err != 0 {
+			fmt.Println("writeNtpServerClearCountersStatus ERROR: ", err)
+		}
+
+	default:
+		fmt.Println("no such property")
+	}
+	mutex.Unlock()
 	defer C.free(unsafe.Pointer(in))
-
 }
