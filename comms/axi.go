@@ -11,6 +11,7 @@ import "C"
 import (
 	"fmt"
 	"sync"
+	"time"
 	"unsafe"
 )
 
@@ -90,12 +91,18 @@ var mutex sync.Mutex
 
 const size = C.size_t(64)
 
-func ReadNtpServer(property string) string {
-
-	out := (*C.char)(C.calloc(size, 1))
+func init() {
 	mutex.Lock()
 	C.connect()
 	C.readConfig()
+	mutex.Unlock()
+}
+
+func ReadNtpServer(property string) string {
+	start := time.Now()
+	out := (*C.char)(C.calloc(size, 1))
+	mutex.Lock()
+
 	switch property {
 	case NtpServer.Status:
 		C.readNtpServerStatus(out, size)
@@ -157,7 +164,11 @@ func ReadNtpServer(property string) string {
 	}
 	mutex.Unlock()
 	defer C.free(unsafe.Pointer(out))
+
+	fmt.Println(property, " : ", time.Since(start))
+
 	return C.GoString(out)
+
 }
 
 func WriteNtpServer(property string, value string) {

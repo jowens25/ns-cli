@@ -67,7 +67,7 @@ func corsMiddleware(next http.Handler) http.Handler {
 			"http://10.1.10.93:29020": true,
 			"http://10.1.10.93:8000":  true,
 			"http://localhost:32930":  true,
-			"http://localhost:3862":   true,
+			"http://localhost:51241":  true,
 		}
 
 		if allowedOrigins[origin] {
