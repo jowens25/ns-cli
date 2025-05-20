@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path"
 	"strconv"
 	"syscall"
 	"time"
@@ -14,6 +15,9 @@ import (
 )
 
 var pidFile string = "/tmp/nts.pid"
+
+var apiBase string = "/api"
+var apiVersion string = "v1"
 
 func RunServers() {
 	pid := os.Getpid()
@@ -26,169 +30,174 @@ func RunServers() {
 
 	apiMux := http.NewServeMux()
 	// NTP Server routes
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.Status,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.Status),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.Status,
 			false))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.InstanceNumber,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.InstanceNumber),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.InstanceNumber,
 			true))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.IpMode,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.IpMode),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.IpMode,
 			false))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.IpAddress,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.IpAddress),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.IpAddress,
 			false))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.MacAddress,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.MacAddress),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.MacAddress,
 			false))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.VlanStatus,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.VlanStatus),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.VlanStatus,
 			false))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.VlanAddress,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.VlanAddress),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.VlanAddress,
 			false))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.UnicastMode,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.UnicastMode),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.UnicastMode,
 			false))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.MulticastMode,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.MulticastMode),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.MulticastMode,
 			false))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.BroadcastMode,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.BroadcastMode),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.BroadcastMode,
 			false))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.PrecisionValue,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.PrecisionValue),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.PrecisionValue,
 			false))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.PollIntervalValue,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.PollIntervalValue),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.PollIntervalValue,
 			false))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.StratumValue,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.StratumValue),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.StratumValue,
 			false))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.ReferenceId,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.ReferenceId),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.ReferenceId,
 			false))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.SmearingStatus,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.SmearingStatus),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.SmearingStatus,
 			false))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.Leap61Progress,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.Leap61Progress),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.Leap61Progress,
 			true))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.Leap59Progress,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.Leap59Progress),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.Leap59Progress,
 			true))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.Leap61Status,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.Leap61Status),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.Leap61Status,
 			false))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.Leap59Status,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.Leap59Status),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.Leap59Status,
 			false))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.UtcOffsetStatus,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.UtcOffsetStatus),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.UtcOffsetStatus,
 			false))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.UtcOffsetValue,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.UtcOffsetValue),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.UtcOffsetValue,
 			false))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.RequestsValue,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.RequestsValue),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.RequestsValue,
 			true))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.ResponsesValue,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.ResponsesValue),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.ResponsesValue,
 			true))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.RequestsDroppedValue,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.RequestsDroppedValue),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.RequestsDroppedValue,
 			true))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.BroadcastsValue,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.BroadcastsValue),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.BroadcastsValue,
 			true))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.ClearCountersStatus,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.ClearCountersStatus),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.ClearCountersStatus,
 			false))
 
-	apiMux.HandleFunc("/api/v1/ntp-server/"+axi.NtpServer.Version,
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.Version),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,
 			axi.NtpServer.Version,
 			true))
 
 	// PTP OC routes
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.PtpOc.Root, axi.PtpOc.Version),
+		Handler(axi.ReadPtpOc,
+			axi.WritePtpOc,
+			axi.PtpOc.Version,
+			false))
 	//apiMux.HandleFunc("/ptp-oc/version", PtpVersionHandler)
 	//apiMux.HandleFunc("/ptp-oc/instance", PtpInstanceHandler)
 	//apiMux.HandleFunc("/ptp-oc/mac", PtpMacHandler)

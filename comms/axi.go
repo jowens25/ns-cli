@@ -14,7 +14,7 @@ import (
 	"unsafe"
 )
 
-type NtpServerStruct struct {
+type NtpServerApi struct {
 	Status               string
 	InstanceNumber       string
 	IpMode               string
@@ -42,9 +42,10 @@ type NtpServerStruct struct {
 	BroadcastsValue      string
 	ClearCountersStatus  string
 	Version              string
+	Root                 string
 }
 
-var NtpServer = NtpServerStruct{
+var NtpServer = NtpServerApi{
 	Status:               "status",
 	InstanceNumber:       "instance",
 	IpMode:               "ip-mode",
@@ -72,6 +73,17 @@ var NtpServer = NtpServerStruct{
 	BroadcastsValue:      "broadcasts",
 	ClearCountersStatus:  "clearcounters",
 	Version:              "version",
+	Root:                 "ntp-server",
+}
+
+type PtpOcApi struct {
+	Version string
+	Root    string
+}
+
+var PtpOc = PtpOcApi{
+	Version: "version",
+	Root:    "ptp-oc",
 }
 
 var mutex sync.Mutex
@@ -247,6 +259,45 @@ func WriteNtpServer(property string, value string) {
 		if err != 0 {
 			fmt.Println("writeNtpServerClearCountersStatus ERROR: ", err)
 		}
+
+	default:
+		fmt.Println("no such property")
+	}
+	mutex.Unlock()
+	defer C.free(unsafe.Pointer(in))
+}
+
+func ReadPtpOc(property string) string {
+	out := (*C.char)(C.calloc(size, 1))
+	mutex.Lock()
+	C.connect()
+	C.readConfig()
+	switch property {
+	case PtpOc.Version:
+		//C.readNtpServerStatus(out, size)
+		out = C.CString("you are fake news")
+
+	default:
+		fmt.Println("no such property")
+	}
+	mutex.Unlock()
+	defer C.free(unsafe.Pointer(out))
+	return C.GoString(out)
+}
+
+func WritePtpOc(property string, value string) {
+	in := C.CString(value)
+	mutex.Lock()
+	C.connect()
+	C.readConfig()
+	switch property {
+
+	case PtpOc.Version:
+		fmt.Println("this is not accessable")
+		//err := C.writeNtpServerMacAddress(in, size)
+	//	if err != 0 {
+	//		fmt.Println("writeNtpServerMacAddress ERROR: ", err)
+	//	}
 
 	default:
 		fmt.Println("no such property")
