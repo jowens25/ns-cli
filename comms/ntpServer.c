@@ -1489,6 +1489,8 @@ int writeNtpServerPollIntervalValue(char *value, size_t size)
     {
         return -4;
     }
+
+    return 0;
 }
 
 int writeNtpServerStratumValue(char *value, size_t size)
