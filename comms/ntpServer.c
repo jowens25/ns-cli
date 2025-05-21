@@ -1378,25 +1378,33 @@ int writeNtpServerBroadcastMode(char *mode, size_t size)
         return -1;
     }
 
-    temp_data &= ~0x00000040;
+    temp_data &= ~0x00000040; // clear it
 
-    if (0 != strncmp(mode, "enabled", size))
+    if (0 == strncmp(mode, "enabled", size))
     {
-        return -1;
+        temp_data |= 0x000000040;
+    }
+    else if (0 == strncmp(mode, "disabled", size))
+    {
+        temp_data |= 0x00000000;
+    }
+    else
+    {
+        return -2;
     }
 
-    temp_data |= 0x000000040;
+    // temp_data |= 0x000000040;
 
     if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
     {
-        return -1;
+        return -3;
     }
 
     temp_data = 0x00000001;
 
     if (0 != writeRegister(temp_addr + Ucm_NtpServer_ConfigControlReg, &temp_data))
     {
-        return -1;
+        return -4;
     }
 
     return 0;

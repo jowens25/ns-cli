@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 )
 
 // accepts axiRead and axiWrite functions, a key, and the requests
@@ -62,12 +63,16 @@ func corsMiddleware(next http.Handler) http.Handler {
 
 		// Allowed origins list (adjust as needed)
 		allowedOrigins := map[string]bool{
-			"http://localhost:8000":   true,
-			"http://10.1.10.205:8000": true,
-			"http://10.1.10.93:29020": true,
-			"http://10.1.10.93:8000":  true,
-			"http://localhost:32930":  true,
-			"http://localhost:51241":  true,
+			"http://localhost:8000": true, // will point to go js server in production
+			//"http://10.1.10.205:8000": true,
+			//"http://10.1.10.93:29020": true,
+			//"http://10.1.10.93:8000":  true,
+			//"http://localhost:32930":  true,
+			//"http://localhost:51241":  true,
+		}
+
+		if strings.HasPrefix(origin, "http://localhost:") || strings.HasPrefix(origin, "http://10.1.10.249:") {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
 		}
 
 		if allowedOrigins[origin] {

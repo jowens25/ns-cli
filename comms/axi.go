@@ -172,6 +172,7 @@ func ReadNtpServer(property string) string {
 }
 
 func WriteNtpServer(property string, value string) {
+	start := time.Now()
 
 	in := C.CString(value)
 
@@ -276,6 +277,8 @@ func WriteNtpServer(property string, value string) {
 	}
 	mutex.Unlock()
 	defer C.free(unsafe.Pointer(in))
+	fmt.Println(property, " : ", time.Since(start))
+
 }
 
 func ReadPtpOc(property string) string {
