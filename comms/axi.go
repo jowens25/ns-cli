@@ -165,7 +165,7 @@ func ReadNtpServer(property string) string {
 	mutex.Unlock()
 	defer C.free(unsafe.Pointer(out))
 
-	fmt.Println(property, " : ", time.Since(start))
+	fmt.Println(property, "r : ", time.Since(start))
 
 	return C.GoString(out)
 
@@ -177,9 +177,15 @@ func WriteNtpServer(property string, value string) {
 	in := C.CString(value)
 
 	mutex.Lock()
-	C.connect()
-	C.readConfig()
+	//C.connect()
+	//C.readConfig()
 	switch property {
+
+	case NtpServer.Status:
+		err := C.writeNtpServerStatus(in, size)
+		if err != 0 {
+			fmt.Println("writeNtpServerStatus ERROR: ", err)
+		}
 
 	case NtpServer.MacAddress:
 		err := C.writeNtpServerMacAddress(in, size)
@@ -277,7 +283,7 @@ func WriteNtpServer(property string, value string) {
 	}
 	mutex.Unlock()
 	defer C.free(unsafe.Pointer(in))
-	fmt.Println(property, " : ", time.Since(start))
+	fmt.Println(property, "w : ", time.Since(start))
 
 }
 

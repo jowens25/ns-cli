@@ -51,6 +51,7 @@ int readNtpServerBroadcastsValue(char *value, size_t size);      // Ntp Server B
 int readNtpServerClearCountersStatus(char *value, size_t size);  // Ntp Server ClearCountersStatus
 int readNtpServerVersion(char *value, size_t size);              // Ntp Server Version
 
+int writeNtpServerStatus(char *status, size_t size);     // ntp server status
 int writeNtpServerMacAddress(char *addr, size_t size);   // Ntp Server MacAddress
 int writeNtpServerVlanStatus(char *status, size_t size); // Ntp Server VlanStatus
 int writeNtpServerVlanAddress(char *value, size_t size); // Ntp Server VlanAddress
