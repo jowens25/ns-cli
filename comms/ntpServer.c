@@ -1454,6 +1454,8 @@ int writeNtpServerPrecisionValue(char *value, size_t size)
     {
         return -4;
     }
+
+    return 0;
 }
 
 int writeNtpServerPollIntervalValue(char *value, size_t size)
