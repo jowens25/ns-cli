@@ -5,6 +5,7 @@ package axi
 #include "axi.h"
 #include "config.h"
 #include "ntpServer.h"
+#include "ptpOc.h"
 #include "coreConfig.h"
 */
 import "C"
@@ -78,13 +79,54 @@ var NtpServer = NtpServerApi{
 }
 
 type PtpOcApi struct {
-	Version string
-	Root    string
+	Version                                string
+	Root                                   string
+	Status                                 string
+	VlanStatus                             string
+	VlanAddress                            string
+	Profile                                string
+	DefaultDsTwoStepStatus                 string
+	DefaultDsSignalingStatus               string
+	Layer                                  string
+	SlaveOnlyStatus                        string
+	MasterOnlyStatus                       string
+	DefaultDsDisableOffsetCorrectionStatus string
+	DefaultDsListedUnicastSlavesOnlyStatus string
+	DelayMechanismValue                    string
+	IpAddress                              string
+	DefaultDsClockId                       string
+	DefaultDsDomain                        string
+
+	DefaultDsPriority1 string
+	DefaultDsPriority2 string
+	DefaultDsVariance  string
+	DefaultDsAccuracy  string
+	DefaultDsClass     string
 }
 
 var PtpOc = PtpOcApi{
-	Version: "version",
-	Root:    "ptp-oc",
+	Version:                                "version",
+	Root:                                   "ptp-oc",
+	Status:                                 "status",
+	VlanStatus:                             "vlan-status",
+	VlanAddress:                            "vlan-address",
+	Profile:                                "profile",
+	DefaultDsTwoStepStatus:                 "default-ds-two-step-status",
+	DefaultDsSignalingStatus:               "default-ds-signaling-status",
+	Layer:                                  "layer",
+	SlaveOnlyStatus:                        "slave-only-status",
+	MasterOnlyStatus:                       "master-only-status",
+	DefaultDsDisableOffsetCorrectionStatus: "default-ds-disable-offset-correction-status",
+	DefaultDsListedUnicastSlavesOnlyStatus: "default-ds-listed-unicast-slaves-only-status",
+	DelayMechanismValue:                    "delay-mechanism-value",
+	IpAddress:                              "ip-address",
+	DefaultDsClockId:                       "default-ds-clock-id",
+	DefaultDsDomain:                        "default-ds-domain",
+	DefaultDsPriority1:                     "default-ds-priority1",
+	DefaultDsPriority2:                     "default-ds-priority2",
+	DefaultDsVariance:                      "default-ds-variance",
+	DefaultDsAccuracy:                      "default-ds-accuracy",
+	DefaultDsClass:                         "default-ds-class",
 }
 
 var mutex sync.Mutex
@@ -297,13 +339,52 @@ func WriteNtpServer(property string, value string) {
 func ReadPtpOc(property string) string {
 	out := (*C.char)(C.calloc(size, 1))
 	mutex.Lock()
-	C.connect()
-	C.readConfig()
+
 	switch property {
 	case PtpOc.Version:
-		//C.readNtpServerStatus(out, size)
-		out = C.CString("you are fake news")
-
+		//C.readPtpOcVersion(out, size)
+	case PtpOc.Root:
+		//C.readPtpOcRoot(out, size)
+	case PtpOc.Status:
+		C.readPtpOcStatus(out, size)
+	case PtpOc.VlanStatus:
+		C.readPtpOcVlanStatus(out, size)
+	case PtpOc.VlanAddress:
+		C.readPtpOcVlanAddress(out, size)
+	case PtpOc.Profile:
+		C.readPtpOcProfile(out, size)
+	case PtpOc.DefaultDsTwoStepStatus:
+		C.readPtpOcDefaultDsTwoStepStatus(out, size)
+	case PtpOc.DefaultDsSignalingStatus:
+		C.readPtpOcDefaultDsSignalingStatus(out, size)
+	case PtpOc.Layer:
+		C.readPtpOcLayer(out, size)
+	case PtpOc.SlaveOnlyStatus:
+		C.readPtpOcSlaveOnlyStatus(out, size)
+	case PtpOc.MasterOnlyStatus:
+		C.readPtpOcMasterOnlyStatus(out, size)
+	case PtpOc.DefaultDsDisableOffsetCorrectionStatus:
+		C.readPtpOcDefaultDsDisableOffsetCorrectionStatus(out, size)
+	case PtpOc.DefaultDsListedUnicastSlavesOnlyStatus:
+		C.readPtpOcDefaultDsListedUnicastSlavesOnlyStatus(out, size)
+	case PtpOc.DelayMechanismValue:
+		C.readPtpOcDelayMechanismValue(out, size)
+	case PtpOc.IpAddress:
+		C.readPtpOcIpAddress(out, size)
+	case PtpOc.DefaultDsClockId:
+		C.readPtpOcDefaultDsClockId(out, size)
+	case PtpOc.DefaultDsDomain:
+		C.readPtpOcDefaultDsDomain(out, size)
+	case PtpOc.DefaultDsPriority1:
+		C.readPtpOcDefaultDsPriority1(out, size)
+	case PtpOc.DefaultDsPriority2:
+		C.readPtpOcDefaultDsPriority2(out, size)
+	case PtpOc.DefaultDsVariance:
+		C.readPtpOcDefaultDsVariance(out, size)
+	case PtpOc.DefaultDsAccuracy:
+		C.readPtpOcDefaultDsAccuracy(out, size)
+	case PtpOc.DefaultDsClass:
+		C.readPtpOcDefaultDsClass(out, size)
 	default:
 		fmt.Println("no such property")
 	}
@@ -331,4 +412,36 @@ func WritePtpOc(property string, value string) {
 	}
 	mutex.Unlock()
 	defer C.free(unsafe.Pointer(in))
+}
+
+func ListPtpOcProperties() {
+	properties := []string{
+		//PtpOc.Version,
+		//PtpOc.Root,
+		PtpOc.Status,
+		PtpOc.VlanStatus,
+		PtpOc.VlanAddress,
+		PtpOc.Profile,
+		PtpOc.DefaultDsTwoStepStatus,
+		PtpOc.DefaultDsSignalingStatus,
+		PtpOc.Layer,
+		PtpOc.SlaveOnlyStatus,
+		PtpOc.MasterOnlyStatus,
+		PtpOc.DefaultDsDisableOffsetCorrectionStatus,
+		PtpOc.DefaultDsListedUnicastSlavesOnlyStatus,
+		PtpOc.DelayMechanismValue,
+		PtpOc.IpAddress,
+		PtpOc.DefaultDsClockId,
+		PtpOc.DefaultDsDomain,
+		PtpOc.DefaultDsPriority1,
+		PtpOc.DefaultDsPriority2,
+		PtpOc.DefaultDsVariance,
+		PtpOc.DefaultDsAccuracy,
+		PtpOc.DefaultDsClass}
+
+	for _, p := range properties {
+		//fmt.Println(i)
+		fmt.Println(p, " : ", ReadPtpOc(p))
+	}
+
 }

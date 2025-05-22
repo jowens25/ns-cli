@@ -72,8 +72,25 @@
 #define Ucm_PtpOc_UnicastDs12Reg 0x00000630
 // int64_t temp_data;
 // int64_t temp_addr;
+int hasPtpOc(char *in, size_t size);
 int readPtpOcStatus(char *status, size_t size);
 int readPtpOcVlanStatus(char *vlanStatus, size_t size);
 int readPtpOcVlanAddress(char *vlanAddr, size_t size);
-
+int readPtpOcProfile(char *profile, size_t size);
+int readPtpOcDefaultDsTwoStepStatus(char *status, size_t size);
+int readPtpOcDefaultDsSignalingStatus(char *status, size_t size);
+int readPtpOcLayer(char *layer, size_t size);
+int readPtpOcSlaveOnlyStatus(char *status, size_t size);
+int readPtpOcMasterOnlyStatus(char *status, size_t size);
+int readPtpOcDefaultDsDisableOffsetCorrectionStatus(char *status, size_t size);
+int readPtpOcDefaultDsListedUnicastSlavesOnlyStatus(char *status, size_t size);
+int readPtpOcDelayMechanismValue(char *value, size_t size);
+int readPtpOcIpAddress(char *ipAddr, size_t size);
+int readPtpOcDefaultDsClockId(char *clockId, size_t size);
+int readPtpOcDefaultDsDomain(char *domain, size_t size);
+int readPtpOcDefaultDsPriority1(char *priority1, size_t size);
+int readPtpOcDefaultDsPriority2(char *priority2, size_t size);
+int readPtpOcDefaultDsVariance(char *variance, size_t size);
+int readPtpOcDefaultDsAccuracy(char *accuracy, size_t size);
+int readPtpOcDefaultDsClass(char *class, size_t size);
 #endif // PTP_OC_H
