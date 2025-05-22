@@ -2,11 +2,6 @@
 #include "axi.h"
 #include "coreConfig.h"
 #include "ntpServer.h"
-#include "config.h"
-
-int64_t ntplow;
-int64_t temp_data = 0x00000000;
-long temp_addr = 0x00000000;
 
 int hasNtpServer(char *in, size_t size)
 {
@@ -49,7 +44,7 @@ int readNtpServerStatus(char *status, size_t size)
 int readNtpServerMacAddress(char *macAddr, size_t size)
 {
     temp_data = 0x00000000;
-    long temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
     unsigned char temp_mac[6];
     // mac
     // temp_string.clear();
@@ -986,7 +981,7 @@ int writeNtpServerVlanAddress(char *value, size_t size)
     {
         return -1;
     }
-    temp_addr = temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
+    temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
     temp_data = 0x00000000;
     long temp_vlan = 0;
     value = &value[2];

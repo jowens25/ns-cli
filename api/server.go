@@ -30,6 +30,12 @@ func RunServers() {
 
 	apiMux := http.NewServeMux()
 	// NTP Server routes
+	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root),
+		Handler(axi.ReadNtpServer,
+			axi.WriteNtpServer,
+			axi.NtpServer.Root,
+			false))
+
 	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.NtpServer.Root, axi.NtpServer.Status),
 		Handler(axi.ReadNtpServer,
 			axi.WriteNtpServer,

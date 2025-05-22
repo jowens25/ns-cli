@@ -104,6 +104,10 @@ func ReadNtpServer(property string) string {
 	mutex.Lock()
 
 	switch property {
+
+	case NtpServer.Root:
+		fmt.Println("readNtpServerRoot???: ")
+		out = C.CString("NtpServer")
 	case NtpServer.Status:
 		C.readNtpServerStatus(out, size)
 	case NtpServer.InstanceNumber:
@@ -180,6 +184,9 @@ func WriteNtpServer(property string, value string) {
 	//C.connect()
 	//C.readConfig()
 	switch property {
+
+	case NtpServer.Root:
+		fmt.Println("writeNtpServerRoot???: ")
 
 	case NtpServer.Status:
 		err := C.writeNtpServerStatus(in, size)

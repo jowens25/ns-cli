@@ -3,11 +3,12 @@
 #include "config.h"
 #include "coreConfig.h"
 // read the core configuration
+
 void readConfig(void)
 {
 
     Ucm_CoreConfig temp_config;
-    int64_t temp_data = 0;
+    // int64_t temp_data = 0;
     long type = 0;
 
     for (int i = 0; i < 256; i++)

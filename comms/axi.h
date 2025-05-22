@@ -40,4 +40,7 @@ int setupTermios(int);
 int readRegister(int64_t addr, int64_t *data);
 int writeRegister(int64_t addr, int64_t *data);
 
+extern int64_t temp_data;
+extern int64_t temp_addr;
+
 #endif // AXI_H

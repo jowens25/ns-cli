@@ -22,7 +22,8 @@
 #define Ucm_NtpServer_ConfigReferenceIdReg 0x000000A4
 #define Ucm_NtpServer_UtcInfoControlReg 0x00000100
 #define Ucm_NtpServer_UtcInfoReg 0x00000104
-
+// int64_t temp_data;
+// int64_t temp_addr;
 int readNtpServerStatus(char *status, size_t size);              // Ntp Server Status
 int readNtpServerInstanceNumber(char *status, size_t size);      // Ntp Server InstanceNumber
 int readNtpServerIpMode(char *ipMode, size_t size);              // Ntp Server IpMode
