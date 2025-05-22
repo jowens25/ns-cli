@@ -96,12 +96,14 @@ type PtpOcApi struct {
 	IpAddress                              string
 	DefaultDsClockId                       string
 	DefaultDsDomain                        string
-
-	DefaultDsPriority1 string
-	DefaultDsPriority2 string
-	DefaultDsVariance  string
-	DefaultDsAccuracy  string
-	DefaultDsClass     string
+	DefaultDsPriority1                     string
+	DefaultDsPriority2                     string
+	DefaultDsVariance                      string
+	DefaultDsAccuracy                      string
+	DefaultDsClass                         string
+	DefaultDsShortId                       string
+	DefaultDsInaccuracy                    string
+	DefaultDsNumberOfPorts                 string
 }
 
 var PtpOc = PtpOcApi{
@@ -127,6 +129,9 @@ var PtpOc = PtpOcApi{
 	DefaultDsVariance:                      "default-ds-variance",
 	DefaultDsAccuracy:                      "default-ds-accuracy",
 	DefaultDsClass:                         "default-ds-class",
+	DefaultDsShortId:                       "default-ds-shortid",
+	DefaultDsInaccuracy:                    "default-ds-inaccuracy",
+	DefaultDsNumberOfPorts:                 "default-ds-numberofports",
 }
 
 var mutex sync.Mutex
@@ -385,6 +390,12 @@ func ReadPtpOc(property string) string {
 		C.readPtpOcDefaultDsAccuracy(out, size)
 	case PtpOc.DefaultDsClass:
 		C.readPtpOcDefaultDsClass(out, size)
+	case PtpOc.DefaultDsShortId:
+		C.readPtpOcDefaultDsShortId(out, size)
+	case PtpOc.DefaultDsInaccuracy:
+		C.readPtpOcDefaultDsInaccuracy(out, size)
+	case PtpOc.DefaultDsNumberOfPorts:
+		C.readPtpOcDefaultDsNumberOfPorts(out, size)
 	default:
 		fmt.Println("no such property")
 	}
@@ -437,7 +448,10 @@ func ListPtpOcProperties() {
 		PtpOc.DefaultDsPriority2,
 		PtpOc.DefaultDsVariance,
 		PtpOc.DefaultDsAccuracy,
-		PtpOc.DefaultDsClass}
+		PtpOc.DefaultDsClass,
+		PtpOc.DefaultDsShortId,
+		PtpOc.DefaultDsInaccuracy,
+		PtpOc.DefaultDsNumberOfPorts}
 
 	for _, p := range properties {
 		//fmt.Println(i)

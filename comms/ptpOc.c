@@ -827,3 +827,127 @@ int readPtpOcDefaultDsClass(char *class, size_t size)
     }
     return 0;
 }
+
+int readPtpOcDefaultDsShortId(char *id, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+    unsigned char temp_clock_id[8];
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
+    {
+        snprintf(id, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(id, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDs5Reg, &temp_data))
+            {
+                snprintf(id, size, "%s", "NA");
+
+                return -3;
+            }
+
+            snprintf(id, size, "0x%04lx", temp_data);
+            break;
+            // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+        }
+    }
+    return 0;
+}
+int readPtpOcDefaultDsInaccuracy(char *inaccuracy, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+    unsigned char temp_clock_id[8];
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
+    {
+        snprintf(inaccuracy, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(inaccuracy, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDs6Reg, &temp_data))
+            {
+                snprintf(inaccuracy, size, "%s", "NA");
+
+                return -3;
+            }
+
+            snprintf(inaccuracy, size, "%ld", temp_data);
+            break;
+            // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+        }
+    }
+    return 0;
+}
+int readPtpOcDefaultDsNumberOfPorts(char *numPorts, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+    unsigned char temp_clock_id[8];
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
+    {
+        snprintf(numPorts, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(numPorts, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDs7Reg, &temp_data))
+            {
+                snprintf(numPorts, size, "%s", "NA");
+
+                return -3;
+            }
+
+            snprintf(numPorts, size, "%ld", temp_data);
+            break;
+            // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+        }
+    }
+    return 0;
+}

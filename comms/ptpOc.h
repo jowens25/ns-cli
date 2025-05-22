@@ -93,4 +93,9 @@ int readPtpOcDefaultDsPriority2(char *priority2, size_t size);
 int readPtpOcDefaultDsVariance(char *variance, size_t size);
 int readPtpOcDefaultDsAccuracy(char *accuracy, size_t size);
 int readPtpOcDefaultDsClass(char *class, size_t size);
+
+int readPtpOcDefaultDsShortId(char *id, size_t size);
+int readPtpOcDefaultDsInaccuracy(char *inaccuracy, size_t size);
+int readPtpOcDefaultDsNumberOfPorts(char *numPorts, size_t size);
+
 #endif // PTP_OC_H
