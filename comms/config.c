@@ -25,7 +25,7 @@ void readConfig(void)
             else if (temp_data == 0)
             {
                 // printf("ERROR 2 \n");
-
+                // return -2;
                 break;
             }
             else
@@ -35,9 +35,36 @@ void readConfig(void)
                 // temp_config.core_type = ((temp_data >> 16) & 0x0000FFFF);
                 type = ((temp_data >> 16) & 0x0000FFFF);
 
+                switch (type)
+                {
+                case Ucm_CoreConfig_PhyConfigurationCoreType: // 30
+                    type = 30;
+                    break;
+                case Ucm_CoreConfig_I2cConfigurationCoreType: // 31
+                    type = 31;
+                    break;
+                case Ucm_CoreConfig_IoConfigurationCoreType: // 32
+                    type = 32;
+                    break;
+                case Ucm_CoreConfig_EthernetTestplatformType: // 33
+                    type = 33;
+                    break;
+                case Ucm_CoreConfig_MinSwitchCoreType: // 34
+                    type = 34;
+                    break;
+                case Ucm_CoreConfig_ConfExtCoreType: // 35
+                    type = 35;
+                    break;
+                default:
+                    break;
+                }
+
                 cores[type].core_type = type;
+
                 // temp_config.core_instance_nr = ((temp_data >> 0) & 0x0000FFFF);
                 cores[type].core_instance_nr = ((temp_data >> 0) & 0x0000FFFF);
+
+                printf("core types: %ld\n", cores[type].core_type);
             }
         }
         else
@@ -81,6 +108,7 @@ void readConfig(void)
         }
         else
         {
+
             // printf("ERROR 7 \n");
             // cores[i] = temp_config;
             break;

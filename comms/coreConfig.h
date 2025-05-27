@@ -29,12 +29,12 @@
 #define Ucm_CoreConfig_PpsClkToPpsCoreType 27
 #define Ucm_CoreConfig_PtpServerCoreType 28
 #define Ucm_CoreConfig_PtpClientCoreType 29
-#define Ucm_CoreConfig_PhyConfigurationCoreType 10000
-#define Ucm_CoreConfig_I2cConfigurationCoreType 10001
-#define Ucm_CoreConfig_IoConfigurationCoreType 10002
-#define Ucm_CoreConfig_EthernetTestplatformType 10003
-#define Ucm_CoreConfig_MinSwitchCoreType 10004
-#define Ucm_CoreConfig_ConfExtCoreType 20000
+#define Ucm_CoreConfig_PhyConfigurationCoreType 10000 // 30
+#define Ucm_CoreConfig_I2cConfigurationCoreType 10001 // 31
+#define Ucm_CoreConfig_IoConfigurationCoreType 10002  // 32
+#define Ucm_CoreConfig_EthernetTestplatformType 10003 // 33
+#define Ucm_CoreConfig_MinSwitchCoreType 10004        // 34
+#define Ucm_CoreConfig_ConfExtCoreType 20000          // 35
 
 typedef struct
 {
