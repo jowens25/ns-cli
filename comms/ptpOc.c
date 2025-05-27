@@ -951,3 +951,545 @@ int readPtpOcDefaultDsNumberOfPorts(char *numPorts, size_t size)
     }
     return 0;
 }
+
+//********************************
+// port dataset
+//********************************
+int readPtpOcPortDsPeerDelayValue(char *delayValue, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+    char delayMechanism[size];
+    int64_t temp_delay = 0;
+    int64_t temp_signed_delay = 0;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        snprintf(delayValue, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(delayValue, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            readPtpOcDelayMechanismValue(delayMechanism, size);
+
+            if (strncmp("E2E", delayMechanism, size) == 0 || strncmp("E2E Unicast", delayMechanism, size) == 0)
+            {
+                snprintf(delayValue, size, "%s", "NA");
+            }
+            else if (0 == readRegister(temp_addr + Ucm_PtpOc_PortDs1Reg, &temp_data))
+            {
+                temp_delay |= temp_data;
+                temp_signed_delay = (long long)temp_delay;
+                temp_signed_delay = temp_signed_delay >> 16;
+                // ui->PtpOcPortDsPeerDelayValue->setText(QString::number(temp_signed_delay));
+                snprintf(delayValue, size, "%ld", temp_signed_delay);
+            }
+            else
+            {
+                snprintf(delayValue, size, "%s", "NA");
+            }
+
+            break;
+            // snprintf(numPorts, size, "%ld", temp_data);
+            // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+        }
+    }
+    return 0;
+}
+
+int readPtpOcPortDsState(char *state, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        snprintf(state, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(state, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            // state
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs3Reg, &temp_data))
+            {
+                return -3;
+            }
+
+            switch (temp_data)
+            {
+            case 0x0000001:
+                snprintf(state, size, "%s", "INITIALIZING");
+                break;
+            case 0x00000002:
+                snprintf(state, size, "%s", "FAULTY");
+                break;
+            case 0x00000003:
+                snprintf(state, size, "%s", "DISABLED");
+                break;
+            case 0x00000004:
+                snprintf(state, size, "%s", "LISTENING");
+                break;
+            case 0x00000005:
+                snprintf(state, size, "%s", "PREMASTER");
+                break;
+            case 0x00000006:
+                snprintf(state, size, "%s", "MASTER");
+                break;
+            case 0x00000007:
+                snprintf(state, size, "%s", "PASSIVE");
+                break;
+            case 0x00000008:
+                snprintf(state, size, "%s", "UNCALIBRATED");
+                break;
+            case 0x00000009:
+                snprintf(state, size, "%s", "SLAVE");
+                break;
+            default:
+                snprintf(state, size, "%s", "NA");
+                break;
+            }
+            break; // success get out...
+        }
+        // snprintf(numPorts, size, "%ld", temp_data);
+        // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+    }
+
+    return 0;
+}
+// Peer - Delay Request Log-seconds? Message Interval Value
+
+int readPtpOcPortDsPDelayReqLogMsgIntervalValue(char *interval, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        snprintf(interval, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(interval, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            // state
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs4Reg, &temp_data))
+            {
+                return -3;
+            }
+
+            // ui->PtpOcPortDsPDelayReqLogMsgIntervalValue->setText(QString::number((signed char)(temp_data & 0x000000FF)));
+
+            snprintf(interval, size, "%d", ((signed char)(temp_data & 0x000000FF)));
+
+            break; // success get out...
+        }
+        // snprintf(numPorts, size, "%ld", temp_data);
+        // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+    }
+
+    return 0;
+}
+
+int readPtpOcPortDsDelayReqLogMsgIntervalValue(char *interval, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        snprintf(interval, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(interval, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            // state
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs4Reg, &temp_data))
+            {
+                return -3;
+            }
+
+            // ui->PtpOcPortDsPDelayReqLogMsgIntervalValue->setText(QString::number((signed char)(temp_data & 0x000000FF)));
+
+            snprintf(interval, size, "%d", ((signed char)((temp_data >> 8) & 0x000000FF)));
+
+            break; // success get out...
+        }
+        // snprintf(numPorts, size, "%ld", temp_data);
+        // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+    }
+
+    return 0;
+}
+
+int readPtpOcPortDsDelayReceiptTimeoutValue(char *timeout, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        snprintf(timeout, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(timeout, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            // state
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs4Reg, &temp_data))
+            {
+                return -3;
+            }
+
+            // ui->PtpOcPortDsPDelayReqLogMsgIntervalValue->setText(QString::number((signed char)(temp_data & 0x000000FF)));
+
+            snprintf(timeout, size, "%ld", ((temp_data >> 16) & 0x000000FF));
+
+            break; // success get out...
+        }
+        // snprintf(numPorts, size, "%ld", temp_data);
+        // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+    }
+
+    return 0;
+}
+
+int readPtpOcPortDsAnnounceLogMsgIntervalValue(char *interval, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        snprintf(interval, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(interval, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            // state
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs5Reg, &temp_data))
+            {
+                return -3;
+            }
+
+            // ui->PtpOcPortDsPDelayReqLogMsgIntervalValue->setText(QString::number((signed char)(temp_data & 0x000000FF)));
+
+            snprintf(interval, size, "%d", ((signed char)(temp_data & 0x000000FF)));
+
+            break; // success get out...
+        }
+        // snprintf(numPorts, size, "%ld", temp_data);
+        // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+    }
+
+    return 0;
+}
+
+int readPtpOcPortDsAnnounceReceiptTimeoutValue(char *timeout, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        snprintf(timeout, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(timeout, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            // state
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs5Reg, &temp_data))
+            {
+                return -3;
+            }
+
+            // ui->PtpOcPortDsPDelayReqLogMsgIntervalValue->setText(QString::number((signed char)(temp_data & 0x000000FF)));
+
+            snprintf(timeout, size, "%ld", (((temp_data >> 8) & 0x000000FF)));
+
+            break; // success get out...
+        }
+        // snprintf(numPorts, size, "%ld", temp_data);
+        // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+    }
+
+    return 0;
+}
+
+int readPtpOcPortDsSyncLogMsgIntervalValue(char *interval, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        snprintf(interval, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(interval, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            // state
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs6Reg, &temp_data))
+            {
+                return -3;
+            }
+
+            // ui->PtpOcPortDsPDelayReqLogMsgIntervalValue->setText(QString::number((signed char)(temp_data & 0x000000FF)));
+
+            snprintf(interval, size, "%d", ((signed char)(temp_data & 0x000000FF)));
+
+            break; // success get out...
+        }
+        // snprintf(numPorts, size, "%ld", temp_data);
+        // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+    }
+
+    return 0;
+}
+
+int readPtpOcPortDsSyncReceiptTimeoutValue(char *timeout, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        snprintf(timeout, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(timeout, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            // state
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs6Reg, &temp_data))
+            {
+                return -3;
+            }
+
+            // ui->PtpOcPortDsPDelayReqLogMsgIntervalValue->setText(QString::number((signed char)(temp_data & 0x000000FF)));
+
+            snprintf(timeout, size, "%ld", (((temp_data >> 8) & 0x000000FF)));
+
+            break; // success get out...
+        }
+        // snprintf(numPorts, size, "%ld", temp_data);
+        // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+    }
+
+    return 0;
+}
+
+int readPtpOcPortDsAsymmetryValue(char *asymmetry, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        snprintf(asymmetry, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(asymmetry, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            // state
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs7Reg, &temp_data))
+            {
+                return -3;
+            }
+
+            // ui->PtpOcPortDsPDelayReqLogMsgIntervalValue->setText(QString::number((signed char)(temp_data & 0x000000FF)));
+
+            snprintf(asymmetry, size, "%d", ((signed int)temp_data));
+
+            break; // success get out...
+        }
+        // snprintf(numPorts, size, "%ld", temp_data);
+        // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+    }
+
+    return 0;
+}
+
+int readPtpOcPortDsMaxPeerDelayValue(char *delay, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        snprintf(delay, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(delay, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            // state
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs8Reg, &temp_data))
+            {
+                return -3;
+            }
+
+            // ui->PtpOcPortDsPDelayReqLogMsgIntervalValue->setText(QString::number((signed char)(temp_data & 0x000000FF)));
+
+            snprintf(delay, size, "%ld", temp_data);
+
+            break; // success get out...
+        }
+        // snprintf(numPorts, size, "%ld", temp_data);
+        // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+    }
+
+    return 0;
+}
+
+//********************************
+// current dataset
+//********************************

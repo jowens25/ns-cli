@@ -97,5 +97,12 @@ int readPtpOcDefaultDsClass(char *class, size_t size);
 int readPtpOcDefaultDsShortId(char *id, size_t size);
 int readPtpOcDefaultDsInaccuracy(char *inaccuracy, size_t size);
 int readPtpOcDefaultDsNumberOfPorts(char *numPorts, size_t size);
+int readPtpOcPortDsPeerDelayValue(char *delayValue, size_t size);
+int readPtpOcPortDsState(char *state, size_t size);
+int readPtpOcPortDsPDelayReqLogMsgIntervalValue(char *interval, size_t size);
+int readPtpOcPortDsDelayReqLogMsgIntervalValue(char *interval, size_t size);
+int readPtpOcPortDsDelayReceiptTimeoutValue(char *timeout, size_t size);
+int readPtpOcPortDsAsymmetryValue(char *asymmetry, size_t size);
+int readPtpOcPortDsMaxPeerDelayValue(char *delay, size_t size);
 
 #endif // PTP_OC_H
