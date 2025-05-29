@@ -111,6 +111,8 @@ type PtpOcApi struct {
 	PortDsDelayReceiptTimeoutValue         string
 	PortDsAsymmetryValue                   string
 	PortDsMaxPeerDelayValue                string
+	CurrentDsStepsRemovedValue             string
+	CurrentDsOffsetValue                   string
 }
 
 var PtpOc = PtpOcApi{
@@ -139,13 +141,15 @@ var PtpOc = PtpOcApi{
 	DefaultDsShortId:                       "default-ds-shortid",
 	DefaultDsInaccuracy:                    "default-ds-inaccuracy",
 	DefaultDsNumberOfPorts:                 "default-ds-numberofports",
-	PortDsPeerDelayValue:                   "port-ds-delay-value",
+	PortDsPeerDelayValue:                   "port-ds-peer-delay-value",
 	PortDsState:                            "port-ds-state",
 	PortDsPDelayReqLogMsgIntervalValue:     "port-ds-p-delay-req-log-msg-interval-value",
 	PortDsDelayReqLogMsgIntervalValue:      "port-ds-delay-req-log-msg-interval-value",
 	PortDsDelayReceiptTimeoutValue:         "port-ds-delay-receipt-timeout-value",
 	PortDsAsymmetryValue:                   "port-ds-asymmetry-value",
 	PortDsMaxPeerDelayValue:                "port-ds-max-peer-delay-value",
+	CurrentDsStepsRemovedValue:             "current-ds-steps-removed-value",
+	CurrentDsOffsetValue:                   "current-ds-offset-value",
 }
 
 var mutex sync.Mutex
@@ -410,6 +414,8 @@ func ReadPtpOc(property string) string {
 		C.readPtpOcDefaultDsInaccuracy(out, size)
 	case PtpOc.DefaultDsNumberOfPorts:
 		C.readPtpOcDefaultDsNumberOfPorts(out, size)
+		//
+		//
 	case PtpOc.PortDsPeerDelayValue:
 		C.readPtpOcPortDsPeerDelayValue(out, size)
 	case PtpOc.PortDsState:
@@ -424,6 +430,13 @@ func ReadPtpOc(property string) string {
 		C.readPtpOcPortDsAsymmetryValue(out, size)
 	case PtpOc.PortDsMaxPeerDelayValue:
 		C.readPtpOcPortDsMaxPeerDelayValue(out, size)
+
+		//
+	case PtpOc.CurrentDsStepsRemovedValue:
+		C.readPtpOcCurrentDsStepsRemovedValue(out, size)
+	case PtpOc.CurrentDsOffsetValue:
+		C.readPtpOcCurrentDsOffsetValue(out, size)
+
 	default:
 		fmt.Println("no such property")
 	}
@@ -486,7 +499,9 @@ func ListPtpOcProperties() {
 		PtpOc.PortDsDelayReqLogMsgIntervalValue,
 		PtpOc.PortDsDelayReceiptTimeoutValue,
 		PtpOc.PortDsAsymmetryValue,
-		PtpOc.PortDsMaxPeerDelayValue}
+		PtpOc.PortDsMaxPeerDelayValue,
+		PtpOc.CurrentDsStepsRemovedValue,
+		PtpOc.CurrentDsOffsetValue}
 
 	for _, p := range properties {
 		//fmt.Println(i)

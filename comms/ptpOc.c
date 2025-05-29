@@ -955,7 +955,7 @@ int readPtpOcDefaultDsNumberOfPorts(char *numPorts, size_t size)
 //********************************
 // port dataset
 //********************************
-int readPtpOcPortDsPeerDelayValue(char *delayValue, size_t size)
+int readPtpOcPortDsPeerDelayValue(char *delay, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
@@ -964,7 +964,7 @@ int readPtpOcPortDsPeerDelayValue(char *delayValue, size_t size)
     int64_t temp_signed_delay = 0;
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
     {
-        snprintf(delayValue, size, "%s", "err");
+        snprintf(delay, size, "%s", "err");
         return -1;
     }
 
@@ -972,7 +972,7 @@ int readPtpOcPortDsPeerDelayValue(char *delayValue, size_t size)
     {
         if (i == 9)
         {
-            snprintf(delayValue, size, "%s", "err: read did not complete");
+            snprintf(delay, size, "%s", "err: read did not complete");
             return -1;
         }
         if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
@@ -987,20 +987,28 @@ int readPtpOcPortDsPeerDelayValue(char *delayValue, size_t size)
 
             if (strncmp("E2E", delayMechanism, size) == 0 || strncmp("E2E Unicast", delayMechanism, size) == 0)
             {
-                snprintf(delayValue, size, "%s", "NA");
+                snprintf(delay, size, "%s", "NA");
+                return -3;
             }
-            else if (0 == readRegister(temp_addr + Ucm_PtpOc_PortDs1Reg, &temp_data))
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs1Reg, &temp_data))
             {
-                temp_delay |= temp_data;
-                temp_signed_delay = (long long)temp_delay;
-                temp_signed_delay = temp_signed_delay >> 16;
-                // ui->PtpOcPortDsPeerDelayValue->setText(QString::number(temp_signed_delay));
-                snprintf(delayValue, size, "%ld", temp_signed_delay);
+                return -4;
             }
-            else
+            // peer delay
+            temp_delay = temp_data;
+            temp_delay = temp_delay << 32;
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs2Reg, &temp_data))
             {
-                snprintf(delayValue, size, "%s", "NA");
+                return -5;
             }
+
+            temp_delay |= temp_data;
+            temp_signed_delay = (long long)temp_delay;
+            temp_signed_delay = temp_signed_delay >> 16;
+            // ui->PtpOcPortDsPeerDelayValue->setText(QString::number(temp_signed_delay));
+            snprintf(delay, size, "%ld", temp_signed_delay);
 
             break;
             // snprintf(numPorts, size, "%ld", temp_data);
@@ -1493,3 +1501,126 @@ int readPtpOcPortDsMaxPeerDelayValue(char *delay, size_t size)
 //********************************
 // current dataset
 //********************************
+
+int readPtpOcCurrentDsStepsRemovedValue(char *steps, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        snprintf(steps, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(steps, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            // state
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_CurrentDs1Reg, &temp_data))
+            {
+                return -3;
+            }
+
+            // ui->PtpOcPortDsPDelayReqLogMsgIntervalValue->setText(QString::number((signed char)(temp_data & 0x000000FF)));
+
+            snprintf(steps, size, "%ld", temp_data & 0xFFFF);
+
+            break; // success get out...
+        }
+        // snprintf(numPorts, size, "%ld", temp_data);
+        // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+    }
+
+    return 0;
+}
+
+int readPtpOcCurrentDsOffsetValue(char *offset, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+    int64_t temp_offset, temp_signed_offset = 0;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        snprintf(offset, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(offset, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            // offset
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_CurrentDs2Reg, &temp_data))
+            {
+                return -3;
+            }
+            temp_offset = temp_data;
+            temp_offset = temp_offset << 32;
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_CurrentDs3Reg, &temp_data))
+            {
+                return -4;
+            }
+
+            temp_offset |= temp_data;
+
+            if ((temp_offset & 0x8000000000000000) != 0)
+            {
+                temp_offset = (0xFFFF000000000000 | (temp_offset >> 16));
+                temp_signed_offset = (long long)temp_offset;
+            }
+            else
+            {
+                temp_offset = (0x0000FFFFFFFFFFFF & (temp_offset >> 16));
+                temp_signed_offset = (long long)temp_offset;
+            }
+
+            if (temp_signed_offset == -4294967296) // negativ 0
+            {
+                temp_signed_offset = 0;
+            }
+
+            // limit to one second in display
+            if (temp_signed_offset >= 100000)
+            {
+                temp_signed_offset = 100000;
+            }
+            else if (temp_signed_offset <= -100000)
+            {
+                temp_signed_offset = -100000;
+            }
+
+            snprintf(offset, size, "%ld", temp_signed_offset);
+
+            break; // success get out...
+        }
+        // snprintf(numPorts, size, "%ld", temp_data);
+        // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+    }
+
+    return 0;
+}
