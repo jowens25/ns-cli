@@ -1624,3 +1624,135 @@ int readPtpOcCurrentDsOffsetValue(char *offset, size_t size)
 
     return 0;
 }
+
+int readPtpOcCurrentDsDelayValue(char *delay, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+    char delayMechanism[size];
+    int64_t temp_delay = 0;
+    int64_t temp_signed_delay = 0;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        snprintf(delay, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(delay, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            readPtpOcDelayMechanismValue(delayMechanism, size);
+
+            if (strncmp("P2P", delayMechanism, size) == 0)
+            {
+                snprintf(delay, size, "%s", "NA");
+                return 0;
+            }
+
+            else if (0 != readRegister(temp_addr + Ucm_PtpOc_CurrentDs4Reg, &temp_data))
+            {
+                return -4;
+            }
+            // peer delay
+            temp_delay = temp_data;
+            temp_delay = temp_delay << 32;
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_CurrentDs5Reg, &temp_data))
+            {
+                return -5;
+            }
+
+            temp_delay |= temp_data;
+            temp_signed_delay = (long long)temp_delay;
+            temp_signed_delay = temp_signed_delay >> 16;
+            // ui->PtpOcPortDsPeerDelayValue->setText(QString::number(temp_signed_delay));
+            snprintf(delay, size, "%ld", temp_signed_delay);
+
+            break;
+            // snprintf(numPorts, size, "%ld", temp_data);
+            // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+        }
+    }
+    return 0;
+}
+
+int readPtpOcParentDsParentClockIdValue(char *clockId, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+    unsigned char temp_clock_id[8];
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+    {
+        snprintf(clockId, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(clockId, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDs1Reg, &temp_data))
+            {
+                snprintf(clockId, size, "%s", "NA");
+
+                return -3;
+            }
+
+            temp_clock_id[0] = ((temp_data >> 0) & 0x000000FF);
+            temp_clock_id[1] = ((temp_data >> 8) & 0x000000FF);
+            temp_clock_id[2] = ((temp_data >> 16) & 0x000000FF);
+            temp_clock_id[3] = ((temp_data >> 24) & 0x000000FF);
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDs2Reg, &temp_data))
+            {
+                snprintf(clockId, size, "%s", "NA");
+
+                return -2;
+            }
+
+            temp_clock_id[4] = ((temp_data >> 0) & 0x000000FF);
+            temp_clock_id[5] = ((temp_data >> 8) & 0x000000FF);
+            temp_clock_id[6] = ((temp_data >> 0) & 0x000000FF);
+            temp_clock_id[7] = ((temp_data >> 8) & 0x000000FF);
+
+            snprintf(clockId, size, "%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",
+                     temp_clock_id[0],
+                     temp_clock_id[1],
+                     temp_clock_id[2],
+                     temp_clock_id[3],
+                     temp_clock_id[4],
+                     temp_clock_id[5],
+                     temp_clock_id[6],
+                     temp_clock_id[7]);
+
+            break;
+
+            // ui->NtpServerMacValue->setText(temp_string);
+        }
+    }
+    return 0;
+}

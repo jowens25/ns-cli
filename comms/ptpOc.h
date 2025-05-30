@@ -106,5 +106,6 @@ int readPtpOcPortDsAsymmetryValue(char *asymmetry, size_t size);
 int readPtpOcPortDsMaxPeerDelayValue(char *delay, size_t size);
 int readPtpOcCurrentDsStepsRemovedValue(char *steps, size_t size);
 int readPtpOcCurrentDsOffsetValue(char *offset, size_t size);
+int readPtpOcCurrentDsDelayValue(char *delay, size_t size);
 
 #endif // PTP_OC_H

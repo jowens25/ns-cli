@@ -113,6 +113,7 @@ type PtpOcApi struct {
 	PortDsMaxPeerDelayValue                string
 	CurrentDsStepsRemovedValue             string
 	CurrentDsOffsetValue                   string
+	CurrentDsDelayValue                    string
 }
 
 var PtpOc = PtpOcApi{
@@ -150,6 +151,7 @@ var PtpOc = PtpOcApi{
 	PortDsMaxPeerDelayValue:                "port-ds-max-peer-delay-value",
 	CurrentDsStepsRemovedValue:             "current-ds-steps-removed-value",
 	CurrentDsOffsetValue:                   "current-ds-offset-value",
+	CurrentDsDelayValue:                    "current-ds-delay-value",
 }
 
 var mutex sync.Mutex
@@ -437,6 +439,9 @@ func ReadPtpOc(property string) string {
 	case PtpOc.CurrentDsOffsetValue:
 		C.readPtpOcCurrentDsOffsetValue(out, size)
 
+	case PtpOc.CurrentDsDelayValue:
+		C.readPtpOcCurrentDsDelayValue(out, size)
+
 	default:
 		fmt.Println("no such property")
 	}
@@ -501,7 +506,8 @@ func ListPtpOcProperties() {
 		PtpOc.PortDsAsymmetryValue,
 		PtpOc.PortDsMaxPeerDelayValue,
 		PtpOc.CurrentDsStepsRemovedValue,
-		PtpOc.CurrentDsOffsetValue}
+		PtpOc.CurrentDsOffsetValue,
+		PtpOc.CurrentDsDelayValue}
 
 	for _, p := range properties {
 		//fmt.Println(i)
