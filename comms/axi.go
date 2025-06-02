@@ -88,8 +88,8 @@ type PtpOcApi struct {
 	DefaultDsTwoStepStatus                 string
 	DefaultDsSignalingStatus               string
 	Layer                                  string
-	SlaveOnlyStatus                        string
-	MasterOnlyStatus                       string
+	DefaultDsSlaveOnlyStatus               string
+	DefaultDsMasterOnlyStatus              string
 	DefaultDsDisableOffsetCorrectionStatus string
 	DefaultDsListedUnicastSlavesOnlyStatus string
 	DelayMechanismValue                    string
@@ -125,6 +125,17 @@ type PtpOcApi struct {
 	ParentDsGmInaccuracyValue              string
 	ParentDsNwInaccuracyValue              string
 	TimePropertiesDsTimeSourceValue        string
+	TimePropertiesDsPtpTimescaleStatus     string
+	TimePropertiesDsFreqTraceableStatus    string
+	TimePropertiesDsTimeTraceableStatus    string
+	TimePropertiesDsLeap61Status           string
+	TimePropertiesDsLeap59Status           string
+	TimePropertiesDsUtcOffsetValStatus     string
+	TimePropertiesDsUtcOffsetValue         string
+	TimePropertiesDsCurrentOffsetValue     string
+	TimePropertiesDsJumpSecondsValue       string
+	TimePropertiesDsNextJumpValue          string
+	TimePropertiesDsDisplayNameValue       string
 }
 
 var PtpOc = PtpOcApi{
@@ -137,8 +148,8 @@ var PtpOc = PtpOcApi{
 	DefaultDsTwoStepStatus:                 "default-ds-two-step-status",
 	DefaultDsSignalingStatus:               "default-ds-signaling-status",
 	Layer:                                  "layer",
-	SlaveOnlyStatus:                        "slave-only-status",
-	MasterOnlyStatus:                       "master-only-status",
+	DefaultDsSlaveOnlyStatus:               "default-ds-slave-only-status",
+	DefaultDsMasterOnlyStatus:              "default-ds-master-only-status",
 	DefaultDsDisableOffsetCorrectionStatus: "default-ds-disable-offset-correction-status",
 	DefaultDsListedUnicastSlavesOnlyStatus: "default-ds-listed-unicast-slaves-only-status",
 	DelayMechanismValue:                    "delay-mechanism-value",
@@ -174,6 +185,17 @@ var PtpOc = PtpOcApi{
 	ParentDsGmInaccuracyValue:              "parent-ds-gm-inaccuracy-value",
 	ParentDsNwInaccuracyValue:              "parent-ds-nw-inaccuracy-value",
 	TimePropertiesDsTimeSourceValue:        "time-properties-ds-time-source-value",
+	TimePropertiesDsPtpTimescaleStatus:     "time-properties-ds-ptp-time-scale-status",
+	TimePropertiesDsFreqTraceableStatus:    "time-properties-ds-freq-traceable-status",
+	TimePropertiesDsTimeTraceableStatus:    "time-properties-ds-time-traceable-status",
+	TimePropertiesDsLeap61Status:           "time-properties-ds-leap61-status",
+	TimePropertiesDsLeap59Status:           "time-properties-ds-leap59-status",
+	TimePropertiesDsUtcOffsetValStatus:     "time-properties-ds-ut-coffset-val-status",
+	TimePropertiesDsUtcOffsetValue:         "time-properties-ds-utc-offset-value",
+	TimePropertiesDsCurrentOffsetValue:     "time-properties-ds-current-offset-value",
+	TimePropertiesDsJumpSecondsValue:       "time-properties-ds-jump-seconds-value",
+	TimePropertiesDsNextJumpValue:          "time-properties-ds-next-jump-value",
+	TimePropertiesDsDisplayNameValue:       "time-properties-ds-display-name-value",
 }
 
 var mutex sync.Mutex
@@ -406,10 +428,10 @@ func ReadPtpOc(property string) string {
 		C.readPtpOcDefaultDsSignalingStatus(out, size)
 	case PtpOc.Layer:
 		C.readPtpOcLayer(out, size)
-	case PtpOc.SlaveOnlyStatus:
-		C.readPtpOcSlaveOnlyStatus(out, size)
-	case PtpOc.MasterOnlyStatus:
-		C.readPtpOcMasterOnlyStatus(out, size)
+	case PtpOc.DefaultDsSlaveOnlyStatus:
+		C.readPtpOcDefaultDsSlaveOnlyStatus(out, size)
+	case PtpOc.DefaultDsMasterOnlyStatus:
+		C.readPtpOcDefaultDsMasterOnlyStatus(out, size)
 	case PtpOc.DefaultDsDisableOffsetCorrectionStatus:
 		C.readPtpOcDefaultDsDisableOffsetCorrectionStatus(out, size)
 	case PtpOc.DefaultDsListedUnicastSlavesOnlyStatus:
@@ -492,6 +514,29 @@ func ReadPtpOc(property string) string {
 	case PtpOc.TimePropertiesDsTimeSourceValue:
 		C.readPtpOcTimePropertiesDsTimeSourceValue(out, size)
 
+	case PtpOc.TimePropertiesDsPtpTimescaleStatus:
+		C.readPtpOcTimePropertiesDsPtpTimescaleStatus(out, size)
+	case PtpOc.TimePropertiesDsFreqTraceableStatus:
+		C.readPtpOcTimePropertiesDsFreqTraceableStatus(out, size)
+	case PtpOc.TimePropertiesDsTimeTraceableStatus:
+		C.readPtpOcTimePropertiesDsTimeTraceableStatus(out, size)
+	case PtpOc.TimePropertiesDsLeap61Status:
+		C.readPtpOcTimePropertiesDsLeap61Status(out, size)
+	case PtpOc.TimePropertiesDsLeap59Status:
+		C.readPtpOcTimePropertiesDsLeap59Status(out, size)
+	case PtpOc.TimePropertiesDsUtcOffsetValStatus:
+		C.readPtpOcTimePropertiesDsUtcOffsetValStatus(out, size)
+	case PtpOc.TimePropertiesDsUtcOffsetValue:
+		C.readPtpOcTimePropertiesDsUtcOffsetValue(out, size)
+	case PtpOc.TimePropertiesDsCurrentOffsetValue:
+		C.readPtpOcTimePropertiesDsCurrentOffsetValue(out, size)
+	case PtpOc.TimePropertiesDsJumpSecondsValue:
+		C.readPtpOcTimePropertiesDsJumpSecondsValue(out, size)
+	case PtpOc.TimePropertiesDsNextJumpValue:
+		C.readPtpOcTimePropertiesDsNextJumpValue(out, size)
+	case PtpOc.TimePropertiesDsDisplayNameValue:
+		C.readPtpOcTimePropertiesDsDisplayNameValue(out, size)
+
 	default:
 		fmt.Println("no such property")
 	}
@@ -532,8 +577,8 @@ func ListPtpOcProperties() {
 		PtpOc.DefaultDsTwoStepStatus,
 		PtpOc.DefaultDsSignalingStatus,
 		PtpOc.Layer,
-		PtpOc.SlaveOnlyStatus,
-		PtpOc.MasterOnlyStatus,
+		PtpOc.DefaultDsSlaveOnlyStatus,
+		PtpOc.DefaultDsMasterOnlyStatus,
 		PtpOc.DefaultDsDisableOffsetCorrectionStatus,
 		PtpOc.DefaultDsListedUnicastSlavesOnlyStatus,
 		PtpOc.DelayMechanismValue,
@@ -568,7 +613,18 @@ func ListPtpOcProperties() {
 		PtpOc.ParentDsGmShortIdValue,
 		PtpOc.ParentDsGmInaccuracyValue,
 		PtpOc.ParentDsNwInaccuracyValue,
-		PtpOc.TimePropertiesDsTimeSourceValue}
+		PtpOc.TimePropertiesDsTimeSourceValue,
+		PtpOc.TimePropertiesDsPtpTimescaleStatus,
+		PtpOc.TimePropertiesDsFreqTraceableStatus,
+		PtpOc.TimePropertiesDsTimeTraceableStatus,
+		PtpOc.TimePropertiesDsLeap61Status,
+		PtpOc.TimePropertiesDsLeap59Status,
+		PtpOc.TimePropertiesDsUtcOffsetValStatus,
+		PtpOc.TimePropertiesDsUtcOffsetValue,
+		PtpOc.TimePropertiesDsCurrentOffsetValue,
+		PtpOc.TimePropertiesDsJumpSecondsValue,
+		PtpOc.TimePropertiesDsNextJumpValue,
+		PtpOc.TimePropertiesDsDisplayNameValue}
 
 	for _, p := range properties {
 		//fmt.Println(i)

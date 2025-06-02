@@ -128,4 +128,16 @@ int readPtpOcParentDsGmInaccuracyValue(char *inaccuracy, size_t size);
 int readPtpOcParentDsNwInaccuracyValue(char *inaccuracy, size_t size);
 // time properties
 int readPtpOcTimePropertiesDsTimeSourceValue(char *source, size_t size);
+int readPtpOcTimePropertiesDsPtpTimescaleStatus(char *status, size_t size);
+int readPtpOcTimePropertiesDsFreqTraceableStatus(char *status, size_t size);
+int readPtpOcTimePropertiesDsTimeTraceableStatus(char *status, size_t size);
+int readPtpOcTimePropertiesDsLeap61Status(char *status, size_t size);
+int readPtpOcTimePropertiesDsLeap59Status(char *status, size_t size);
+int readPtpOcTimePropertiesDsUtcOffsetValStatus(char *status, size_t size);
+int readPtpOcTimePropertiesDsUtcOffsetValue(char *offset, size_t size);
+int readPtpOcTimePropertiesDsCurrentOffsetValue(char *offset, size_t size);
+int readPtpOcTimePropertiesDsJumpSecondsValue(char *seconds, size_t size);
+int readPtpOcTimePropertiesDsNextJumpValue(char *seconds, size_t size);
+int readPtpOcTimePropertiesDsDisplayNameValue(char *seconds, size_t size);
+
 #endif // PTP_OC_H
