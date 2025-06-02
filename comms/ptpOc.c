@@ -14,33 +14,43 @@ int hasPtpOc(char *in, size_t size)
 
     return 0;
 }
-
-int readPtpOcStatus(char *status, size_t size)
+// Version
+int readPtpOcVersion(char *value, size_t size)
 {
+
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
 
-    // enabled
-    if (0 != readRegister(temp_addr + Ucm_PtpOc_ControlReg, &temp_data))
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_VersionReg, &temp_data))
     {
-        snprintf(status, size, "%s", "err");
+        snprintf(value, size, "%s", "NA");
 
         return -1;
     }
-
-    if ((temp_data & 0x00000001) == 0)
-    {
-        snprintf(status, size, "%s", "disabled");
-    }
-
-    else
-    {
-        snprintf(status, size, "%s", "enabled");
-    }
+    snprintf(value, size, "0x%lx", temp_data);
 
     return 0;
 }
-
-// vlan status
+// InstanceNumber
+int readPtpOcInstanceNumber(char *instanceNumber, size_t size)
+{
+    snprintf(instanceNumber, size, "%ld", cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].core_instance_nr);
+    return 0;
+}
+// VlanAddress
+int readPtpOcVlanAddress(char *vlanAddr, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigVlanReg, &temp_data))
+    {
+        snprintf(vlanAddr, size, "%s", "NA");
+        return -1;
+    }
+    temp_data &= 0x0000FFFF;
+    snprintf(vlanAddr, size, "0x%04lx", temp_data);
+    return 0;
+}
+// VlanStatus
 int readPtpOcVlanStatus(char *vlanStatus, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
@@ -61,22 +71,7 @@ int readPtpOcVlanStatus(char *vlanStatus, size_t size)
     temp_data &= 0x0000FFFF;
     return 0;
 }
-
-// vlan addr
-int readPtpOcVlanAddress(char *vlanAddr, size_t size)
-{
-    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
-    temp_data = 0x00000000;
-    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigVlanReg, &temp_data))
-    {
-        snprintf(vlanAddr, size, "%s", "NA");
-        return -1;
-    }
-    temp_data &= 0x0000FFFF;
-    snprintf(vlanAddr, size, "0x%04lx", temp_data);
-    return 0;
-}
-
+// Profile
 int readPtpOcProfile(char *profile, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
@@ -118,68 +113,7 @@ int readPtpOcProfile(char *profile, size_t size)
 
     return 0;
 }
-
-int readPtpOcDefaultDsTwoStepStatus(char *status, size_t size)
-{
-    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
-    temp_data = 0x00000000;
-
-    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
-    {
-        snprintf(status, size, "%s", "NA");
-        return -1;
-    }
-    switch ((temp_data >> 8) & 0x00000001)
-    {
-    case 0:
-        // ui->PtpOcDefaultDsTwoStepCheckBox->setChecked(false);
-        snprintf(status, size, "%s", "disabled");
-        break;
-    case 1:
-        // ui->PtpOcDefaultDsTwoStepCheckBox->setChecked(true);
-        snprintf(status, size, "%s", "enabled");
-
-        break;
-    default:
-        // ui->PtpOcDefaultDsTwoStepCheckBox->setChecked(false);
-        snprintf(status, size, "%s", "disabled");
-
-        break;
-    }
-
-    return 0;
-}
-
-int readPtpOcDefaultDsSignalingStatus(char *status, size_t size)
-{
-    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
-    temp_data = 0x00000000;
-
-    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
-    {
-        snprintf(status, size, "%s", "NA");
-        return -1;
-    }
-    switch ((temp_data >> 9) & 0x00000001)
-    {
-    case 0:
-        // ui->PtpOcDefaultDsTwoStepCheckBox->setChecked(false);
-        snprintf(status, size, "%s", "disabled");
-        break;
-    case 1:
-        // ui->PtpOcDefaultDsTwoStepCheckBox->setChecked(true);
-        snprintf(status, size, "%s", "enabled");
-
-        break;
-    default:
-        // ui->PtpOcDefaultDsTwoStepCheckBox->setChecked(false);
-        snprintf(status, size, "%s", "disabled");
-
-        break;
-    }
-    return 0;
-}
-
+// Layer
 int readPtpOcLayer(char *layer, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
@@ -215,148 +149,7 @@ int readPtpOcLayer(char *layer, size_t size)
     }
     return 0;
 }
-
-int readPtpOcSlaveOnlyStatus(char *status, size_t size)
-{
-    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
-    temp_data = 0x00000000;
-
-    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
-    {
-        snprintf(status, size, "%s", "NA");
-        return -1;
-    }
-    switch ((temp_data >> 20) & 0x00000003)
-    {
-    case 0:
-        //    ui->PtpOcDefaultDsSlaveOnlyCheckBox->setChecked(false);
-        snprintf(status, size, "%s", "disabled");
-
-        // ui->PtpOcDefaultDsMasterOnlyCheckBox->setChecked(false);
-        break;
-    case 1:
-        //    ui->PtpOcDefaultDsSlaveOnlyCheckBox->setChecked(true);
-        snprintf(status, size, "%s", "enabled");
-
-        // ui->PtpOcDefaultDsMasterOnlyCheckBox->setChecked(false);
-        break;
-    case 2:
-        //    ui->PtpOcDefaultDsSlaveOnlyCheckBox->setChecked(false);
-        snprintf(status, size, "%s", "disabled");
-
-        // ui->PtpOcDefaultDsMasterOnlyCheckBox->setChecked(true);
-        break;
-    default:
-        //    ui->PtpOcDefaultDsSlaveOnlyCheckBox->setChecked(false);
-        snprintf(status, size, "%s", "disabled");
-
-        // ui->PtpOcDefaultDsMasterOnlyCheckBox->setChecked(false);
-        break;
-    }
-    return 0;
-}
-
-int readPtpOcMasterOnlyStatus(char *status, size_t size)
-{
-    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
-    temp_data = 0x00000000;
-
-    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
-    {
-        snprintf(status, size, "%s", "NA");
-        return -1;
-    }
-    switch ((temp_data >> 20) & 0x00000003)
-    {
-    case 0:
-        //    ui->PtpOcDefaultDsSlaveOnlyCheckBox->setChecked(false);
-        snprintf(status, size, "%s", "disabled");
-
-        // ui->PtpOcDefaultDsMasterOnlyCheckBox->setChecked(false);
-        break;
-    case 1:
-        //    ui->PtpOcDefaultDsSlaveOnlyCheckBox->setChecked(true);
-        snprintf(status, size, "%s", "disabled");
-
-        // ui->PtpOcDefaultDsMasterOnlyCheckBox->setChecked(false);
-        break;
-    case 2:
-        //    ui->PtpOcDefaultDsSlaveOnlyCheckBox->setChecked(false);
-        snprintf(status, size, "%s", "enabled");
-
-        // ui->PtpOcDefaultDsMasterOnlyCheckBox->setChecked(true);
-        break;
-    default:
-        //    ui->PtpOcDefaultDsSlaveOnlyCheckBox->setChecked(false);
-        snprintf(status, size, "%s", "disabled");
-
-        // ui->PtpOcDefaultDsMasterOnlyCheckBox->setChecked(false);
-        break;
-    }
-    return 0;
-}
-
-int readPtpOcDefaultDsDisableOffsetCorrectionStatus(char *status, size_t size)
-{
-    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
-    temp_data = 0x00000000;
-
-    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
-    {
-        snprintf(status, size, "%s", "NA");
-        return -1;
-    }
-    switch ((temp_data >> 22) & 0x00000001)
-    {
-    case 0:
-        // ui->PtpOcDefaultDsDisableOffsetCorCheckBox->setChecked(false);
-        snprintf(status, size, "%s", "disabled");
-        break;
-    case 1:
-        // ui->PtpOcDefaultDsDisableOffsetCorCheckBox->setChecked(true);
-        snprintf(status, size, "%s", "enabled"); // offset correction disabled... I think
-
-        break;
-    default:
-        // ui->PtpOcDefaultDsDisableOffsetCorCheckBox->setChecked(false);
-        snprintf(status, size, "%s", "disabled");
-
-        break;
-    }
-    return 0;
-}
-
-// default dataset use listed unicast slaves only (y/n)   f me, this is a long function name
-int readPtpOcDefaultDsListedUnicastSlavesOnlyStatus(char *status, size_t size)
-{
-    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
-    temp_data = 0x00000000;
-
-    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
-    {
-        snprintf(status, size, "%s", "NA");
-        return -1;
-    }
-    switch ((temp_data >> 23) & 0x00000001)
-    {
-    case 0:
-        // ui->PtpOcDefaultDsListedUnicastSlavesOnlyCheckBox->setChecked(false);
-        snprintf(status, size, "%s", "disabled");
-        break;
-    case 1:
-        // ui->PtpOcDefaultDsListedUnicastSlavesOnlyCheckBox->setChecked(true);
-        snprintf(status, size, "%s", "enabled"); // offset correction disabled... I think
-
-        break;
-    default:
-        // ui->PtpOcDefaultDsListedUnicastSlavesOnlyCheckBox->setChecked(false);
-        snprintf(status, size, "%s", "disabled");
-
-        break;
-    }
-    return 0;
-}
-
+// DelayMechanismValue
 int readPtpOcDelayMechanismValue(char *value, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
@@ -388,7 +181,7 @@ int readPtpOcDelayMechanismValue(char *value, size_t size)
     }
     return 0;
 }
-
+// IpAddress
 int readPtpOcIpAddress(char *ipAddr, size_t size)
 {
 
@@ -504,6 +297,35 @@ int readPtpOcIpAddress(char *ipAddr, size_t size)
 
     return 0;
 }
+// Status
+int readPtpOcStatus(char *status, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+
+    // enabled
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_ControlReg, &temp_data))
+    {
+        snprintf(status, size, "%s", "err");
+
+        return -1;
+    }
+
+    if ((temp_data & 0x00000001) == 0)
+    {
+        snprintf(status, size, "%s", "disabled");
+    }
+
+    else
+    {
+        snprintf(status, size, "%s", "enabled");
+    }
+
+    return 0;
+}
+
+//********************************
+// default dataset
+//********************************
 
 int readPtpOcDefaultDsClockId(char *clockId, size_t size)
 {
@@ -553,8 +375,8 @@ int readPtpOcDefaultDsClockId(char *clockId, size_t size)
 
             temp_clock_id[4] = ((temp_data >> 0) & 0x000000FF);
             temp_clock_id[5] = ((temp_data >> 8) & 0x000000FF);
-            temp_clock_id[6] = ((temp_data >> 0) & 0x000000FF);
-            temp_clock_id[7] = ((temp_data >> 8) & 0x000000FF);
+            temp_clock_id[6] = ((temp_data >> 16) & 0x000000FF);
+            temp_clock_id[7] = ((temp_data >> 24) & 0x000000FF);
 
             snprintf(clockId, size, "%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",
                      temp_clock_id[0],
@@ -657,7 +479,6 @@ int readPtpOcDefaultDsPriority1(char *priority1, size_t size)
     }
     return 0;
 }
-
 // priority 2 from >> 16
 int readPtpOcDefaultDsPriority2(char *priority2, size_t size)
 {
@@ -694,48 +515,6 @@ int readPtpOcDefaultDsPriority2(char *priority2, size_t size)
             }
 
             snprintf(priority2, size, "0x%02lx", ((temp_data >> 16) & 0x000000FF));
-            break;
-            // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
-        }
-    }
-    return 0;
-}
-
-int readPtpOcDefaultDsVariance(char *variance, size_t size)
-{
-    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
-    temp_data = 0x40000000;
-    unsigned char temp_clock_id[8];
-
-    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
-    {
-        snprintf(variance, size, "%s", "err");
-        return -1;
-    }
-
-    for (int i = 0; i < 10; i++)
-    {
-        if (i == 9)
-        {
-            snprintf(variance, size, "%s", "err: read did not complete");
-            return -1;
-        }
-        if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
-        {
-            return -2;
-        }
-
-        if ((temp_data & 0x80000000) != 0)
-        {
-
-            if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDs4Reg, &temp_data))
-            {
-                snprintf(variance, size, "%s", "NA");
-
-                return -3;
-            }
-
-            snprintf(variance, size, "0x%04lx", ((temp_data >> 0) & 0x0000FFFF));
             break;
             // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
         }
@@ -828,6 +607,48 @@ int readPtpOcDefaultDsClass(char *class, size_t size)
     return 0;
 }
 
+int readPtpOcDefaultDsVariance(char *variance, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+    unsigned char temp_clock_id[8];
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
+    {
+        snprintf(variance, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(variance, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDs4Reg, &temp_data))
+            {
+                snprintf(variance, size, "%s", "NA");
+
+                return -3;
+            }
+
+            snprintf(variance, size, "0x%04lx", ((temp_data >> 0) & 0x0000FFFF));
+            break;
+            // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+        }
+    }
+    return 0;
+}
+
 int readPtpOcDefaultDsShortId(char *id, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
@@ -869,6 +690,7 @@ int readPtpOcDefaultDsShortId(char *id, size_t size)
     }
     return 0;
 }
+
 int readPtpOcDefaultDsInaccuracy(char *inaccuracy, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
@@ -910,6 +732,7 @@ int readPtpOcDefaultDsInaccuracy(char *inaccuracy, size_t size)
     }
     return 0;
 }
+
 int readPtpOcDefaultDsNumberOfPorts(char *numPorts, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
@@ -948,6 +771,207 @@ int readPtpOcDefaultDsNumberOfPorts(char *numPorts, size_t size)
             break;
             // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
         }
+    }
+    return 0;
+}
+
+int readPtpOcDefaultDsTwoStepStatus(char *status, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        snprintf(status, size, "%s", "NA");
+        return -1;
+    }
+    switch ((temp_data >> 8) & 0x00000001)
+    {
+    case 0:
+        // ui->PtpOcDefaultDsTwoStepCheckBox->setChecked(false);
+        snprintf(status, size, "%s", "disabled");
+        break;
+    case 1:
+        // ui->PtpOcDefaultDsTwoStepCheckBox->setChecked(true);
+        snprintf(status, size, "%s", "enabled");
+
+        break;
+    default:
+        // ui->PtpOcDefaultDsTwoStepCheckBox->setChecked(false);
+        snprintf(status, size, "%s", "disabled");
+
+        break;
+    }
+
+    return 0;
+}
+
+int readPtpOcDefaultDsSignalingStatus(char *status, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        snprintf(status, size, "%s", "NA");
+        return -1;
+    }
+    switch ((temp_data >> 9) & 0x00000001)
+    {
+    case 0:
+        // ui->PtpOcDefaultDsTwoStepCheckBox->setChecked(false);
+        snprintf(status, size, "%s", "disabled");
+        break;
+    case 1:
+        // ui->PtpOcDefaultDsTwoStepCheckBox->setChecked(true);
+        snprintf(status, size, "%s", "enabled");
+
+        break;
+    default:
+        // ui->PtpOcDefaultDsTwoStepCheckBox->setChecked(false);
+        snprintf(status, size, "%s", "disabled");
+
+        break;
+    }
+    return 0;
+}
+
+int readPtpOcDefaultDsMasterOnlyStatus(char *status, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        snprintf(status, size, "%s", "NA");
+        return -1;
+    }
+    switch ((temp_data >> 20) & 0x00000003)
+    {
+    case 0:
+        //    ui->PtpOcDefaultDsSlaveOnlyCheckBox->setChecked(false);
+        snprintf(status, size, "%s", "disabled");
+
+        // ui->PtpOcDefaultDsMasterOnlyCheckBox->setChecked(false);
+        break;
+    case 1:
+        //    ui->PtpOcDefaultDsSlaveOnlyCheckBox->setChecked(true);
+        snprintf(status, size, "%s", "disabled");
+
+        // ui->PtpOcDefaultDsMasterOnlyCheckBox->setChecked(false);
+        break;
+    case 2:
+        //    ui->PtpOcDefaultDsSlaveOnlyCheckBox->setChecked(false);
+        snprintf(status, size, "%s", "enabled");
+
+        // ui->PtpOcDefaultDsMasterOnlyCheckBox->setChecked(true);
+        break;
+    default:
+        //    ui->PtpOcDefaultDsSlaveOnlyCheckBox->setChecked(false);
+        snprintf(status, size, "%s", "disabled");
+
+        // ui->PtpOcDefaultDsMasterOnlyCheckBox->setChecked(false);
+        break;
+    }
+    return 0;
+}
+
+int readPtpOcDefaultDsSlaveOnlyStatus(char *status, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        snprintf(status, size, "%s", "NA");
+        return -1;
+    }
+    switch ((temp_data >> 20) & 0x00000003)
+    {
+    case 0:
+        //    ui->PtpOcDefaultDsSlaveOnlyCheckBox->setChecked(false);
+        snprintf(status, size, "%s", "disabled");
+
+        // ui->PtpOcDefaultDsMasterOnlyCheckBox->setChecked(false);
+        break;
+    case 1:
+        //    ui->PtpOcDefaultDsSlaveOnlyCheckBox->setChecked(true);
+        snprintf(status, size, "%s", "enabled");
+
+        // ui->PtpOcDefaultDsMasterOnlyCheckBox->setChecked(false);
+        break;
+    case 2:
+        //    ui->PtpOcDefaultDsSlaveOnlyCheckBox->setChecked(false);
+        snprintf(status, size, "%s", "disabled");
+
+        // ui->PtpOcDefaultDsMasterOnlyCheckBox->setChecked(true);
+        break;
+    default:
+        //    ui->PtpOcDefaultDsSlaveOnlyCheckBox->setChecked(false);
+        snprintf(status, size, "%s", "disabled");
+
+        // ui->PtpOcDefaultDsMasterOnlyCheckBox->setChecked(false);
+        break;
+    }
+    return 0;
+}
+// use listed unicast slaves only (y/n)   f me, this is a long function name
+int readPtpOcDefaultDsListedUnicastSlavesOnlyStatus(char *status, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        snprintf(status, size, "%s", "NA");
+        return -1;
+    }
+    switch ((temp_data >> 23) & 0x00000001)
+    {
+    case 0:
+        // ui->PtpOcDefaultDsListedUnicastSlavesOnlyCheckBox->setChecked(false);
+        snprintf(status, size, "%s", "disabled");
+        break;
+    case 1:
+        // ui->PtpOcDefaultDsListedUnicastSlavesOnlyCheckBox->setChecked(true);
+        snprintf(status, size, "%s", "enabled"); // offset correction disabled... I think
+
+        break;
+    default:
+        // ui->PtpOcDefaultDsListedUnicastSlavesOnlyCheckBox->setChecked(false);
+        snprintf(status, size, "%s", "disabled");
+
+        break;
+    }
+    return 0;
+}
+
+int readPtpOcDefaultDsDisableOffsetCorrectionStatus(char *status, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        snprintf(status, size, "%s", "NA");
+        return -1;
+    }
+    switch ((temp_data >> 22) & 0x00000001)
+    {
+    case 0:
+        // ui->PtpOcDefaultDsDisableOffsetCorCheckBox->setChecked(false);
+        snprintf(status, size, "%s", "disabled");
+        break;
+    case 1:
+        // ui->PtpOcDefaultDsDisableOffsetCorCheckBox->setChecked(true);
+        snprintf(status, size, "%s", "enabled"); // offset correction disabled... I think
+
+        break;
+    default:
+        // ui->PtpOcDefaultDsDisableOffsetCorCheckBox->setChecked(false);
+        snprintf(status, size, "%s", "disabled");
+
+        break;
     }
     return 0;
 }
@@ -1091,7 +1115,96 @@ int readPtpOcPortDsState(char *state, size_t size)
 
     return 0;
 }
-// Peer - Delay Request Log-seconds? Message Interval Value
+
+int readPtpOcPortDsAsymmetryValue(char *asymmetry, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        snprintf(asymmetry, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(asymmetry, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            // state
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs7Reg, &temp_data))
+            {
+                return -3;
+            }
+
+            // ui->PtpOcPortDsPDelayReqLogMsgIntervalValue->setText(QString::number((signed char)(temp_data & 0x000000FF)));
+
+            snprintf(asymmetry, size, "%d", ((signed int)temp_data));
+
+            break; // success get out...
+        }
+        // snprintf(numPorts, size, "%ld", temp_data);
+        // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+    }
+
+    return 0;
+}
+
+int readPtpOcPortDsMaxPeerDelayValue(char *delay, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        snprintf(delay, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(delay, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            // state
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs8Reg, &temp_data))
+            {
+                return -3;
+            }
+
+            // ui->PtpOcPortDsPDelayReqLogMsgIntervalValue->setText(QString::number((signed char)(temp_data & 0x000000FF)));
+
+            snprintf(delay, size, "%ld", temp_data);
+
+            break; // success get out...
+        }
+        // snprintf(numPorts, size, "%ld", temp_data);
+        // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
+    }
+
+    return 0;
+}
 
 int readPtpOcPortDsPDelayReqLogMsgIntervalValue(char *interval, size_t size)
 {
@@ -1408,96 +1521,6 @@ int readPtpOcPortDsSyncReceiptTimeoutValue(char *timeout, size_t size)
     return 0;
 }
 
-int readPtpOcPortDsAsymmetryValue(char *asymmetry, size_t size)
-{
-    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
-    temp_data = 0x40000000;
-
-    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
-    {
-        snprintf(asymmetry, size, "%s", "err");
-        return -1;
-    }
-
-    for (int i = 0; i < 10; i++)
-    {
-        if (i == 9)
-        {
-            snprintf(asymmetry, size, "%s", "err: read did not complete");
-            return -1;
-        }
-        if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
-        {
-            return -2;
-        }
-
-        if ((temp_data & 0x80000000) != 0)
-        {
-
-            // state
-            if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs7Reg, &temp_data))
-            {
-                return -3;
-            }
-
-            // ui->PtpOcPortDsPDelayReqLogMsgIntervalValue->setText(QString::number((signed char)(temp_data & 0x000000FF)));
-
-            snprintf(asymmetry, size, "%d", ((signed int)temp_data));
-
-            break; // success get out...
-        }
-        // snprintf(numPorts, size, "%ld", temp_data);
-        // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
-    }
-
-    return 0;
-}
-
-int readPtpOcPortDsMaxPeerDelayValue(char *delay, size_t size)
-{
-    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
-    temp_data = 0x40000000;
-
-    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
-    {
-        snprintf(delay, size, "%s", "err");
-        return -1;
-    }
-
-    for (int i = 0; i < 10; i++)
-    {
-        if (i == 9)
-        {
-            snprintf(delay, size, "%s", "err: read did not complete");
-            return -1;
-        }
-        if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
-        {
-            return -2;
-        }
-
-        if ((temp_data & 0x80000000) != 0)
-        {
-
-            // state
-            if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs8Reg, &temp_data))
-            {
-                return -3;
-            }
-
-            // ui->PtpOcPortDsPDelayReqLogMsgIntervalValue->setText(QString::number((signed char)(temp_data & 0x000000FF)));
-
-            snprintf(delay, size, "%ld", temp_data);
-
-            break; // success get out...
-        }
-        // snprintf(numPorts, size, "%ld", temp_data);
-        // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
-    }
-
-    return 0;
-}
-
 //********************************
 // current dataset
 //********************************
@@ -1688,11 +1711,15 @@ int readPtpOcCurrentDsDelayValue(char *delay, size_t size)
     return 0;
 }
 
+//********************************
+// parent dataset
+//********************************
+
 int readPtpOcParentDsParentClockIdValue(char *clockId, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    unsigned char temp_clock_id[8];
+    unsigned char temp_clock_id[16];
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
     {
@@ -1736,8 +1763,89 @@ int readPtpOcParentDsParentClockIdValue(char *clockId, size_t size)
 
             temp_clock_id[4] = ((temp_data >> 0) & 0x000000FF);
             temp_clock_id[5] = ((temp_data >> 8) & 0x000000FF);
-            temp_clock_id[6] = ((temp_data >> 0) & 0x000000FF);
-            temp_clock_id[7] = ((temp_data >> 8) & 0x000000FF);
+            temp_clock_id[6] = ((temp_data >> 16) & 0x000000FF);
+            temp_clock_id[7] = ((temp_data >> 24) & 0x000000FF);
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDs3Reg, &temp_data))
+            {
+
+                snprintf(clockId, size, "%s", "NA");
+
+                return -3;
+            }
+
+            // port
+            temp_clock_id[8] = ((temp_data >> 0) & 0x0000FFFF);
+
+            snprintf(clockId, size, "%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x.%04d",
+                     temp_clock_id[0],
+                     temp_clock_id[1],
+                     temp_clock_id[2],
+                     temp_clock_id[3],
+                     temp_clock_id[4],
+                     temp_clock_id[5],
+                     temp_clock_id[6],
+                     temp_clock_id[7],
+                     temp_clock_id[8]);
+
+            break;
+
+            // ui->NtpServerMacValue->setText(temp_string);
+        }
+    }
+    return 0;
+}
+
+int readPtpOcParentDsGmClockIdValue(char *clockId, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+    unsigned char temp_clock_id[8];
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+    {
+        snprintf(clockId, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(clockId, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDs4Reg, &temp_data))
+            {
+                snprintf(clockId, size, "%s", "NA");
+
+                return -3;
+            }
+
+            temp_clock_id[0] = ((temp_data >> 0) & 0x000000FF);
+            temp_clock_id[1] = ((temp_data >> 8) & 0x000000FF);
+            temp_clock_id[2] = ((temp_data >> 16) & 0x000000FF);
+            temp_clock_id[3] = ((temp_data >> 24) & 0x000000FF);
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDs5Reg, &temp_data))
+            {
+                snprintf(clockId, size, "%s", "NA");
+
+                return -2;
+            }
+
+            temp_clock_id[4] = ((temp_data >> 0) & 0x000000FF);
+            temp_clock_id[5] = ((temp_data >> 8) & 0x000000FF);
+            temp_clock_id[6] = ((temp_data >> 16) & 0x000000FF);
+            temp_clock_id[7] = ((temp_data >> 24) & 0x000000FF);
 
             snprintf(clockId, size, "%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",
                      temp_clock_id[0],
@@ -1752,6 +1860,411 @@ int readPtpOcParentDsParentClockIdValue(char *clockId, size_t size)
             break;
 
             // ui->NtpServerMacValue->setText(temp_string);
+        }
+    }
+    return 0;
+}
+
+int readPtpOcParentDsGmPriority1Value(char *priority, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+    int64_t temp_priority;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+    {
+        snprintf(priority, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(priority, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDs3Reg, &temp_data))
+            {
+                snprintf(priority, size, "%s", "NA");
+
+                return -3;
+            }
+
+            temp_priority = ((temp_data >> 24) & 0x000000FF);
+
+            snprintf(priority, size, "0x%02lx", temp_priority);
+
+            break;
+
+            // ui->NtpServerMacValue->setText(temp_string);
+        }
+    }
+    return 0;
+}
+
+int readPtpOcParentDsGmPriority2Value(char *priority, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+    int64_t temp_priority;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+    {
+        snprintf(priority, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(priority, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDs3Reg, &temp_data))
+            {
+                snprintf(priority, size, "%s", "NA");
+
+                return -3;
+            }
+
+            temp_priority = ((temp_data >> 16) & 0x000000FF);
+
+            snprintf(priority, size, "0x%02lx", temp_priority);
+
+            break;
+
+            // ui->NtpServerMacValue->setText(temp_string);
+        }
+    }
+    return 0;
+}
+
+int readPtpOcParentDsGmVarianceValue(char *variance, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+    int64_t temp_variance;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+    {
+        snprintf(variance, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(variance, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDs6Reg, &temp_data))
+            {
+                snprintf(variance, size, "%s", "NA");
+
+                return -3;
+            }
+
+            temp_variance = ((temp_data >> 0) & 0x0000FFFF);
+
+            snprintf(variance, size, "0x%02lx", temp_variance);
+
+            break;
+        }
+    }
+    return 0;
+}
+
+int readPtpOcParentDsGmAccuracyValue(char *accuracy, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+    int64_t temp_accuracy;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+    {
+        snprintf(accuracy, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(accuracy, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDs6Reg, &temp_data))
+            {
+                snprintf(accuracy, size, "%s", "NA");
+
+                return -3;
+            }
+
+            temp_accuracy = ((temp_data >> 16) & 0x000000FF);
+
+            snprintf(accuracy, size, "%02ld", temp_accuracy);
+
+            break;
+        }
+    }
+    return 0;
+}
+
+int readPtpOcParentDsGmClassValue(char *class, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+    int64_t temp_class;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+    {
+        snprintf(class, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(class, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDs6Reg, &temp_data))
+            {
+                snprintf(class, size, "%s", "NA");
+
+                return -3;
+            }
+
+            temp_class = ((temp_data >> 24) & 0x000000FF);
+
+            snprintf(class, size, "0x%02lx", temp_class);
+
+            break;
+        }
+    }
+    return 0;
+}
+
+int readPtpOcParentDsGmShortIdValue(char *id, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+    int64_t temp_id;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+    {
+        snprintf(id, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(id, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDs7Reg, &temp_data))
+            {
+                snprintf(id, size, "%s", "NA");
+
+                return -3;
+            }
+
+            temp_id = temp_data;
+
+            snprintf(id, size, "0x%04lx", temp_id);
+
+            break;
+        }
+    }
+    return 0;
+}
+
+int readPtpOcParentDsGmInaccuracyValue(char *inaccuracy, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+    int64_t temp_inaccuracy;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+    {
+        snprintf(inaccuracy, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(inaccuracy, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDs8Reg, &temp_data))
+            {
+                snprintf(inaccuracy, size, "%s", "NA");
+
+                return -3;
+            }
+
+            temp_inaccuracy = temp_data;
+
+            snprintf(inaccuracy, size, "%ld", temp_inaccuracy);
+
+            break;
+        }
+    }
+    return 0;
+}
+
+int readPtpOcParentDsNwInaccuracyValue(char *inaccuracy, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+    int64_t temp_inaccuracy;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+    {
+        snprintf(inaccuracy, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(inaccuracy, size, "%s", "err: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
+        {
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_ParentDs9Reg, &temp_data))
+            {
+                snprintf(inaccuracy, size, "%s", "NA");
+
+                return -3;
+            }
+
+            temp_inaccuracy = temp_data;
+
+            snprintf(inaccuracy, size, "%ld", temp_inaccuracy);
+
+            break;
+        }
+    }
+    return 0;
+}
+
+//********************************
+// time properties dataset
+//********************************
+
+int readPtpOcTimePropertiesDsTimeSourceValue(char *source, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x40000000;
+    int64_t temp_source;
+    snprintf(source, size, "%s", "NA");
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDsControlReg, &temp_data))
+    {
+        snprintf(source, size, "%s", "err");
+        return -1;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            snprintf(source, size, "%s", "err1: read did not complete");
+            return -1;
+        }
+        if (0 != readRegister(temp_addr + Ucm_PtpOc_TimePropertiesDsControlReg, &temp_data))
+        {
+            snprintf(source, size, "%s", "err2");
+            return -2;
+        }
+
+        if ((temp_data & 0x80000000) != 0)
+        {
+
+            if (0 != readRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs1Reg, &temp_data))
+            {
+                snprintf(source, size, "%s", "err3");
+                return -3;
+            }
+
+            temp_source = (temp_data >> 0) & 0x000000FF;
+
+            snprintf(source, size, "0x%02lx", temp_source);
+
+            break;
         }
     }
     return 0;

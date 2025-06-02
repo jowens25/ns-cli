@@ -70,42 +70,62 @@
 #define Ucm_PtpOc_UnicastDs10Reg 0x00000628
 #define Ucm_PtpOc_UnicastDs11Reg 0x0000062C
 #define Ucm_PtpOc_UnicastDs12Reg 0x00000630
-// int64_t temp_data;
-// int64_t temp_addr;
+
+// ptp oc
 int hasPtpOc(char *in, size_t size);
-int readPtpOcStatus(char *status, size_t size);
-int readPtpOcVlanStatus(char *vlanStatus, size_t size);
+int readPtpOcVersion(char *value, size_t size);
+int readPtpOcInstanceNumber(char *instanceNumber, size_t size);
 int readPtpOcVlanAddress(char *vlanAddr, size_t size);
+int readPtpOcVlanStatus(char *vlanStatus, size_t size);
 int readPtpOcProfile(char *profile, size_t size);
-int readPtpOcDefaultDsTwoStepStatus(char *status, size_t size);
-int readPtpOcDefaultDsSignalingStatus(char *status, size_t size);
 int readPtpOcLayer(char *layer, size_t size);
-int readPtpOcSlaveOnlyStatus(char *status, size_t size);
-int readPtpOcMasterOnlyStatus(char *status, size_t size);
-int readPtpOcDefaultDsDisableOffsetCorrectionStatus(char *status, size_t size);
-int readPtpOcDefaultDsListedUnicastSlavesOnlyStatus(char *status, size_t size);
 int readPtpOcDelayMechanismValue(char *value, size_t size);
 int readPtpOcIpAddress(char *ipAddr, size_t size);
+int readPtpOcStatus(char *status, size_t size);
+// default
 int readPtpOcDefaultDsClockId(char *clockId, size_t size);
 int readPtpOcDefaultDsDomain(char *domain, size_t size);
 int readPtpOcDefaultDsPriority1(char *priority1, size_t size);
 int readPtpOcDefaultDsPriority2(char *priority2, size_t size);
-int readPtpOcDefaultDsVariance(char *variance, size_t size);
 int readPtpOcDefaultDsAccuracy(char *accuracy, size_t size);
 int readPtpOcDefaultDsClass(char *class, size_t size);
-
+int readPtpOcDefaultDsVariance(char *variance, size_t size);
 int readPtpOcDefaultDsShortId(char *id, size_t size);
 int readPtpOcDefaultDsInaccuracy(char *inaccuracy, size_t size);
 int readPtpOcDefaultDsNumberOfPorts(char *numPorts, size_t size);
-int readPtpOcPortDsPeerDelayValue(char *delayValue, size_t size);
+int readPtpOcDefaultDsTwoStepStatus(char *status, size_t size);
+int readPtpOcDefaultDsSignalingStatus(char *status, size_t size);
+int readPtpOcDefaultDsMasterOnlyStatus(char *status, size_t size);
+int readPtpOcDefaultDsSlaveOnlyStatus(char *status, size_t size);
+int readPtpOcDefaultDsListedUnicastSlavesOnlyStatus(char *status, size_t size);
+int readPtpOcDefaultDsDisableOffsetCorrectionStatus(char *status, size_t size);
+// port
+int readPtpOcPortDsPeerDelayValue(char *delay, size_t size);
 int readPtpOcPortDsState(char *state, size_t size);
+int readPtpOcPortDsAsymmetryValue(char *asymmetry, size_t size);
+int readPtpOcPortDsMaxPeerDelayValue(char *delay, size_t size);
 int readPtpOcPortDsPDelayReqLogMsgIntervalValue(char *interval, size_t size);
 int readPtpOcPortDsDelayReqLogMsgIntervalValue(char *interval, size_t size);
 int readPtpOcPortDsDelayReceiptTimeoutValue(char *timeout, size_t size);
-int readPtpOcPortDsAsymmetryValue(char *asymmetry, size_t size);
-int readPtpOcPortDsMaxPeerDelayValue(char *delay, size_t size);
+int readPtpOcPortDsAnnounceLogMsgIntervalValue(char *interval, size_t size);
+int readPtpOcPortDsAnnounceReceiptTimeoutValue(char *timeout, size_t size);
+int readPtpOcPortDsSyncLogMsgIntervalValue(char *interval, size_t size);
+int readPtpOcPortDsSyncReceiptTimeoutValue(char *timeout, size_t size);
+// current - RO
 int readPtpOcCurrentDsStepsRemovedValue(char *steps, size_t size);
 int readPtpOcCurrentDsOffsetValue(char *offset, size_t size);
 int readPtpOcCurrentDsDelayValue(char *delay, size_t size);
-
+// parent - RO
+int readPtpOcParentDsParentClockIdValue(char *clockId, size_t size);
+int readPtpOcParentDsGmClockIdValue(char *clockId, size_t size);
+int readPtpOcParentDsGmPriority1Value(char *priority, size_t size);
+int readPtpOcParentDsGmPriority2Value(char *priority, size_t size);
+int readPtpOcParentDsGmVarianceValue(char *variance, size_t size);
+int readPtpOcParentDsGmAccuracyValue(char *accuracy, size_t size);
+int readPtpOcParentDsGmClassValue(char *class, size_t size);
+int readPtpOcParentDsGmShortIdValue(char *id, size_t size);
+int readPtpOcParentDsGmInaccuracyValue(char *inaccuracy, size_t size);
+int readPtpOcParentDsNwInaccuracyValue(char *inaccuracy, size_t size);
+// time properties
+int readPtpOcTimePropertiesDsTimeSourceValue(char *source, size_t size);
 #endif // PTP_OC_H

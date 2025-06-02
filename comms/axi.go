@@ -114,6 +114,17 @@ type PtpOcApi struct {
 	CurrentDsStepsRemovedValue             string
 	CurrentDsOffsetValue                   string
 	CurrentDsDelayValue                    string
+	ParentDsParentClockIdValue             string
+	ParentDsGmClockIdValue                 string
+	ParentDsGmPriority1Value               string
+	ParentDsGmPriority2Value               string
+	ParentDsGmVarianceValue                string
+	ParentDsGmAccuracyValue                string
+	ParentDsGmClassValue                   string
+	ParentDsGmShortIdValue                 string
+	ParentDsGmInaccuracyValue              string
+	ParentDsNwInaccuracyValue              string
+	TimePropertiesDsTimeSourceValue        string
 }
 
 var PtpOc = PtpOcApi{
@@ -152,6 +163,17 @@ var PtpOc = PtpOcApi{
 	CurrentDsStepsRemovedValue:             "current-ds-steps-removed-value",
 	CurrentDsOffsetValue:                   "current-ds-offset-value",
 	CurrentDsDelayValue:                    "current-ds-delay-value",
+	ParentDsParentClockIdValue:             "parent-ds-parent-clock-id-value",
+	ParentDsGmClockIdValue:                 "parent-ds-gm-clock-id-value",
+	ParentDsGmPriority1Value:               "parent-ds-gm-priority-1-value",
+	ParentDsGmPriority2Value:               "parent-ds-gm-priority-2-value",
+	ParentDsGmVarianceValue:                "parent-ds-gm-variance-value",
+	ParentDsGmAccuracyValue:                "parent-ds-gm-accuracy-value",
+	ParentDsGmClassValue:                   "parent-ds-gm-class-value",
+	ParentDsGmShortIdValue:                 "parent-ds-gm-short-id-value",
+	ParentDsGmInaccuracyValue:              "parent-ds-gm-inaccuracy-value",
+	ParentDsNwInaccuracyValue:              "parent-ds-nw-inaccuracy-value",
+	TimePropertiesDsTimeSourceValue:        "time-properties-ds-time-source-value",
 }
 
 var mutex sync.Mutex
@@ -442,6 +464,34 @@ func ReadPtpOc(property string) string {
 	case PtpOc.CurrentDsDelayValue:
 		C.readPtpOcCurrentDsDelayValue(out, size)
 
+	// parent dataset
+	case PtpOc.ParentDsParentClockIdValue:
+		C.readPtpOcParentDsParentClockIdValue(out, size)
+
+	case PtpOc.ParentDsGmClockIdValue:
+		C.readPtpOcParentDsGmClockIdValue(out, size)
+	case PtpOc.ParentDsGmPriority1Value:
+		C.readPtpOcParentDsGmPriority1Value(out, size)
+
+	case PtpOc.ParentDsGmPriority2Value:
+		C.readPtpOcParentDsGmPriority2Value(out, size)
+	case PtpOc.ParentDsGmVarianceValue:
+		C.readPtpOcParentDsGmVarianceValue(out, size)
+	case PtpOc.ParentDsGmAccuracyValue:
+		C.readPtpOcParentDsGmAccuracyValue(out, size)
+	case PtpOc.ParentDsGmClassValue:
+		C.readPtpOcParentDsGmClassValue(out, size)
+	case PtpOc.ParentDsGmShortIdValue:
+		C.readPtpOcParentDsGmShortIdValue(out, size)
+	case PtpOc.ParentDsGmInaccuracyValue:
+		C.readPtpOcParentDsGmInaccuracyValue(out, size)
+	case PtpOc.ParentDsNwInaccuracyValue:
+		C.readPtpOcParentDsNwInaccuracyValue(out, size)
+
+		// time properties
+	case PtpOc.TimePropertiesDsTimeSourceValue:
+		C.readPtpOcTimePropertiesDsTimeSourceValue(out, size)
+
 	default:
 		fmt.Println("no such property")
 	}
@@ -507,7 +557,18 @@ func ListPtpOcProperties() {
 		PtpOc.PortDsMaxPeerDelayValue,
 		PtpOc.CurrentDsStepsRemovedValue,
 		PtpOc.CurrentDsOffsetValue,
-		PtpOc.CurrentDsDelayValue}
+		PtpOc.CurrentDsDelayValue,
+		PtpOc.ParentDsParentClockIdValue,
+		PtpOc.ParentDsGmClockIdValue,
+		PtpOc.ParentDsGmPriority1Value,
+		PtpOc.ParentDsGmPriority2Value,
+		PtpOc.ParentDsGmVarianceValue,
+		PtpOc.ParentDsGmAccuracyValue,
+		PtpOc.ParentDsGmClassValue,
+		PtpOc.ParentDsGmShortIdValue,
+		PtpOc.ParentDsGmInaccuracyValue,
+		PtpOc.ParentDsNwInaccuracyValue,
+		PtpOc.TimePropertiesDsTimeSourceValue}
 
 	for _, p := range properties {
 		//fmt.Println(i)
