@@ -2812,3 +2812,751 @@ int readPtpOcTimePropertiesDsDisplayNameValue(char *seconds, size_t size)
     }
     return 0;
 }
+
+int writePtpOcProfile(char *profile, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        return -1;
+    }
+    temp_data &= ~0x00000007;
+
+    if (0 == strncmp(profile, "Default", size))
+    {
+        temp_data |= 0x00000000;
+    }
+    else if (0 == strncmp(profile, "Power", size))
+    {
+        temp_data |= 0x00000001;
+    }
+    else if (0 == strncmp(profile, "Utility", size))
+    {
+        temp_data |= 0x00000002;
+    }
+    else if (0 == strncmp(profile, "TSN", size))
+    {
+        temp_data |= 0x00000003;
+    }
+    else if (0 == strncmp(profile, "ITUG8265.1", size))
+    {
+        temp_data |= 0x00000004;
+    }
+    else if (0 == strncmp(profile, "ITUG8275.1", size))
+    {
+        temp_data |= 0x00000005;
+    }
+    else if (0 == strncmp(profile, "ITUG8275.2", size))
+    {
+        temp_data |= 0x00000006;
+    }
+    else
+    {
+
+        return -1;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        return -2; // write fail
+    }
+
+    temp_data = 0x00000001;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigControlReg, &temp_data))
+    {
+        return -3; // write fail
+    }
+
+    return 0;
+}
+
+int writePtpOcDefaultDsTwoStepStatus(char *status, size_t size)
+{
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        return -1;
+    }
+
+    // clear the two step bit
+    temp_data &= ~0x00000100;
+
+    if (0 == strcmp(status, "enabled"))
+    {
+        temp_data |= 0x00000100;
+    }
+    else if (0 == strcmp(status, "disabled"))
+    {
+        temp_data |= 0x00000000;
+    }
+    else
+    {
+        return -2;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        return -3; // write fail
+    }
+
+    temp_data = 0x00000001;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigControlReg, &temp_data))
+    {
+        return -4; // write fail
+    }
+
+    return 0;
+}
+
+int writePtpOcDefaultDsSignalingStatus(char *status, size_t size)
+{
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        return -1;
+    }
+
+    // clear the two step bit
+    temp_data &= ~0x00000200;
+
+    if (0 == strcmp(status, "enabled"))
+    {
+        temp_data |= 0x00000200;
+    }
+    else if (0 == strcmp(status, "disabled"))
+    {
+        temp_data |= 0x00000000;
+    }
+    else
+    {
+        return -2;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        return -3; // write fail
+    }
+
+    temp_data = 0x00000001;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigControlReg, &temp_data))
+    {
+        return -4; // write fail
+    }
+
+    return 0;
+}
+
+int writePtpOcDefaultDsSlaveOnlyStatus(char *status, size_t size)
+{
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        return -1;
+    }
+
+    // clear both bits
+    temp_data &= ~(0x00100000 | 0x00200000);
+
+    if (0 == strcmp(status, "enabled"))
+    {
+        temp_data |= 0x00100000;
+    }
+    else if (0 == strcmp(status, "disabled"))
+    {
+        temp_data |= 0x00000000;
+    }
+    else
+    {
+        return -2;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        return -3; // write fail
+    }
+
+    temp_data = 0x00000001;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigControlReg, &temp_data))
+    {
+        return -4; // write fail
+    }
+
+    return 0;
+}
+
+int writePtpOcDefaultDsMasterOnlyStatus(char *status, size_t size)
+{
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        return -1;
+    }
+
+    temp_data &= ~(0x00100000 | 0x00200000);
+
+    if (0 == strcmp(status, "enabled"))
+    {
+        temp_data |= 0x00200000;
+    }
+    else if (0 == strcmp(status, "disabled"))
+    {
+        temp_data |= 0x00000000;
+    }
+    else
+    {
+        return -2;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        return -3; // write fail
+    }
+
+    temp_data = 0x00000001;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigControlReg, &temp_data))
+    {
+        return -4; // write fail
+    }
+
+    return 0;
+}
+
+int writePtpOcDefaultDsDisableOffsetCorrectionStatus(char *status, size_t size)
+{
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        return -1;
+    }
+
+    temp_data &= ~0x00400000;
+
+    if (0 == strcmp(status, "enabled"))
+    {
+        temp_data |= 0x00400000;
+    }
+    else if (0 == strcmp(status, "disabled"))
+    {
+        temp_data |= 0x00000000;
+    }
+    else
+    {
+        return -2;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        return -3; // write fail
+    }
+
+    temp_data = 0x00000001;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigControlReg, &temp_data))
+    {
+        return -4; // write fail
+    }
+
+    return 0;
+}
+
+int writePtpOcDefaultDsListedUnicastSlavesOnlyStatus(char *status, size_t size)
+{
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        return -1;
+    }
+
+    temp_data &= ~0x00800000;
+
+    if (0 == strcmp(status, "enabled"))
+    {
+        temp_data |= 0x00800000;
+    }
+    else if (0 == strcmp(status, "disabled"))
+    {
+        temp_data |= 0x00000000;
+    }
+    else
+    {
+        return -2;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        return -3; // write fail
+    }
+
+    temp_data = 0x00000001;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigControlReg, &temp_data))
+    {
+        return -4; // write fail
+    }
+
+    return 0;
+}
+
+int writePtpOcLayer(char *layer, size_t size)
+{
+
+    char currentAddress[size];
+    int err = readPtpOcIpAddress(currentAddress, size);
+
+    if (err != 0)
+    {
+        return -555;
+    }
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        return -2;
+    }
+
+    if (0 == strcmp(layer, "Layer 2"))
+    {
+        // clear both
+        temp_data &= ~(0x00010000 | 0x00200000);
+        temp_data |= 0x00000000;
+    }
+
+    else if (0 == strcmp(layer, "Layer 3v4"))
+    {
+        temp_data &= ~0x00200000;
+        temp_data |= 0x00010000;
+    }
+
+    else if (0 == strcmp(layer, "Layer 3v6"))
+    {
+        temp_data &= ~0x00010000;
+        temp_data |= 0x00020000;
+    }
+
+    else
+    {
+        return -3;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        return -4; // write fail
+    }
+
+    temp_data = 0x00000001;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigControlReg, &temp_data))
+    {
+        return -5; // write fail
+    }
+
+    err = 0;
+    err = writePtpOcIpAddress(currentAddress, size);
+    if (err != 0)
+    {
+        return err;
+    }
+
+    return 0;
+}
+
+int writePtpOcDelayMechanismValue(char *mechanism, size_t size)
+{
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        return -1;
+    }
+
+    // clear both
+    temp_data &= ~(0x01000000 | 0x03000000);
+
+    if (0 == strcmp(mechanism, "P2P"))
+    {
+        temp_data |= 0x00000000;
+    }
+
+    else if (0 == strcmp(mechanism, "E2E"))
+    {
+        temp_data |= 0x01000000;
+    }
+
+    else if (0 == strcmp(mechanism, "E2E Unicast"))
+    {
+        temp_data |= 0x03000000;
+    }
+
+    else
+    {
+        return -2;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
+    {
+        return -3; // write fail
+    }
+
+    temp_data = 0x00000001;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigControlReg, &temp_data))
+    {
+        return -4; // write fail
+    }
+
+    return 0;
+}
+
+int writePtpOcVlanAddress(char *address, size_t size)
+{
+    // return -1;
+    //  readConfig();
+    if (strlen(address) > 6)
+    {
+        return -1;
+    }
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+    long temp_vlan = 0;
+    address = &address[2];
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigVlanReg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+
+    temp_vlan = strtol(address, NULL, 16);
+
+    temp_data &= 0xFFFF0000;
+
+    temp_data |= temp_vlan;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigVlanReg, &temp_data))
+    {
+        return -3;
+    }
+
+    temp_data = 0x00000002;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcVlanStatus(char *status, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigVlanReg, &temp_data))
+    {
+        return -1;
+    }
+
+    temp_data &= 0x0000FFFF;
+
+    if (0 == strncmp(status, "enabled", size))
+    {
+        temp_data = 0x00010000 | temp_data;
+    }
+    else if (0 == strncmp(status, "disabled", size))
+    {
+        temp_data = 0x00000000 | temp_data; // disable
+    }
+    else
+    {
+        return -2;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigVlanReg, &temp_data))
+    {
+        return -3;
+    }
+
+    temp_data = 0x00000002;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigControlReg, &temp_data))
+    {
+        return -4;
+    }
+
+    return 0;
+}
+
+int writePtpOcIpAddress(char *ipAddress, size_t size)
+{
+    char currentMode[size];
+
+    if (0 != readPtpOcLayer(currentMode, size))
+    {
+        printf("failed to read current layer\n");
+        return -66;
+    }
+
+    if (0 == strncmp(currentMode, "Layer 3v4", size))
+    {
+        if (0 != ptp_ipv4_addr_to_register_value(ipAddress, size))
+        {
+            printf("failed to write ipv4 crap\n");
+            return -4;
+        }
+    }
+    else if (0 == strncmp(currentMode, "Layer 3v6", size))
+    {
+        ptp_ipv6_addr_to_register_value(ipAddress, size);
+    }
+
+    else if (0 == strncmp(currentMode, "Layer 2", size))
+    {
+    }
+    else
+    {
+        return -6;
+    }
+    return 0;
+}
+
+int ptp_ipv4_addr_to_register_value(char *ipAddress, size_t size)
+{
+    long temp_ip[4] = {0};
+
+    if (strchr(ipAddress, '.'))
+    { // ipv4
+        printf("ipv4 case \n");
+
+        char *token;
+        for (int i = 0; i < 4; i++)
+        {
+            token = (i == 0) ? strtok(ipAddress, ".") : strtok(NULL, ".");
+            if (token == NULL)
+                break;
+            temp_ip[i] = strtol(token, NULL, 10);
+        }
+    }
+
+    else if (strchr(ipAddress, ':'))
+    {
+        // temp_ip[0] = 0;
+        // temp_ip[1] = 0;
+        // temp_ip[2] = 0;
+        // temp_ip[3] = 0;
+
+        ipAddress = ipAddress + 25;
+
+        char *token;
+        char byte[3];
+        for (int i = 0; i < 4; i += 2)
+        {
+
+            if (i == 0)
+            {
+                token = strtok(ipAddress, ":"); // grabs first token
+                printf("first token: %s\n", token);
+                if (0 == strncmp(token, "ffff", 5))
+                {
+                    token = strtok(NULL, ":");
+                    printf("ffff so it is a mapped ipv4\n");
+                }
+                else
+                {
+                    printf("not ffff, not mapped so exit\n");
+                    temp_ip[0] = 0;
+                    temp_ip[1] = 0;
+                    temp_ip[2] = 0;
+                    temp_ip[3] = 0;
+                    break;
+                }
+            }
+            else
+            {
+                token = strtok(NULL, ":");
+            }
+
+            if (token == NULL)
+                break;
+
+            printf("token: %s \n", token);
+            // Extract first two characters
+            strncpy(byte, token, 2);
+
+            snprintf(byte, 3, "%2s", token);
+
+            printf("byte: %s \n", byte);
+
+            temp_ip[i] = strtol(byte, NULL, 16);
+
+            // Extract next two characters
+            snprintf(byte, 3, "%2s", token + 2);
+            printf("byte: %s \n", byte);
+
+            temp_ip[i + 1] = strtol(byte, NULL, 16);
+        }
+    }
+    else
+    {
+        printf("big fat else\n");
+        return -1;
+    }
+    temp_data = 0x00000000;
+    temp_data |= (temp_ip[3]) & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= (temp_ip[2]) & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= (temp_ip[1]) & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= (temp_ip[0]) & 0x000000FF;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigIpReg, &temp_data))
+    {
+        printf("failed to write config \n");
+        return -1;
+    }
+    temp_data = 0x00000008; // write
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigControlReg, &temp_data))
+    {
+        printf("failed to write control \n");
+        return -1;
+    }
+    return 0;
+}
+int ptp_ipv6_addr_to_register_value(char *ipAddress, size_t size)
+{
+    long temp_ip[16] = {0};
+
+    if (strchr(ipAddress, ':'))
+    { // ipv4
+        char *token;
+        char *err;
+        char byte[3];
+        for (int i = 0; i < size; i += 2)
+        {
+
+            token = (i == 0) ? strtok(ipAddress, ":") : strtok(NULL, ":");
+            if (token == NULL)
+                break;
+
+            // Extract first two characters
+            strncpy(byte, token, 2);
+            byte[2] = '\0';
+            temp_ip[i] = strtol(byte, &err, 16);
+            if (err == token || *err != '\0')
+            {
+                return -1;
+            }
+
+            // Extract next two characters
+            strncpy(byte, token + 2, 2);
+            byte[2] = '\0';
+            temp_ip[i + 1] = strtol(byte, &err, 16);
+            if (err == token || *err != '\0')
+            {
+                return -1;
+            }
+        }
+    }
+
+    else if (strchr(ipAddress, '.'))
+    {
+        char *token;
+        char *err;
+        for (int i = 12; i < 16; i++)
+        {
+            token = (i == 12) ? strtok(ipAddress, ".") : strtok(NULL, ".");
+            if (token == NULL)
+                break;
+            temp_ip[i] = strtol(token, &err, 10);
+
+            if (err == token || *err != '\0')
+            {
+                return -1;
+            }
+        }
+        temp_ip[10] = 0x000000FF;
+        temp_ip[11] = 0x000000FF;
+    }
+    else
+    {
+        return -1;
+    }
+
+    temp_data = 0x00000000;
+    temp_data |= temp_ip[3] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[2] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[1] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[0] & 0x000000FF;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigIpReg, &temp_data))
+    {
+        return -1;
+    }
+    temp_data = 0x00000000;
+    temp_data |= temp_ip[7] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[6] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[5] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[4] & 0x000000FF;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigIpv61Reg, &temp_data))
+    {
+        return -2;
+    }
+    temp_data = 0x00000000;
+    temp_data |= temp_ip[11] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[10] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[9] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[8] & 0x000000FF;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigIpv62Reg, &temp_data))
+    {
+        return -3;
+    }
+    temp_data = 0x00000000;
+    temp_data |= temp_ip[15] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[14] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[13] & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= temp_ip[12] & 0x000000FF;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigIpv63Reg, &temp_data))
+    {
+        return -4;
+    }
+    temp_data = 0x00000008; // write
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ConfigControlReg, &temp_data))
+    {
+        return -5;
+    }
+    return 0;
+}

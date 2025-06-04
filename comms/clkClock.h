@@ -2,26 +2,26 @@
 
 #define CLK_CLOCK
 
-#define ControlReg 0x00000000
-#define StatusReg 0x00000004
-#define SelectReg 0x00000008
-#define VersionReg 0x0000000C
-#define TimeValueLReg 0x00000010
-#define TimeValueHReg 0x00000014
-#define TimeAdjValueLReg 0x00000020
-#define TimeAdjValueHReg 0x00000024
-#define OffsetAdjValueReg 0x00000030
-#define OffsetAdjIntervalReg 0x00000034
-#define DriftAdjValueReg 0x00000040
-#define DriftAdjIntervalReg 0x00000044
-#define InSyncThresholdReg 0x00000050
-#define ServoOffsetFactorPReg 0x00000060
-#define ServoOffsetFactorIReg 0x00000064
-#define ServoDriftFactorPReg 0x00000068
-#define ServoDriftFactorIReg 0x0000006C
-#define StatusOffsetReg 0x00000070
-#define StatusDriftReg 0x00000074
-#define StatusOffsetFractionsReg 0x00000078
-#define StatusDriftFractionsReg 0x0000007C
+#define Ucm_ClkClock_ControlReg 0x00000000
+#define Ucm_ClkClock_StatusReg 0x00000004
+#define Ucm_ClkClock_SelectReg 0x00000008
+#define Ucm_ClkClock_VersionReg 0x0000000C
+#define Ucm_ClkClock_TimeValueLReg 0x00000010
+#define Ucm_ClkClock_TimeValueHReg 0x00000014
+#define Ucm_ClkClock_TimeAdjValueLReg 0x00000020
+#define Ucm_ClkClock_TimeAdjValueHReg 0x00000024
+#define Ucm_ClkClock_OffsetAdjValueReg 0x00000030
+#define Ucm_ClkClock_OffsetAdjIntervalReg 0x00000034
+#define Ucm_ClkClock_DriftAdjValueReg 0x00000040
+#define Ucm_ClkClock_DriftAdjIntervalReg 0x00000044
+#define Ucm_ClkClock_InSyncThresholdReg 0x00000050
+#define Ucm_ClkClock_ServoOffsetFactorPReg 0x00000060
+#define Ucm_ClkClock_ServoOffsetFactorIReg 0x00000064
+#define Ucm_ClkClock_ServoDriftFactorPReg 0x00000068
+#define Ucm_ClkClock_ServoDriftFactorIReg 0x0000006C
+#define Ucm_ClkClock_StatusOffsetReg 0x00000070
+#define Ucm_ClkClock_StatusDriftReg 0x00000074
+#define Ucm_ClkClock_StatusOffsetFractionsReg 0x00000078
+#define Ucm_ClkClock_StatusDriftFractionsReg 0x0000007C
 
 #endif // CLK_CLOCK

@@ -12,6 +12,12 @@
         "string_view": "c",
         "initializer_list": "c",
         "cstddef": "c",
-        "limits": "c"
+        "limits": "c",
+        "optional": "c",
+        "system_error": "c",
+        "functional": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c"
     }
 }

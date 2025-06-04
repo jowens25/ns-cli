@@ -140,4 +140,20 @@ int readPtpOcTimePropertiesDsJumpSecondsValue(char *seconds, size_t size);
 int readPtpOcTimePropertiesDsNextJumpValue(char *seconds, size_t size);
 int readPtpOcTimePropertiesDsDisplayNameValue(char *seconds, size_t size);
 
+int writePtpOcProfile(char *profile, size_t size);
+int writePtpOcDefaultDsTwoStepStatus(char *status, size_t size);
+int writePtpOcDefaultDsSignalingStatus(char *status, size_t size);
+int writePtpOcDefaultDsSlaveOnlyStatus(char *status, size_t size);
+int writePtpOcDefaultDsMasterOnlyStatus(char *status, size_t size);
+int writePtpOcDefaultDsDisableOffsetCorrectionStatus(char *status, size_t size);
+int writePtpOcDefaultDsListedUnicastSlavesOnlyStatus(char *status, size_t size);
+int writePtpOcLayer(char *layer, size_t size);
+int writePtpOcDelayMechanismValue(char *layer, size_t size);
+
+int writePtpOcVlanAddress(char *address, size_t size);
+int writePtpOcVlanStatus(char *status, size_t size);
+int writePtpOcIpAddress(char *ipAddress, size_t size);
+
+int ptp_ipv4_addr_to_register_value(char *ipAddress, size_t size);
+int ptp_ipv6_addr_to_register_value(char *ipAddress, size_t size);
 #endif // PTP_OC_H

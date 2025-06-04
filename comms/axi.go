@@ -546,24 +546,88 @@ func ReadPtpOc(property string) string {
 }
 
 func WritePtpOc(property string, value string) {
+	start := time.Now()
+
 	in := C.CString(value)
+
 	mutex.Lock()
-	C.connect()
-	C.readConfig()
+
 	switch property {
 
-	case PtpOc.Version:
-		fmt.Println("this is not accessable")
-		//err := C.writeNtpServerMacAddress(in, size)
-	//	if err != 0 {
-	//		fmt.Println("writeNtpServerMacAddress ERROR: ", err)
-	//	}
+	case PtpOc.Profile:
+		err := C.writePtpOcProfile(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcProfile ERROR: ", err)
+		}
 
+	case PtpOc.DefaultDsTwoStepStatus:
+		err := C.writePtpOcDefaultDsTwoStepStatus(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcDefaultDsTwoStepStatus ERROR: ", err)
+		}
+
+	case PtpOc.DefaultDsSignalingStatus:
+		err := C.writePtpOcDefaultDsSignalingStatus(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcDefaultDsSignalingStatus ERROR: ", err)
+		}
+
+	case PtpOc.DefaultDsSlaveOnlyStatus:
+		err := C.writePtpOcDefaultDsSlaveOnlyStatus(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcDefaultDsSlaveOnlyStatus ERROR: ", err)
+		}
+
+	case PtpOc.DefaultDsMasterOnlyStatus:
+		err := C.writePtpOcDefaultDsMasterOnlyStatus(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcDefaultDsMasterOnlyStatus ERROR: ", err)
+		}
+
+	case PtpOc.DefaultDsDisableOffsetCorrectionStatus:
+		err := C.writePtpOcDefaultDsDisableOffsetCorrectionStatus(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcDefaultDsDisableOffsetCorStatus ERROR: ", err)
+		}
+
+	case PtpOc.DefaultDsListedUnicastSlavesOnlyStatus:
+		err := C.writePtpOcDefaultDsListedUnicastSlavesOnlyStatus(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcDefaultDsListedUnicastSlavesOnlyStatus ERROR: ", err)
+		}
+
+	case PtpOc.Layer:
+		err := C.writePtpOcLayer(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcLayer ERROR: ", err)
+		}
+
+	case PtpOc.DelayMechanismValue:
+		err := C.writePtpOcDelayMechanismValue(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcDelayMechanismValue ERROR: ", err)
+		}
+
+	case PtpOc.VlanAddress:
+		err := C.writePtpOcVlanAddress(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcVlanAddress ERROR: ", err)
+		}
+
+	case PtpOc.VlanStatus:
+		err := C.writePtpOcVlanStatus(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcVlanStatus ERROR: ", err)
+		}
+		//
+		//
 	default:
-		fmt.Println("no such property")
+		fmt.Println("NO SUCH PROPERTY")
 	}
 	mutex.Unlock()
 	defer C.free(unsafe.Pointer(in))
+	fmt.Println(property, "w : ", time.Since(start))
+
 }
 
 func ListPtpOcProperties() {

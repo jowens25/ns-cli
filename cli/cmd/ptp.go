@@ -9,6 +9,7 @@ import (
 	"github.com/jowens25/axi"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 // ptpCmd represents the ptp command
@@ -22,15 +23,32 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("ptp called")
-		axi.ListPtpOcProperties()
+
+		cmd.Flags().Visit(func(f *pflag.Flag) {
+
+			switch f.Name {
+			case "list":
+				axi.ListPtpOcProperties()
+			case "write":
+
+				fmt.Println(args[0], args[1])
+				axi.WritePtpOc(args[0], args[1])
+			case "read":
+				fmt.Println(args[0], " ", axi.ReadPtpOc(args[0]))
+
+			default:
+				fmt.Println("Please pass the ntp command a valid flag")
+			}
+		})
 
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(ptpCmd)
-
+	ptpCmd.Flags().BoolP("list", "l", false, "list ptp oc properties and values")
+	ptpCmd.Flags().BoolP("write", "w", false, "write ptp oc property")
+	ptpCmd.Flags().BoolP("read", "r", false, "read ptp oc property")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

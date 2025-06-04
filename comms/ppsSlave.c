@@ -111,7 +111,7 @@ int readPpsSlaveInputOkStatus(char *status, size_t size)
         snprintf(status, size, "%s", "disabled");
     }
     // clear
-    writeRegister(temp_addr + Ucm_PpsSlave_StatusReg, temp_data);
+    writeRegister(temp_addr + Ucm_PpsSlave_StatusReg, &temp_data);
 
     return 0;
 }
@@ -158,3 +158,5 @@ int readPpsSlaveCableDelayValue(char *value, size_t size)
 
     return 0;
 }
+
+//

@@ -32,6 +32,11 @@ to quickly create a Cobra application.`,
 				axi.ReadNtpServer("version")
 			case "ip":
 				fmt.Println("ip flag called")
+
+			case "read":
+				fmt.Println(args[0], " ", axi.ReadNtpServer(args[0]))
+			case "write":
+				axi.WriteNtpServer(args[0], args[1])
 			default:
 				fmt.Println("Please pass the ntp command a valid flag")
 			}
@@ -44,7 +49,8 @@ func init() {
 	rootCmd.AddCommand(ntpCmd)
 	ntpCmd.Flags().BoolP("list", "l", false, "list ntp properties and values")
 	ntpCmd.Flags().BoolP("version", "v", false, "list ntp server version")
-
+	ntpCmd.Flags().BoolP("read", "r", false, "read ntp serve rproperty")
+	ntpCmd.Flags().BoolP("write", "w", false, "write ntp server property")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
