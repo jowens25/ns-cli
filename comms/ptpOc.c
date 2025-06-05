@@ -123,8 +123,9 @@ int readPtpOcLayer(char *layer, size_t size)
     if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigProfileReg, &temp_data))
     {
         snprintf(layer, size, "%s", "NA");
-        return -1;
+        return -1234;
     }
+    printf("The value for this switch is: %ld\r\n", (temp_data >> 16) & 0x00000003);
     switch ((temp_data >> 16) & 0x00000003)
     {
     case 0:
@@ -144,7 +145,7 @@ int readPtpOcLayer(char *layer, size_t size)
         break;
     default:
         // ui->PtpOcLayerValue->setCurrentText("NA");
-        snprintf(layer, size, "%s", "NA");
+        snprintf(layer, size, "%s", "NA-Default");
 
         break;
     }
@@ -190,12 +191,12 @@ int readPtpOcIpAddress(char *ipAddr, size_t size)
     int64_t temp_ip = 0;
     char layer[size];
 
-    int err = readPtpOcLayer(layer, size);
-
+    // int err = readPtpOcLayer(layer, size);
+    int err = 0;
     if (err != 0)
     {
         snprintf(ipAddr, size, "%s", "mode err");
-        return -1;
+        return -45;
     }
 
     if (0 == strncmp(layer, "Layer 2", size))
@@ -209,7 +210,7 @@ int readPtpOcIpAddress(char *ipAddr, size_t size)
         if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigIpReg, &temp_data))
         {
             snprintf(ipAddr, size, "%s", "err");
-            return -1;
+            return -17869;
         }
         temp_ip = 0x00000000;
         temp_ip |= (temp_data >> 0) & 0x000000FF;
@@ -235,7 +236,7 @@ int readPtpOcIpAddress(char *ipAddr, size_t size)
         if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigIpReg, &temp_data))
         {
             snprintf(ipAddr, size, "%s", "err0-3");
-            return -1;
+            return -1009;
         }
         temp_ip6[0] = (temp_data >> 0) & 0x000000FF;
         temp_ip6[1] = (temp_data >> 8) & 0x000000FF;
@@ -245,7 +246,7 @@ int readPtpOcIpAddress(char *ipAddr, size_t size)
         if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigIpv61Reg, &temp_data))
         {
             snprintf(ipAddr, size, "%s", "err4-7");
-            return -1;
+            return -1008;
         }
         temp_ip6[4] = (temp_data >> 0) & 0x000000FF;
         temp_ip6[5] = (temp_data >> 8) & 0x000000FF;
@@ -255,7 +256,7 @@ int readPtpOcIpAddress(char *ipAddr, size_t size)
         if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigIpv62Reg, &temp_data))
         {
             snprintf(ipAddr, size, "%s", "err8-11");
-            return -1;
+            return -1007;
         }
         temp_ip6[8] = (temp_data >> 0) & 0x000000FF;
         temp_ip6[9] = (temp_data >> 8) & 0x000000FF;
@@ -265,7 +266,7 @@ int readPtpOcIpAddress(char *ipAddr, size_t size)
         if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigIpv63Reg, &temp_data))
         {
             snprintf(ipAddr, size, "%s", "err12-15");
-            return -1;
+            return -1006;
         }
         temp_ip6[12] = (temp_data >> 0) & 0x000000FF;
         temp_ip6[13] = (temp_data >> 8) & 0x000000FF;
@@ -293,7 +294,7 @@ int readPtpOcIpAddress(char *ipAddr, size_t size)
     else
     {
         snprintf(ipAddr, size, "%s", "NA");
-        return -1;
+        return -10005;
     }
 
     return 0;
@@ -3119,12 +3120,13 @@ int writePtpOcLayer(char *layer, size_t size)
 {
 
     char currentAddress[size];
-    int err = readPtpOcIpAddress(currentAddress, size);
+    // int err = readPtpOcIpAddress(currentAddress, size);
 
-    if (err != 0)
-    {
-        return -555;
-    }
+    // printf("this err: %d\r\n", err);
+    // if (err != 0)
+    //{
+    //    return -77;
+    //}
 
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x00000000;
@@ -3134,22 +3136,24 @@ int writePtpOcLayer(char *layer, size_t size)
         return -2;
     }
 
+    // clear both
+    temp_data &= ~(0x00010000 | 0x00020000);
+
     if (0 == strcmp(layer, "Layer 2"))
     {
-        // clear both
-        temp_data &= ~(0x00010000 | 0x00200000);
+
         temp_data |= 0x00000000;
     }
 
     else if (0 == strcmp(layer, "Layer 3v4"))
     {
-        temp_data &= ~0x00200000;
+        // temp_data &= ~0x00020000;
         temp_data |= 0x00010000;
     }
 
     else if (0 == strcmp(layer, "Layer 3v6"))
     {
-        temp_data &= ~0x00010000;
+        // temp_data &= ~0x00010000;
         temp_data |= 0x00020000;
     }
 
@@ -3169,12 +3173,12 @@ int writePtpOcLayer(char *layer, size_t size)
         return -5; // write fail
     }
 
-    err = 0;
-    err = writePtpOcIpAddress(currentAddress, size);
-    if (err != 0)
-    {
-        return err;
-    }
+    // err = 0;
+    //// err = writePtpOcIpAddress(currentAddress, size);
+    // if (err != 0)
+    //{
+    //     return err;
+    // }
 
     return 0;
 }
@@ -3309,18 +3313,18 @@ int writePtpOcIpAddress(char *ipAddress, size_t size)
 {
     char currentMode[size];
 
-    if (0 != readPtpOcLayer(currentMode, size))
-    {
-        printf("failed to read current layer\n");
-        return -66;
-    }
+    // if (0 != readPtpOcLayer(currentMode, size))
+    //{
+    //     printf("failed to read current layer\n");
+    //     return -11;
+    // }
 
     if (0 == strncmp(currentMode, "Layer 3v4", size))
     {
         if (0 != ptp_ipv4_addr_to_register_value(ipAddress, size))
         {
             printf("failed to write ipv4 crap\n");
-            return -4;
+            return -14;
         }
     }
     else if (0 == strncmp(currentMode, "Layer 3v6", size))
@@ -3333,7 +3337,8 @@ int writePtpOcIpAddress(char *ipAddress, size_t size)
     }
     else
     {
-        return -6;
+        printf("this is the mode: %s\r\n", currentMode);
+        return -12;
     }
     return 0;
 }
@@ -3358,6 +3363,7 @@ int ptp_ipv4_addr_to_register_value(char *ipAddress, size_t size)
 
     else if (strchr(ipAddress, ':'))
     {
+        printf("ipv6 going to ipv4?");
         // temp_ip[0] = 0;
         // temp_ip[1] = 0;
         // temp_ip[2] = 0;
