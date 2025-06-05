@@ -191,12 +191,10 @@ int readPtpOcIpAddress(char *ipAddr, size_t size)
     int64_t temp_ip = 0;
     char layer[size];
 
-    // int err = readPtpOcLayer(layer, size);
-    int err = 0;
-    if (err != 0)
+    if (0 != readPtpOcLayer(layer, size))
     {
         snprintf(ipAddr, size, "%s", "mode err");
-        return -45;
+        return -1;
     }
 
     if (0 == strncmp(layer, "Layer 2", size))
@@ -210,7 +208,7 @@ int readPtpOcIpAddress(char *ipAddr, size_t size)
         if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigIpReg, &temp_data))
         {
             snprintf(ipAddr, size, "%s", "err");
-            return -17869;
+            return -2;
         }
         temp_ip = 0x00000000;
         temp_ip |= (temp_data >> 0) & 0x000000FF;
@@ -236,7 +234,7 @@ int readPtpOcIpAddress(char *ipAddr, size_t size)
         if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigIpReg, &temp_data))
         {
             snprintf(ipAddr, size, "%s", "err0-3");
-            return -1009;
+            return -3;
         }
         temp_ip6[0] = (temp_data >> 0) & 0x000000FF;
         temp_ip6[1] = (temp_data >> 8) & 0x000000FF;
@@ -246,7 +244,7 @@ int readPtpOcIpAddress(char *ipAddr, size_t size)
         if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigIpv61Reg, &temp_data))
         {
             snprintf(ipAddr, size, "%s", "err4-7");
-            return -1008;
+            return -4;
         }
         temp_ip6[4] = (temp_data >> 0) & 0x000000FF;
         temp_ip6[5] = (temp_data >> 8) & 0x000000FF;
@@ -256,7 +254,7 @@ int readPtpOcIpAddress(char *ipAddr, size_t size)
         if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigIpv62Reg, &temp_data))
         {
             snprintf(ipAddr, size, "%s", "err8-11");
-            return -1007;
+            return -5;
         }
         temp_ip6[8] = (temp_data >> 0) & 0x000000FF;
         temp_ip6[9] = (temp_data >> 8) & 0x000000FF;
@@ -266,7 +264,7 @@ int readPtpOcIpAddress(char *ipAddr, size_t size)
         if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigIpv63Reg, &temp_data))
         {
             snprintf(ipAddr, size, "%s", "err12-15");
-            return -1006;
+            return -6;
         }
         temp_ip6[12] = (temp_data >> 0) & 0x000000FF;
         temp_ip6[13] = (temp_data >> 8) & 0x000000FF;
@@ -294,7 +292,7 @@ int readPtpOcIpAddress(char *ipAddr, size_t size)
     else
     {
         snprintf(ipAddr, size, "%s", "NA");
-        return -10005;
+        return -7;
     }
 
     return 0;
@@ -3120,13 +3118,10 @@ int writePtpOcLayer(char *layer, size_t size)
 {
 
     char currentAddress[size];
-    // int err = readPtpOcIpAddress(currentAddress, size);
-
-    // printf("this err: %d\r\n", err);
-    // if (err != 0)
-    //{
-    //    return -77;
-    //}
+    if (0 != readPtpOcIpAddress(currentAddress, size))
+    {
+        return -1;
+    }
 
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x00000000;
@@ -3173,12 +3168,10 @@ int writePtpOcLayer(char *layer, size_t size)
         return -5; // write fail
     }
 
-    // err = 0;
-    //// err = writePtpOcIpAddress(currentAddress, size);
-    // if (err != 0)
-    //{
-    //     return err;
-    // }
+    if (0 != writePtpOcIpAddress(currentAddress, size))
+    {
+        return -6;
+    }
 
     return 0;
 }
@@ -3313,19 +3306,14 @@ int writePtpOcIpAddress(char *ipAddress, size_t size)
 {
     char currentMode[size];
 
-    // if (0 != readPtpOcLayer(currentMode, size))
-    //{
-    //     printf("failed to read current layer\n");
-    //     return -11;
-    // }
+    if (0 != readPtpOcLayer(currentMode, size))
+    {
+        return -1;
+    }
 
     if (0 == strncmp(currentMode, "Layer 3v4", size))
     {
-        if (0 != ptp_ipv4_addr_to_register_value(ipAddress, size))
-        {
-            printf("failed to write ipv4 crap\n");
-            return -14;
-        }
+        ptp_ipv4_addr_to_register_value(ipAddress, size);
     }
     else if (0 == strncmp(currentMode, "Layer 3v6", size))
     {
@@ -3334,11 +3322,11 @@ int writePtpOcIpAddress(char *ipAddress, size_t size)
 
     else if (0 == strncmp(currentMode, "Layer 2", size))
     {
+        // nothing
     }
     else
     {
-        printf("this is the mode: %s\r\n", currentMode);
-        return -12;
+        return -2;
     }
     return 0;
 }
@@ -3564,5 +3552,380 @@ int ptp_ipv6_addr_to_register_value(char *ipAddress, size_t size)
     {
         return -5;
     }
+    return 0;
+}
+
+//********************************
+// default dataset
+//********************************
+
+int writePtpOcDefaultDsClockIdValue(char *clockid, size_t size)
+{ // mac
+    // readConfig();
+    // AA:BB:CC:DD:EE:FF:GG:HH
+    if (strlen(clockid) > 23)
+    {
+        return -1;
+    }
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    // int j = 0;
+    long temp_clockid = 0;
+
+    // removes :
+    for (int i = 0, j = 0; i < size; i++)
+    {
+        if (clockid[i] != ':')
+        {
+            clockid[j] = clockid[i];
+            j++;
+        }
+
+        if (clockid[i] == '\0')
+        {
+            break;
+        }
+    }
+
+    temp_clockid = strtol(clockid, NULL, 16);
+
+    temp_data = 0x00000000;
+    temp_data |= (temp_clockid >> 32) & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= (temp_clockid >> 40) & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= (temp_clockid >> 48) & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= (temp_clockid >> 56) & 0x000000FF;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDs1Reg, &temp_data))
+    {
+        return -1;
+    }
+
+    temp_data = 0x00000000;
+    temp_data |= (temp_clockid >> 0) & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= (temp_clockid >> 8) & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= (temp_clockid >> 16) & 0x000000FF;
+    temp_data = temp_data << 8;
+    temp_data |= (temp_clockid >> 24) & 0x000000FF;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDs2Reg, &temp_data))
+    {
+        return -1;
+    }
+
+    temp_data = 0x00000001; // write
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
+    {
+        return -1;
+    }
+    // write success
+    return 0;
+}
+
+int writePtpOcDefaultDsDomainValue(char *domain, size_t size)
+{
+
+    if (strlen(domain) != 4)
+    {
+        return -1;
+    }
+    domain[0] = domain[2];
+    domain[1] = domain[3];
+    domain[2] = '\0';
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDs3Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+    // remove current domain
+    temp_data &= ~0x000000FF;
+    // temp_data &= 0x000000FF;
+
+    temp_data |= strtol(domain, NULL, 16);
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDs3Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    temp_data = 0x00000002;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcDefaultDsPriority1Value(char *priority1, size_t size)
+{
+
+    if (strlen(priority1) != 4)
+    {
+        return -1;
+    }
+
+    priority1[0] = priority1[2];
+    priority1[1] = priority1[3];
+    priority1[2] = '\0';
+
+    long temp_priority1 = (strtol(priority1, NULL, 16)); // takes 0x44 and puts in the top of the ds3 reg -> 0x44000000
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDs3Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+
+    temp_data &= ~(0xFF << 24);          // mask the bottom 6 bytes
+    temp_data |= (temp_priority1 << 24); // set top 2 bytes
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDs3Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    // write
+    temp_data = 0x00000008;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcDefaultDsPriority2Value(char *priority2, size_t size)
+{
+
+    if (strlen(priority2) != 4)
+    {
+        return -1;
+    }
+    priority2[0] = priority2[2];
+    priority2[1] = priority2[3];
+    priority2[2] = '\0';
+
+    long temp_priority2 = (strtol(priority2, NULL, 16)); // takes 0x44 and puts in the top of the ds3 reg -> 0x44000000
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDs3Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+
+    temp_data &= ~(0xFF << 16);          // mask the bottom 6 bytes
+    temp_data |= (temp_priority2 << 16); // set top 2 bytes
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDs3Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    // write
+    temp_data = 0x00000010;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcDefaultDsClassValue(char *class, size_t size)
+{
+
+    if (strlen(class) != 4)
+    {
+        return -1;
+    }
+    class[0] = class[2];
+    class[1] = class[3];
+    class[2] = '\0';
+
+    long temp_class = (strtol(class, NULL, 16)); // takes 0x44 and puts in the top of the ds3 reg -> 0x44000000
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDs4Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+
+    temp_data &= ~(0xFF << 24);      // mask 0x 00 FF
+    temp_data |= (temp_class << 24); // set top 2 bytes
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDs4Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    // write
+    temp_data = 0x00000004;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcDefaultDsAccuracyValue(char *accuracy, size_t size)
+{
+
+    long temp_accuracy = (strtol(accuracy, NULL, 10));
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDs4Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+
+    temp_data &= ~(0xFF << 16);         // mask bytes
+    temp_data |= (temp_accuracy << 16); // set bytes
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDs4Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    // write
+    temp_data = 0x00000004;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcDefaultDsVarianceValue(char *variance, size_t size)
+{
+
+    if (strlen(variance) != 6)
+    {
+        return -1;
+    }
+    variance[0] = variance[2];
+    variance[1] = variance[3];
+    variance[2] = variance[4];
+    variance[3] = variance[5];
+    variance[5] = '\0';
+
+    long temp_class = (strtol(variance, NULL, 16)); // takes 0x44 and puts in the top of the ds3 reg -> 0x44000000
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDs4Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+
+    temp_data &= ~(0xFFFF << 0);    // mask 0x 00 FF
+    temp_data |= (temp_class << 0); // set top 2 bytes
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDs4Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    // write
+    temp_data = 0x00000004;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcDefaultDsShortIdValue(char *shortid, size_t size)
+{
+
+    if (strlen(shortid) != 6)
+    {
+        return -1;
+    }
+    shortid[0] = shortid[2];
+    shortid[1] = shortid[3];
+    shortid[2] = shortid[4];
+    shortid[3] = shortid[5];
+    shortid[5] = '\0';
+
+    long temp_shortid = (strtol(shortid, NULL, 16));
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    // this is disregarded
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDs5Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+
+    temp_data = temp_shortid;
+
+    // temp_data &= ~(0xFF << 16);         // mask bytes
+    // temp_data |= (temp_accuracy << 16); // set bytes
+    //
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDs5Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    // write
+    temp_data = 0x00000020;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcDefaultDsInaccuracyValue(char *inaccuracy, size_t size)
+{
+
+    long temp_inaccuracy = (strtol(inaccuracy, NULL, 10));
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    // temp_data = 0x00000000;
+    //
+    // if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDs6Reg, &temp_data))
+    //{
+    //    return -2; // read current settings fails
+    //}
+
+    // temp_data &= ~(0xFF << 16);         // mask bytes
+    // temp_data |= (temp_accuracy << 16); // set bytes
+    //
+    temp_data = temp_inaccuracy;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDs6Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    // write
+    temp_data = 0x00000040;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
     return 0;
 }

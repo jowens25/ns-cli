@@ -619,6 +619,61 @@ func WritePtpOc(property string, value string) {
 		if err != 0 {
 			fmt.Println("writePtpOcVlanStatus ERROR: ", err)
 		}
+
+	case PtpOc.DefaultDsClockId:
+		err := C.writePtpOcDefaultDsClockIdValue(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcDefaultDsClockIdValue ERROR: ", err)
+		}
+
+	case PtpOc.DefaultDsDomain:
+		err := C.writePtpOcDefaultDsDomainValue(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcDefaultDsDomainValue ERROR: ", err)
+		}
+
+	case PtpOc.DefaultDsPriority1:
+		err := C.writePtpOcDefaultDsPriority1Value(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcDefaultDsPriority1Value ERROR: ", err)
+		}
+
+	case PtpOc.DefaultDsPriority2:
+		err := C.writePtpOcDefaultDsPriority2Value(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcDefaultDsPriority2Value ERROR: ", err)
+		}
+
+	case PtpOc.DefaultDsClass:
+		err := C.writePtpOcDefaultDsClassValue(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcDefaultDsClassValue ERROR: ", err)
+		}
+
+	case PtpOc.DefaultDsAccuracy:
+		err := C.writePtpOcDefaultDsAccuracyValue(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcDefaultDsAccuracyValue ERROR: ", err)
+		}
+
+	case PtpOc.DefaultDsVariance:
+		err := C.writePtpOcDefaultDsVarianceValue(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcDefaultDsVarianceValue ERROR: ", err)
+		}
+
+	case PtpOc.DefaultDsShortId:
+		err := C.writePtpOcDefaultDsShortIdValue(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcDefaultDsShortIdValue ERROR: ", err)
+		}
+
+	case PtpOc.DefaultDsInaccuracy:
+		err := C.writePtpOcDefaultDsInaccuracyValue(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcDefaultDsInaccuracyValue ERROR: ", err)
+		}
+
 		//
 		//
 	default:

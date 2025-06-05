@@ -156,4 +156,14 @@ int writePtpOcIpAddress(char *ipAddress, size_t size);
 
 int ptp_ipv4_addr_to_register_value(char *ipAddress, size_t size);
 int ptp_ipv6_addr_to_register_value(char *ipAddress, size_t size);
+
+int writePtpOcDefaultDsClockIdValue(char *clockid, size_t size);
+int writePtpOcDefaultDsDomainValue(char *domain, size_t size);
+int writePtpOcDefaultDsPriority1Value(char *priority1, size_t size);
+int writePtpOcDefaultDsPriority2Value(char *priority2, size_t size);
+int writePtpOcDefaultDsClassValue(char *class, size_t size);
+int writePtpOcDefaultDsAccuracyValue(char *accuracy, size_t size);
+int writePtpOcDefaultDsVarianceValue(char *variance, size_t size);
+int writePtpOcDefaultDsShortIdValue(char *shortid, size_t size);
+int writePtpOcDefaultDsInaccuracyValue(char *inaccuracy, size_t size);
 #endif // PTP_OC_H
