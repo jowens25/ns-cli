@@ -2964,6 +2964,10 @@ int writePtpOcDefaultDsSlaveOnlyStatus(char *status, size_t size)
         return -1;
     }
 
+    printf("temp data in write slave only: 0x%08lx\r\n", temp_data);
+
+    printf("temp data in write slave only: 0x%08lx\r\n", temp_data >> 20);
+
     // clear both bits
     temp_data &= ~(0x00100000 | 0x00200000);
 
@@ -3929,3 +3933,70 @@ int writePtpOcDefaultDsInaccuracyValue(char *inaccuracy, size_t size)
 
     return 0;
 }
+
+// number of ports - RO
+
+// int writePtpOcDefaultDsAccuracyValue(char *accuracy, size_t size)
+//{
+//
+//     long temp_accuracy = (strtol(accuracy, NULL, 10));
+//
+//     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+//     temp_data = 0x00000000;
+//
+//     if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDs4Reg, &temp_data))
+//     {
+//         return -2; // read current settings fails
+//     }
+//
+//     temp_data &= ~(0xFF << 16);         // mask bytes
+//     temp_data |= (temp_accuracy << 16); // set bytes
+//
+//     if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDs4Reg, &temp_data))
+//     {
+//         return -3;
+//     }
+//
+//     // write
+//     temp_data = 0x00000004;
+//     if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
+//     {
+//         return -4; // failed to write control reg
+//     }
+//
+//     return 0;
+// }
+
+//
+
+// int writePtpOcDefaultDsInaccuracyValue(char *inaccuracy, size_t size)
+//{
+//
+//     long temp_inaccuracy = (strtol(inaccuracy, NULL, 10));
+//
+//     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+//     // temp_data = 0x00000000;
+//     //
+//     // if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDs6Reg, &temp_data))
+//     //{
+//     //    return -2; // read current settings fails
+//     //}
+//
+//     // temp_data &= ~(0xFF << 16);         // mask bytes
+//     // temp_data |= (temp_accuracy << 16); // set bytes
+//     //
+//     temp_data = temp_inaccuracy;
+//     if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDs6Reg, &temp_data))
+//     {
+//         return -3;
+//     }
+//
+//     // write
+//     temp_data = 0x00000040;
+//     if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
+//     {
+//         return -4; // failed to write control reg
+//     }
+//
+//     return 0;
+// }

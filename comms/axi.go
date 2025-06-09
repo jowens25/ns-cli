@@ -10,7 +10,10 @@ package axi
 */
 import "C"
 import (
+	"encoding/json"
 	"fmt"
+	"log"
+	"os"
 	"sync"
 	"time"
 	"unsafe"
@@ -79,134 +82,84 @@ var NtpServer = NtpServerApi{
 }
 
 type PtpOcApi struct {
-	Version                                string
-	Root                                   string
-	Status                                 string
-	VlanStatus                             string
-	VlanAddress                            string
-	Profile                                string
-	DefaultDsTwoStepStatus                 string
-	DefaultDsSignalingStatus               string
-	Layer                                  string
-	DefaultDsSlaveOnlyStatus               string
-	DefaultDsMasterOnlyStatus              string
-	DefaultDsDisableOffsetCorrectionStatus string
-	DefaultDsListedUnicastSlavesOnlyStatus string
-	DelayMechanismValue                    string
-	IpAddress                              string
-	DefaultDsClockId                       string
-	DefaultDsDomain                        string
-	DefaultDsPriority1                     string
-	DefaultDsPriority2                     string
-	DefaultDsVariance                      string
-	DefaultDsAccuracy                      string
-	DefaultDsClass                         string
-	DefaultDsShortId                       string
-	DefaultDsInaccuracy                    string
-	DefaultDsNumberOfPorts                 string
-	PortDsPeerDelayValue                   string
-	PortDsState                            string
-	PortDsPDelayReqLogMsgIntervalValue     string
-	PortDsDelayReqLogMsgIntervalValue      string
-	PortDsDelayReceiptTimeoutValue         string
-	PortDsAsymmetryValue                   string
-	PortDsMaxPeerDelayValue                string
-	CurrentDsStepsRemovedValue             string
-	CurrentDsOffsetValue                   string
-	CurrentDsDelayValue                    string
-	ParentDsParentClockIdValue             string
-	ParentDsGmClockIdValue                 string
-	ParentDsGmPriority1Value               string
-	ParentDsGmPriority2Value               string
-	ParentDsGmVarianceValue                string
-	ParentDsGmAccuracyValue                string
-	ParentDsGmClassValue                   string
-	ParentDsGmShortIdValue                 string
-	ParentDsGmInaccuracyValue              string
-	ParentDsNwInaccuracyValue              string
-	TimePropertiesDsTimeSourceValue        string
-	TimePropertiesDsPtpTimescaleStatus     string
-	TimePropertiesDsFreqTraceableStatus    string
-	TimePropertiesDsTimeTraceableStatus    string
-	TimePropertiesDsLeap61Status           string
-	TimePropertiesDsLeap59Status           string
-	TimePropertiesDsUtcOffsetValStatus     string
-	TimePropertiesDsUtcOffsetValue         string
-	TimePropertiesDsCurrentOffsetValue     string
-	TimePropertiesDsJumpSecondsValue       string
-	TimePropertiesDsNextJumpValue          string
-	TimePropertiesDsDisplayNameValue       string
+	Root                                   string `json:"ptp-oc"`
+	Version                                string `json:"version"`
+	Status                                 string `json:"status"`
+	VlanStatus                             string `json:"vlan-status"`
+	VlanAddress                            string `json:"vlan-address"`
+	Profile                                string `json:"profile"`
+	DefaultDsTwoStepStatus                 string `json:"default-ds-two-step-status"`
+	DefaultDsSignalingStatus               string `json:"default-ds-signaling-status"`
+	Layer                                  string `json:"layer"`
+	DefaultDsSlaveOnlyStatus               string `json:"default-ds-slave-only-status"`
+	DefaultDsMasterOnlyStatus              string `json:"default-ds-master-only-status"`
+	DefaultDsDisableOffsetCorrectionStatus string `json:"default-ds-disable-offset-correction-status"`
+	DefaultDsListedUnicastSlavesOnlyStatus string `json:"default-ds-listed-unicast-slaves-only-status"`
+	DelayMechanismValue                    string `json:"delay-mechanism-value"`
+	IpAddress                              string `json:"ip-address"`
+	DefaultDsClockId                       string `json:"default-ds-clock-id"`
+	DefaultDsDomain                        string `json:"default-ds-domain"`
+	DefaultDsPriority1                     string `json:"default-ds-priority1"`
+	DefaultDsPriority2                     string `json:"default-ds-priority2"`
+	DefaultDsVariance                      string `json:"default-ds-variance"`
+	DefaultDsAccuracy                      string `json:"default-ds-accuracy"`
+	DefaultDsClass                         string `json:"default-ds-class"`
+	DefaultDsShortId                       string `json:"default-ds-shortid"`
+	DefaultDsInaccuracy                    string `json:"default-ds-inaccuracy"`
+	DefaultDsNumberOfPorts                 string `json:"default-ds-numberofports"`
+	PortDsPeerDelayValue                   string `json:"port-ds-peer-delay-value"`
+	PortDsState                            string `json:"port-ds-state"`
+	PortDsPDelayReqLogMsgIntervalValue     string `json:"port-ds-p-delay-req-log-msg-interval-value"`
+	PortDsDelayReqLogMsgIntervalValue      string `json:"port-ds-delay-req-log-msg-interval-value"`
+	PortDsDelayReceiptTimeoutValue         string `json:"port-ds-delay-receipt-timeout-value"`
+	PortDsAsymmetryValue                   string `json:"port-ds-asymmetry-value"`
+	PortDsMaxPeerDelayValue                string `json:"port-ds-max-peer-delay-value"`
+	CurrentDsStepsRemovedValue             string `json:"current-ds-steps-removed-value"`
+	CurrentDsOffsetValue                   string `json:"current-ds-offset-value"`
+	CurrentDsDelayValue                    string `json:"current-ds-delay-value"`
+	ParentDsParentClockIdValue             string `json:"parent-ds-parent-clock-id-value"`
+	ParentDsGmClockIdValue                 string `json:"parent-ds-gm-clock-id-value"`
+	ParentDsGmPriority1Value               string `json:"parent-ds-gm-priority-1-value"`
+	ParentDsGmPriority2Value               string `json:"parent-ds-gm-priority-2-value"`
+	ParentDsGmVarianceValue                string `json:"parent-ds-gm-variance-value"`
+	ParentDsGmAccuracyValue                string `json:"parent-ds-gm-accuracy-value"`
+	ParentDsGmClassValue                   string `json:"parent-ds-gm-class-value"`
+	ParentDsGmShortIdValue                 string `json:"parent-ds-gm-short-id-value"`
+	ParentDsGmInaccuracyValue              string `json:"parent-ds-gm-inaccuracy-value"`
+	ParentDsNwInaccuracyValue              string `json:"parent-ds-nw-inaccuracy-value"`
+	TimePropertiesDsTimeSourceValue        string `json:"time-properties-ds-time-source-value"`
+	TimePropertiesDsPtpTimescaleStatus     string `json:"time-properties-ds-ptp-time-scale-status"`
+	TimePropertiesDsFreqTraceableStatus    string `json:"time-properties-ds-freq-traceable-status"`
+	TimePropertiesDsTimeTraceableStatus    string `json:"time-properties-ds-time-traceable-status"`
+	TimePropertiesDsLeap61Status           string `json:"time-properties-ds-leap61-status"`
+	TimePropertiesDsLeap59Status           string `json:"time-properties-ds-leap59-status"`
+	TimePropertiesDsUtcOffsetValStatus     string `json:"time-properties-ds-ut-coffset-val-status"`
+	TimePropertiesDsUtcOffsetValue         string `json:"time-properties-ds-utc-offset-value"`
+	TimePropertiesDsCurrentOffsetValue     string `json:"time-properties-ds-current-offset-value"`
+	TimePropertiesDsJumpSecondsValue       string `json:"time-properties-ds-jump-seconds-value"`
+	TimePropertiesDsNextJumpValue          string `json:"time-properties-ds-next-jump-value"`
+	TimePropertiesDsDisplayNameValue       string `json:"time-properties-ds-display-name-value"`
 }
 
-var PtpOc = PtpOcApi{
-	Version:                                "version",
-	Root:                                   "ptp-oc",
-	Status:                                 "status",
-	VlanStatus:                             "vlan-status",
-	VlanAddress:                            "vlan-address",
-	Profile:                                "profile",
-	DefaultDsTwoStepStatus:                 "default-ds-two-step-status",
-	DefaultDsSignalingStatus:               "default-ds-signaling-status",
-	Layer:                                  "layer",
-	DefaultDsSlaveOnlyStatus:               "default-ds-slave-only-status",
-	DefaultDsMasterOnlyStatus:              "default-ds-master-only-status",
-	DefaultDsDisableOffsetCorrectionStatus: "default-ds-disable-offset-correction-status",
-	DefaultDsListedUnicastSlavesOnlyStatus: "default-ds-listed-unicast-slaves-only-status",
-	DelayMechanismValue:                    "delay-mechanism-value",
-	IpAddress:                              "ip-address",
-	DefaultDsClockId:                       "default-ds-clock-id",
-	DefaultDsDomain:                        "default-ds-domain",
-	DefaultDsPriority1:                     "default-ds-priority1",
-	DefaultDsPriority2:                     "default-ds-priority2",
-	DefaultDsVariance:                      "default-ds-variance",
-	DefaultDsAccuracy:                      "default-ds-accuracy",
-	DefaultDsClass:                         "default-ds-class",
-	DefaultDsShortId:                       "default-ds-shortid",
-	DefaultDsInaccuracy:                    "default-ds-inaccuracy",
-	DefaultDsNumberOfPorts:                 "default-ds-numberofports",
-	PortDsPeerDelayValue:                   "port-ds-peer-delay-value",
-	PortDsState:                            "port-ds-state",
-	PortDsPDelayReqLogMsgIntervalValue:     "port-ds-p-delay-req-log-msg-interval-value",
-	PortDsDelayReqLogMsgIntervalValue:      "port-ds-delay-req-log-msg-interval-value",
-	PortDsDelayReceiptTimeoutValue:         "port-ds-delay-receipt-timeout-value",
-	PortDsAsymmetryValue:                   "port-ds-asymmetry-value",
-	PortDsMaxPeerDelayValue:                "port-ds-max-peer-delay-value",
-	CurrentDsStepsRemovedValue:             "current-ds-steps-removed-value",
-	CurrentDsOffsetValue:                   "current-ds-offset-value",
-	CurrentDsDelayValue:                    "current-ds-delay-value",
-	ParentDsParentClockIdValue:             "parent-ds-parent-clock-id-value",
-	ParentDsGmClockIdValue:                 "parent-ds-gm-clock-id-value",
-	ParentDsGmPriority1Value:               "parent-ds-gm-priority-1-value",
-	ParentDsGmPriority2Value:               "parent-ds-gm-priority-2-value",
-	ParentDsGmVarianceValue:                "parent-ds-gm-variance-value",
-	ParentDsGmAccuracyValue:                "parent-ds-gm-accuracy-value",
-	ParentDsGmClassValue:                   "parent-ds-gm-class-value",
-	ParentDsGmShortIdValue:                 "parent-ds-gm-short-id-value",
-	ParentDsGmInaccuracyValue:              "parent-ds-gm-inaccuracy-value",
-	ParentDsNwInaccuracyValue:              "parent-ds-nw-inaccuracy-value",
-	TimePropertiesDsTimeSourceValue:        "time-properties-ds-time-source-value",
-	TimePropertiesDsPtpTimescaleStatus:     "time-properties-ds-ptp-time-scale-status",
-	TimePropertiesDsFreqTraceableStatus:    "time-properties-ds-freq-traceable-status",
-	TimePropertiesDsTimeTraceableStatus:    "time-properties-ds-time-traceable-status",
-	TimePropertiesDsLeap61Status:           "time-properties-ds-leap61-status",
-	TimePropertiesDsLeap59Status:           "time-properties-ds-leap59-status",
-	TimePropertiesDsUtcOffsetValStatus:     "time-properties-ds-ut-coffset-val-status",
-	TimePropertiesDsUtcOffsetValue:         "time-properties-ds-utc-offset-value",
-	TimePropertiesDsCurrentOffsetValue:     "time-properties-ds-current-offset-value",
-	TimePropertiesDsJumpSecondsValue:       "time-properties-ds-jump-seconds-value",
-	TimePropertiesDsNextJumpValue:          "time-properties-ds-next-jump-value",
-	TimePropertiesDsDisplayNameValue:       "time-properties-ds-display-name-value",
-}
+var PtpOc = PtpOcApi{}
 
 var mutex sync.Mutex
 
 const size = C.size_t(64)
 
 func init() {
+	jsonFile, err := os.ReadFile("/home/jowens/Projects/NovusTimeServer/comms/ptpOc.json")
+	if err != nil {
+		log.Fatalf("Error reading file: %v", err)
+	}
+
+	json.Unmarshal(jsonFile, &PtpOc)
+
 	mutex.Lock()
 	C.connect()
 	C.readConfig()
 	mutex.Unlock()
+
 }
 
 func ReadNtpServer(property string) string {
@@ -410,138 +363,243 @@ func ReadPtpOc(property string) string {
 	mutex.Lock()
 
 	switch property {
+
 	case PtpOc.Version:
-		//C.readPtpOcVersion(out, size)
-	case PtpOc.Root:
-		//C.readPtpOcRoot(out, size)
+		C.readPtpOcVersion(out, size)
+		PtpOc.Version = C.GoString(out)
+
 	case PtpOc.Status:
 		C.readPtpOcStatus(out, size)
+		PtpOc.Status = C.GoString(out)
+
 	case PtpOc.VlanStatus:
 		C.readPtpOcVlanStatus(out, size)
+		PtpOc.VlanStatus = C.GoString(out)
+
 	case PtpOc.VlanAddress:
 		C.readPtpOcVlanAddress(out, size)
+		PtpOc.VlanAddress = C.GoString(out)
+
 	case PtpOc.Profile:
 		C.readPtpOcProfile(out, size)
+		PtpOc.Profile = C.GoString(out)
+
 	case PtpOc.DefaultDsTwoStepStatus:
 		C.readPtpOcDefaultDsTwoStepStatus(out, size)
+		PtpOc.DefaultDsTwoStepStatus = C.GoString(out)
+
 	case PtpOc.DefaultDsSignalingStatus:
 		C.readPtpOcDefaultDsSignalingStatus(out, size)
+		PtpOc.DefaultDsSignalingStatus = C.GoString(out)
+
 	case PtpOc.Layer:
 		C.readPtpOcLayer(out, size)
+		PtpOc.Layer = C.GoString(out)
+
 	case PtpOc.DefaultDsSlaveOnlyStatus:
 		C.readPtpOcDefaultDsSlaveOnlyStatus(out, size)
+		PtpOc.DefaultDsSlaveOnlyStatus = C.GoString(out)
+
 	case PtpOc.DefaultDsMasterOnlyStatus:
 		C.readPtpOcDefaultDsMasterOnlyStatus(out, size)
+		PtpOc.DefaultDsMasterOnlyStatus = C.GoString(out)
+
 	case PtpOc.DefaultDsDisableOffsetCorrectionStatus:
 		C.readPtpOcDefaultDsDisableOffsetCorrectionStatus(out, size)
+		PtpOc.DefaultDsDisableOffsetCorrectionStatus = C.GoString(out)
+
 	case PtpOc.DefaultDsListedUnicastSlavesOnlyStatus:
 		C.readPtpOcDefaultDsListedUnicastSlavesOnlyStatus(out, size)
+		PtpOc.DefaultDsListedUnicastSlavesOnlyStatus = C.GoString(out)
+
 	case PtpOc.DelayMechanismValue:
 		C.readPtpOcDelayMechanismValue(out, size)
+		PtpOc.DelayMechanismValue = C.GoString(out)
+
 	case PtpOc.IpAddress:
 		C.readPtpOcIpAddress(out, size)
+		PtpOc.IpAddress = C.GoString(out)
+
 	case PtpOc.DefaultDsClockId:
 		C.readPtpOcDefaultDsClockId(out, size)
+		PtpOc.DefaultDsClockId = C.GoString(out)
+
 	case PtpOc.DefaultDsDomain:
 		C.readPtpOcDefaultDsDomain(out, size)
+		PtpOc.DefaultDsDomain = C.GoString(out)
+
 	case PtpOc.DefaultDsPriority1:
 		C.readPtpOcDefaultDsPriority1(out, size)
+		PtpOc.DefaultDsPriority1 = C.GoString(out)
+
 	case PtpOc.DefaultDsPriority2:
 		C.readPtpOcDefaultDsPriority2(out, size)
+		PtpOc.DefaultDsPriority2 = C.GoString(out)
+
 	case PtpOc.DefaultDsVariance:
 		C.readPtpOcDefaultDsVariance(out, size)
+		PtpOc.DefaultDsVariance = C.GoString(out)
+
 	case PtpOc.DefaultDsAccuracy:
 		C.readPtpOcDefaultDsAccuracy(out, size)
+		PtpOc.DefaultDsAccuracy = C.GoString(out)
+
 	case PtpOc.DefaultDsClass:
 		C.readPtpOcDefaultDsClass(out, size)
+		PtpOc.DefaultDsClass = C.GoString(out)
+
 	case PtpOc.DefaultDsShortId:
 		C.readPtpOcDefaultDsShortId(out, size)
+		PtpOc.DefaultDsShortId = C.GoString(out)
+
 	case PtpOc.DefaultDsInaccuracy:
 		C.readPtpOcDefaultDsInaccuracy(out, size)
+		PtpOc.DefaultDsInaccuracy = C.GoString(out)
+
 	case PtpOc.DefaultDsNumberOfPorts:
 		C.readPtpOcDefaultDsNumberOfPorts(out, size)
+		PtpOc.DefaultDsNumberOfPorts = C.GoString(out)
+
 		//
 		//
 	case PtpOc.PortDsPeerDelayValue:
 		C.readPtpOcPortDsPeerDelayValue(out, size)
+		PtpOc.PortDsPeerDelayValue = C.GoString(out)
+
 	case PtpOc.PortDsState:
 		C.readPtpOcPortDsState(out, size)
+		PtpOc.PortDsState = C.GoString(out)
+
 	case PtpOc.PortDsPDelayReqLogMsgIntervalValue:
 		C.readPtpOcPortDsPDelayReqLogMsgIntervalValue(out, size)
+		PtpOc.PortDsPDelayReqLogMsgIntervalValue = C.GoString(out)
+
 	case PtpOc.PortDsDelayReqLogMsgIntervalValue:
 		C.readPtpOcPortDsDelayReqLogMsgIntervalValue(out, size)
+		PtpOc.PortDsDelayReqLogMsgIntervalValue = C.GoString(out)
+
 	case PtpOc.PortDsDelayReceiptTimeoutValue:
 		C.readPtpOcPortDsDelayReceiptTimeoutValue(out, size)
+		PtpOc.PortDsDelayReceiptTimeoutValue = C.GoString(out)
+
 	case PtpOc.PortDsAsymmetryValue:
 		C.readPtpOcPortDsAsymmetryValue(out, size)
+		PtpOc.PortDsAsymmetryValue = C.GoString(out)
+
 	case PtpOc.PortDsMaxPeerDelayValue:
 		C.readPtpOcPortDsMaxPeerDelayValue(out, size)
+		PtpOc.PortDsMaxPeerDelayValue = C.GoString(out)
 
 		//
 	case PtpOc.CurrentDsStepsRemovedValue:
 		C.readPtpOcCurrentDsStepsRemovedValue(out, size)
+		PtpOc.CurrentDsStepsRemovedValue = C.GoString(out)
+
 	case PtpOc.CurrentDsOffsetValue:
 		C.readPtpOcCurrentDsOffsetValue(out, size)
+		PtpOc.CurrentDsOffsetValue = C.GoString(out)
 
 	case PtpOc.CurrentDsDelayValue:
 		C.readPtpOcCurrentDsDelayValue(out, size)
+		PtpOc.CurrentDsDelayValue = C.GoString(out)
 
 	// parent dataset
 	case PtpOc.ParentDsParentClockIdValue:
 		C.readPtpOcParentDsParentClockIdValue(out, size)
+		PtpOc.ParentDsParentClockIdValue = C.GoString(out)
 
 	case PtpOc.ParentDsGmClockIdValue:
 		C.readPtpOcParentDsGmClockIdValue(out, size)
+		PtpOc.ParentDsGmClockIdValue = C.GoString(out)
+
 	case PtpOc.ParentDsGmPriority1Value:
 		C.readPtpOcParentDsGmPriority1Value(out, size)
+		PtpOc.ParentDsGmPriority1Value = C.GoString(out)
 
 	case PtpOc.ParentDsGmPriority2Value:
 		C.readPtpOcParentDsGmPriority2Value(out, size)
+		PtpOc.ParentDsGmPriority2Value = C.GoString(out)
+
 	case PtpOc.ParentDsGmVarianceValue:
 		C.readPtpOcParentDsGmVarianceValue(out, size)
+		PtpOc.ParentDsGmVarianceValue = C.GoString(out)
+
 	case PtpOc.ParentDsGmAccuracyValue:
 		C.readPtpOcParentDsGmAccuracyValue(out, size)
+		PtpOc.ParentDsGmAccuracyValue = C.GoString(out)
+
 	case PtpOc.ParentDsGmClassValue:
 		C.readPtpOcParentDsGmClassValue(out, size)
+		PtpOc.ParentDsGmClassValue = C.GoString(out)
+
 	case PtpOc.ParentDsGmShortIdValue:
 		C.readPtpOcParentDsGmShortIdValue(out, size)
+		PtpOc.ParentDsGmShortIdValue = C.GoString(out)
+
 	case PtpOc.ParentDsGmInaccuracyValue:
 		C.readPtpOcParentDsGmInaccuracyValue(out, size)
+		PtpOc.ParentDsGmInaccuracyValue = C.GoString(out)
+
 	case PtpOc.ParentDsNwInaccuracyValue:
 		C.readPtpOcParentDsNwInaccuracyValue(out, size)
+		PtpOc.ParentDsNwInaccuracyValue = C.GoString(out)
 
 		// time properties
 	case PtpOc.TimePropertiesDsTimeSourceValue:
 		C.readPtpOcTimePropertiesDsTimeSourceValue(out, size)
+		PtpOc.TimePropertiesDsTimeSourceValue = C.GoString(out)
 
 	case PtpOc.TimePropertiesDsPtpTimescaleStatus:
 		C.readPtpOcTimePropertiesDsPtpTimescaleStatus(out, size)
+		PtpOc.TimePropertiesDsPtpTimescaleStatus = C.GoString(out)
 	case PtpOc.TimePropertiesDsFreqTraceableStatus:
 		C.readPtpOcTimePropertiesDsFreqTraceableStatus(out, size)
+		PtpOc.TimePropertiesDsFreqTraceableStatus = C.GoString(out)
 	case PtpOc.TimePropertiesDsTimeTraceableStatus:
 		C.readPtpOcTimePropertiesDsTimeTraceableStatus(out, size)
+		PtpOc.TimePropertiesDsTimeTraceableStatus = C.GoString(out)
 	case PtpOc.TimePropertiesDsLeap61Status:
 		C.readPtpOcTimePropertiesDsLeap61Status(out, size)
+		PtpOc.TimePropertiesDsLeap61Status = C.GoString(out)
 	case PtpOc.TimePropertiesDsLeap59Status:
 		C.readPtpOcTimePropertiesDsLeap59Status(out, size)
+		PtpOc.TimePropertiesDsLeap59Status = C.GoString(out)
 	case PtpOc.TimePropertiesDsUtcOffsetValStatus:
 		C.readPtpOcTimePropertiesDsUtcOffsetValStatus(out, size)
+		PtpOc.TimePropertiesDsUtcOffsetValStatus = C.GoString(out)
 	case PtpOc.TimePropertiesDsUtcOffsetValue:
 		C.readPtpOcTimePropertiesDsUtcOffsetValue(out, size)
+		PtpOc.TimePropertiesDsUtcOffsetValue = C.GoString(out)
 	case PtpOc.TimePropertiesDsCurrentOffsetValue:
 		C.readPtpOcTimePropertiesDsCurrentOffsetValue(out, size)
+		PtpOc.TimePropertiesDsCurrentOffsetValue = C.GoString(out)
 	case PtpOc.TimePropertiesDsJumpSecondsValue:
 		C.readPtpOcTimePropertiesDsJumpSecondsValue(out, size)
+		PtpOc.TimePropertiesDsJumpSecondsValue = C.GoString(out)
 	case PtpOc.TimePropertiesDsNextJumpValue:
 		C.readPtpOcTimePropertiesDsNextJumpValue(out, size)
+		PtpOc.TimePropertiesDsNextJumpValue = C.GoString(out)
 	case PtpOc.TimePropertiesDsDisplayNameValue:
 		C.readPtpOcTimePropertiesDsDisplayNameValue(out, size)
+		PtpOc.TimePropertiesDsDisplayNameValue = C.GoString(out)
 
 	default:
 		fmt.Println("no such property")
 	}
+
 	mutex.Unlock()
 	defer C.free(unsafe.Pointer(out))
+
+	updatedData, err := json.MarshalIndent(PtpOc, "", "  ")
+	if err != nil {
+		log.Fatalf("Error marshaling: %v", err)
+	}
+
+	err = os.WriteFile("/home/jowens/Projects/NovusTimeServer/comms/ptpOc.json", updatedData, 0644)
+	if err != nil {
+		log.Fatalf("Error writing file: %v", err)
+	}
+
 	return C.GoString(out)
 }
 
@@ -677,7 +735,7 @@ func WritePtpOc(property string, value string) {
 		//
 		//
 	default:
-		fmt.Println("NO SUCH PROPERTY")
+		fmt.Println("NO SUCH WRITE PROPERTY")
 	}
 	mutex.Unlock()
 	defer C.free(unsafe.Pointer(in))
@@ -686,9 +744,9 @@ func WritePtpOc(property string, value string) {
 }
 
 func ListPtpOcProperties() {
+
 	properties := []string{
-		//PtpOc.Version,
-		//PtpOc.Root,
+		PtpOc.Version,
 		PtpOc.Status,
 		PtpOc.VlanStatus,
 		PtpOc.VlanAddress,
@@ -746,8 +804,6 @@ func ListPtpOcProperties() {
 		PtpOc.TimePropertiesDsDisplayNameValue}
 
 	for _, p := range properties {
-		//fmt.Println(i)
 		fmt.Println(p, " : ", ReadPtpOc(p))
 	}
-
 }

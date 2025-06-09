@@ -1,0 +1,21 @@
+//package main
+//
+//type PtpOcApi struct {
+//	Page    string `json:"page"`
+//	Fruits  string `json:"fruits"`
+//	Status  string `json:"status"`
+//	Version string `json:"version"`
+//}
+//
+//var PtpOc = PtpOcApi{}
+//
+//func init() {
+//}
+//
+//func main() {
+//
+//	PtpOc.Fruits = "big apple"
+//
+//	PtpOc.Status = "disabled"
+//
+//}
