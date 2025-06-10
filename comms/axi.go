@@ -20,66 +20,37 @@ import (
 )
 
 type NtpServerApi struct {
-	Status               string
-	InstanceNumber       string
-	IpMode               string
-	IpAddress            string
-	MacAddress           string
-	VlanStatus           string
-	VlanAddress          string
-	UnicastMode          string
-	MulticastMode        string
-	BroadcastMode        string
-	PrecisionValue       string
-	PollIntervalValue    string
-	StratumValue         string
-	ReferenceId          string
-	SmearingStatus       string
-	Leap61Progress       string
-	Leap59Progress       string
-	Leap61Status         string
-	Leap59Status         string
-	UtcOffsetStatus      string
-	UtcOffsetValue       string
-	RequestsValue        string
-	ResponsesValue       string
-	RequestsDroppedValue string
-	BroadcastsValue      string
-	ClearCountersStatus  string
-	Version              string
-	Root                 string
+	Status               string `json:"status"`
+	InstanceNumber       string `json:"instance"`
+	IpMode               string `json:"ip-mode"`
+	IpAddress            string `json:"ip-address"`
+	MacAddress           string `json:"mac-address"`
+	VlanStatus           string `json:"vlan-status"`
+	VlanAddress          string `json:"vlan-address"`
+	UnicastMode          string `json:"unicast"`
+	MulticastMode        string `json:"multicast"`
+	BroadcastMode        string `json:"broadcast"`
+	PrecisionValue       string `json:"precision"`
+	PollIntervalValue    string `json:"poll-interval"`
+	StratumValue         string `json:"stratum"`
+	ReferenceId          string `json:"reference-id"`
+	SmearingStatus       string `json:"smearing-status"`
+	Leap61Progress       string `json:"leap61-progress"`
+	Leap59Progress       string `json:"leap59-progress"`
+	Leap61Status         string `json:"leap61-status"`
+	Leap59Status         string `json:"leap59-status"`
+	UtcOffsetStatus      string `json:"utc-offset-status"`
+	UtcOffsetValue       string `json:"utc-offset"`
+	RequestsValue        string `json:"requests"`
+	ResponsesValue       string `json:"responses"`
+	RequestsDroppedValue string `json:"requestsdropped"`
+	BroadcastsValue      string `json:"broadcasts"`
+	ClearCountersStatus  string `json:"clearcounters"`
+	Version              string `json:"version"`
+	Root                 string `json:"ntp-server"`
 }
 
-var NtpServer = NtpServerApi{
-	Status:               "status",
-	InstanceNumber:       "instance",
-	IpMode:               "ip-mode",
-	IpAddress:            "ip-address",
-	MacAddress:           "mac-address",
-	VlanStatus:           "vlan-status",
-	VlanAddress:          "vlan-address",
-	UnicastMode:          "unicast",
-	MulticastMode:        "multicast",
-	BroadcastMode:        "broadcast",
-	PrecisionValue:       "precision",
-	PollIntervalValue:    "poll-interval",
-	StratumValue:         "stratum",
-	ReferenceId:          "reference-id",
-	SmearingStatus:       "smearing-status",
-	Leap61Progress:       "leap61-progress",
-	Leap59Progress:       "leap59-progress",
-	Leap61Status:         "leap61-status",
-	Leap59Status:         "leap59-status",
-	UtcOffsetStatus:      "utc-offset-status",
-	UtcOffsetValue:       "utc-offset",
-	RequestsValue:        "requests",
-	ResponsesValue:       "responses",
-	RequestsDroppedValue: "requestsdropped",
-	BroadcastsValue:      "broadcasts",
-	ClearCountersStatus:  "clearcounters",
-	Version:              "version",
-	Root:                 "ntp-server",
-}
+var PtpOcMap map[string]string
 
 type PtpOcApi struct {
 	Root                                   string `json:"ptp-oc"`
@@ -141,6 +112,8 @@ type PtpOcApi struct {
 	TimePropertiesDsDisplayNameValue       string `json:"time-properties-ds-display-name-value"`
 }
 
+var NtpServer = NtpServerApi{}
+
 var PtpOc = PtpOcApi{}
 
 var mutex sync.Mutex
@@ -159,6 +132,14 @@ func init() {
 	C.connect()
 	C.readConfig()
 	mutex.Unlock()
+
+}
+
+func ShowKeys() {
+	fmt.Println(PtpOc)
+	fmt.Println(PtpOc.Version["version"])
+	//fmt.Println(ptpOcMap["ip-address"])
+	//fmt.Println("version: ", ptpOcMap["ptp-oc"]["version"])
 
 }
 
@@ -364,9 +345,9 @@ func ReadPtpOc(property string) string {
 
 	switch property {
 
-	case PtpOc.Version:
-		C.readPtpOcVersion(out, size)
-		PtpOc.Version = C.GoString(out)
+	//case PtpOc.Version:
+	//	C.readPtpOcVersion(out, size)
+	//	PtpOc.Version = C.GoString(out)
 
 	case PtpOc.Status:
 		C.readPtpOcStatus(out, size)
@@ -746,7 +727,7 @@ func WritePtpOc(property string, value string) {
 func ListPtpOcProperties() {
 
 	properties := []string{
-		PtpOc.Version,
+		//PtpOc.Version,
 		PtpOc.Status,
 		PtpOc.VlanStatus,
 		PtpOc.VlanAddress,

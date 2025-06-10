@@ -27,6 +27,8 @@ to quickly create a Cobra application.`,
 		cmd.Flags().Visit(func(f *pflag.Flag) {
 
 			switch f.Name {
+			case "show":
+				axi.ShowKeys()
 			case "list":
 				axi.ListPtpOcProperties()
 			case "write":
@@ -46,6 +48,7 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(ptpCmd)
+	ptpCmd.Flags().BoolP("show", "s", false, "show keys")
 	ptpCmd.Flags().BoolP("list", "l", false, "list ptp oc properties and values")
 	ptpCmd.Flags().BoolP("write", "w", false, "write ptp oc property")
 	ptpCmd.Flags().BoolP("read", "r", false, "read ptp oc property")

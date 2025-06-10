@@ -3936,6 +3936,10 @@ int writePtpOcDefaultDsInaccuracyValue(char *inaccuracy, size_t size)
 
 // number of ports - RO
 
+//********************************
+// port dataset
+//********************************
+
 // int writePtpOcDefaultDsAccuracyValue(char *accuracy, size_t size)
 //{
 //

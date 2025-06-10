@@ -199,11 +199,11 @@ func RunServers() {
 			true))
 
 	// PTP OC routes
-	apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.PtpOc.Root, axi.PtpOc.Version),
-		Handler(axi.ReadPtpOc,
-			axi.WritePtpOc,
-			axi.PtpOc.Version,
-			false))
+	//apiMux.HandleFunc(path.Join(apiBase, apiVersion, axi.PtpOc.Root, axi.PtpOc.Version),
+	//	Handler(axi.ReadPtpOc,
+	//		axi.WritePtpOc,
+	//		axi.PtpOc.Version,
+	//		false))
 	//apiMux.HandleFunc("/ptp-oc/version", PtpVersionHandler)
 	//apiMux.HandleFunc("/ptp-oc/instance", PtpInstanceHandler)
 	//apiMux.HandleFunc("/ptp-oc/mac", PtpMacHandler)
