@@ -199,7 +199,7 @@ var PtpOc = PtpOcAPi{
 	TimePropertiesDsTimeTraceableStatus:    "time-properties-ds-time-traceable-status",
 	TimePropertiesDsLeap61Status:           "time-properties-ds-leap61-status",
 	TimePropertiesDsLeap59Status:           "time-properties-ds-leap59-status",
-	TimePropertiesDsUtcOffsetValStatus:     "time-properties-ds-ut-coffset-val-status",
+	TimePropertiesDsUtcOffsetValStatus:     "time-properties-ds-utc-offset-val-status",
 	TimePropertiesDsUtcOffsetValue:         "time-properties-ds-utc-offset-value",
 	TimePropertiesDsCurrentOffsetValue:     "time-properties-ds-current-offset-value",
 	TimePropertiesDsJumpSecondsValue:       "time-properties-ds-jump-seconds-value",
@@ -850,6 +850,64 @@ func WritePtpOc(property string, value string) {
 		err := C.writePtpOcTimePropertiesDsFreqTraceableStatus(in, size)
 		if err != 0 {
 			fmt.Println("writePtpOcTimePropertiesDsFreqTraceableStatus ERROR: ", err)
+		}
+	case PtpOc.TimePropertiesDsTimeTraceableStatus:
+		err := C.writePtpOcTimePropertiesDsTimeTraceableStatus(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcTimePropertiesDsTimeTraceableStatus ERROR: ", err)
+		}
+
+	case PtpOc.TimePropertiesDsLeap61Status:
+		err := C.writePtpOcTimePropertiesDsLeap61Status(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcTimePropertiesDsLeap61Status ERROR: ", err)
+		}
+	case PtpOc.TimePropertiesDsLeap59Status:
+		err := C.writePtpOcTimePropertiesDsLeap59Status(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcTimePropertiesDsLeap59Status ERROR: ", err)
+		}
+	case PtpOc.TimePropertiesDsUtcOffsetValStatus:
+		err := C.writePtpOcTimePropertiesDsUtcOffsetValStatus(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcTimePropertiesDsUtcOffsetValStatus ERROR: ", err)
+		}
+	case PtpOc.TimePropertiesDsUtcOffsetValue:
+		err := C.writePtpOcTimePropertiesDsUtcOffsetValue(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcTimePropertiesDsUtcOffsetValue ERROR: ", err)
+		}
+	case PtpOc.TimePropertiesDsCurrentOffsetValue:
+		err := C.writePtpOcTimePropertiesDsCurrentOffsetValue(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcTimePropertiesDsCurrentOffsetValue ERROR: ", err)
+		}
+	case PtpOc.TimePropertiesDsJumpSecondsValue:
+		err := C.writePtpOcTimePropertiesDsJumpSecondsValue(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcTimePropertiesDsJumpSecondsValue ERROR: ", err)
+		}
+	case PtpOc.TimePropertiesDsNextJumpValue:
+		err := C.writePtpOcTimePropertiesDsNextJumpValue(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcTimePropertiesDsNextJumpValue ERROR: ", err)
+		}
+	case PtpOc.TimePropertiesDsDisplayNameValue:
+		err := C.writePtpOcTimePropertiesDsDisplayNameValue(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcTimePropertiesDsDisplayNameValue ERROR: ", err)
+		}
+
+	case PtpOc.Status:
+		err := C.writePtpOcStatus(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcStatus ERROR: ", err)
+		}
+
+	case PtpOc.IpAddress:
+		err := C.writePtpOcIpAddress(in, size)
+		if err != 0 {
+			fmt.Println("writePtpOcIpAddress ERROR: ", err)
 		}
 		//
 		//

@@ -182,4 +182,16 @@ int writePtpOcPortDsSetCustomIntervalsStatus(char *status, size_t size);
 int writePtpOcTimePropertiesDsTimeSourceValue(char *source, size_t size);
 int writePtpOcTimePropertiesDsPtpTimescaleStatus(char *status, size_t size);
 int writePtpOcTimePropertiesDsFreqTraceableStatus(char *status, size_t size);
+int writePtpOcTimePropertiesDsTimeTraceableStatus(char *status, size_t size);
+int writePtpOcTimePropertiesDsLeap61Status(char *status, size_t size);
+int writePtpOcTimePropertiesDsLeap59Status(char *status, size_t size);
+int writePtpOcTimePropertiesDsUtcOffsetValStatus(char *status, size_t size);
+int writePtpOcTimePropertiesDsUtcOffsetValue(char *offset, size_t size);
+int writePtpOcTimePropertiesDsCurrentOffsetValue(char *offset, size_t size);
+int writePtpOcTimePropertiesDsJumpSecondsValue(char *seconds, size_t size);
+int writePtpOcTimePropertiesDsNextJumpValue(char *next, size_t size);
+int writePtpOcTimePropertiesDsDisplayNameValue(char *name, size_t size);
+int writePtpOcStatus(char *status, size_t size);
+int writePtpOcIpAddress(char *ipAddress, size_t size);
+
 #endif // PTP_OC_H

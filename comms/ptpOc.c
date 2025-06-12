@@ -2745,7 +2745,7 @@ int readPtpOcTimePropertiesDsNextJumpValue(char *seconds, size_t size)
             snprintf(seconds, size, "%ld", temp_next_jump);
 
             // ui->PtpOcTimePropertiesDsNextJumpValue->setText(QString::number(temp_next_jump));
-            snprintf(seconds, size, "%ld", temp_next_jump);
+            // snprintf(seconds, size, "%ld", temp_next_jump);
         }
 
         break;
@@ -4505,5 +4505,378 @@ int writePtpOcTimePropertiesDsFreqTraceableStatus(char *status, size_t size)
         return -4;
     }
 
+    return 0;
+}
+
+int writePtpOcTimePropertiesDsTimeTraceableStatus(char *status, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs1Reg, &temp_data))
+    {
+        return -1;
+    }
+
+    // temp_data &= 0x0000FFFF;
+    //
+    temp_data &= ~0x00000400;
+
+    if (0 == strncmp(status, "enabled", size))
+    {
+        temp_data = 0x00000400 | temp_data;
+    }
+    else if (0 == strncmp(status, "disabled", size))
+    {
+        temp_data = 0x00000000 | temp_data; // disable
+    }
+    else
+    {
+        return -2;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs1Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    temp_data = 0x00000010;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDsControlReg, &temp_data))
+    {
+        return -4;
+    }
+
+    return 0;
+}
+
+int writePtpOcTimePropertiesDsLeap61Status(char *status, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs1Reg, &temp_data))
+    {
+        return -1;
+    }
+
+    // temp_data &= 0x0000FFFF;
+    //
+    temp_data &= ~0x00000800;
+
+    if (0 == strncmp(status, "enabled", size))
+    {
+        temp_data = 0x00000800 | temp_data;
+    }
+    else if (0 == strncmp(status, "disabled", size))
+    {
+        temp_data = 0x00000000 | temp_data; // disable
+    }
+    else
+    {
+        return -2;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs1Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    temp_data = 0x00000008;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDsControlReg, &temp_data))
+    {
+        return -4;
+    }
+
+    return 0;
+}
+
+int writePtpOcTimePropertiesDsLeap59Status(char *status, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs1Reg, &temp_data))
+    {
+        return -1;
+    }
+
+    // temp_data &= 0x0000FFFF;
+    //
+    temp_data &= ~0x00001000;
+
+    if (0 == strncmp(status, "enabled", size))
+    {
+        temp_data = 0x00001000 | temp_data;
+    }
+    else if (0 == strncmp(status, "disabled", size))
+    {
+        temp_data = 0x00000000 | temp_data; // disable
+    }
+    else
+    {
+        return -2;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs1Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    temp_data = 0x00000004;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDsControlReg, &temp_data))
+    {
+        return -4;
+    }
+
+    return 0;
+}
+
+int writePtpOcTimePropertiesDsUtcOffsetValStatus(char *status, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs1Reg, &temp_data))
+    {
+        return -1;
+    }
+
+    // temp_data &= 0x0000FFFF;
+    //
+    temp_data &= ~0x00002000;
+
+    if (0 == strncmp(status, "enabled", size))
+    {
+        temp_data = 0x00002000 | temp_data;
+    }
+    else if (0 == strncmp(status, "disabled", size))
+    {
+        temp_data = 0x00000000 | temp_data; // disable
+    }
+    else
+    {
+        return -2;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs1Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    temp_data = 0x00000002;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDsControlReg, &temp_data))
+    {
+        return -4;
+    }
+
+    return 0;
+}
+
+int writePtpOcTimePropertiesDsUtcOffsetValue(char *offset, size_t size)
+{
+    long temp_offset = (strtol(offset, NULL, 10));
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs1Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+
+    printf("read temp_data: 0x%08lx\n", temp_data);
+    // clear the top of temp_data we just read
+    temp_data &= ~0xFFFF0000;
+    temp_data |= (temp_offset << 16);
+    // temp_data &= 0x000000FF;
+    printf("write temp_data: 0x%08lx\n", temp_data);
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs1Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    temp_data = 0x00000001;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcTimePropertiesDsCurrentOffsetValue(char *offset, size_t size)
+{
+    long temp_offset = (strtol(offset, NULL, 10));
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs2Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+
+    // printf("read temp_data: 0x%08lx\n", temp_data);
+    // clear the top of temp_data we just read
+    // temp_data &= ~0xFFFF0000;
+    // temp_data |= (temp_offset << 16);
+    // temp_data &= 0x000000FF;
+
+    temp_data = temp_offset;
+    // printf("write temp_data: 0x%08lx\n", temp_data);
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs2Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    temp_data = 0x00000100;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcTimePropertiesDsJumpSecondsValue(char *seconds, size_t size)
+{
+    long temp_seconds = (strtol(seconds, NULL, 10));
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs3Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+
+    // printf("read temp_data: 0x%08lx\n", temp_data);
+    // clear the top of temp_data we just read
+    // temp_data &= ~0xFFFF0000;
+    // temp_data |= (temp_offset << 16);
+    // temp_data &= 0x000000FF;
+
+    temp_data = temp_seconds;
+    // printf("write temp_data: 0x%08lx\n", temp_data);
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs3Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    temp_data = 0x00000200;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcTimePropertiesDsNextJumpValue(char *next, size_t size)
+{
+    long temp_next = (strtol(next, NULL, 10));
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    // unused
+    // if (0 != readRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs4Reg, &temp_data))
+    //{
+    //    return -2; // read current settings fails
+    //}
+
+    // printf("read temp_data: 0x%08lx\n", temp_data);
+    // clear the top of temp_data we just read
+    // temp_data &= ~0x00000000;
+    temp_data = (temp_next >> 32);
+    // temp_data &= 0x000000FF;
+
+    // temp_data = temp_seconds;
+    //  printf("write temp_data: 0x%08lx\n", temp_data);
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs4Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    temp_data = temp_next & 0x00000000FFFFFFFF;
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs5Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    temp_data = 0x00000400;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcTimePropertiesDsDisplayNameValue(char *name, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+
+    for (int j = 0; j < 3; j++)
+    {
+        temp_data = 0x00000000;
+        if ((j * 4) + 0 < strlen(name))
+        {
+            temp_data |= ((name[((j * 4) + 0)]) & 0x000000FF) << 0;
+        }
+
+        if ((j * 4) + 1 < strlen(name))
+        {
+            temp_data |= ((name[((j * 4) + 1)]) & 0x000000FF) << 8;
+        }
+
+        if ((j * 4) + 2 < strlen(name))
+        {
+            temp_data |= ((name[((j * 4) + 2)]) & 0x000000FF) << 16;
+        }
+
+        if ((j * 4) + 3 < strlen(name))
+        {
+            temp_data |= ((name[((j * 4) + 3)]) & 0x000000FF) << 24;
+        }
+
+        if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs7Reg + (j * 4), &temp_data))
+        {
+            return -1;
+        }
+        if (j == 2)
+        {
+            temp_data = strlen(name); // length
+            if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs6Reg, &temp_data))
+            {
+                return -2;
+            }
+
+            temp_data = 0x00001800; // write
+            if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDsControlReg, &temp_data))
+            {
+                return -3;
+            }
+
+            // ui->PtpOcTimePropertiesDsDisplayNameValue->setText(temp_string);
+        }
+    }
+}
+
+int writePtpOcStatus(char *status, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 == strncmp(status, "enabled", size))
+    {
+        temp_data |= 0x00000001;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_ControlReg, &temp_data))
+    {
+        return -1;
+    }
     return 0;
 }

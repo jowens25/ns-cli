@@ -53,7 +53,7 @@
   "TimePropertiesDsTimeTraceableStatus": "time-properties-ds-time-traceable-status",
   "TimePropertiesDsLeap61Status": "time-properties-ds-leap61-status",
   "TimePropertiesDsLeap59Status": "time-properties-ds-leap59-status",
-  "TimePropertiesDsUtcOffsetValStatus": "time-properties-ds-ut-coffset-val-status",
+  "TimePropertiesDsUtcOffsetValStatus": "time-properties-ds-utc-offset-val-status",
   "TimePropertiesDsUtcOffsetValue": "time-properties-ds-utc-offset-value",
   "TimePropertiesDsCurrentOffsetValue": "time-properties-ds-current-offset-value",
   "TimePropertiesDsJumpSecondsValue": "time-properties-ds-jump-seconds-value",
