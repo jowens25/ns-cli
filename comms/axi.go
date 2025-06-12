@@ -396,7 +396,7 @@ func WriteNtpServer(property string, value string) {
 		}
 
 	default:
-		fmt.Println("no such property")
+		fmt.Println("no such property / read only")
 	}
 	mutex.Unlock()
 	defer C.free(unsafe.Pointer(in))
@@ -920,10 +920,10 @@ func WritePtpOc(property string, value string) {
 
 }
 
-func ListPtpOcProperties() {
+func ListPtpOcProperties() error {
 
 	properties := []string{
-		//PtpOc.Version,
+		PtpOc.Version,
 		PtpOc.Status,
 		PtpOc.VlanStatus,
 		PtpOc.VlanAddress,
@@ -951,6 +951,10 @@ func ListPtpOcProperties() {
 		PtpOc.PortDsState,
 		PtpOc.PortDsPDelayReqLogMsgIntervalValue,
 		PtpOc.PortDsDelayReqLogMsgIntervalValue,
+		PtpOc.PortDsAnnounceReceiptTimeoutValue,
+		PtpOc.PortDsAnnounceLogMsgIntervalValue,
+		PtpOc.PortDsSyncReceiptTimeoutValue,
+		PtpOc.PortDsSyncLogMsgIntervalValue,
 		PtpOc.PortDsDelayReceiptTimeoutValue,
 		PtpOc.PortDsAsymmetryValue,
 		PtpOc.PortDsMaxPeerDelayValue,
@@ -980,7 +984,106 @@ func ListPtpOcProperties() {
 		PtpOc.TimePropertiesDsNextJumpValue,
 		PtpOc.TimePropertiesDsDisplayNameValue}
 
-	for _, p := range properties {
-		fmt.Println(p, " : ", ReadPtpOc(p))
+	file, err := os.Create("ptp_properties.txt")
+	if err != nil {
+		return fmt.Errorf("failed to create file: %w", err)
+	}
+	defer file.Close()
+
+	for _, property := range properties {
+		current := ReadPtpOc(property)
+		// Write property name and value to file
+		_, err := fmt.Fprintf(file, "%s: %v\n", property, current)
+		if err != nil {
+			return fmt.Errorf("failed to write to file: %w", err)
+		}
+	}
+	return nil
+}
+
+func TestPtpProperties() {
+
+	properties := []string{
+		PtpOc.Version,
+		PtpOc.Status,
+		PtpOc.VlanStatus,
+		PtpOc.VlanAddress,
+		PtpOc.Profile,
+		PtpOc.DefaultDsTwoStepStatus,
+		PtpOc.DefaultDsSignalingStatus,
+		PtpOc.Layer,
+		PtpOc.DefaultDsSlaveOnlyStatus,
+		PtpOc.DefaultDsMasterOnlyStatus,
+		PtpOc.DefaultDsDisableOffsetCorrectionStatus,
+		PtpOc.DefaultDsListedUnicastSlavesOnlyStatus,
+		PtpOc.DelayMechanismValue,
+		PtpOc.IpAddress,
+		PtpOc.DefaultDsClockId,
+		PtpOc.DefaultDsDomain,
+		PtpOc.DefaultDsPriority1,
+		PtpOc.DefaultDsPriority2,
+		PtpOc.DefaultDsVariance,
+		PtpOc.DefaultDsAccuracy,
+		PtpOc.DefaultDsClass,
+		PtpOc.DefaultDsShortId,
+		PtpOc.DefaultDsInaccuracy,
+		PtpOc.DefaultDsNumberOfPorts,
+		PtpOc.PortDsPeerDelayValue,
+		PtpOc.PortDsState,
+		PtpOc.PortDsPDelayReqLogMsgIntervalValue,
+		PtpOc.PortDsDelayReqLogMsgIntervalValue,
+		PtpOc.PortDsAnnounceReceiptTimeoutValue,
+		PtpOc.PortDsAnnounceLogMsgIntervalValue,
+		PtpOc.PortDsSyncReceiptTimeoutValue,
+		PtpOc.PortDsSyncLogMsgIntervalValue,
+		PtpOc.PortDsDelayReceiptTimeoutValue,
+		PtpOc.PortDsAsymmetryValue,
+		PtpOc.PortDsMaxPeerDelayValue,
+		PtpOc.CurrentDsStepsRemovedValue,
+		PtpOc.CurrentDsOffsetValue,
+		PtpOc.CurrentDsDelayValue,
+		PtpOc.ParentDsParentClockIdValue,
+		PtpOc.ParentDsGmClockIdValue,
+		PtpOc.ParentDsGmPriority1Value,
+		PtpOc.ParentDsGmPriority2Value,
+		PtpOc.ParentDsGmVarianceValue,
+		PtpOc.ParentDsGmAccuracyValue,
+		PtpOc.ParentDsGmClassValue,
+		PtpOc.ParentDsGmShortIdValue,
+		PtpOc.ParentDsGmInaccuracyValue,
+		PtpOc.ParentDsNwInaccuracyValue,
+		PtpOc.TimePropertiesDsTimeSourceValue,
+		PtpOc.TimePropertiesDsPtpTimescaleStatus,
+		PtpOc.TimePropertiesDsFreqTraceableStatus,
+		PtpOc.TimePropertiesDsTimeTraceableStatus,
+		PtpOc.TimePropertiesDsLeap61Status,
+		PtpOc.TimePropertiesDsLeap59Status,
+		PtpOc.TimePropertiesDsUtcOffsetValStatus,
+		PtpOc.TimePropertiesDsUtcOffsetValue,
+		PtpOc.TimePropertiesDsCurrentOffsetValue,
+		PtpOc.TimePropertiesDsJumpSecondsValue,
+		PtpOc.TimePropertiesDsNextJumpValue,
+		PtpOc.TimePropertiesDsDisplayNameValue}
+
+	for _, property := range properties {
+		//fmt.Println(p, " : ", ReadPtpOc(p))
+		value := "0"
+		// read - current
+		current := ReadPtpOc(property)
+		fmt.Println(property, " ", current)
+		// update
+		WritePtpOc(property, value)
+		// read - check if new == requested
+		new := ReadPtpOc(property)
+		fmt.Println("new value: ", new)
+		if new == value {
+			fmt.Println(property, " ", new)
+			WritePtpOc(property, current)
+
+			fmt.Println("TEST PASSED!!")
+			fmt.Println("Changed back to starting value: ", property, " ", ReadPtpOc(property))
+		} else {
+			fmt.Println("TEST FAILED")
+		}
 	}
 }
