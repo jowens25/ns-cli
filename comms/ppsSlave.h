@@ -18,5 +18,9 @@ int readPpsSlaveInvertedStatus(char *status, size_t size);
 int readPpsSlaveInputOkStatus(char *status, size_t size);
 int readPpsSlavePulseWidthValue(char *value, size_t size);
 int readPpsSlaveCableDelayValue(char *value, size_t size);
+int writePpsSlaveCableDelayValue(char *cable_delay, size_t size);
+int writePpsSlaveCableDelayValue(char *cable_delay, size_t size);
+int writePpsSlaveInvertedStatus(char *status, size_t size);
+int writePpsSlaveEnableStatus(char *status, size_t size);
 
 #endif

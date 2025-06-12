@@ -160,3 +160,109 @@ int readPpsSlaveCableDelayValue(char *value, size_t size)
 }
 
 //
+
+int writePpsSlaveCableDelayValue(char *cable_delay, size_t size)
+{
+
+    long temp_cable_delay = (strtol(cable_delay, NULL, 10)); // takes 0x44 and puts in the top of the ds3 reg -> 0x44000000
+
+    temp_addr = cores[Ucm_CoreConfig_PpsSlaveCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    // if (0 != readRegister(temp_addr + Ucm_PpsSlave_CableDelayReg, &temp_data))
+    //{
+    //     return -2; // read current settings fails
+    // }
+
+    temp_data = abs(temp_cable_delay) & 0x3FFFFFFF;
+    if (temp_cable_delay < 0)
+    {
+        temp_data |= 0x80000000; // set sign bit
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PpsSlave_CableDelayReg, &temp_data))
+    {
+        return -3;
+    }
+
+    return 0;
+}
+
+int writePpsSlaveCableDelayValue(char *cable_delay, size_t size)
+{
+
+    long temp_cable_delay = (strtol(cable_delay, NULL, 10)); // takes 0x44 and puts in the top of the ds3 reg -> 0x44000000
+
+    temp_addr = cores[Ucm_CoreConfig_PpsSlaveCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    // if (0 != readRegister(temp_addr + Ucm_PpsSlave_CableDelayReg, &temp_data))
+    //{
+    //     return -2; // read current settings fails
+    // }
+
+    temp_data = abs(temp_cable_delay) & 0x3FFFFFFF;
+    if (temp_cable_delay < 0)
+    {
+        temp_data |= 0x80000000; // set sign bit
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PpsSlave_CableDelayReg, &temp_data))
+    {
+        return -3;
+    }
+
+    return 0;
+}
+
+int writePpsSlaveInvertedStatus(char *status, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PpsSlaveCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 == strncmp(status, "enabled", size))
+    {
+        temp_data = 0x00000001 | temp_data;
+    }
+    else if (0 == strncmp(status, "disabled", size))
+    {
+        temp_data = 0x00000000 | temp_data; // disable
+    }
+    else
+    {
+        return -2;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PpsSlave_PolarityReg, &temp_data))
+    {
+        return -3;
+    }
+
+    return 0;
+}
+
+int writePpsSlaveEnableStatus(char *status, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PpsSlaveCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 == strncmp(status, "enabled", size))
+    {
+        temp_data = 0x00000001 | temp_data;
+    }
+    else if (0 == strncmp(status, "disabled", size))
+    {
+        temp_data = 0x00000000 | temp_data; // disable
+    }
+    else
+    {
+        return -2;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PpsSlave_ControlReg, &temp_data))
+    {
+        return -3;
+    }
+
+    return 0;
+}

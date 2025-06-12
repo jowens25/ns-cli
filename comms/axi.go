@@ -19,6 +19,27 @@ import (
 	"unsafe"
 )
 
+type PpsSlaveApi struct {
+	Version         string
+	InstanceNumber  string
+	EnableStatus    string
+	InvertedStatus  string
+	InputOkStatus   string
+	PulseWidthValue string
+	CableDelayValue string
+}
+
+var PpsSlave = PpsSlaveApi{
+
+	Version:         "version",
+	InstanceNumber:  "instance-number",
+	EnableStatus:    "enable-status",
+	InvertedStatus:  "inverted-status",
+	InputOkStatus:   "input-ok-status",
+	PulseWidthValue: "pulse-width-value",
+	CableDelayValue: "cable-delay-value",
+}
+
 type NtpServerApi struct {
 	Status               string
 	InstanceNumber       string
@@ -402,6 +423,53 @@ func WriteNtpServer(property string, value string) {
 	defer C.free(unsafe.Pointer(in))
 	fmt.Println(property, "w : ", time.Since(start))
 
+}
+
+func TestPpsSlaveModule(property string) {
+	buf := (*C.char)(C.calloc(size, 1))
+	mutex.Lock()
+	switch property {
+
+	case PpsSlave.Version:
+		C.readPpsSlaveVersion(buf, size)
+	case PpsSlave.InstanceNumber:
+		C.readPpsSlaveInstanceNumber(buf, size)
+	case PpsSlave.EnableStatus:
+		C.readPpsSlaveEnableStatus(buf, size)
+	case PpsSlave.InvertedStatus:
+		C.readPpsSlaveInvertedStatus(buf, size)
+	case PpsSlave.InputOkStatus:
+		C.readPpsSlaveInputOkStatus(buf, size)
+	case PpsSlave.PulseWidthValue:
+		C.readPpsSlavePulseWidthValue(buf, size)
+	case PpsSlave.CableDelayValue:
+		C.readPpsSlaveCableDelayValue(buf, size)
+	case PpsSlave.CableDelayValue:
+		C.writePpsSlaveCableDelayValue(buf, size)
+	case PpsSlave.CableDelayValue:
+		C.writePpsSlaveCableDelayValue(buf, size)
+	case PpsSlave.InvertedStatus:
+		C.writePpsSlaveInvertedStatus(buf, size)
+	case PpsSlave.EnableStatus:
+		C.writePpsSlaveEnableStatus(buf, size)
+	default:
+		fmt.Println("no such pps slave property / read only")
+	}
+
+	mutex.Unlock()
+	defer C.free(unsafe.Pointer(buf))
+
+	updatedData, err := json.MarshalIndent(PtpOc, "", "  ")
+	if err != nil {
+		log.Fatalf("Error marshaling: %v", err)
+	}
+
+	err = os.WriteFile("/home/jowens/Projects/NovusTimeServer/comms/ptpOc.json", updatedData, 0644)
+	if err != nil {
+		log.Fatalf("Error writing file: %v", err)
+	}
+
+	return C.GoString(out)
 }
 
 func ReadPtpOc(property string) string {
