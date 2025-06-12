@@ -26,6 +26,9 @@ to quickly create a Cobra application.`,
 		cmd.Flags().Visit(func(f *pflag.Flag) {
 
 			switch f.Name {
+			case "module":
+				//axi.ModuleOperation()
+
 			case "list":
 				//axi.ListNtpProperties()
 			case "version":
@@ -34,9 +37,32 @@ to quickly create a Cobra application.`,
 				fmt.Println("ip flag called")
 
 			case "read":
-				fmt.Println(args[0], " ", axi.ReadNtpServer(args[0]))
+				//axi.ModuleOperation("ntp-server", "r", args[0])
+				fmt.Println(axi.ReadNtpServer(args[0]))
 			case "write":
-				axi.WriteNtpServer(args[0], args[1])
+				//axi.ModuleOperation("ntp-server", "w", args[0], args[1])
+
+			case "test":
+				property := args[0]
+				value := args[1]
+				// read - current
+				current := axi.ReadNtpServer(property)
+				fmt.Println(property, " ", current)
+				// update
+				axi.WriteNtpServer(property, value)
+				// read - check if new == requested
+				new := axi.ReadNtpServer(property)
+				fmt.Println("new value: ", new)
+				if new == value {
+					fmt.Println(property, " ", new)
+					axi.WriteNtpServer(property, current)
+
+					fmt.Println("TEST PASSED!!")
+					fmt.Println("Changed back to starting value: ", property, " ", axi.ReadNtpServer(property))
+				} else {
+					fmt.Println("TEST FAILED")
+				}
+
 			default:
 				fmt.Println("Please pass the ntp command a valid flag")
 			}
@@ -51,6 +77,7 @@ func init() {
 	ntpCmd.Flags().BoolP("version", "v", false, "list ntp server version")
 	ntpCmd.Flags().BoolP("read", "r", false, "read ntp serve rproperty")
 	ntpCmd.Flags().BoolP("write", "w", false, "write ntp server property")
+	ntpCmd.Flags().BoolP("test", "t", false, "property test")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

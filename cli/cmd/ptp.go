@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/jowens25/axi"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -28,19 +27,45 @@ to quickly create a Cobra application.`,
 
 			switch f.Name {
 			case "show":
-				axi.ShowKeys()
+				//axi.ShowKeys()
 			case "list":
 				axi.ListPtpOcProperties()
 			case "write":
+				property := args[0]
+				value := args[1]
 
-				fmt.Println(args[0], args[1])
-				axi.WritePtpOc(args[0], args[1])
+				fmt.Println(property, value)
+				axi.WritePtpOc(property, value)
 			case "read":
-				fmt.Println(args[0], " ", axi.ReadPtpOc(args[0]))
+				property := args[0]
+
+				fmt.Println(property, " ", axi.ReadPtpOc(property))
+
+			case "test":
+				property := args[0]
+				value := args[1]
+				// read - current
+				current := axi.ReadPtpOc(property)
+				fmt.Println(property, " ", current)
+				// update
+				axi.WritePtpOc(property, value)
+				// read - check if new == requested
+				new := axi.ReadPtpOc(property)
+				fmt.Println("new value: ", new)
+				if new == value {
+					fmt.Println(property, " ", new)
+					axi.WritePtpOc(property, current)
+
+					fmt.Println("TEST PASSED!!")
+					fmt.Println("Changed back to starting value: ", property, " ", axi.ReadPtpOc(property))
+				} else {
+					fmt.Println("TEST FAILED")
+				}
 
 			default:
 				fmt.Println("Please pass the ntp command a valid flag")
 			}
+
 		})
 
 	},
@@ -52,6 +77,7 @@ func init() {
 	ptpCmd.Flags().BoolP("list", "l", false, "list ptp oc properties and values")
 	ptpCmd.Flags().BoolP("write", "w", false, "write ptp oc property")
 	ptpCmd.Flags().BoolP("read", "r", false, "read ptp oc property")
+	ptpCmd.Flags().BoolP("test", "t", false, "test a ptp oc config property")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

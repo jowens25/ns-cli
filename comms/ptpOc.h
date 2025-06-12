@@ -166,4 +166,20 @@ int writePtpOcDefaultDsAccuracyValue(char *accuracy, size_t size);
 int writePtpOcDefaultDsVarianceValue(char *variance, size_t size);
 int writePtpOcDefaultDsShortIdValue(char *shortid, size_t size);
 int writePtpOcDefaultDsInaccuracyValue(char *inaccuracy, size_t size);
+
+int writePtpOcPortDsDelayReceiptTimeoutValue(char *timeout, size_t size);      //
+int writePtpOcPortDsDelayReqLogMsgIntervalValue(char *interval, size_t size);  //
+int writePtpOcPortDsPDelayReqLogMsgIntervalValue(char *interval, size_t size); //
+int writePtpOcPortDsAnnounceReceiptTimeoutValue(char *timeout, size_t size);   //
+int writePtpOcPortDsAnnounceLogMsgIntervalValue(char *interval, size_t size);  //
+int writePtpOcPortDsSyncReceiptTimeoutValue(char *timeout, size_t size);       //
+int writePtpOcPortDsSyncLogMsgIntervalValue(char *interval, size_t size);
+int writePtpOcPortDsAsymmetryValue(char *asymmetry, size_t size);
+int writePtpOcPortDsMaxPeerDelayValue(char *delay, size_t size);
+
+int readPtpOcPortDsSetCustomIntervalsStatus(char *status, size_t size);
+int writePtpOcPortDsSetCustomIntervalsStatus(char *status, size_t size);
+int writePtpOcTimePropertiesDsTimeSourceValue(char *source, size_t size);
+int writePtpOcTimePropertiesDsPtpTimescaleStatus(char *status, size_t size);
+int writePtpOcTimePropertiesDsFreqTraceableStatus(char *status, size_t size);
 #endif // PTP_OC_H

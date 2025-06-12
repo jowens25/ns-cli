@@ -3939,68 +3939,571 @@ int writePtpOcDefaultDsInaccuracyValue(char *inaccuracy, size_t size)
 //********************************
 // port dataset
 //********************************
+int PortDsSetCustomIntervals = 0;
+int readPtpOcPortDsSetCustomIntervalsStatus(char *status, size_t size)
+{
+    snprintf(status, size, "%s", "err");
 
-// int writePtpOcDefaultDsAccuracyValue(char *accuracy, size_t size)
-//{
-//
-//     long temp_accuracy = (strtol(accuracy, NULL, 10));
-//
-//     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
-//     temp_data = 0x00000000;
-//
-//     if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDs4Reg, &temp_data))
-//     {
-//         return -2; // read current settings fails
-//     }
-//
-//     temp_data &= ~(0xFF << 16);         // mask bytes
-//     temp_data |= (temp_accuracy << 16); // set bytes
-//
-//     if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDs4Reg, &temp_data))
-//     {
-//         return -3;
-//     }
-//
-//     // write
-//     temp_data = 0x00000004;
-//     if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
-//     {
-//         return -4; // failed to write control reg
-//     }
-//
-//     return 0;
-// }
+    switch (PortDsSetCustomIntervals)
+    {
+    case 0:
+        snprintf(status, size, "%s", "disabled");
+        break;
 
-//
+    case 1:
+        snprintf(status, size, "%s", "enabled");
+        break;
+    default:
+        snprintf(status, size, "%s", "err");
+    }
+    return 0;
+}
+int writePtpOcPortDsSetCustomIntervalsStatus(char *status, size_t size)
+{
 
-// int writePtpOcDefaultDsInaccuracyValue(char *inaccuracy, size_t size)
-//{
-//
-//     long temp_inaccuracy = (strtol(inaccuracy, NULL, 10));
-//
-//     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
-//     // temp_data = 0x00000000;
-//     //
-//     // if (0 != readRegister(temp_addr + Ucm_PtpOc_DefaultDs6Reg, &temp_data))
-//     //{
-//     //    return -2; // read current settings fails
-//     //}
-//
-//     // temp_data &= ~(0xFF << 16);         // mask bytes
-//     // temp_data |= (temp_accuracy << 16); // set bytes
-//     //
-//     temp_data = temp_inaccuracy;
-//     if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDs6Reg, &temp_data))
-//     {
-//         return -3;
-//     }
-//
-//     // write
-//     temp_data = 0x00000040;
-//     if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
-//     {
-//         return -4; // failed to write control reg
-//     }
-//
-//     return 0;
-// }
+    if (0 == strncmp(status, "enabled", size))
+    {
+        PortDsSetCustomIntervals = 1;
+    }
+    else
+    {
+        return -1;
+    }
+
+    if (0 == strncmp(status, "disabled", size))
+    {
+        PortDsSetCustomIntervals = 0;
+    }
+    else
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+int writePtpOcPortDsDelayReceiptTimeoutValue(char *timeout, size_t size)
+{
+
+    long temp_timeout = (strtol(timeout, NULL, 10));
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs4Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+
+    printf("read temp_data: 0x%08lx\n", temp_data);
+
+    temp_data &= ~(0x000000FF << 16);  // mask bytes
+    temp_data |= (temp_timeout << 16); // set bytes
+
+    printf("write temp_data: 0x%08lx\n", temp_data);
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDs4Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    // set intervals
+    temp_data = 0x00000002;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcPortDsDelayReqLogMsgIntervalValue(char *interval, size_t size)
+{
+
+    long temp_interval = (strtol(interval, NULL, 10));
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs4Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+
+    printf("read temp_data: 0x%08lx\n", temp_data);
+
+    temp_data &= ~(0x000000FF << 8);   // mask bytes
+    temp_data |= (temp_interval << 8); // set bytes
+
+    printf("write temp_data: 0x%08lx\n", temp_data);
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDs4Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    // set intervals
+    temp_data = 0x00000002;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcPortDsPDelayReqLogMsgIntervalValue(char *interval, size_t size)
+{
+
+    long temp_interval = (strtol(interval, NULL, 10));
+
+    if (temp_interval < 0)
+    {
+        return -1; // o is too small
+    }
+
+    if (temp_interval >= 128)
+    {
+        return -1; // ooo is too biiig
+    }
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs4Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+
+    printf("read temp_data: 0x%08lx\n", temp_data);
+
+    temp_data &= ~(0x000000FF << 0);   // mask bytes
+    temp_data |= (temp_interval << 0); // set bytes
+
+    printf("write temp_data: 0x%08lx\n", temp_data);
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDs4Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    // set intervals
+    temp_data = 0x00000002;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcPortDsAnnounceReceiptTimeoutValue(char *timeout, size_t size)
+{
+    snprintf(timeout, size, "%s", "read-only");
+    return 0;
+    /*
+    long temp_timeout = (strtol(timeout, NULL, 10));
+
+    if (temp_timeout < 0)
+    {
+        return -1; // o is too small
+    }
+
+    if (temp_timeout > 127)
+    {
+        return -1; // ooo is too biiig
+    }
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs5Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+
+    printf("read temp_data: 0x%08lx\n", temp_data);
+
+    temp_data &= ~(0x000000FF << 8);  // mask bytes
+    temp_data |= (temp_timeout << 8); // set bytes
+
+    printf("write temp_data: 0x%08lx\n", temp_data);
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDs5Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    // set intervals
+    temp_data = 0x00000002;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+    */
+}
+
+int writePtpOcPortDsAnnounceLogMsgIntervalValue(char *interval, size_t size)
+{
+
+    long temp_interval = (strtol(interval, NULL, 10));
+
+    if (temp_interval < 0)
+    {
+        return -1; // o is too small
+    }
+
+    if (temp_interval > 127)
+    {
+        return -1; // ooo is too biiig
+    }
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs5Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+
+    printf("read temp_data: 0x%08lx\n", temp_data);
+
+    temp_data &= ~(0x000000FF << 0);   // mask bytes
+    temp_data |= (temp_interval << 0); // set bytes
+
+    printf("write temp_data: 0x%08lx\n", temp_data);
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDs5Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    // set intervals
+    temp_data = 0x00000002;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcPortDsSyncReceiptTimeoutValue(char *timeout, size_t size)
+{
+
+    long temp_timeout = (strtol(timeout, NULL, 10));
+
+    if (temp_timeout < 0)
+    {
+        return -1; // o is too small
+    }
+
+    if (temp_timeout > 127)
+    {
+        return -1; // ooo is too biiig
+    }
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs6Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+
+    printf("read temp_data: 0x%08lx\n", temp_data);
+
+    temp_data &= ~(0x000000FF << 8);  // mask bytes
+    temp_data |= (temp_timeout << 8); // set bytes
+
+    printf("write temp_data: 0x%08lx\n", temp_data);
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDs6Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    // set intervals
+    temp_data = 0x00000002;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcPortDsSyncLogMsgIntervalValue(char *interval, size_t size)
+{
+
+    long temp_interval = (strtol(interval, NULL, 10));
+
+    if (temp_interval < 0)
+    {
+        return -1; // o is too small
+    }
+
+    if (temp_interval > 127)
+    {
+        return -1; // ooo is too biiig
+    }
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs6Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+
+    printf("read temp_data: 0x%08lx\n", temp_data);
+
+    temp_data &= ~(0x000000FF << 0);   // mask bytes
+    temp_data |= (temp_interval << 0); // set bytes
+
+    printf("write temp_data: 0x%08lx\n", temp_data);
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDs6Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    // set intervals
+    temp_data = 0x00000002;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcPortDsAsymmetryValue(char *asymmetry, size_t size)
+{
+
+    long temp_asymmetry = (strtol(asymmetry, NULL, 10));
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs7Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+
+    printf("read temp_data: 0x%08lx\n", temp_data);
+
+    // temp_data &= ~(0x000000FF << 0);   // mask bytes
+    // temp_data |= (temp_asymmetry << 0); // set bytes
+
+    temp_data = temp_asymmetry;
+
+    printf("write temp_data: 0x%08lx\n", temp_data);
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDs7Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    // set asymmetry
+    temp_data = 0x00000004;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcPortDsMaxPeerDelayValue(char *delay, size_t size)
+{
+
+    long temp_delay = (strtol(delay, NULL, 10));
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_PortDs8Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+
+    printf("read temp_data: 0x%08lx\n", temp_data);
+
+    // temp_data &= ~(0x000000FF << 0);   // mask bytes
+    // temp_data |= (temp_asymmetry << 0); // set bytes
+
+    temp_data = temp_delay;
+
+    printf("write temp_data: 0x%08lx\n", temp_data);
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDs8Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    // set delay
+    temp_data = 0x00000008;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int TimePropertiesDsSetLocalPropertiesCheckBox = 0;
+int readPtpOcTimePropertiesDsSetLocalPropertiesCheckBox(char *status, size_t size)
+{
+    snprintf(status, size, "%s", "err");
+
+    switch (TimePropertiesDsSetLocalPropertiesCheckBox)
+    {
+    case 0:
+        snprintf(status, size, "%s", "disabled");
+        break;
+
+    case 1:
+        snprintf(status, size, "%s", "enabled");
+        break;
+    default:
+        snprintf(status, size, "%s", "err");
+    }
+    return 0;
+}
+int writePtpOcTimePropertiesDsSetLocalPropertiesCheckBox(char *status, size_t size)
+{
+
+    if (0 == strncmp(status, "enabled", size))
+    {
+        TimePropertiesDsSetLocalPropertiesCheckBox = 1;
+    }
+    else
+    {
+        return -1;
+    }
+
+    if (0 == strncmp(status, "disabled", size))
+    {
+        TimePropertiesDsSetLocalPropertiesCheckBox = 0;
+    }
+    else
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+int writePtpOcTimePropertiesDsTimeSourceValue(char *source, size_t size)
+{
+
+    if (strlen(source) != 4)
+    {
+        return -1;
+    }
+    source[0] = source[2];
+    source[1] = source[3];
+    source[2] = '\0';
+
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs1Reg, &temp_data))
+    {
+        return -2; // read current settings fails
+    }
+    // remove current domain
+    temp_data &= ~0x000000FF;
+    // temp_data &= 0x000000FF;
+
+    temp_data |= strtol(source, NULL, 16);
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs1Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    temp_data = 0x00000080;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDsControlReg, &temp_data))
+    {
+        return -4; // failed to write control reg
+    }
+
+    return 0;
+}
+
+int writePtpOcTimePropertiesDsPtpTimescaleStatus(char *status, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs1Reg, &temp_data))
+    {
+        return -1;
+    }
+
+    // temp_data &= 0x0000FFFF;
+    //
+    temp_data &= ~0x00000100;
+
+    if (0 == strncmp(status, "enabled", size))
+    {
+        temp_data = 0x00000100 | temp_data;
+    }
+    else if (0 == strncmp(status, "disabled", size))
+    {
+        temp_data = 0x00000000 | temp_data; // disable
+    }
+    else
+    {
+        return -2;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs1Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    temp_data = 0x00000040;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDsControlReg, &temp_data))
+    {
+        return -4;
+    }
+
+    return 0;
+}
+
+int writePtpOcTimePropertiesDsFreqTraceableStatus(char *status, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs1Reg, &temp_data))
+    {
+        return -1;
+    }
+
+    // temp_data &= 0x0000FFFF;
+    //
+    temp_data &= ~0x00000200;
+
+    if (0 == strncmp(status, "enabled", size))
+    {
+        temp_data = 0x00000200 | temp_data;
+    }
+    else if (0 == strncmp(status, "disabled", size))
+    {
+        temp_data = 0x00000000 | temp_data; // disable
+    }
+    else
+    {
+        return -2;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs1Reg, &temp_data))
+    {
+        return -3;
+    }
+
+    temp_data = 0x00000020;
+    if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDsControlReg, &temp_data))
+    {
+        return -4;
+    }
+
+    return 0;
+}
