@@ -1,6 +1,44 @@
 #ifndef UCM_CORECONFIG_H
 #define UCM_CORECONFIG_H
 
+#define NumberPtpOcProperties 64
+#define NumberNtpServerProperties 32
+
+#define ConfSlave 1
+#define ClkClock 2
+#define ClkSignalGenerator 3
+#define ClkSignalTimestamper 4
+#define IrigSlave 5
+#define IrigMaster 6
+#define PpsSlave 7
+#define PpsMaster 8
+#define PtpOrdinaryClock 9
+#define PtpTransparentClock 10
+#define PtpHybridClock 11
+#define RedHsrPrp 12
+#define RtcSlave 13
+#define RtcMaster 14
+#define TodSlave 15
+#define TodMaster 16
+#define TapSlave 17
+#define DcfSlave 18
+#define DcfMaster 19
+#define RedTsn 20
+#define TsnIic 21
+#define NtpServer 22
+#define NtpClient 23
+#define ClkFrequencyGenerator 25
+#define SynceNode 26
+#define PpsClkToPps 27
+#define PtpServer 28
+#define PtpClient 29
+#define PhyConfiguration 10000 // 30
+#define I2cConfiguration 10001 // 31
+#define IoConfiguration 10002  // 32
+#define EthernetTestplat 10003 // 33
+#define MinSwitch 10004        // 34
+#define ConfExt 20000          // 35
+
 #define Ucm_CoreConfig_ConfSlaveCoreType 1
 #define Ucm_CoreConfig_ClkClockCoreType 2
 #define Ucm_CoreConfig_ClkSignalGeneratorCoreType 3
@@ -38,6 +76,8 @@
 
 typedef struct
 {
+    char *name;
+    char **properties;
     long core_type;
     long core_instance_nr;
     long address_range_low;
@@ -45,6 +85,16 @@ typedef struct
     long interrupt_mask;
 } Ucm_CoreConfig;
 
-extern Ucm_CoreConfig cores[64];
+extern Ucm_CoreConfig cores[];
 
-#endif // Ucm_CoreConfig_H
+extern char **coreProperties[];
+
+extern char *coreNames[];
+
+int getCoreId(char *name);
+
+int getPropertyId(int core, char *name);
+
+int getOperationId(char *name);
+
+#endif // Ucm_CoreConfig_H;

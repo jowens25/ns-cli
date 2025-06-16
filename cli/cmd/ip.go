@@ -6,7 +6,6 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/jowens25/axi"
 	//"github.com/jowens25/axi"
 
 	"github.com/spf13/cobra"
@@ -34,7 +33,7 @@ to quickly create a Cobra application.`,
 		//axi.SetNtpOffsetStatus(args[0])
 		//axi.SetNtpOffsetValue(args[0])
 		//axi.ClearNtpCounters(args[0])
-		axi.WriteNtpServer("clearcounters", args[0])
+		//axi.WriteNtpServer("clearcounters", args[0])
 	},
 }
 

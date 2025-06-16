@@ -3,6 +3,36 @@
 #include "coreConfig.h"
 #include "ntpServer.h"
 
+char *NtpServerProperties[] = {
+    [NtpServerInstanceNumber] = "instance-number",
+    [NtpServerMacAddress] = "mac-address",
+    [NtpServerVlanAddress] = "vlan-address",
+    [NtpServerVlanStatus] = "vlan-status",
+    [NtpServerIpMode] = "ip-mode",
+    [NtpServerIpAddress] = "ip-address",
+    [NtpServerUnicastMode] = "unicast-mode",
+    [NtpServerMulticastMode] = "multicast-mode",
+    [NtpServerBroadcastMode] = "broadcast-mode",
+    [NtpServerStatus] = "status",
+    [NtpServerStratumValue] = "stratum-value",
+    [NtpServerPollIntervalValue] = "pollinterval-value",
+    [NtpServerPrecisionValue] = "precision-value",
+    [NtpServerReferenceIdValue] = "referenceid-value",
+    [NtpServerLeap59Status] = "leap-59-status",
+    [NtpServerLeap59InProgress] = "leap59-in-progress",
+    [NtpServerLeap61Status] = "leap-61-status",
+    [NtpServerLeap61InProgress] = "leap-61-in-progress",
+    [NtpServerUtcSmearingStatus] = "utc-smearing-status",
+    [NtpServerUtcOffsetStatus] = "utc-offset-status",
+    [NtpServerUtcOffsetValue] = "utc-offset-value",
+    [NtpServerRequestsValue] = "requests-value",
+    [NtpServerResponsesValue] = "responses-value",
+    [NtpServerRequestsDroppedValue] = "requests-dropped-value",
+    [NtpServerBroadcastsValue] = "broadcasts-value",
+    [NtpServerClearCountersStatus] = "clear-counters-status",
+    [27] = NULL,
+};
+
 int hasNtpServer(char *in, size_t size)
 {
     if (Ucm_CoreConfig_NtpServerCoreType != cores[Ucm_CoreConfig_NtpServerCoreType].core_type)
@@ -469,7 +499,7 @@ int readNtpServerSmearingStatus(char *status, size_t size)
     return 0;
 }
 
-int readNtpServerLeap61Progress(char *progress, size_t size)
+int readNtpServerLeap61InProgress(char *progress, size_t size)
 {
     // utc info
     temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
@@ -515,7 +545,7 @@ int readNtpServerLeap61Progress(char *progress, size_t size)
 
     return 0;
 }
-int readNtpServerLeap59Progress(char *progress, size_t size)
+int readNtpServerLeap59InProgress(char *progress, size_t size)
 {
     // utc info
     temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
@@ -821,19 +851,19 @@ int readNtpServerClearCountersStatus(char *status, size_t size)
 
     return 0;
 }
-int readNtpServerVersion(char *value, size_t size)
+int readNtpServerVersion(char *version, size_t size)
 {
     // version
     temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
 
     if (0 != readRegister(temp_addr + Ucm_NtpServer_VersionReg, &temp_data))
     {
-        snprintf(value, size, "%s", "NA");
+        snprintf(version, size, "%s", "NA");
 
         return -1;
     }
     // ui->NtpServerVersionValue->setText(QString("0x%1").arg(temp_data, 8, 16, QLatin1Char('0')));
-    snprintf(value, size, "0x%lx", temp_data);
+    snprintf(version, size, "0x%lx", temp_data);
 
     return 0;
 }

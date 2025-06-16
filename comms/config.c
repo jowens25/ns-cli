@@ -2,7 +2,7 @@
 #include "axi.h"
 #include "config.h"
 #include "coreConfig.h"
-// read the core configuration
+//   read the core configuration
 
 void readConfig(void)
 {
@@ -59,12 +59,16 @@ void readConfig(void)
                     break;
                 }
 
+                cores[type].name = coreNames[type];
+
+                cores[type].properties = coreProperties[type];
+
                 cores[type].core_type = type;
 
                 // temp_config.core_instance_nr = ((temp_data >> 0) & 0x0000FFFF);
                 cores[type].core_instance_nr = ((temp_data >> 0) & 0x0000FFFF);
 
-                printf("core types: %ld\n", cores[type].core_type);
+                printf("core type: %ld ... core name: %s\n", cores[type].core_type, cores[type].name);
             }
         }
         else

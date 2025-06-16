@@ -1,7 +1,7 @@
 #ifndef NTP_SERVER_H
 
 #define NTP_SERVER_H
-
+#include <stddef.h>
 #define Ucm_NtpServer_ControlReg 0x00000000
 #define Ucm_NtpServer_StatusReg 0x00000004
 #define Ucm_NtpServer_VersionReg 0x0000000C
@@ -22,6 +22,49 @@
 #define Ucm_NtpServer_ConfigReferenceIdReg 0x000000A4
 #define Ucm_NtpServer_UtcInfoControlReg 0x00000100
 #define Ucm_NtpServer_UtcInfoReg 0x00000104
+
+// server
+#define NtpServerVersion 0
+#define NtpServerInstanceNumber 1
+#define NtpServerMacAddress 2
+#define NtpServerVlanAddress 3
+#define NtpServerVlanStatus 4
+#define NtpServerIpMode 5
+#define NtpServerIpAddress 6
+
+#define NtpServerUnicastMode 7
+#define NtpServerMulticastMode 8
+#define NtpServerBroadcastMode 9
+
+#define NtpServerStatus 10
+
+// serveNtpServerr config
+#define NtpServerStratumValue 11
+#define NtpServerPollIntervalValue 12
+#define NtpServerPrecisionValue 13
+#define NtpServerReferenceIdValue 14
+
+// utc cNtpServeronfig
+#define NtpServerLeap59Status 15
+#define NtpServerLeap59InProgress 16
+
+#define NtpServerLeap61Status 17
+#define NtpServerLeap61InProgress 18
+
+#define NtpServerUtcSmearingStatus 19
+#define NtpServerUtcOffsetStatus 20
+#define NtpServerUtcOffsetValue 21
+// statuNtpServers
+#define NtpServerRequestsValue 22
+#define NtpServerResponsesValue 23
+#define NtpServerRequestsDroppedValue 24
+#define NtpServerBroadcastsValue 25
+
+#define NtpServerClearCountersStatus 26
+
+extern char *NtpServerProperties[];
+
+void initNtpServer(void);
 // int64_t temp_data;
 // int64_t temp_addr;
 int readNtpServerStatus(char *status, size_t size);              // Ntp Server Status
@@ -39,8 +82,8 @@ int readNtpServerPollIntervalValue(char *value, size_t size);    // Ntp Server P
 int readNtpServerStratumValue(char *value, size_t size);         // Ntp Server StratumValue
 int readNtpServerReferenceId(char *value, size_t size);          // Ntp Server ReferenceId
 int readNtpServerSmearingStatus(char *status, size_t size);      // Ntp Server SmearingStatus
-int readNtpServerLeap61Progress(char *progress, size_t size);    // Ntp Server Leap61Progress
-int readNtpServerLeap59Progress(char *progress, size_t size);    // Ntp Server Leap59Progress
+int readNtpServerLeap61InProgress(char *progress, size_t size);  // Ntp Server Leap61Progress
+int readNtpServerLeap59InProgress(char *progress, size_t size);  // Ntp Server Leap59Progress
 int readNtpServerLeap61Status(char *status, size_t size);        // Ntp Server Leap61Status
 int readNtpServerLeap59Status(char *status, size_t size);        // Ntp Server Leap59Status
 int readNtpServerUtcOffsetStatus(char *status, size_t size);     // Ntp Server UtcOffsetStatus

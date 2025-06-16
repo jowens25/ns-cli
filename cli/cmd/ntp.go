@@ -6,7 +6,6 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/jowens25/axi"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -26,42 +25,42 @@ to quickly create a Cobra application.`,
 		cmd.Flags().Visit(func(f *pflag.Flag) {
 
 			switch f.Name {
-			case "module":
-				//axi.ModuleOperation()
-
-			case "list":
-				//axi.ListNtpProperties()
-			case "version":
-				axi.ReadNtpServer("version")
-			case "ip":
-				fmt.Println("ip flag called")
-
-			case "read":
-				//axi.ModuleOperation("ntp-server", "r", args[0])
-				fmt.Println(axi.ReadNtpServer(args[0]))
-			case "write":
-				//axi.ModuleOperation("ntp-server", "w", args[0], args[1])
-
-			case "test":
-				property := args[0]
-				value := args[1]
-				// read - current
-				current := axi.ReadNtpServer(property)
-				fmt.Println(property, " ", current)
-				// update
-				axi.WriteNtpServer(property, value)
-				// read - check if new == requested
-				new := axi.ReadNtpServer(property)
-				fmt.Println("new value: ", new)
-				if new == value {
-					fmt.Println(property, " ", new)
-					axi.WriteNtpServer(property, current)
-
-					fmt.Println("TEST PASSED!!")
-					fmt.Println("Changed back to starting value: ", property, " ", axi.ReadNtpServer(property))
-				} else {
-					fmt.Println("TEST FAILED")
-				}
+			//	case "module":
+			//		//axi.ModuleOperation()
+			//
+			//	case "list":
+			//		//axi.ListNtpProperties()
+			//	case "version":
+			//		axi.ReadNtpServer("version")
+			//	case "ip":
+			//		fmt.Println("ip flag called")
+			//
+			//	case "read":
+			//		//axi.ModuleOperation("ntp-server", "r", args[0])
+			//		fmt.Println(axi.ReadNtpServer(args[0]))
+			//	case "write":
+			//		//axi.ModuleOperation("ntp-server", "w", args[0], args[1])
+			//
+			//	case "test":
+			//		property := args[0]
+			//		value := args[1]
+			//		// read - current
+			//		current := axi.ReadNtpServer(property)
+			//		fmt.Println(property, " ", current)
+			//		// update
+			//		axi.WriteNtpServer(property, value)
+			//		// read - check if new == requested
+			//		new := axi.ReadNtpServer(property)
+			//		fmt.Println("new value: ", new)
+			//		if new == value {
+			//			fmt.Println(property, " ", new)
+			//			axi.WriteNtpServer(property, current)
+			//
+			//			fmt.Println("TEST PASSED!!")
+			//			fmt.Println("Changed back to starting value: ", property, " ", axi.ReadNtpServer(property))
+			//		} else {
+			//			fmt.Println("TEST FAILED")
+			//		}
 
 			default:
 				fmt.Println("Please pass the ntp command a valid flag")

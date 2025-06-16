@@ -18,6 +18,10 @@
         "functional": "c",
         "tuple": "c",
         "type_traits": "c",
-        "utility": "c"
+        "utility": "c",
+        "ntpserver.h": "c",
+        "stddef.h": "c",
+        "ptpoc.h": "c",
+        "typeinfo": "c"
     }
 }

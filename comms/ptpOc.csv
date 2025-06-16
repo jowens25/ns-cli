@@ -1,3 +1,0 @@
-module,         property-name,        property-value,          read-only,
-ntpServer,      ip-address,           192.168.10.10,           false,
-ptpOc,          ip-address,           192.168.1.1,             false, 

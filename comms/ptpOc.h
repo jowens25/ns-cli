@@ -2,7 +2,8 @@
 #ifndef PTP_OC_H
 
 #define PTP_OC_H
-
+#include <stddef.h>
+// registers
 #define Ucm_PtpOc_ControlReg 0x00000000
 #define Ucm_PtpOc_StatusReg 0x00000004
 #define Ucm_PtpOc_VersionReg 0x0000000C
@@ -71,8 +72,76 @@
 #define Ucm_PtpOc_UnicastDs11Reg 0x0000062C
 #define Ucm_PtpOc_UnicastDs12Reg 0x00000630
 
+// properties
+#define PtpOcVersion 0
+#define PtpOcInstanceNumber 1
+#define PtpOcVlanAddress 2
+#define PtpOcVlanStatus 3
+#define PtpOcProfile 4
+#define PtpOcLayer 5
+#define PtpOcDelayMechanismValue 6
+#define PtpOcIpAddress 7
+#define PtpOcStatus 8
+#define PtpOcDefaultDsClockId 9
+#define PtpOcDefaultDsDomain 10
+#define PtpOcDefaultDsPriority1 11
+#define PtpOcDefaultDsPriority2 12
+#define PtpOcDefaultDsAccuracy 13
+#define PtpOcDefaultDsClass 14
+#define PtpOcDefaultDsVariance 15
+#define PtpOcDefaultDsShortId 16
+#define PtpOcDefaultDsInaccuracy 17
+#define PtpOcDefaultDsNumberOfPorts 18 // read only
+#define PtpOcDefaultDsTwoStepStatus 19
+#define PtpOcDefaultDsSignalingStatus 20
+#define PtpOcDefaultDsMasterOnlyStatus 21
+#define PtpOcDefaultDsSlaveOnlyStatus 22
+#define PtpOcDefaultDsListedUnicastSlavesOnlyStatus 23
+#define PtpOcDefaultDsDisableOffsetCorrectionStatus 24
+#define PtpOcPortDsPeerDelayValue 25 // read only
+#define PtpOcPortDsState 26          // read only
+#define PtpOcPortDsAsymmetryValue 27
+#define PtpOcPortDsMaxPeerDelayValue 28
+#define PtpOcPortDsPDelayReqLogMsgIntervalValue 29
+#define PtpOcPortDsDelayReqLogMsgIntervalValue 30
+#define PtpOcPortDsDelayReceiptTimeoutValue 31
+#define PtpOcPortDsAnnounceLogMsgIntervalValue 32
+#define PtpOcPortDsAnnounceReceiptTimeoutValue 33 // read only
+#define PtpOcPortDsSyncLogMsgIntervalValue 34
+#define PtpOcPortDsSyncReceiptTimeoutValue 35
+#define PtpOcCurrentDsStepsRemovedValue 36 // read only
+#define PtpOcCurrentDsOffsetValue 37       // read only
+#define PtpOcCurrentDsDelayValue 38        // read only
+#define PtpOcParentDsParentClockIdValue 39 // read only
+#define PtpOcParentDsGmClockIdValue 40     // read only
+#define PtpOcParentDsGmPriority1Value 41   // read only
+#define PtpOcParentDsGmPriority2Value 42   // read only
+#define PtpOcParentDsGmVarianceValue 43    // read only
+#define PtpOcParentDsGmAccuracyValue 44    // read only
+#define PtpOcParentDsGmClassValue 45       // read only
+#define PtpOcParentDsGmShortIdValue 46     // read only
+#define PtpOcParentDsGmInaccuracyValue 47  // read only
+#define PtpOcParentDsNwInaccuracyValue 48  // read only
+#define PtpOcTimePropertiesDsTimeSourceValue 49
+#define PtpOcTimePropertiesDsPtpTimescaleStatus 50
+#define PtpOcTimePropertiesDsFreqTraceableStatus 51
+#define PtpOcTimePropertiesDsTimeTraceableStatus 52
+#define PtpOcTimePropertiesDsLeap61Status 53
+#define PtpOcTimePropertiesDsLeap59Status 54
+#define PtpOcTimePropertiesDsUtcOffsetValStatus 55
+#define PtpOcTimePropertiesDsUtcOffsetValue 56
+#define PtpOcTimePropertiesDsCurrentOffsetValue 57
+#define PtpOcTimePropertiesDsJumpSecondsValue 58
+#define PtpOcTimePropertiesDsNextJumpValue 59
+#define PtpOcTimePropertiesDsDisplayNameValue 60
+
+extern char *PtpOcProperties[];
+
+//=============================
+
 // ptp oc
-int hasPtpOc(char *in, size_t size);
+
+// hasPtpOc(char *in, size_t size);
 int readPtpOcVersion(char *value, size_t size);
 int readPtpOcInstanceNumber(char *instanceNumber, size_t size);
 int readPtpOcVlanAddress(char *vlanAddr, size_t size);

@@ -1,7 +1,74 @@
 #include "axi.h"
 #include "coreConfig.h"
 #include "ptpOc.h"
+#include <stddef.h>
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
+
+char *PtpOcProperties[] = {
+
+    [PtpOcVersion] = "version",
+    [PtpOcInstanceNumber] = "instance-number",
+    [PtpOcVlanAddress] = "vlan-address",
+    [PtpOcVlanStatus] = "vlan-status",
+    [PtpOcProfile] = "profile",
+    [PtpOcLayer] = "layer",
+    [PtpOcDelayMechanismValue] = "delay-mechanism-value",
+    [PtpOcIpAddress] = "ip-address",
+    [PtpOcStatus] = "status",
+    [PtpOcDefaultDsClockId] = "default-ds-clock-id",
+    [PtpOcDefaultDsDomain] = "default-ds-domain",
+    [PtpOcDefaultDsPriority1] = "default-ds-priority1",
+    [PtpOcDefaultDsPriority2] = "default-ds-priority2",
+    [PtpOcDefaultDsAccuracy] = "default-ds-accuracy",
+    [PtpOcDefaultDsClass] = "default-ds-class",
+    [PtpOcDefaultDsVariance] = "default-ds-variance",
+    [PtpOcDefaultDsShortId] = "default-ds-short-id",
+    [PtpOcDefaultDsInaccuracy] = "default-ds-inaccuracy",
+    [PtpOcDefaultDsNumberOfPorts] = "default-ds-number-of-ports", // read only,
+    [PtpOcDefaultDsTwoStepStatus] = "default-ds-two-step-status",
+    [PtpOcDefaultDsSignalingStatus] = "default-ds-signaling-status",
+    [PtpOcDefaultDsMasterOnlyStatus] = "default-ds-master-only-status",
+    [PtpOcDefaultDsSlaveOnlyStatus] = "default-ds-slave-only-status",
+    [PtpOcDefaultDsListedUnicastSlavesOnlyStatus] = "default-ds-listed-unicast-slaves-only-status",
+    [PtpOcDefaultDsDisableOffsetCorrectionStatus] = "default-ds-disable-offset-correction-status",
+    [PtpOcPortDsPeerDelayValue] = "port-ds-peer-delay-value", // read only
+    [PtpOcPortDsState] = "port-ds-state",                     // read only
+    [PtpOcPortDsAsymmetryValue] = "port-ds-asymmetry-value",
+    [PtpOcPortDsMaxPeerDelayValue] = "port-ds-maxpeerdelay-value",
+    [PtpOcPortDsPDelayReqLogMsgIntervalValue] = "port-ds-p-delay-req-log-msg-interval-value",
+    [PtpOcPortDsDelayReqLogMsgIntervalValue] = "port-ds-delay-req-log-msg-interval-value",
+    [PtpOcPortDsDelayReceiptTimeoutValue] = "port-ds-delay-receipt-timeout-value",
+    [PtpOcPortDsAnnounceLogMsgIntervalValue] = "port-ds-announce-log-msg-interval-value",
+    [PtpOcPortDsAnnounceReceiptTimeoutValue] = "port-ds-announce-receipt-timeout-value", // read only
+    [PtpOcPortDsSyncLogMsgIntervalValue] = "port-ds-synclogmsgintervalvalue",
+    [PtpOcPortDsSyncReceiptTimeoutValue] = "port-ds-syncreceipttimeoutvalue",
+    [PtpOcCurrentDsStepsRemovedValue] = "current-ds-stepsremovedvalue",    // read only
+    [PtpOcCurrentDsOffsetValue] = "current-ds-offsetvalue",                // read only
+    [PtpOcCurrentDsDelayValue] = "current-ds-delayvalue",                  // read only
+    [PtpOcParentDsParentClockIdValue] = "parent-ds-parent-clock-id-value", // read only
+    [PtpOcParentDsGmClockIdValue] = "parent-ds-gm-clock-id-value",         // read only
+    [PtpOcParentDsGmPriority1Value] = "parent-ds-gm-priority1-value",      // read only
+    [PtpOcParentDsGmPriority2Value] = "parent-ds-gm-priority2-value",      // read only
+    [PtpOcParentDsGmVarianceValue] = "parent-ds-gm-variance-value",        // read only
+    [PtpOcParentDsGmAccuracyValue] = "parent-ds-gm-accuracy-value",        // read only
+    [PtpOcParentDsGmClassValue] = "parent-ds-gm-class-value",              // read only
+    [PtpOcParentDsGmShortIdValue] = "parent-ds-gm-shortid-value",          // read only
+    [PtpOcParentDsGmInaccuracyValue] = "parent-ds-gm-inaccuracy-value",    // read only
+    [PtpOcParentDsNwInaccuracyValue] = "parent-ds-nw-inaccuracy-value",    // read onl;
+    [PtpOcTimePropertiesDsTimeSourceValue] = "time-properties-ds-time-source-value",
+    [PtpOcTimePropertiesDsPtpTimescaleStatus] = "time-properties-ds-ptptimescale-status",
+    [PtpOcTimePropertiesDsFreqTraceableStatus] = "time-properties-ds-freqtraceable-status",
+    [PtpOcTimePropertiesDsTimeTraceableStatus] = "time-properties-ds-timetraceable-status",
+    [PtpOcTimePropertiesDsLeap61Status] = "time-properties-ds-leap61-status",
+    [PtpOcTimePropertiesDsLeap59Status] = "time-properties-ds-leap59-status",
+    [PtpOcTimePropertiesDsUtcOffsetValStatus] = "time-properties-ds-utc-offset-val-status",
+    [PtpOcTimePropertiesDsUtcOffsetValue] = "time-properties-ds-utc-offset-value",
+    [PtpOcTimePropertiesDsCurrentOffsetValue] = "time-properties-ds-current-offset-value",
+    [PtpOcTimePropertiesDsJumpSecondsValue] = "time-properties-ds-jump-seconds-value",
+    [PtpOcTimePropertiesDsNextJumpValue] = "time-properties-ds-next-jump-value",
+    [PtpOcTimePropertiesDsDisplayNameValue] = "time-properties-ds-display-name-value",
+    [61] = NULL,
+};
 
 int hasPtpOc(char *in, size_t size)
 {

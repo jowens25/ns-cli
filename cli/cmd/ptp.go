@@ -6,7 +6,6 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/jowens25/axi"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -26,41 +25,41 @@ to quickly create a Cobra application.`,
 		cmd.Flags().Visit(func(f *pflag.Flag) {
 
 			switch f.Name {
-			case "show":
-				//axi.ShowKeys()
-			case "list":
-				axi.ListPtpOcProperties()
-			case "write":
-				property := args[0]
-				value := args[1]
-
-				fmt.Println(property, value)
-				axi.WritePtpOc(property, value)
-			case "read":
-				property := args[0]
-
-				fmt.Println(property, " ", axi.ReadPtpOc(property))
-
-			case "test":
-				property := args[0]
-				value := args[1]
-				// read - current
-				current := axi.ReadPtpOc(property)
-				fmt.Println(property, " ", current)
-				// update
-				axi.WritePtpOc(property, value)
-				// read - check if new == requested
-				new := axi.ReadPtpOc(property)
-				fmt.Println("new value: ", new)
-				if new == value {
-					fmt.Println(property, " ", new)
-					axi.WritePtpOc(property, current)
-
-					fmt.Println("TEST PASSED!!")
-					fmt.Println("Changed back to starting value: ", property, " ", axi.ReadPtpOc(property))
-				} else {
-					fmt.Println("TEST FAILED")
-				}
+			//		case "show":
+			//			//axi.ShowKeys()
+			//		case "list":
+			//			axi.ListPtpOcProperties()
+			//		case "write":
+			//			property := args[0]
+			//			value := args[1]
+			//
+			//			fmt.Println(property, value)
+			//			axi.WritePtpOc(property, value)
+			//		case "read":
+			//			property := args[0]
+			//
+			//			fmt.Println(property, " ", axi.ReadPtpOc(property))
+			//
+			//		case "test":
+			//			property := args[0]
+			//			value := args[1]
+			//			// read - current
+			//			current := axi.ReadPtpOc(property)
+			//			fmt.Println(property, " ", current)
+			//			// update
+			//			axi.WritePtpOc(property, value)
+			//			// read - check if new == requested
+			//			new := axi.ReadPtpOc(property)
+			//			fmt.Println("new value: ", new)
+			//			if new == value {
+			//				fmt.Println(property, " ", new)
+			//				axi.WritePtpOc(property, current)
+			//
+			//				fmt.Println("TEST PASSED!!")
+			//				fmt.Println("Changed back to starting value: ", property, " ", axi.ReadPtpOc(property))
+			//			} else {
+			//				fmt.Println("TEST FAILED")
+			//			}
 
 			default:
 				fmt.Println("Please pass the ntp command a valid flag")
