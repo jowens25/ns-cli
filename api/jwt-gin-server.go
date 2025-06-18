@@ -14,6 +14,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
+
 // models
 // Database Models
 type User struct {
@@ -324,7 +325,7 @@ func registerHandler(c *gin.Context) {
 
 func logoutHandler(c *gin.Context) {
 	// In a real application, you might blacklist the token
-	c.JSON(http.StatuOK, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"message": "Logged out successfully",
 	})
 }

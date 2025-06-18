@@ -2,12 +2,12 @@ package axi
 
 /*
 
-#include "axi.h"
-#include "config.h"
-#include "ntpServer.h"
-#include "ptpOc.h"
-#include "ppsSlave.h"
-#include "coreConfig.h"
+#include "clib/axi.h"
+#include "clib/config.h"
+#include "clib/ntpServer.h"
+#include "clib/ptpOc.h"
+#include "clib/ppsSlave.h"
+#include "clib/coreConfig.h"
 */
 import "C"
 import (

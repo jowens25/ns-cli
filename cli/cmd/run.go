@@ -7,8 +7,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-
-	"api"
 )
 
 // runCmd represents the run command

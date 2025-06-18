@@ -4,8 +4,9 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"api"
 	"fmt"
+
+	//"NovusTimeServer/api"
 
 	"github.com/spf13/cobra"
 )
@@ -23,7 +24,7 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("stop called")
 
-		api.StopServers()
+		//api.StopServers()
 	},
 }
 

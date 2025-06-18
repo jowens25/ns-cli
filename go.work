@@ -1,7 +1,8 @@
-go 1.23.1
+go 1.23.10
 
 use (
-	./api/
-	./cli/
-	./comms/
+	./api
+	./axi
+	./cli
+	./server
 )
