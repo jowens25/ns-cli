@@ -1,92 +1,83 @@
 package api
 
-//
-//type PostData struct {
-//	Module string `json:"module"`
-//	Cmd    string `json:"command"`
-//	Data   string `json:"data"`
-//}
-//
-//func handler(w http.ResponseWriter, r *http.Request) {
-//
-//	origin := r.Header.Get("Origin")
-//
-//	// List of allowed origins (adjust as needed)
-//	allowedOrigins := map[string]bool{
-//		"http://localhost:8000":   true,
-//		"http://10.1.10.205:8000": true,
-//		"http://10.1.10.93:29020": true,
-//		"http://10.1.10.93:8000":  true,
-//		"http://localhost:32930":  true,
-//	}
-//
-//	if allowedOrigins[origin] {
-//		w.Header().Set("Access-Control-Allow-Origin", origin)
-//	} else {
-//		// Optionally reject or set no CORS header
-//		http.Error(w, "Origin not allowed", http.StatusForbidden)
-//		return
-//	}
-//	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
-//	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-//
-//	// Handle preflight OPTIONS request
-//	if r.Method == http.MethodOptions {
-//		w.WriteHeader(http.StatusOK)
-//		return
-//	}
-//
-//	if r.Method != http.MethodPost {
-//		http.Error(w, "Only POST allowed", http.StatusMethodNotAllowed)
-//		return
-//	}
-//
-//	log.Println("posts handler called")
-//	// Parse form data (for application/x-www-form-urlencoded)
-//	if err := r.ParseForm(); err != nil {
-//		http.Error(w, "Bad request", http.StatusBadRequest)
-//		return
-//	}
-//
-//	data := PostData{
-//		Module: r.FormValue("module"),
-//		Cmd:    r.FormValue("command"),
-//		Data:   r.FormValue("data"),
-//	}
-//
-//	//serverResponse := handleResponse(data.Module, data.Cmd, data.Data)
-//
-//	// Print received data
-//	fmt.Printf("Received: %+v\n", data)
-//
-//	// Respond with JSON
-//	w.Header().Set("Content-Type", "application/json")
-//
-//	w.WriteHeader(http.StatusOK)
-//	json.NewEncoder(w).Encode(map[string]string{
-//		"status": "success",
-//		//"msg":    serverResponse,
-//	})
-//}
+import (
+	"net/http"
+	"time"
 
-//func handleResponse(module string, command string, data string) string {
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
+)
 
-//axi.ReadConfig()
-//
-//if DeviceHasNtpServer() == 0 {
-//	switch module {
-//	case "ntp":
-//		log.Println(data)
-//		writeNtpServerStatus(data)
-//		newStatus := formatNtpServerSTATUS()
-//
-//		log.Println(newStatus)
-//		return newStatus
-//	case "yourmom":
-//		log.Println("your mom case")
-//	default:
-//		log.Println("def case")
-//	}
-//}
-//return "your mom"
-//}
+const (
+	JWT_SECRET = "your-secret-key-change-this-in-production"
+	PORT       = ":8080"
+	DB_PATH    = "./app.db"
+)
+
+// JWT Claims
+type Claims struct {
+	UserID   uint   `json:"user_id"`
+	Username string `json:"username"`
+	jwt.RegisteredClaims
+}
+
+func RunApiServer() {
+
+	initDataBase()
+	r := gin.Default()
+	r.Use(cors.Default())
+	// middleware
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
+
+	// api version group
+	v1 := r.Group("/api/v1")
+
+	// public routes
+	r.POST("/login", loginHandler)
+	// protected routes
+	protected := v1.Group("/")
+	protected.Use(authorizationMiddleware())
+	{
+		protected.POST("/logout", logoutHandler)
+
+		protected.GET("/health", healthHandler)
+
+	}
+
+	// 404 handler
+	r.NoRoute(func(c *gin.Context) {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error":   "Endpoint not found",
+			"path":    c.Request.URL.Path,
+			"method":  c.Request.Method,
+			"message": "The requested resource could not be found",
+		})
+	})
+	r.Run(PORT)
+}
+
+func healthHandler(c *gin.Context) {
+	sqlDB, err := db.DB()
+	if err != nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{
+			"status": "unhealthy",
+			"error":  "Database connection failed",
+		})
+		return
+	}
+
+	if err := sqlDB.Ping(); err != nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{
+			"status": "unhealthy",
+			"error":  "Database ping failed",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status":    "healthy",
+		"timestamp": time.Now(),
+		"database":  "connected",
+	})
+}

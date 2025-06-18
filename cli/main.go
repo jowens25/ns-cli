@@ -1,7 +1,7 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 */
-package cli
+package main
 
 import (
 	"NovusTimeServer/cli/cmd"

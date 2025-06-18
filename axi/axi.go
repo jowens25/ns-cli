@@ -1,17 +1,15 @@
 package axi
 
 /*
-
-#include "clib/axi.h"
-#include "clib/config.h"
-#include "clib/ntpServer.h"
-#include "clib/ptpOc.h"
-#include "clib/ppsSlave.h"
-#include "clib/coreConfig.h"
+#include "axi.h"
+#include "config.h"
+#include "ntpServer.h"
+#include "ptpOc.h"
+#include "ppsSlave.h"
+#include "coreConfig.h"
 */
 import "C"
 import (
-	"fmt"
 	"sync"
 )
 
@@ -239,9 +237,9 @@ var mutex sync.Mutex
 const size = C.size_t(64)
 
 func init() {
-	mutex.Lock()
-	C.connect()
-	C.readConfig()
+	//mutex.Lock()
+	//C.connect()
+	//C.readConfig()
 	//var mystring = ""
 	//fmt.Println(mystring)
 	//
@@ -249,16 +247,16 @@ func init() {
 	//
 	//fmt.Println(mystring)
 
-	mutex.Unlock()
+	//mutex.Unlock()
 }
 
 func Operate(operation string, module string, property string, value string) string {
-	fmt.Println("module: ", module)
-	fmt.Println("property: ", property)
-
+	//fmt.Println("module: ", module)
+	//fmt.Println("property: ", property)
+	//
 	C.Axi(C.CString(operation), C.CString(module), C.CString(property), C.CString(value))
-
-	return value
+	//
+	return "value"
 }
 
 //func Write(module string, property string, value *string) {
