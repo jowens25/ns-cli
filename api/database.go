@@ -40,11 +40,11 @@ func createDefaultUser() {
 	db.Model(&User{}).Count(&userCount)
 
 	if userCount == 0 {
-		adminPassword, _ := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
+		adminPassword, _ := bcrypt.GenerateFromPassword([]byte("admin"), bcrypt.DefaultCost)
 
 		user := User{
 
-			Username: "novusadmin",
+			Username: "admin",
 			Email:    "jowens@novuspower.com",
 			Password: string(adminPassword),
 		}
