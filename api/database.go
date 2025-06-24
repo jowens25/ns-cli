@@ -51,6 +51,15 @@ func createDefaultUser() {
 
 		db.Create(&user)
 
+		user = User{
+
+			Username: "bill",
+			Email:    "bill@novuspower.com",
+			Password: string(adminPassword),
+		}
+
+		db.Create(&user)
+
 	}
 
 }
