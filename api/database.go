@@ -45,7 +45,7 @@ func createDefaultUser() {
 		user := User{
 
 			Username: "admin",
-			Email:    "jowens@novuspower.com",
+			Email:    "admin@novuspower.com",
 			Password: string(adminPassword),
 		}
 

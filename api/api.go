@@ -1,6 +1,7 @@
 package api
 
 import (
+	"log"
 	"net/http"
 	"time"
 
@@ -29,15 +30,15 @@ func RunApiServer() {
 	r.SetTrustedProxies(nil)
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
-	corsConfig.AllowHeaders = []string{"Authorization", "Content-Type"}
+	corsConfig.AllowHeaders = []string{"Authorization", "Content-Type", "X-Request-ID"}
 	corsConfig.AllowCredentials = true
-	corsConfig.AllowOrigins = []string{"http://localhost:56586"}
+	corsConfig.AllowOrigins = []string{"http://localhost:48541"}
 
 	//r.Use(corsConfig)
 	r.Use(cors.New(corsConfig))
 
 	// middleware
-	r.Use(gin.Logger())
+	//r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
 	// api version group
@@ -56,6 +57,7 @@ func RunApiServer() {
 
 		protected.GET("/users", getUsersHandler)
 		protected.POST("/users", createUsersHandler)
+		protected.DELETE("/users/:id", deleteUsersHandler)
 
 	}
 
@@ -97,6 +99,10 @@ func healthHandler(c *gin.Context) {
 
 func getUsersHandler(c *gin.Context) {
 
+	requestID := c.GetHeader("X-Request-ID")
+	//requestID := c.GetString("request_id")
+	log.Printf("Request ID: %s\n", requestID)
+
 	var users []struct {
 		ID       int    `json:"id"`
 		Username string `json:"username"`
@@ -115,6 +121,8 @@ func getUsersHandler(c *gin.Context) {
 		"total_users": len(users),
 		"server_time": time.Now(),
 		"database":    "SQLite",
+		"request_id":  requestID, // Optionally include in the response
+
 	})
 
 }
@@ -147,5 +155,26 @@ func createUsersHandler(c *gin.Context) {
 			"username": newUser.Username,
 			"email":    newUser.Email,
 		},
+	})
+}
+
+func deleteUsersHandler(c *gin.Context) {
+
+	userID := c.Param("id")
+
+	var userToDelete User
+
+	if err := db.First(&userToDelete, userID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	if err := db.Delete(&userToDelete).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "User deleted successfully",
 	})
 }
