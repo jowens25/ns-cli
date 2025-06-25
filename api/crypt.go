@@ -20,6 +20,7 @@ func checkPasswordHash(password, hash string) bool {
 func generateJWT(user *User) (string, error) {
 	claims := &Claims{
 		UserID:   user.ID,
+		UserRole: user.Role,
 		Username: user.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(2 * time.Hour)),

@@ -19,6 +19,7 @@ const (
 // JWT Claims
 type Claims struct {
 	UserID   uint   `json:"user_id"`
+	UserRole string `json:"role"`
 	Username string `json:"username"`
 	jwt.RegisteredClaims
 }
@@ -32,7 +33,7 @@ func RunApiServer() {
 	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
 	corsConfig.AllowHeaders = []string{"Authorization", "Content-Type", "X-Request-ID"}
 	corsConfig.AllowCredentials = true
-	corsConfig.AllowOrigins = []string{"http://localhost:48541"}
+	corsConfig.AllowOrigins = []string{"http://localhost:52374"}
 
 	//r.Use(corsConfig)
 	r.Use(cors.New(corsConfig))
@@ -105,11 +106,12 @@ func getUsersHandler(c *gin.Context) {
 
 	var users []struct {
 		ID       int    `json:"id"`
+		Role     string `json:"role"`
 		Username string `json:"username"`
 		Email    string `json:"email"`
 	}
 
-	result := db.Model(&User{}).Select("id, username, email").Find(&users)
+	result := db.Model(&User{}).Select("id, role, username, email").Find(&users)
 
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
@@ -142,6 +144,11 @@ func createUsersHandler(c *gin.Context) {
 		return
 	}
 
+	if !(newUser.Role == "admin" || newUser.Role == "viewer") {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "role must be 'admin' or 'viewer'"})
+		return
+	}
+
 	result := db.Create(&newUser)
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
@@ -152,6 +159,7 @@ func createUsersHandler(c *gin.Context) {
 		"message": "User created successfully",
 		"user": gin.H{
 			"id":       newUser.ID,
+			"role":     newUser.Role,
 			"username": newUser.Username,
 			"email":    newUser.Email,
 		},

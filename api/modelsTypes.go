@@ -4,6 +4,7 @@ import "time"
 
 type User struct {
 	ID        uint      `json:"id" gorm:"primaryKey"`
+	Role      string    `json:"role" gorm:"not null"`
 	Username  string    `json:"username" gorm:"uniqueIndex;not null"`
 	Email     string    `json:"email" gorm:"uniqueIndex;not null"`
 	Password  string    `json:"-" gorm:"not null"` // "-" excludes from JSON

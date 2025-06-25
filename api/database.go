@@ -45,6 +45,7 @@ func createDefaultUser() {
 		user := User{
 
 			Username: "admin",
+			Role:     "admin",
 			Email:    "admin@novuspower.com",
 			Password: string(adminPassword),
 		}
@@ -53,8 +54,19 @@ func createDefaultUser() {
 
 		user = User{
 
-			Username: "bill",
-			Email:    "bill@novuspower.com",
+			Username: "viewer",
+			Role:     "viewer",
+			Email:    "viewer@novuspower.com",
+			Password: string(adminPassword),
+		}
+
+		db.Create(&user)
+
+		user = User{
+
+			Username: "factory",
+			Role:     "admin",
+			Email:    "factory@novuspower.com",
 			Password: string(adminPassword),
 		}
 
