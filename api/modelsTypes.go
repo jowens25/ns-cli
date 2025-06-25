@@ -7,7 +7,7 @@ type User struct {
 	Role      string    `json:"role" gorm:"not null"`
 	Username  string    `json:"username" gorm:"uniqueIndex;not null"`
 	Email     string    `json:"email" gorm:"uniqueIndex;not null"`
-	Password  string    `json:"-" gorm:"not null"` // "-" excludes from JSON
+	Password  string    `json:"password" gorm:"not null"` // "-" excludes from JSON
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	UserType  string    `json:""`

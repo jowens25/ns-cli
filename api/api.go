@@ -8,6 +8,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
 )
 
 const (
@@ -75,7 +76,7 @@ func RunApiServer() {
 }
 
 func healthHandler(c *gin.Context) {
-	sqlDB, err := db.DB()
+	sqlDB, err := Db.DB()
 	if err != nil {
 		c.JSON(http.StatusServiceUnavailable, gin.H{
 			"status": "unhealthy",
@@ -111,7 +112,7 @@ func getUsersHandler(c *gin.Context) {
 		Email    string `json:"email"`
 	}
 
-	result := db.Model(&User{}).Select("id, role, username, email").Find(&users)
+	result := Db.Model(&User{}).Select("id, role, username, email").Find(&users)
 
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
@@ -149,7 +150,15 @@ func createUsersHandler(c *gin.Context) {
 		return
 	}
 
-	result := db.Create(&newUser)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+		return
+	}
+	newUser.Password = string(hashedPassword)
+
+	result := Db.Create(&newUser)
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
@@ -172,12 +181,12 @@ func deleteUsersHandler(c *gin.Context) {
 
 	var userToDelete User
 
-	if err := db.First(&userToDelete, userID).Error; err != nil {
+	if err := Db.First(&userToDelete, userID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
 
-	if err := db.Delete(&userToDelete).Error; err != nil {
+	if err := Db.Delete(&userToDelete).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

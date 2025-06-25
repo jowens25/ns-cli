@@ -9,20 +9,20 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-var db *gorm.DB
+var Db *gorm.DB
 
 func initDataBase() {
 
 	var err error
 
-	db, err = gorm.Open(sqlite.Open(DB_PATH), &gorm.Config{
+	Db, err = gorm.Open(sqlite.Open(DB_PATH), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {
 		log.Fatal("Failed to connect to database: ", err)
 	}
 
-	err = db.AutoMigrate(&User{})
+	err = Db.AutoMigrate(&User{})
 
 	if err != nil {
 		log.Fatal("Failed to migrate database: ", err)
@@ -37,7 +37,7 @@ func initDataBase() {
 func createDefaultUser() {
 
 	var userCount int64
-	db.Model(&User{}).Count(&userCount)
+	Db.Model(&User{}).Count(&userCount)
 
 	if userCount == 0 {
 		adminPassword, _ := bcrypt.GenerateFromPassword([]byte("admin"), bcrypt.DefaultCost)
@@ -50,7 +50,7 @@ func createDefaultUser() {
 			Password: string(adminPassword),
 		}
 
-		db.Create(&user)
+		Db.Create(&user)
 
 		user = User{
 
@@ -60,7 +60,7 @@ func createDefaultUser() {
 			Password: string(adminPassword),
 		}
 
-		db.Create(&user)
+		Db.Create(&user)
 
 		user = User{
 
@@ -70,7 +70,7 @@ func createDefaultUser() {
 			Password: string(adminPassword),
 		}
 
-		db.Create(&user)
+		Db.Create(&user)
 
 	}
 

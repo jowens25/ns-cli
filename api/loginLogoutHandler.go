@@ -25,7 +25,7 @@ func loginHandler(c *gin.Context) {
 
 	var user User
 
-	result := db.Where("username = ?", request.Username).First(&user)
+	result := Db.Where("username = ?", request.Username).First(&user)
 	fmt.Println("result from db: ", result)
 	if result.Error != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
