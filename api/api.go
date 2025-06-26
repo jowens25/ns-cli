@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"time"
@@ -9,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 const (
@@ -31,10 +33,10 @@ func RunApiServer() {
 	r := gin.Default()
 	r.SetTrustedProxies(nil)
 	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"}
 	corsConfig.AllowHeaders = []string{"Authorization", "Content-Type", "X-Request-ID"}
 	corsConfig.AllowCredentials = true
-	corsConfig.AllowOrigins = []string{"http://localhost:52374"}
+	corsConfig.AllowOrigins = []string{"http://localhost:31611"}
 
 	//r.Use(corsConfig)
 	r.Use(cors.New(corsConfig))
@@ -60,6 +62,12 @@ func RunApiServer() {
 		protected.GET("/users", getUsersHandler)
 		protected.POST("/users", createUsersHandler)
 		protected.DELETE("/users/:id", deleteUsersHandler)
+		protected.PATCH("/users/:id", patchUsersHandler)
+
+		protected.GET("/snmp/:version/:id", getSnmpUserHandler)
+		protected.POST("/snmp/:version/:id", postSnmpUserHandler)
+		protected.PATCH("/snmp/:version/:id", patchSnmpUserHandler)
+		protected.DELETE("/snmp/:version/:id", deleteSnmpUserHandler)
 
 	}
 
@@ -186,12 +194,125 @@ func deleteUsersHandler(c *gin.Context) {
 		return
 	}
 
-	if err := Db.Delete(&userToDelete).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	if userToDelete.Role == "viewer" {
+		if err := Db.Delete(&userToDelete).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	}
+
+	if userToDelete.Role == "admin" {
+
+		var count int64
+
+		Db.Model(&User{}).Where("role = ?", "admin").Count(&count)
+
+		if count > 1 {
+			if err := Db.Delete(&userToDelete).Error; err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+
+			c.JSON(http.StatusCreated, gin.H{
+				"message": "User deleted successfully",
+			})
+
+		} else {
+			c.JSON(http.StatusUnprocessableEntity, gin.H{
+				"error": "Cannot delete the last admin",
+			})
+			return
+		}
+
+	}
+
+}
+
+func patchUsersHandler(c *gin.Context) {
+	userID := c.Param("id")
+
+	var existingUser User
+	if err := Db.First(&existingUser, userID).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		}
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "User deleted successfully",
+	var updateData User
+	if err := c.ShouldBindJSON(&updateData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	updates := make(map[string]interface{})
+
+	if updateData.Username != "" {
+		updates["username"] = updateData.Username
+	}
+
+	if updateData.Email != "" {
+		updates["email"] = updateData.Email
+	}
+
+	if updateData.Role != "" {
+		if !(updateData.Role == "admin" || updateData.Role == "viewer") {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "role must be 'admin' or 'viewer'"})
+			return
+		}
+		updates["role"] = updateData.Role
+	}
+
+	if updateData.Password != "" {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(updateData.Password), bcrypt.DefaultCost)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+			return
+		}
+		updates["password"] = string(hashedPassword)
+	}
+
+	// Check if there's anything to update
+	if len(updates) == 0 {
+		c.JSON(http.StatusOK, gin.H{"message": "No update"})
+		return
+	}
+
+	// Perform the update using the user ID
+	result := Db.Model(&existingUser).Updates(updates)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	var updatedUser User
+	if err := Db.First(&updatedUser, userID).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch updated user"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User updated successfully",
+		"user": gin.H{
+			"id":       updatedUser.ID,
+			"role":     updatedUser.Role,
+			"username": updatedUser.Username,
+			"email":    updatedUser.Email,
+		},
 	})
+}
+
+func getSnmpUserHandler(c *gin.Context) {
+
+}
+func postSnmpUserHandler(c *gin.Context) {
+
+}
+func patchSnmpUserHandler(c *gin.Context) {
+
+}
+func deleteSnmpUserHandler(c *gin.Context) {
+
 }
