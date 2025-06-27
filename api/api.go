@@ -17,9 +17,9 @@ import (
 
 const (
 	JWT_SECRET = "your-secret-key-change-this-in-production"
-	API_HOST   = "10.1.10.125"
+	API_HOST   = "10.1.10.205"
 	API_PORT   = ":5000"
-	WEB_HOST   = "10.1.10.125"
+	WEB_HOST   = "10.1.10.96"
 	WEB_PORT   = ":3000"
 	DB_PATH    = "./app.db"
 )
@@ -51,10 +51,11 @@ func RunApiServer() {
 	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"}
 	corsConfig.AllowHeaders = []string{"Authorization", "Content-Type", "X-Request-ID"}
 	corsConfig.AllowCredentials = true
-	corsConfig.AllowOrigins = []string{
-		"http://" + WEB_HOST + WEB_PORT,
-		"http://" + API_HOST + API_PORT,
-	}
+	corsConfig.AllowAllOrigins = true
+	//corsConfig.AllowOrigins = []string{
+	//	"http://" + WEB_HOST + WEB_PORT,
+	//	"http://" + API_HOST + API_PORT,
+	//}
 
 	//r.Use(corsConfig)
 	r.Use(cors.New(corsConfig))
