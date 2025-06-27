@@ -5,4 +5,5 @@ use (
 	./axi
 	./cli
 	./server
+	./web
 )

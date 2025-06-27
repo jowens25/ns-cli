@@ -1,7 +1,9 @@
 package api
 
 import (
+	"NovusTimeServer/web"
 	"errors"
+	"io/fs"
 	"log"
 	"net/http"
 	"time"
@@ -15,7 +17,10 @@ import (
 
 const (
 	JWT_SECRET = "your-secret-key-change-this-in-production"
-	PORT       = ":8080"
+	API_HOST   = "10.1.10.125"
+	API_PORT   = ":5000"
+	WEB_HOST   = "10.1.10.125"
+	WEB_PORT   = ":3000"
 	DB_PATH    = "./app.db"
 )
 
@@ -29,6 +34,16 @@ type Claims struct {
 
 func RunApiServer() {
 
+	jsRouter := gin.Default()
+
+	webFS, err := fs.Sub(web.Files, "files")
+	if err != nil {
+		panic(err)
+	}
+	jsRouter.StaticFS("/", http.FS(webFS))
+
+	go jsRouter.Run(WEB_HOST + WEB_PORT)
+
 	initDataBase()
 	r := gin.Default()
 	r.SetTrustedProxies(nil)
@@ -36,7 +51,10 @@ func RunApiServer() {
 	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"}
 	corsConfig.AllowHeaders = []string{"Authorization", "Content-Type", "X-Request-ID"}
 	corsConfig.AllowCredentials = true
-	corsConfig.AllowOrigins = []string{"http://localhost:31611"}
+	corsConfig.AllowOrigins = []string{
+		"http://" + WEB_HOST + WEB_PORT,
+		"http://" + API_HOST + API_PORT,
+	}
 
 	//r.Use(corsConfig)
 	r.Use(cors.New(corsConfig))
@@ -50,6 +68,8 @@ func RunApiServer() {
 
 	// public routes
 	r.POST("/login", loginHandler)
+
+	//r.Static("/", "")
 	//r.GET("/users", usersHandler)
 	// protected routes
 	protected := v1.Group("/")
@@ -80,7 +100,7 @@ func RunApiServer() {
 			"message": "The requested resource could not be found",
 		})
 	})
-	r.Run(PORT)
+	r.Run(API_HOST + API_PORT)
 }
 
 func healthHandler(c *gin.Context) {
