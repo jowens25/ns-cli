@@ -3,6 +3,7 @@ package api
 import (
 	"NovusTimeServer/web"
 	"errors"
+	"fmt"
 	"io/fs"
 	"log"
 	"net/http"
@@ -14,7 +15,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 const (
@@ -25,14 +28,6 @@ const (
 	WEB_PORT   = ":3000"
 	DB_PATH    = "./app.db"
 )
-
-// JWT Claims
-type Claims struct {
-	UserID   uint   `json:"user_id"`
-	UserRole string `json:"role"`
-	Username string `json:"username"`
-	jwt.RegisteredClaims
-}
 
 func RunApiServer() {
 
@@ -87,10 +82,15 @@ func RunApiServer() {
 		protected.DELETE("/users/:id", deleteUsersHandler)
 		protected.PATCH("/users/:id", patchUsersHandler)
 
-		protected.GET("/snmp/:version/:id", getSnmpUserHandler)
-		protected.POST("/snmp/:version/:id", postSnmpUserHandler)
-		protected.PATCH("/snmp/:version/:id", patchSnmpUserHandler)
-		protected.DELETE("/snmp/:version/:id", deleteSnmpUserHandler)
+		//protected.GET("/snmp/:version/:id", getSnmpUserHandler)
+		//protected.POST("/snmp/:version/:id", postSnmpUserHandler)
+		//protected.PATCH("/snmp/:version/:id", patchSnmpUserHandler)
+		//protected.DELETE("/snmp/:version/:id", deleteSnmpUserHandler)
+
+		protected.GET("/snmp_v1v2c", readSnmpV1V2cUser)
+		protected.POST("/snmp_v1v2c", createSnmpV1V2cUser)
+		protected.PATCH("/snmp_v1v2c/:id", updateSnmpV1V2User)
+		protected.DELETE("/snmp_v1v2c/:id", deleteSnmpV1V2User)
 
 		protected.GET("snmp/status", getSnmpStatusHandler)
 		protected.POST("snmp/status", postSnmpStatusHandler)
@@ -110,7 +110,7 @@ func RunApiServer() {
 }
 
 func healthHandler(c *gin.Context) {
-	sqlDB, err := Db.DB()
+	sqlDB, err := db.DB()
 	if err != nil {
 		c.JSON(http.StatusServiceUnavailable, gin.H{
 			"status": "unhealthy",
@@ -146,7 +146,7 @@ func getUsersHandler(c *gin.Context) {
 		Email    string `json:"email"`
 	}
 
-	result := Db.Model(&User{}).Select("id, role, username, email").Find(&users)
+	result := db.Model(&User{}).Select("id, role, username, email").Find(&users)
 
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
@@ -192,7 +192,7 @@ func createUsersHandler(c *gin.Context) {
 	}
 	newUser.Password = string(hashedPassword)
 
-	result := Db.Create(&newUser)
+	result := db.Create(&newUser)
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
@@ -215,13 +215,13 @@ func deleteUsersHandler(c *gin.Context) {
 
 	var userToDelete User
 
-	if err := Db.First(&userToDelete, userID).Error; err != nil {
+	if err := db.First(&userToDelete, userID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
 
 	if userToDelete.Role == "viewer" {
-		if err := Db.Delete(&userToDelete).Error; err != nil {
+		if err := db.Delete(&userToDelete).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
@@ -231,10 +231,10 @@ func deleteUsersHandler(c *gin.Context) {
 
 		var count int64
 
-		Db.Model(&User{}).Where("role = ?", "admin").Count(&count)
+		db.Model(&User{}).Where("role = ?", "admin").Count(&count)
 
 		if count > 1 {
-			if err := Db.Delete(&userToDelete).Error; err != nil {
+			if err := db.Delete(&userToDelete).Error; err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
@@ -258,7 +258,7 @@ func patchUsersHandler(c *gin.Context) {
 	userID := c.Param("id")
 
 	var existingUser User
-	if err := Db.First(&existingUser, userID).Error; err != nil {
+	if err := db.First(&existingUser, userID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		} else {
@@ -307,14 +307,14 @@ func patchUsersHandler(c *gin.Context) {
 	}
 
 	// Perform the update using the user ID
-	result := Db.Model(&existingUser).Updates(updates)
+	result := db.Model(&existingUser).Updates(updates)
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
 	}
 
 	var updatedUser User
-	if err := Db.First(&updatedUser, userID).Error; err != nil {
+	if err := db.First(&updatedUser, userID).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch updated user"})
 		return
 	}
@@ -328,19 +328,6 @@ func patchUsersHandler(c *gin.Context) {
 			"email":    updatedUser.Email,
 		},
 	})
-}
-
-func getSnmpUserHandler(c *gin.Context) {
-
-}
-func postSnmpUserHandler(c *gin.Context) {
-
-}
-func patchSnmpUserHandler(c *gin.Context) {
-
-}
-func deleteSnmpUserHandler(c *gin.Context) {
-
 }
 
 func getSnmpStatusHandler(c *gin.Context) {
@@ -380,5 +367,371 @@ func postSnmpStatusHandler(c *gin.Context) {
 			"status": newSnmpStatus.Status,
 		},
 	})
+
+}
+
+// ==============================================
+
+func createSnmpV1V2cUser(c *gin.Context) {
+	var count int64
+	var snmpV1V2cUser SnmpV1V2cUser
+
+	if err := c.ShouldBindJSON(&snmpV1V2cUser); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	db.Model(&SnmpV1V2cUser{}).Count(&count)
+
+	snmpV1V2cUser.ID = count + 1
+
+	result := db.Create(&snmpV1V2cUser)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "SNMP V1/V2c User Created",
+		"snmp_v1_v2c": gin.H{
+			"id":          snmpV1V2cUser.ID,
+			"version":     snmpV1V2cUser.Version,
+			"group_name":  snmpV1V2cUser.GroupName,
+			"community":   snmpV1V2cUser.Community,
+			"ip_version":  snmpV1V2cUser.IpVersion,
+			"ip4_address": snmpV1V2cUser.Ip4Address,
+			"ip6_address": snmpV1V2cUser.Ip6Address,
+		},
+	})
+}
+
+func readSnmpV1V2cUser(c *gin.Context) {
+
+	var snmpV1V2cUsers []SnmpV1V2cUser
+
+	result := db.Model(&SnmpV1V2cUser{}).Find(&snmpV1V2cUsers)
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"snmp_v1v2c_users": snmpV1V2cUsers,
+		"total_users":      len(snmpV1V2cUsers),
+	})
+}
+
+func updateSnmpV1V2User(c *gin.Context) {
+
+	fmt.Println("update snmp... ")
+	id := c.Param("id")
+
+	var existingUser SnmpV1V2cUser
+	if err := db.First(&existingUser, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		}
+		return
+	}
+
+	var updateData SnmpV1V2cUser
+	if err := c.ShouldBindJSON(&updateData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	updates := make(map[string]interface{})
+
+	if updateData.Version != "" {
+		if !(updateData.Version == "v1" || updateData.Version == "v2c") {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "wrong version entry"})
+			return
+		}
+		updates["version"] = updateData.Version
+	}
+
+	if updateData.GroupName != "" {
+		if !(updateData.GroupName == "read_only" || updateData.GroupName == "read_write") {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "wrong group name entry"})
+			return
+		}
+		updates["group_name"] = updateData.GroupName
+	}
+
+	if updateData.Community != "" {
+		updates["community"] = updateData.Community
+	}
+
+	if updateData.IpVersion != "" {
+		if !(updateData.IpVersion == "ipv4" || updateData.IpVersion == "ipv6") {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "wrong ip version entry"})
+			return
+		}
+		updates["ip_version"] = updateData.IpVersion
+	}
+
+	if updateData.Ip4Address != "" {
+		updates["ip4_address"] = updateData.Ip4Address
+	}
+
+	if updateData.Ip6Address != "" {
+		updates["ip6_address"] = updateData.Ip6Address
+	}
+
+	// Check if there's anything to update
+	if len(updates) == 0 {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "No update"})
+		return
+	}
+
+	// Perform the update using the user ID
+	result := db.Model(&existingUser).Updates(updates)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	var updatedUser SnmpV1V2cUser
+	if err := db.First(&updatedUser, id).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch updated user"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User updated successfully",
+		"user": gin.H{
+			"id":          updatedUser.ID,
+			"version":     updatedUser.Version,
+			"group_name":  updatedUser.GroupName,
+			"community":   updatedUser.Community,
+			"ip_version":  updatedUser.IpVersion,
+			"ip4_address": updatedUser.Ip4Address,
+			"ip6_address": updatedUser.Ip6Address,
+		},
+	})
+}
+
+func deleteSnmpV1V2User(c *gin.Context) {
+
+	id := c.Param("id")
+	var userToDelete SnmpV1V2cUser
+
+	if err := db.First(&userToDelete, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "SNMP user not found"})
+		return
+	}
+
+	if err := db.Delete(&userToDelete).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "User deleted successfully",
+	})
+
+}
+
+// ======================================
+
+func createSnmpV3User(c *gin.Context) {}
+func createSnmpStatus(c *gin.Context) {}
+func createSnmpTrap(c *gin.Context)   {}
+
+func readSnmpV3User(c *gin.Context) {}
+func readSnmpStatus(c *gin.Context) {}
+func readSnmpTrap(c *gin.Context)   {}
+
+func updateSnmpV3User(c *gin.Context) {}
+func updateSnmpStatus(c *gin.Context) {}
+func updateSnmpTrap(c *gin.Context)   {}
+
+func deleteSnmpV3User(c *gin.Context) {}
+func deleteSnmpStatus(c *gin.Context) {}
+func deleteSnmpTrap(c *gin.Context)   {}
+
+func logoutHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"message": "Logged out successfully"})
+}
+
+func loginHandler(c *gin.Context) {
+	var request LoginRequest
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Invalid request format",
+			"details": err.Error(),
+		})
+		fmt.Println(err.Error())
+		return
+	}
+
+	var user User
+
+	result := db.Where("username = ?", request.Username).First(&user)
+	fmt.Println("result from db: ", result)
+	if result.Error != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Invalid username or password",
+		})
+		return
+	}
+
+	if !checkPasswordHash(request.Password, user.Password) {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Invalid username or password",
+		})
+		return
+	}
+
+	token, err := generateJWT(&user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to generate token",
+		})
+		return
+	}
+
+	response := LoginResponse{
+		Token: token,
+		User:  user,
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+func authorizationMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		tokenString := c.GetHeader("Authorization")
+
+		if tokenString == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Missing Authorization header"})
+			c.Abort()
+			return
+		}
+
+		if len(tokenString) > 7 && tokenString[:7] == "Bearer " {
+			tokenString = tokenString[7:]
+		}
+
+		claims := &Claims{}
+		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+			return []byte(JWT_SECRET), nil
+		})
+
+		if err != nil || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			c.Abort()
+			return
+		}
+		c.Set("user_id", claims.UserID)
+		c.Set("username", claims.Username)
+		c.Next()
+	}
+}
+
+func hashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(bytes), err
+}
+
+func checkPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+}
+
+func generateJWT(user *User) (string, error) {
+	claims := &Claims{
+		UserID:   user.ID,
+		UserRole: user.Role,
+		Username: user.Username,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(2 * time.Hour)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			NotBefore: jwt.NewNumericDate(time.Now()),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(JWT_SECRET))
+}
+
+var db *gorm.DB
+
+func initDataBase() {
+
+	var err error
+
+	db, err = gorm.Open(sqlite.Open(DB_PATH), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
+	if err != nil {
+		log.Fatal("Failed to connect to database: ", err)
+	}
+
+	err = db.AutoMigrate(&User{}, &SnmpV1V2cUser{})
+
+	if err != nil {
+		log.Fatal("Failed to migrate database: ", err)
+	}
+
+	createDefaultUser()
+
+	log.Println("Database initialized successfully")
+
+}
+
+func createDefaultUser() {
+
+	var userCount int64
+	db.Model(&User{}).Count(&userCount)
+
+	if userCount == 0 {
+		adminPassword, _ := bcrypt.GenerateFromPassword([]byte("admin"), bcrypt.DefaultCost)
+
+		user := User{
+
+			Username: "admin",
+			Role:     "admin",
+			Email:    "admin@novuspower.com",
+			Password: string(adminPassword),
+		}
+
+		db.Create(&user)
+
+		user = User{
+
+			Username: "viewer",
+			Role:     "viewer",
+			Email:    "viewer@novuspower.com",
+			Password: string(adminPassword),
+		}
+
+		db.Create(&user)
+
+		user = User{
+
+			Username: "factory",
+			Role:     "admin",
+			Email:    "factory@novuspower.com",
+			Password: string(adminPassword),
+		}
+
+		db.Create(&user)
+
+		snmpV1V2User := SnmpV1V2cUser{
+			Version:    "v2c",
+			GroupName:  "read_write",
+			Community:  "myCommunity",
+			IpVersion:  "ipv4",
+			Ip4Address: "10.1.10.220",
+		}
+
+		db.Create(&snmpV1V2User)
+
+	}
 
 }
