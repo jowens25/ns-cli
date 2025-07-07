@@ -6,6 +6,8 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -89,6 +91,9 @@ func RunApiServer() {
 		protected.POST("/snmp/:version/:id", postSnmpUserHandler)
 		protected.PATCH("/snmp/:version/:id", patchSnmpUserHandler)
 		protected.DELETE("/snmp/:version/:id", deleteSnmpUserHandler)
+
+		protected.GET("snmp/status", getSnmpStatusHandler)
+		protected.POST("snmp/status", postSnmpStatusHandler)
 
 	}
 
@@ -335,5 +340,45 @@ func patchSnmpUserHandler(c *gin.Context) {
 
 }
 func deleteSnmpUserHandler(c *gin.Context) {
+
+}
+
+func getSnmpStatusHandler(c *gin.Context) {
+
+	cmd := exec.Command("systemctl", "is-active", "snmpd")
+	out, err := cmd.CombinedOutput()
+	log.Println(err)
+	log.Println("this the output: ", strings.TrimSpace(string(out)))
+
+	status := strings.TrimSpace(string(out))
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": status,
+	})
+
+}
+
+func postSnmpStatusHandler(c *gin.Context) {
+
+	var newSnmpStatus SnmpStatus
+
+	if err := c.ShouldBindJSON(&newSnmpStatus); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	cmd := exec.Command("systemctl", newSnmpStatus.Status, "snmpd")
+	out, err := cmd.CombinedOutput()
+	log.Println(err)
+	log.Println("this the output: ", strings.TrimSpace(string(out)))
+
+	newSnmpStatus.Status = strings.TrimSpace(string(out))
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Snmp enabled or disabled",
+		"status": gin.H{
+			"status": newSnmpStatus.Status,
+		},
+	})
 
 }

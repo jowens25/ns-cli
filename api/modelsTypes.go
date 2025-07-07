@@ -23,3 +23,8 @@ type LoginResponse struct {
 	Token string `json:"token"`
 	User  User   `json:"user"`
 }
+
+type SnmpStatus struct {
+	Status string `json:"status"`
+	//User  User   `json:"user"`
+}
