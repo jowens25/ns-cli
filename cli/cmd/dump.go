@@ -36,7 +36,7 @@ to quickly create a Cobra application.`,
 
 		var users []api.User
 		var snmpV1V2cUsers []api.SnmpV1V2cUser
-
+		var snmpV3Users []api.SnmpV3User
 		// Print Users table
 		result := Db.Find(&users)
 		if result.Error != nil {
@@ -55,6 +55,17 @@ to quickly create a Cobra application.`,
 		} else {
 			fmt.Printf("\n=== SNMP V1/V2c USERS TABLE (%d records) ===\n", len(snmpV1V2cUsers))
 			for i, snmpUser := range snmpV1V2cUsers {
+				fmt.Printf("SNMP User %d: %+v\n", i+1, snmpUser)
+			}
+		}
+
+		// Print SNMP Users table
+		result = Db.Find(&snmpV3Users)
+		if result.Error != nil {
+			fmt.Printf("Error querying SNMP users: %v\n", result.Error)
+		} else {
+			fmt.Printf("\n=== SNMP V3 USERS TABLE (%d records) ===\n", len(snmpV3Users))
+			for i, snmpUser := range snmpV3Users {
 				fmt.Printf("SNMP User %d: %+v\n", i+1, snmpUser)
 			}
 		}

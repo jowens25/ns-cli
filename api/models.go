@@ -52,17 +52,17 @@ type SnmpV1V2cUser struct {
 }
 
 type SnmpV3User struct {
-	ID            uint   `json:"id" gorm:"primaryKey"`
-	UserName      string `json:"user_name"`
-	AuthType      string `json:"auth_type"`
-	AuthPassphase string `json:"auth_passphase"`
-	PrivType      string `json:"priv_type"`
-	PrivPassphase string `json:"priv_passphase"`
-	Permissions   string `json:"permissions"`
+	ID             int64  `json:"id" gorm:"primaryKey"`
+	UserName       string `json:"user_name"`
+	AuthType       string `json:"auth_type"`
+	AuthPassphrase string `json:"auth_passphrase"`
+	PrivType       string `json:"priv_type"`
+	PrivPassphrase string `json:"priv_passphrase"`
+	GroupName      string `json:"group_name"`
 }
 
 type SnmpTrap struct {
-	ID                   uint   `json:"id" gorm:"primaryKey"`
+	ID                   int64  `json:"id" gorm:"primaryKey"`
 	Version              string `json:"version"`
 	User                 string `json:"user"`
 	DestinationIpVersion string `json:"destination_ip_version"`
@@ -70,9 +70,9 @@ type SnmpTrap struct {
 	Port                 string `json:"port"`
 	EngineId             string `json:"engine_id"`
 	AuthType             string `json:"auth_type"`
-	AuthPassphase        string `json:"auth_passphase"`
+	AuthPassphrase       string `json:"auth_passphrase"`
 	PrivType             string `json:"priv_type"`
-	PrivPassphase        string `json:"priv_passphase"`
+	PrivPassphrase       string `json:"priv_passphrase"`
 }
 
 // JWT Claims
