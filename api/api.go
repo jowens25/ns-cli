@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"os"
 	"os/exec"
 	"strings"
 	"time"
@@ -22,12 +23,17 @@ import (
 
 const (
 	JWT_SECRET = "your-secret-key-change-this-in-production"
-	API_HOST   = "10.1.10.205"
+	API_HOST   = "100.127.98.7"
 	API_PORT   = ":5000"
-	WEB_HOST   = "10.1.10.96"
+	WEB_HOST   = "100.82.20.69"
 	WEB_PORT   = ":3000"
 	DB_PATH    = "./app.db"
 )
+
+func init() {
+	os.Setenv(SNMP_CONFIG_PATH, "/etc/snmp/snmpd.conf")
+
+}
 
 func RunApiServer() {
 
@@ -97,8 +103,25 @@ func RunApiServer() {
 		protected.PATCH("/snmp_v3/:id", updateSnmpV3User)
 		protected.DELETE("/snmp_v3/:id", deleteSnmpV3User)
 
-		protected.GET("snmp/status", getSnmpStatusHandler)
-		protected.POST("snmp/status", postSnmpStatusHandler)
+		protected.GET("/snmp/status", readSnmpStatus)
+		protected.POST("/snmp/status", updateSnmpStatus)
+
+		protected.GET("/snmp/details", readSnmpSysDetails)
+		protected.PATCH("/snmp/details", updateSnmpSysDetails)
+
+		protected.GET("/snmp/reset_config", resetSnmpConfig)
+		//r.GET("/:function/:resource/:id/:property", readHandler)
+		////snmp / users / id / name
+		////snmp / users / id / addr
+		////snmp / v1users / id / rule
+		////ntp / server / id / ip_addr
+		////ntp / server / id /
+		//protected.POST("/:function/:resource/:property", readHandler)
+		//protected.PATCH("/:function/:resource/:property", readHandler)
+		//protected.DELETE("/:function/:resource/:property", readHandler)
+		//snmp/user/username
+		//snmp/trap/setting
+		//snmp/details/asdf
 
 	}
 
@@ -113,6 +136,70 @@ func RunApiServer() {
 	})
 	r.Run(API_HOST + API_PORT)
 }
+
+func resetSnmpConfig(c *gin.Context) {
+	cmd := exec.Command("systemctl", "stop", "snmpd")
+	out, err := cmd.CombinedOutput()
+	log.Println(err)
+	log.Println(strings.TrimSpace(string(out)))
+
+	dest := os.Getenv("SNMP_CONFIG_PATH")
+	log.Println("should be here")
+	log.Println(dest)
+
+	cmd = exec.Command("cp", "snmpd.conf", dest)
+	out, err = cmd.CombinedOutput()
+	log.Println(err)
+	log.Println(strings.TrimSpace(string(out)))
+
+	cmd = exec.Command("systemctl", "restart", "snmpd")
+	out, err = cmd.CombinedOutput()
+	log.Println(err)
+	log.Println(strings.TrimSpace(string(out)))
+
+}
+
+// /func readHandler(c *gin.Context) {
+// /	f := c.Param("function")
+// /	r := c.Param("resource")
+// /	id := c.Param("id")
+// /	p := c.Param("property")
+// /
+// /	value := ""
+// /
+// /	switch f {
+// /	case "snmp":
+// /		fmt.Println("snmp")
+// /		value = getSnmp(r, id, p)
+// /
+// /	case "ntp":
+// /		fmt.Println("ntp")
+// /	}
+// /
+// /	//value := "read: " + f + " of " + r + " of " + id + " of " + p
+// /
+// /	c.JSON(http.StatusOK, gin.H{
+// /		"value": value,
+// /	})
+// /
+// /}
+
+//func getSnmp(r, i, p string) {
+//
+//	switch r {
+//	case "v1_user":
+//		getV1User(i)
+//	case "v2c_user":
+//		getV1User(i)
+//	case "v3_user":
+//		getV1User(i)
+//	case "system_details":
+//		getSnmpSystemDetails(p)
+//
+//	case "":
+//
+//	}
+//}
 
 func healthHandler(c *gin.Context) {
 	sqlDB, err := db.DB()
@@ -335,80 +422,7 @@ func patchUsersHandler(c *gin.Context) {
 	})
 }
 
-func getSnmpStatusHandler(c *gin.Context) {
-
-	cmd := exec.Command("systemctl", "is-active", "snmpd")
-	out, err := cmd.CombinedOutput()
-	log.Println(err)
-	log.Println("this the output: ", strings.TrimSpace(string(out)))
-
-	status := strings.TrimSpace(string(out))
-
-	c.JSON(http.StatusOK, gin.H{
-		"status": status,
-	})
-
-}
-
-func postSnmpStatusHandler(c *gin.Context) {
-
-	var newSnmpStatus SnmpStatus
-
-	if err := c.ShouldBindJSON(&newSnmpStatus); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	cmd := exec.Command("systemctl", newSnmpStatus.Status, "snmpd")
-	out, err := cmd.CombinedOutput()
-	log.Println(err)
-	log.Println("this the output: ", strings.TrimSpace(string(out)))
-
-	newSnmpStatus.Status = strings.TrimSpace(string(out))
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Snmp enabled or disabled",
-		"status": gin.H{
-			"status": newSnmpStatus.Status,
-		},
-	})
-
-}
-
 // ==============================================
-
-func createSnmpV1V2cUser(c *gin.Context) {
-	var count int64
-	var snmpV1V2cUser SnmpV1V2cUser
-
-	if err := c.ShouldBindJSON(&snmpV1V2cUser); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	db.Model(&SnmpV1V2cUser{}).Count(&count)
-
-	snmpV1V2cUser.ID = count + 1
-
-	result := db.Create(&snmpV1V2cUser)
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-		return
-	}
-
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "SNMP V1/V2c User Created",
-		"snmp_v1_v2c": gin.H{
-			"id":          snmpV1V2cUser.ID,
-			"version":     snmpV1V2cUser.Version,
-			"group_name":  snmpV1V2cUser.GroupName,
-			"community":   snmpV1V2cUser.Community,
-			"ip_version":  snmpV1V2cUser.IpVersion,
-			"ip4_address": snmpV1V2cUser.Ip4Address,
-			"ip6_address": snmpV1V2cUser.Ip6Address,
-		},
-	})
-}
 
 func readSnmpV1V2cUser(c *gin.Context) {
 
@@ -540,7 +554,7 @@ func deleteSnmpV1V2cUser(c *gin.Context) {
 
 }
 
-// ======================================
+// ============== snmp v3 users ========================
 
 func createSnmpV3User(c *gin.Context) {
 	var count int64
@@ -705,6 +719,8 @@ func deleteSnmpV3User(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "User deleted successfully",
 	})
+
+	removeSnmpdV3Conf(userToDelete)
 }
 
 // =============== snmp v3 linux management ======================
@@ -730,6 +746,25 @@ func addSnmpdV3Conf(user SnmpV3User) {
 
 	exec.Command("systemctl", "start", "snmpd")
 
+}
+
+// snmpusm [COMMON OPTIONS] delete USER
+// snmpusm -v3 -u admin -a SHA -A adminpass -x AES -X adminpass localhost delete username
+
+func removeSnmpdV3Conf(user SnmpV3User) {
+	cmd := exec.Command("snmpusm", "-v3", "-u", "admin",
+		"-a", user.AuthType,
+		"-A", user.AuthPassphrase,
+		"-x", user.PrivType,
+		"-X", user.PrivPassphrase,
+		"localhost",
+		"delete",
+		user.UserName)
+
+	//cmd := exec.Command("snmpusm", "delete", user.UserName)
+	out, err := cmd.CombinedOutput()
+	log.Println(err)
+	log.Println("this the output: ", strings.TrimSpace(string(out)))
 }
 
 // ======================================

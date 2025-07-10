@@ -28,17 +28,14 @@ type LoginResponse struct {
 	User  User   `json:"user"`
 }
 
-type SnmpStatus struct {
-	Status              string `json:"status"`
-	AuthErrorTrapStatus string `json:"auth_error_trap_status"`
-	SysObjId            string `json:"sys_obj_id"`
-	Contact             string `json:"contact"`
-	Location            string `json:"location"`
-	Description         string `json:"description"`
-}
-
-type SnmpAction struct {
+type Snmp struct {
+	Status string `json:"status"`
 	Action string `json:"action"`
+
+	SysObjId       string `json:"sys_obj_id"`
+	SysContact     string `json:"sys_contact"`
+	SysLocation    string `json:"sys_location"`
+	SysDescription string `json:"sys_description"`
 }
 
 type SnmpV1V2cUser struct {
