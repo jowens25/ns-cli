@@ -95,13 +95,13 @@ func RunApiServer() {
 
 		snmpGroup := protected.Group("/snmp")
 
-		snmpGroup.GET("/v1v2c_user", readSnmpV1V2cUser)
-		snmpGroup.POST("/v1v2c_user", createSnmpV1V2cUser)
+		snmpGroup.GET("/users", readSnmpUsers)
+		snmpGroup.POST("/v1v2c_user", addSnmpV1V2cUser)
 		snmpGroup.PATCH("/v1v2c_user/:id", updateSnmpV1V2cUser)
 		snmpGroup.DELETE("/v1v2c_user/:id", deleteSnmpV1V2cUser)
 
 		snmpGroup.GET("v3_user", readSnmpV3User)
-		snmpGroup.POST("v3_user", createSnmpV3User)
+		snmpGroup.POST("v3_user", addSnmpV3User)
 		snmpGroup.PATCH("v3_user/:id", updateSnmpV3User)
 		snmpGroup.DELETE("v3_user/:id", deleteSnmpV3User)
 

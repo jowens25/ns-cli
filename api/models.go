@@ -39,7 +39,6 @@ type Snmp struct {
 }
 
 type SnmpV1V2cUser struct {
-	ID        int64  `json:"id" gorm:"primaryKey"`
 	Version   string `json:"version"`
 	GroupName string `json:"group_name"`
 	Community string `json:"community"`
@@ -51,6 +50,7 @@ type SnmpV1V2cUser struct {
 
 type SnmpV3User struct {
 	ID             int64  `json:"id" gorm:"primaryKey"`
+	Version        string `json: "version"`
 	UserName       string `json:"user_name"`
 	AuthType       string `json:"auth_type"`
 	AuthPassphrase string `json:"auth_passphrase"`

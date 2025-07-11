@@ -17,6 +17,9 @@ const (
 	SNMP_CONFIG_PATH = "SNMP_CONFIG_PATH"
 )
 
+var v1v2c_users []SnmpV1V2cUser
+var v3_users []SnmpV3User
+
 // func createSnmpStatus(c *gin.Context) {
 //
 //		var snmpStatus Snmp
@@ -241,7 +244,7 @@ func updateSnmpSysDetails(c *gin.Context) {
 	})
 }
 
-func createSnmpV1V2cUser(c *gin.Context) {
+func addSnmpV1V2cUser(c *gin.Context) {
 	//var count int64
 	var snmpV1V2cUser SnmpV1V2cUser
 
@@ -289,7 +292,7 @@ func createSnmpV1V2cUser(c *gin.Context) {
 		lineCount++
 	}
 
-	id := strconv.FormatInt(snmpV1V2cUser.ID, 10)
+	id := strconv.FormatInt(int64(len(v1v2c_users)), 10)
 
 	newUserLine := []string{"com2sec " + "comuser_" + id + " " + snmpV1V2cUser.Source + " " + snmpV1V2cUser.Community}
 
@@ -322,11 +325,13 @@ func convertGroups(group string) string {
 	return "convert groups error"
 }
 
-func readSnmpV1V2cUser(c *gin.Context) {
+func readSnmpUsers(c *gin.Context) {
 
-	var users []SnmpV1V2cUser
+	v1v2c_users = nil
+	v3_users = nil
 	var groups []map[string]string
 	var communities []map[string]string
+	var createUsers []map[string]string
 	file, err := os.Open(os.Getenv(SNMP_CONFIG_PATH))
 	if err != nil {
 		log.Fatal("failed to open config file")
@@ -341,6 +346,7 @@ func readSnmpV1V2cUser(c *gin.Context) {
 		fields := strings.Fields(line)
 		group := make(map[string]string)
 		community := make(map[string]string)
+		createUser := make(map[string]string)
 
 		if len(fields) > 0 {
 			// group - group name - sec.model - sec.name
@@ -357,8 +363,23 @@ func readSnmpV1V2cUser(c *gin.Context) {
 				community["community"] = strings.TrimSpace(fields[3])
 				communities = append(communities, community)
 			}
+
+			if strings.Contains(fields[0], "createUser") {
+
+				createUser["user_name"] = strings.TrimSpace(fields[1])
+				createUser["auth_type"] = strings.TrimSpace(fields[2])
+				createUser["auth_passphrase"] = strings.TrimSpace(fields[3])
+				createUser["priv_type"] = strings.TrimSpace(fields[4])
+				createUser["priv_passphase"] = strings.TrimSpace(fields[5])
+
+				createUsers = append(createUsers, createUser)
+			}
 		}
 	}
+
+	fmt.Println(groups)
+	fmt.Println(communities)
+	fmt.Println(createUsers)
 
 	for _, group := range groups {
 		for _, community := range communities {
@@ -370,14 +391,94 @@ func readSnmpV1V2cUser(c *gin.Context) {
 				user.Source = community["source"]
 				user.SecName = community["sec_name"]
 
-				users = append(users, user)
+				v1v2c_users = append(v1v2c_users, user)
+			}
+		}
+		for _, createUser := range createUsers {
+			if group["sec_name"] == createUser["user_name"] {
+				var user SnmpV3User
+
+				user.UserName = createUser["user_name"]
+				user.AuthType = createUser["auth_type"]
+				user.AuthPassphrase = createUser["auth_passphrase"]
+				user.PrivType = createUser["priv_type"]
+				user.PrivPassphrase = createUser["priv_passphase"]
+				user.GroupName = group["group_name"]
+				user.Version = group["version"]
+
+				v3_users = append(v3_users, user)
 			}
 		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"v1v2c_users": users,
-		"total_users": len(users),
+		"v1v2c_users": v1v2c_users,
+		"v3_users":    v3_users,
+		"total_users": len(v1v2c_users) + len(v3_users),
 	})
 
+}
+
+func addSnmpV3User(c *gin.Context) {
+	var user SnmpV3User
+
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	cmd := exec.Command("systemctl", "stop", "snmpd")
+	out, err := cmd.CombinedOutput()
+	log.Println(err)
+	log.Println("this the output: ", strings.TrimSpace(string(out)))
+
+	file, err := os.Open(os.Getenv(SNMP_CONFIG_PATH))
+
+	if err != nil {
+		log.Println(err)
+	}
+	defer file.Close()
+
+	lineCount := 0
+	createUserIndex := -1
+	groupIndex := -1
+	//
+	var lines []string
+	scanner := bufio.NewScanner(file)
+	// read all the lines, find placements
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if strings.Contains(line, "#createUser") {
+			createUserIndex = lineCount + 2 // skip the header and blank line
+		}
+		if strings.Contains(line, "#group") {
+			groupIndex = lineCount + 2
+		}
+
+		lines = append(lines, line)
+		lineCount++
+	}
+
+	newUserLine := fmt.Sprintf("createUser %s %s %s %s %s", user.UserName, user.AuthType, user.AuthPassphrase, user.PrivType, user.PrivPassphrase)
+	newGroupLine := fmt.Sprintf("group %s %s %s", user.GroupName, user.Version, user.UserName)
+
+	lines = append(lines[:createUserIndex], append([]string{newUserLine}, lines[createUserIndex:]...)...)
+
+	lines = append(lines[:groupIndex], append([]string{newGroupLine}, lines[groupIndex:]...)...)
+
+	err = os.WriteFile(os.Getenv(SNMP_CONFIG_PATH), []byte(strings.Join(lines, "\n")+"\n"), 0644)
+	if err != nil {
+		log.Fatal("failed to write file:", err)
+	}
+
+	cmd = exec.Command("systemctl", "start", "snmpd")
+	out, err = cmd.CombinedOutput()
+	log.Println(err)
+	log.Println("this the output: ", strings.TrimSpace(string(out)))
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "SNMP V3 User Created",
+		"v3_user": user,
+	})
 }
