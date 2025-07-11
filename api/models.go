@@ -39,13 +39,14 @@ type Snmp struct {
 }
 
 type SnmpV1V2cUser struct {
-	ID         int64  `json:"id" gorm:"primaryKey"`
-	Version    string `json:"version"`
-	GroupName  string `json:"group_name"`
-	Community  string `json:"community"`
-	IpVersion  string `json:"ip_version"`
-	Ip4Address string `json:"ip4_address"`
-	Ip6Address string `json:"ip6_address"`
+	ID        int64  `json:"id" gorm:"primaryKey"`
+	Version   string `json:"version"`
+	GroupName string `json:"group_name"`
+	Community string `json:"community"`
+	//IpVersion  string `json:"ip_version"`
+	Source  string `json:"source"`
+	SecName string `json:"sec_name"`
+	//Ip6Address string `json:"ip6_address"`
 }
 
 type SnmpV3User struct {

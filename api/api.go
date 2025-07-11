@@ -93,7 +93,7 @@ func RunApiServer() {
 		//protected.PATCH("/snmp/:version/:id", patchSnmpUserHandler)
 		//protected.DELETE("/snmp/:version/:id", deleteSnmpUserHandler)
 
-		protected.GET("/snmp_v1v2c", readSnmpV1V2cUser)
+		r.GET("/snmp_v1v2c", readSnmpV1V2cUser)
 		protected.POST("/snmp_v1v2c", createSnmpV1V2cUser)
 		protected.PATCH("/snmp_v1v2c/:id", updateSnmpV1V2cUser)
 		protected.DELETE("/snmp_v1v2c/:id", deleteSnmpV1V2cUser)
@@ -424,23 +424,6 @@ func patchUsersHandler(c *gin.Context) {
 
 // ==============================================
 
-func readSnmpV1V2cUser(c *gin.Context) {
-
-	var snmpV1V2cUsers []SnmpV1V2cUser
-
-	result := db.Model(&SnmpV1V2cUser{}).Find(&snmpV1V2cUsers)
-
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"snmp_v1v2c_users": snmpV1V2cUsers,
-		"total_users":      len(snmpV1V2cUsers),
-	})
-}
-
 func updateSnmpV1V2cUser(c *gin.Context) {
 
 	fmt.Println("update snmp... ")
@@ -484,21 +467,21 @@ func updateSnmpV1V2cUser(c *gin.Context) {
 		updates["community"] = updateData.Community
 	}
 
-	if updateData.IpVersion != "" {
-		if !(updateData.IpVersion == "ipv4" || updateData.IpVersion == "ipv6") {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "wrong ip version entry"})
-			return
-		}
-		updates["ip_version"] = updateData.IpVersion
-	}
+	//if updateData.IpVersion != "" {
+	//	if !(updateData.IpVersion == "ipv4" || updateData.IpVersion == "ipv6") {
+	//		c.JSON(http.StatusBadRequest, gin.H{"error": "wrong ip version entry"})
+	//		return
+	//	}
+	//	updates["ip_version"] = updateData.IpVersion
+	//}
 
-	if updateData.Ip4Address != "" {
-		updates["ip4_address"] = updateData.Ip4Address
-	}
+	//if updateData.Ip4Address != "" {
+	//	updates["ip4_address"] = updateData.Ip4Address
+	//}
 
-	if updateData.Ip6Address != "" {
-		updates["ip6_address"] = updateData.Ip6Address
-	}
+	//if updateData.Ip6Address != "" {
+	//	updates["ip6_address"] = updateData.Ip6Address
+	//}
 
 	// Check if there's anything to update
 	if len(updates) == 0 {
@@ -519,18 +502,18 @@ func updateSnmpV1V2cUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "User updated successfully",
-		"user": gin.H{
-			"id":          updatedUser.ID,
-			"version":     updatedUser.Version,
-			"group_name":  updatedUser.GroupName,
-			"community":   updatedUser.Community,
-			"ip_version":  updatedUser.IpVersion,
-			"ip4_address": updatedUser.Ip4Address,
-			"ip6_address": updatedUser.Ip6Address,
-		},
-	})
+	//c.JSON(http.StatusOK, gin.H{
+	//	"message": "User updated successfully",
+	//	"user": gin.H{
+	//		"id":          updatedUser.ID,
+	//		"version":     updatedUser.Version,
+	//		"group_name":  updatedUser.GroupName,
+	//		"community":   updatedUser.Community,
+	//		"ip_version":  updatedUser.IpVersion,
+	//		"ip4_address": updatedUser.Ip4Address,
+	//		"ip6_address": updatedUser.Ip6Address,
+	//	},
+	//})
 }
 
 func deleteSnmpV1V2cUser(c *gin.Context) {
@@ -944,11 +927,11 @@ func createDefaultUser() {
 		db.Create(&user)
 
 		snmpV1V2User := SnmpV1V2cUser{
-			Version:    "v2c",
-			GroupName:  "read_write",
-			Community:  "myCommunity",
-			IpVersion:  "ipv4",
-			Ip4Address: "10.1.10.220",
+			Version:   "v2c",
+			GroupName: "read_write",
+			Community: "myCommunity",
+			//	IpVersion:  "ipv4",
+			//	Ip4Address: "10.1.10.220",
 		}
 
 		db.Create(&snmpV1V2User)
