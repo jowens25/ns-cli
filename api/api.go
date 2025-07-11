@@ -93,23 +93,24 @@ func RunApiServer() {
 		//protected.PATCH("/snmp/:version/:id", patchSnmpUserHandler)
 		//protected.DELETE("/snmp/:version/:id", deleteSnmpUserHandler)
 
-		r.GET("/snmp_v1v2c", readSnmpV1V2cUser)
-		protected.POST("/snmp_v1v2c", createSnmpV1V2cUser)
-		protected.PATCH("/snmp_v1v2c/:id", updateSnmpV1V2cUser)
-		protected.DELETE("/snmp_v1v2c/:id", deleteSnmpV1V2cUser)
+		snmpGroup := protected.Group("/snmp")
 
-		protected.GET("/snmp_v3", readSnmpV3User)
-		protected.POST("/snmp_v3", createSnmpV3User)
-		protected.PATCH("/snmp_v3/:id", updateSnmpV3User)
-		protected.DELETE("/snmp_v3/:id", deleteSnmpV3User)
+		snmpGroup.GET("/v1v2c_user", readSnmpV1V2cUser)
+		snmpGroup.POST("/v1v2c_user", createSnmpV1V2cUser)
+		snmpGroup.PATCH("/v1v2c_user/:id", updateSnmpV1V2cUser)
+		snmpGroup.DELETE("/v1v2c_user/:id", deleteSnmpV1V2cUser)
 
-		protected.GET("/snmp/status", readSnmpStatus)
-		protected.POST("/snmp/status", updateSnmpStatus)
+		snmpGroup.GET("v3_user", readSnmpV3User)
+		snmpGroup.POST("v3_user", createSnmpV3User)
+		snmpGroup.PATCH("v3_user/:id", updateSnmpV3User)
+		snmpGroup.DELETE("v3_user/:id", deleteSnmpV3User)
 
-		protected.GET("/snmp/details", readSnmpSysDetails)
-		protected.PATCH("/snmp/details", updateSnmpSysDetails)
+		snmpGroup.GET("/status", readSnmpStatus)
+		snmpGroup.POST("/status", updateSnmpStatus)
 
-		protected.GET("/snmp/reset_config", resetSnmpConfig)
+		snmpGroup.GET("/details", readSnmpSysDetails)
+		snmpGroup.PATCH("/details", updateSnmpSysDetails)
+		snmpGroup.GET("/reset_config", resetSnmpConfig)
 		//r.GET("/:function/:resource/:id/:property", readHandler)
 		////snmp / users / id / name
 		////snmp / users / id / addr

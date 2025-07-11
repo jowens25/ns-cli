@@ -17,28 +17,27 @@ const (
 	SNMP_CONFIG_PATH = "SNMP_CONFIG_PATH"
 )
 
-func createSnmpStatus(c *gin.Context) {
-
-	var snmpStatus Snmp
-
-	if err := c.ShouldBindJSON(&snmpStatus); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	result := db.Create(&snmpStatus)
-
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-		return
-	}
-
-	c.JSON(http.StatusCreated, gin.H{
-		"message":     "SNMP Status Initialized",
-		"snmp_status": snmpStatus,
-	})
-}
-
+// func createSnmpStatus(c *gin.Context) {
+//
+//		var snmpStatus Snmp
+//
+//		if err := c.ShouldBindJSON(&snmpStatus); err != nil {
+//			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+//			return
+//		}
+//
+//		result := db.Create(&snmpStatus)
+//
+//		if result.Error != nil {
+//			c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+//			return
+//		}
+//
+//		c.JSON(http.StatusCreated, gin.H{
+//			"message":     "SNMP Status Initialized",
+//			"snmp_status": snmpStatus,
+//		})
+//	}
 func readSnmpStatus(c *gin.Context) {
 
 	var snmpStatus Snmp
@@ -51,8 +50,8 @@ func readSnmpStatus(c *gin.Context) {
 	snmpStatus.Status = strings.TrimSpace(string(out))
 
 	c.JSON(http.StatusOK, gin.H{
-		"message":     "Read SNMP Status",
-		"snmp_status": snmpStatus.Status,
+		"message": "Read SNMP Status",
+		"status":  snmpStatus.Status,
 	})
 
 }
@@ -130,6 +129,11 @@ func setSnmpStatus(c *gin.Context) {
 
 func readSnmpSysDetails(c *gin.Context) {
 
+	cmd := exec.Command("systemctl", "is-active", "snmpd")
+	out, err := cmd.CombinedOutput()
+	log.Println(err)
+	log.Println("this the output: ", strings.TrimSpace(string(out)))
+
 	var details Snmp
 	file, err := os.Open(os.Getenv(SNMP_CONFIG_PATH))
 	if err != nil {
@@ -163,8 +167,10 @@ func readSnmpSysDetails(c *gin.Context) {
 
 	}
 
+	details.Status = strings.TrimSpace(string(out))
+
 	c.JSON(http.StatusOK, gin.H{
-		"snmp_sys_details": details,
+		"sys_details": details,
 	})
 
 }
@@ -176,6 +182,16 @@ func updateSnmpSysDetails(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	if details.Action != "" {
+		cmd := exec.Command("systemctl", details.Action, "snmpd")
+		out, err := cmd.CombinedOutput()
+		log.Println(err)
+		log.Println("this the output: ", strings.TrimSpace(string(out)))
+		details.Status = strings.TrimSpace(string(out))
+
+	}
+
 	fmt.Println("HELP")
 	fmt.Println(details)
 
@@ -221,12 +237,12 @@ func updateSnmpSysDetails(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"snmp_sys_details": details,
+		"sys_details": details,
 	})
 }
 
 func createSnmpV1V2cUser(c *gin.Context) {
-	var count int64
+	//var count int64
 	var snmpV1V2cUser SnmpV1V2cUser
 
 	if err := c.ShouldBindJSON(&snmpV1V2cUser); err != nil {
@@ -234,15 +250,15 @@ func createSnmpV1V2cUser(c *gin.Context) {
 		return
 	}
 
-	db.Model(&SnmpV1V2cUser{}).Count(&count)
-
-	snmpV1V2cUser.ID = count + 1
-
-	result := db.Create(&snmpV1V2cUser)
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-		return
-	}
+	//db.Model(&SnmpV1V2cUser{}).Count(&count)
+	//
+	//snmpV1V2cUser.ID = count + 1
+	//
+	//result := db.Create(&snmpV1V2cUser)
+	//if result.Error != nil {
+	//	c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+	//	return
+	//}
 
 	file, err := os.Open(os.Getenv(SNMP_CONFIG_PATH))
 
@@ -289,8 +305,8 @@ func createSnmpV1V2cUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"message":     "SNMP V1/V2c User Created",
-		"snmp_v1_v2c": snmpV1V2cUser,
+		"message":    "SNMP V1/V2c User Created",
+		"v1v2c_user": snmpV1V2cUser,
 	})
 
 }
@@ -360,8 +376,8 @@ func readSnmpV1V2cUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"snmp_v1v2c_users": users,
-		"total_users":      len(users),
+		"v1v2c_users": users,
+		"total_users": len(users),
 	})
 
 }
