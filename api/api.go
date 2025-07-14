@@ -8,8 +8,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
-	"strings"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -95,21 +93,21 @@ func RunApiServer() {
 
 		snmpGroup := protected.Group("/snmp")
 
-		snmpGroup.GET("/users", readSnmpUsers)
-		snmpGroup.POST("/v1v2c_user", addSnmpV1V2cUser)
-		snmpGroup.PATCH("/v1v2c_user/:id", updateSnmpV1V2cUser)
+		snmpGroup.GET("/v1v2c_user", readSnmpV1V2cUsers)
+		snmpGroup.POST("/v1v2c_user", writeSnmpV1V2cUser)
+		snmpGroup.PATCH("/v1v2c_user/:id", editSnmpV1V2cUser)
 		snmpGroup.DELETE("/v1v2c_user/:id", deleteSnmpV1V2cUser)
-
-		snmpGroup.GET("v3_user", readSnmpV3User)
-		snmpGroup.POST("v3_user", addSnmpV3User)
-		snmpGroup.PATCH("v3_user/:id", updateSnmpV3User)
+		//
+		snmpGroup.GET("v3_user", readSnmpV3Users)
+		snmpGroup.POST("v3_user", writeSnmpV3User)
+		snmpGroup.PATCH("v3_user/:id", editSnmpV3User)
 		snmpGroup.DELETE("v3_user/:id", deleteSnmpV3User)
 
-		snmpGroup.GET("/status", readSnmpStatus)
-		snmpGroup.POST("/status", updateSnmpStatus)
+		//snmpGroup.GET("/status", readSnmpStatus)
+		//snmpGroup.POST("/status", updateSnmpStatus)
 
-		snmpGroup.GET("/details", readSnmpSysDetails)
-		snmpGroup.PATCH("/details", updateSnmpSysDetails)
+		snmpGroup.GET("/info", readSnmpInfo)
+		snmpGroup.PATCH("/info", writeSnmpInfo)
 		snmpGroup.GET("/reset_config", resetSnmpConfig)
 		//r.GET("/:function/:resource/:id/:property", readHandler)
 		////snmp / users / id / name
@@ -136,28 +134,6 @@ func RunApiServer() {
 		})
 	})
 	r.Run(API_HOST + API_PORT)
-}
-
-func resetSnmpConfig(c *gin.Context) {
-	cmd := exec.Command("systemctl", "stop", "snmpd")
-	out, err := cmd.CombinedOutput()
-	log.Println(err)
-	log.Println(strings.TrimSpace(string(out)))
-
-	dest := os.Getenv("SNMP_CONFIG_PATH")
-	log.Println("should be here")
-	log.Println(dest)
-
-	cmd = exec.Command("cp", "snmpd.conf", dest)
-	out, err = cmd.CombinedOutput()
-	log.Println(err)
-	log.Println(strings.TrimSpace(string(out)))
-
-	cmd = exec.Command("systemctl", "restart", "snmpd")
-	out, err = cmd.CombinedOutput()
-	log.Println(err)
-	log.Println(strings.TrimSpace(string(out)))
-
 }
 
 // /func readHandler(c *gin.Context) {
@@ -425,331 +401,26 @@ func patchUsersHandler(c *gin.Context) {
 
 // ==============================================
 
-func updateSnmpV1V2cUser(c *gin.Context) {
-
-	fmt.Println("update snmp... ")
-	id := c.Param("id")
-
-	var existingUser SnmpV1V2cUser
-	if err := db.First(&existingUser, id).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-		}
-		return
-	}
-
-	var updateData SnmpV1V2cUser
-	if err := c.ShouldBindJSON(&updateData); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	updates := make(map[string]interface{})
-
-	if updateData.Version != "" {
-		if !(updateData.Version == "v1" || updateData.Version == "v2c") {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "wrong version entry"})
-			return
-		}
-		updates["version"] = updateData.Version
-	}
-
-	if updateData.GroupName != "" {
-		if !(updateData.GroupName == "read_only" || updateData.GroupName == "read_write") {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "wrong group name entry"})
-			return
-		}
-		updates["group_name"] = updateData.GroupName
-	}
-
-	if updateData.Community != "" {
-		updates["community"] = updateData.Community
-	}
-
-	//if updateData.IpVersion != "" {
-	//	if !(updateData.IpVersion == "ipv4" || updateData.IpVersion == "ipv6") {
-	//		c.JSON(http.StatusBadRequest, gin.H{"error": "wrong ip version entry"})
-	//		return
-	//	}
-	//	updates["ip_version"] = updateData.IpVersion
-	//}
-
-	//if updateData.Ip4Address != "" {
-	//	updates["ip4_address"] = updateData.Ip4Address
-	//}
-
-	//if updateData.Ip6Address != "" {
-	//	updates["ip6_address"] = updateData.Ip6Address
-	//}
-
-	// Check if there's anything to update
-	if len(updates) == 0 {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "No update"})
-		return
-	}
-
-	// Perform the update using the user ID
-	result := db.Model(&existingUser).Updates(updates)
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-		return
-	}
-
-	var updatedUser SnmpV1V2cUser
-	if err := db.First(&updatedUser, id).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch updated user"})
-		return
-	}
-
-	//c.JSON(http.StatusOK, gin.H{
-	//	"message": "User updated successfully",
-	//	"user": gin.H{
-	//		"id":          updatedUser.ID,
-	//		"version":     updatedUser.Version,
-	//		"group_name":  updatedUser.GroupName,
-	//		"community":   updatedUser.Community,
-	//		"ip_version":  updatedUser.IpVersion,
-	//		"ip4_address": updatedUser.Ip4Address,
-	//		"ip6_address": updatedUser.Ip6Address,
-	//	},
-	//})
-}
-
-func deleteSnmpV1V2cUser(c *gin.Context) {
-
-	id := c.Param("id")
-	var userToDelete SnmpV1V2cUser
-
-	if err := db.First(&userToDelete, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "SNMP user not found"})
-		return
-	}
-
-	if err := db.Delete(&userToDelete).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "User deleted successfully",
-	})
-
-}
-
-// ============== snmp v3 users ========================
-
-func createSnmpV3User(c *gin.Context) {
-	var count int64
-	var snmpV3User SnmpV3User
-
-	if err := c.ShouldBindJSON(&snmpV3User); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	db.Model(&SnmpV3User{}).Count(&count)
-
-	snmpV3User.ID = count + 1
-
-	result := db.Create(&snmpV3User)
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-		return
-	}
-
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "SNMP V3 User Created",
-		"snmp_v3_user": gin.H{
-			"id":              snmpV3User.ID,
-			"user_name":       snmpV3User.UserName,
-			"auth_type":       snmpV3User.AuthType,
-			"auth_passphrase": snmpV3User.AuthPassphrase,
-			"priv_type":       snmpV3User.PrivType,
-			"priv_passphrase": snmpV3User.PrivPassphrase,
-			"group_name":      snmpV3User.GroupName,
-		},
-	})
-
-	// do the fun part
-
-	addSnmpdV3Conf(snmpV3User)
-}
-func readSnmpV3User(c *gin.Context) {
-	var snmpV3Users []SnmpV3User
-
-	result := db.Model(&SnmpV3User{}).Find(&snmpV3Users)
-
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"snmp_v3_users": snmpV3Users,
-		"total_users":   len(snmpV3Users),
-	})
-}
-func updateSnmpV3User(c *gin.Context) {
-	fmt.Println("update snmp... ")
-	id := c.Param("id")
-
-	var existingUser SnmpV3User
-	if err := db.First(&existingUser, id).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-		}
-		return
-	}
-
-	var updateData SnmpV3User
-	if err := c.ShouldBindJSON(&updateData); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	updates := make(map[string]interface{})
-
-	// user name
-	if updateData.UserName != "" {
-		updates["user_name"] = updateData.UserName
-	}
-
-	// auth type
-	if updateData.AuthType != "" {
-		if !(updateData.AuthType == "MD5" || updateData.AuthType == "SHA") {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "wrong auth entry"})
-			return
-		}
-		updates["auth_type"] = updateData.AuthType
-	}
-	// auth pass
-	if updateData.AuthPassphrase != "" {
-		updates["auth_passphrase"] = updateData.AuthPassphrase
-	}
-
-	// priv type
-	if updateData.PrivType != "" {
-		if !(updateData.PrivType == "AES" || updateData.PrivType == "DES") {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "wrong priv entry"})
-			return
-		}
-		updates["priv_type"] = updateData.PrivType
-	}
-
-	// priv pass
-	if updateData.PrivPassphrase != "" {
-		updates["priv_passphrase"] = updateData.PrivPassphrase
-	}
-
-	// priv type
-	if updateData.GroupName != "" {
-		if !(updateData.GroupName == "read_only" || updateData.GroupName == "read_write") {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "wrong group entry"})
-			return
-		}
-		updates["group_name"] = updateData.GroupName
-	}
-
-	// Check if there's anything to update
-	if len(updates) == 0 {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "No update"})
-		return
-	}
-
-	// Perform the update using the user ID
-	result := db.Model(&existingUser).Updates(updates)
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-		return
-	}
-
-	var updatedUser SnmpV3User
-	if err := db.First(&updatedUser, id).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch updated user"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": "User updated successfully",
-		"user": gin.H{
-			"id":              updatedUser.ID,
-			"user_name":       updatedUser.UserName,
-			"auth_type":       updatedUser.AuthType,
-			"auth_passphrase": updatedUser.AuthPassphrase,
-			"priv_type":       updatedUser.PrivType,
-			"priv_passphrase": updatedUser.PrivPassphrase,
-			"group_name":      updatedUser.GroupName,
-		},
-	})
-}
-func deleteSnmpV3User(c *gin.Context) {
-	id := c.Param("id")
-	var userToDelete SnmpV3User
-
-	if err := db.First(&userToDelete, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "SNMP user not found"})
-		return
-	}
-
-	if err := db.Delete(&userToDelete).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "User deleted successfully",
-	})
-
-	removeSnmpdV3Conf(userToDelete)
-}
-
-// =============== snmp v3 linux management ======================
-// net-snmp-create-v3-user [-ro] [-a authpass] [-x privpass] [-X DES|AES] [username]
-
-func addSnmpdV3Conf(user SnmpV3User) {
-
-	exec.Command("systemctl", "stop", "snmpd")
-
-	if user.GroupName == "read_only" {
-		cmd := exec.Command("net-snmp-create-v3-user", "-ro", "-a", user.AuthPassphrase, "-x", user.PrivPassphrase, "-X", user.PrivType, user.UserName)
-		out, err := cmd.CombinedOutput()
-		log.Println(err)
-		log.Println("this the output: ", strings.TrimSpace(string(out)))
-	}
-
-	if user.GroupName == "read_write" {
-		cmd := exec.Command("net-snmp-create-v3-user", "-a", user.AuthPassphrase, "-x", user.PrivPassphrase, "-X", user.PrivType, user.UserName)
-		out, err := cmd.CombinedOutput()
-		log.Println(err)
-		log.Println("this the output: ", strings.TrimSpace(string(out)))
-	}
-
-	exec.Command("systemctl", "start", "snmpd")
-
-}
-
-// snmpusm [COMMON OPTIONS] delete USER
-// snmpusm -v3 -u admin -a SHA -A adminpass -x AES -X adminpass localhost delete username
-
-func removeSnmpdV3Conf(user SnmpV3User) {
-	cmd := exec.Command("snmpusm", "-v3", "-u", "admin",
-		"-a", user.AuthType,
-		"-A", user.AuthPassphrase,
-		"-x", user.PrivType,
-		"-X", user.PrivPassphrase,
-		"localhost",
-		"delete",
-		user.UserName)
-
-	//cmd := exec.Command("snmpusm", "delete", user.UserName)
-	out, err := cmd.CombinedOutput()
-	log.Println(err)
-	log.Println("this the output: ", strings.TrimSpace(string(out)))
-}
+//func deleteSnmpV1V2cUser(c *gin.Context) {
+//
+//	id := c.Param("id")
+//	var userToDelete SnmpV1V2cUser
+//
+//	if err := db.First(&userToDelete, id).Error; err != nil {
+//		c.JSON(http.StatusNotFound, gin.H{"error": "SNMP user not found"})
+//		return
+//	}
+//
+//	if err := db.Delete(&userToDelete).Error; err != nil {
+//		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+//		return
+//	}
+//
+//	c.JSON(http.StatusCreated, gin.H{
+//		"message": "User deleted successfully",
+//	})
+//
+//}
 
 // ======================================
 

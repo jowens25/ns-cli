@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"gorm.io/gorm"
 )
 
 type User struct {
@@ -29,9 +30,8 @@ type LoginResponse struct {
 }
 
 type Snmp struct {
-	Status string `json:"status"`
-	Action string `json:"action"`
-
+	Status         string `json:"status"`
+	Action         string `json:"action"`
 	SysObjId       string `json:"sys_obj_id"`
 	SysContact     string `json:"sys_contact"`
 	SysLocation    string `json:"sys_location"`
@@ -39,18 +39,18 @@ type Snmp struct {
 }
 
 type SnmpV1V2cUser struct {
+	gorm.Model
+	ComNumber string `json:"com_number"`
 	Version   string `json:"version"`
 	GroupName string `json:"group_name"`
 	Community string `json:"community"`
-	//IpVersion  string `json:"ip_version"`
-	Source  string `json:"source"`
-	SecName string `json:"sec_name"`
-	//Ip6Address string `json:"ip6_address"`
+	Source    string `json:"source"`
+	SecName   string `json:"sec_name"`
 }
 
 type SnmpV3User struct {
-	ID             int64  `json:"id" gorm:"primaryKey"`
-	Version        string `json: "version"`
+	gorm.Model
+	Version        string `json:"version"`
 	UserName       string `json:"user_name"`
 	AuthType       string `json:"auth_type"`
 	AuthPassphrase string `json:"auth_passphrase"`
@@ -60,7 +60,7 @@ type SnmpV3User struct {
 }
 
 type SnmpTrap struct {
-	ID                   int64  `json:"id" gorm:"primaryKey"`
+	gorm.Model
 	Version              string `json:"version"`
 	User                 string `json:"user"`
 	DestinationIpVersion string `json:"destination_ip_version"`
