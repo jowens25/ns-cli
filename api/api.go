@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	JWT_SECRET = "your-secret-key-change-this-in-production"
+	JWT_SECRET = "your-secret-key"
 	API_HOST   = "100.127.98.7"
 	API_PORT   = ":5000"
 	WEB_HOST   = "100.82.20.69"
@@ -69,7 +69,7 @@ func RunApiServer() {
 	v1 := r.Group("/api/v1")
 
 	// public routes
-	r.POST("/login", loginHandler)
+	v1.POST("/auth/login", loginHandler)
 
 	//r.Static("/", "")
 	//r.GET("/users", usersHandler)

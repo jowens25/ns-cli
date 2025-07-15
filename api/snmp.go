@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 const (
@@ -19,6 +20,7 @@ const (
 func readSnmpUsersFromFile() {
 	v1v2c_users = nil
 	v3_users = nil
+
 	var groups []map[string]string
 	var communities []map[string]string
 	var createUsers []map[string]string
@@ -96,7 +98,10 @@ func readSnmpUsersFromFile() {
 				user.Community = community["community"]
 				user.Source = community["source"]
 				user.SecName = community["sec_name"]
-
+				//result := db.Where("community = ?", user.Community).Updates(&user)
+				//if result.Error != nil {
+				//					log.Println(result.Error)
+				//}
 				v1v2c_users = append(v1v2c_users, user)
 			}
 		}
@@ -112,25 +117,55 @@ func readSnmpUsersFromFile() {
 				user.GroupName = group["group_name"]
 				user.Version = group["version"]
 
+				//result := db.Where("user_name = ?", user.UserName).Updates(&user)
+				//if result.Error != nil {
+				//	log.Println(result.Error)
+				//}
 				v3_users = append(v3_users, user)
 			}
 		}
 	}
 
-	for _, v3 := range v3_users {
+	var new_v3_usernames []string
 
-		result := db.Where("user_name = ?", v3.UserName).FirstOrCreate(&v3)
-		if result.Error != nil {
-			log.Println(result.Error)
+	for _, user := range v3_users {
+
+		// look up the user by user name
+		result := db.Where("user_name = ?", user.UserName).First(&SnmpV3User{})
+		if result.Error == gorm.ErrRecordNotFound {
+			// Create new user
+			db.Create(&user)
+
+		} else {
+			// Update existing user
+			db.Where("user_name = ?", user.UserName).Updates(&user)
 		}
+
+		new_v3_usernames = append(new_v3_usernames, user.UserName)
 	}
 
-	for _, v1v2c := range v1v2c_users {
-		result := db.Where("community = ?", v1v2c.Community).FirstOrCreate(&v1v2c)
-		if result.Error != nil {
-			log.Println(result.Error)
+	db.Where("user_name NOT IN ?", new_v3_usernames).Delete(&SnmpV3User{})
+
+	var new_v1v2c_communities []string
+
+	for _, user := range v1v2c_users {
+
+		// look up the user by user name
+		result := db.Where("community = ?", user.Community).First(&SnmpV1V2cUser{})
+		if result.Error == gorm.ErrRecordNotFound {
+			// Create new user
+			db.Create(&user)
+
+		} else {
+			// Update existing user
+			db.Where("community = ?", user.Community).Updates(&user)
 		}
+
+		new_v1v2c_communities = append(new_v1v2c_communities, user.Community)
 	}
+
+	db.Where("community NOT IN ?", new_v1v2c_communities).Delete(&SnmpV1V2cUser{})
+
 }
 
 func resetSnmpConfig(c *gin.Context) {

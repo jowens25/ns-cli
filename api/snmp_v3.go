@@ -17,6 +17,8 @@ var v3_users []SnmpV3User
 
 func readSnmpV3Users(c *gin.Context) {
 
+	readSnmpUsersFromFile()
+
 	var users []SnmpV3User
 	result := db.Find(&users)
 
