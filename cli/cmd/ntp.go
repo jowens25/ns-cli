@@ -35,9 +35,10 @@ to quickly create a Cobra application.`,
 			//	case "ip":
 			//		fmt.Println("ip flag called")
 			//
-			//	case "read":
-			//		//axi.ModuleOperation("ntp-server", "r", args[0])
-			//		fmt.Println(axi.ReadNtpServer(args[0]))
+			//case "read":
+			//	//axi.ModuleOperation("ntp-server", "r", args[0])
+			//	//fmt.Println(axi.ReadNtpServer(args[0]))
+			//	axi.Operate("read", "ntp-server", "ip-address", "")
 			//	case "write":
 			//		//axi.ModuleOperation("ntp-server", "w", args[0], args[1])
 			//

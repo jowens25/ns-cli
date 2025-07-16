@@ -6,8 +6,6 @@ package cmd
 import (
 	"fmt"
 
-	"NovusTimeServer/axi"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -29,10 +27,10 @@ to quickly create a Cobra application.`,
 
 			switch f.Name {
 			case "read":
-				axi.Operate("read", "ntp-server", "status", "000000000000000000000000000000000")
-				//axi.Read("ntp-server", "status")
+			//	axi.Operate("read", "ntp-server", "status", "000000000000000000000000000000000")
+			//axi.Read("ntp-server", "status")
 			case "write":
-				axi.Operate("write", "ntp-server", "status", "enabled")
+			//	axi.Operate("write", "ntp-server", "status", "enabled")
 			default:
 				//fmt.Println("Please pass the ntp command a valid flag")
 				//api.StopServers()

@@ -105,16 +105,21 @@ int getPropertyId(int core_id, char *name)
     // cores[core_id].properties[1]
     for (int i = 0; i < 63; i++)
     {
+
+        if (0 == strcmp(cores[core_id].properties[i], "NULL"))
+        {
+            return -1; // end of properties
+        }
+
         if (cores[core_id].properties[i] != NULL)
         {
-
             if (strcmp(cores[core_id].properties[i], name) == 0)
             {
                 return i;
             }
         }
     }
-    return -1; // not found
+    return -1;
 }
 
 int getOperationId(char *name)

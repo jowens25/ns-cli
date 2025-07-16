@@ -6,7 +6,7 @@
 
 char *PtpOcProperties[] = {
 
-    [PtpOcVersion] = "version",
+    [PtpOcVersion] = "ptpversion",
     [PtpOcInstanceNumber] = "instance-number",
     [PtpOcVlanAddress] = "vlan-address",
     [PtpOcVlanStatus] = "vlan-status",

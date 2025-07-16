@@ -1,6 +1,7 @@
 package api
 
 import (
+	"NovusTimeServer/axi"
 	"NovusTimeServer/web"
 	"errors"
 	"fmt"
@@ -109,6 +110,9 @@ func RunApiServer() {
 		snmpGroup.GET("/info", readSnmpInfo)
 		snmpGroup.PATCH("/info", writeSnmpInfo)
 		snmpGroup.GET("/reset_config", resetSnmpConfig)
+
+		protected.GET("/ntp/:prop", readNtpProperty)
+		protected.POST("/ntp/:prop", writeNtpProperty)
 		//r.GET("/:function/:resource/:id/:property", readHandler)
 		////snmp / users / id / name
 		////snmp / users / id / addr
@@ -177,6 +181,42 @@ func RunApiServer() {
 //
 //	}
 //}
+
+func readNtpProperty(c *gin.Context) {
+	operation := "read"
+	module := "ntp-server"
+	property := c.Param("prop")
+	value := "0000000000000000000000000000000000000"
+
+	err := axi.Operate(&operation, &module, &property, &value)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{property: value})
+
+}
+
+func writeNtpProperty(c *gin.Context) {
+	var data map[string]string
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	operation := "write"
+	module := "ntp-server"
+	property := c.Param("prop")
+
+	value := data[property]
+
+	err := axi.Operate(&operation, &module, &property, &value)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{property: value})
+
+}
 
 func healthHandler(c *gin.Context) {
 	sqlDB, err := db.DB()

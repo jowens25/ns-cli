@@ -1,22 +1,17 @@
 package api
 
 import (
-	"time"
-
 	"github.com/golang-jwt/jwt/v5"
 	"gorm.io/gorm"
 )
 
 type User struct {
-	ID        uint      `json:"id" gorm:"primaryKey"`
-	Role      string    `json:"role" gorm:"not null"`
-	Username  string    `json:"username" gorm:"uniqueIndex;not null"`
-	Email     string    `json:"email" gorm:"uniqueIndex;not null"`
-	Password  string    `json:"password" gorm:"not null"` // "-" excludes from JSON
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	UserType  string    `json:""`
-	//Posts     []Post    `json:"posts,omitempty" gorm:"foreignKey:AuthorID"`
+	gorm.Model
+	Role     string `json:"role" gorm:"not null"`
+	Username string `json:"username" gorm:"uniqueIndex;not null"`
+	Email    string `json:"email" gorm:"uniqueIndex;not null"`
+	Password string `json:"password" gorm:"not null"` // "-" excludes from JSON
+
 }
 
 type LoginRequest struct {
@@ -36,6 +31,36 @@ type Snmp struct {
 	SysContact     string `json:"sys_contact"`
 	SysLocation    string `json:"sys_location"`
 	SysDescription string `json:"sys_description"`
+}
+
+type Ntp struct {
+	Version          string `json:"version"`
+	Instance         string `json:"instance"`
+	Mac              string `json:"mac"`
+	VlanAddress      string `json:"vlan_address"`
+	VlanStatus       string `json:"vlan_status"`
+	IpMode           string `json:"ip_mode"`
+	IpAddress        string `json:"ip_address"`
+	UnicastMode      string `json:"unicast_mode"`
+	MulticastMode    string `json:"multicast_mode"`
+	BroadcastMode    string `json:"broadcast_mode"`
+	Status           string `json:"status"`
+	Stratum          string `json:"stratum"`
+	PollInterval     string `json:"poll_interval"`
+	Precision        string `json:"precision"`
+	ReferenceId      string `json:"reference_id"`
+	Leap59           string `json:"leap59"`
+	Leap59Inprogress string `json:"leap59_inprogress"`
+	Leap61           string `json:"leap61"`
+	Leap61Inprogress string `json:"leap61_inprogress"`
+	Utc_smearing     string `json:"utc_smearing"`
+	UtcOffsetStatus  string `json:"utc_offset_status"`
+	UtcOffsetValue   string `json:"utc_offset_value"`
+	Requests         string `json:"requests"`
+	Responses        string `json:"responses"`
+	RequestsDropped  string `json:"requests_dropped"`
+	Broadcasts       string `json:"broadcasts"`
+	ClearCounters    string `json:"clear_counters"`
 }
 
 type SnmpV1V2cUser struct {

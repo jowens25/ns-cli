@@ -238,11 +238,25 @@ int Axi(char *operation, char *core, char *property, char *value)
     int op_id = getOperationId(operation);
     printf("op id: %d\n", op_id);
 
+    if (op_id < 0)
+    {
+        return -1;
+    }
+
     int core_id = getCoreId(core);
     printf("core id: %d\n", core_id);
+    if (core_id < 0)
+    {
+        return -1;
+    }
 
     int property_id = getPropertyId(core_id, property);
     printf("property id: %d\n", property_id);
+
+    if (property_id < 0)
+    {
+        return -1;
+    }
 
     int err = timeServer[op_id][core_id][property_id](value, 64);
 

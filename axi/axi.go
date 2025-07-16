@@ -10,7 +10,9 @@ package axi
 */
 import "C"
 import (
+	"errors"
 	"sync"
+	"unsafe"
 )
 
 //
@@ -240,23 +242,47 @@ func init() {
 	//mutex.Lock()
 	//C.connect()
 	//C.readConfig()
-	//var mystring = ""
-	//fmt.Println(mystring)
+	////var mystring = ""
+	////fmt.Println(mystring)
+	////
+	////Read("module", "property", &mystring)
+	////
+	////fmt.Println(mystring)
 	//
-	//Read("module", "property", &mystring)
-	//
-	//fmt.Println(mystring)
-
 	//mutex.Unlock()
 }
 
-func Operate(operation string, module string, property string, value string) string {
-	//fmt.Println("module: ", module)
-	//fmt.Println("property: ", property)
-	//
-	C.Axi(C.CString(operation), C.CString(module), C.CString(property), C.CString(value))
-	//
-	return "value"
+func Operate(operation *string, module *string, property *string, value *string) error {
+
+	op := C.CString(*operation)
+	mod := C.CString(*module)
+	prop := C.CString(*property)
+	val := C.CString(*value)
+
+	defer C.free(unsafe.Pointer(op))
+	defer C.free(unsafe.Pointer(mod))
+	defer C.free(unsafe.Pointer(prop))
+	defer C.free(unsafe.Pointer(val))
+
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	err := C.connect()
+	C.readConfig()
+
+	if err != 0 {
+		return errors.New("connection failed")
+	}
+
+	err = C.Axi(op, mod, prop, val)
+
+	*value = C.GoString(val)
+
+	if err != 0 {
+		return errors.New("axi failed")
+	}
+
+	return nil
 }
 
 //func Write(module string, property string, value *string) {
