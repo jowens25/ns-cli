@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -22,15 +23,47 @@ import (
 
 const (
 	JWT_SECRET = "your-secret-key"
-	API_HOST   = "100.127.98.7"
+	API_HOST   = "10.1.10.205"
 	API_PORT   = ":5000"
-	WEB_HOST   = "100.82.20.69"
+	WEB_HOST   = "10.1.10.205"
 	WEB_PORT   = ":3000"
 	DB_PATH    = "./app.db"
 )
 
+var serialMutex sync.Mutex
+
+//var NtpProperties = make(map[string]string)
+
 func init() {
 	os.Setenv(SNMP_CONFIG_PATH, "/etc/snmp/snmpd.conf")
+
+	//NtpProperties["version"] = ""
+	//NtpProperties["instance"] = ""
+	//NtpProperties["mac"] = ""
+	//NtpProperties["vlan_address"] = ""
+	//NtpProperties["vlan_status"] = ""
+	//NtpProperties["ip_mode"] = ""
+	//NtpProperties["ip_address"] = ""
+	//NtpProperties["unicast_mode"] = ""
+	//NtpProperties["multicast_mode"] = ""
+	//NtpProperties["broadcast_mode"] = ""
+	//NtpProperties["status"] = ""
+	//NtpProperties["stratum"] = ""
+	//NtpProperties["poll_interval"] = ""
+	//NtpProperties["precision"] = ""
+	//NtpProperties["reference_id"] = ""
+	//NtpProperties["leap59"] = ""
+	//NtpProperties["leap59_inprogress"] = ""
+	//NtpProperties["leap61"] = ""
+	//NtpProperties["leap61_inprogress"] = ""
+	//NtpProperties["utc_smearing"] = ""
+	//NtpProperties["utc_offset_status"] = ""
+	//NtpProperties["utc_offset_value"] = ""
+	//NtpProperties["requests"] = ""
+	//NtpProperties["responses"] = ""
+	//NtpProperties["requests_dropped"] = ""
+	//NtpProperties["broadcasts"] = ""
+	//NtpProperties["clear_counters"] = ""
 
 }
 
@@ -137,67 +170,32 @@ func RunApiServer() {
 			"message": "The requested resource could not be found",
 		})
 	})
+
+	//readAllNtp()
+
 	r.Run(API_HOST + API_PORT)
 }
 
-// /func readHandler(c *gin.Context) {
-// /	f := c.Param("function")
-// /	r := c.Param("resource")
-// /	id := c.Param("id")
-// /	p := c.Param("property")
-// /
-// /	value := ""
-// /
-// /	switch f {
-// /	case "snmp":
-// /		fmt.Println("snmp")
-// /		value = getSnmp(r, id, p)
-// /
-// /	case "ntp":
-// /		fmt.Println("ntp")
-// /	}
-// /
-// /	//value := "read: " + f + " of " + r + " of " + id + " of " + p
-// /
-// /	c.JSON(http.StatusOK, gin.H{
-// /		"value": value,
-// /	})
-// /
-// /}
-
-//func getSnmp(r, i, p string) {
-//
-//	switch r {
-//	case "v1_user":
-//		getV1User(i)
-//	case "v2c_user":
-//		getV1User(i)
-//	case "v3_user":
-//		getV1User(i)
-//	case "system_details":
-//		getSnmpSystemDetails(p)
-//
-//	case "":
-//
-//	}
-//}
-
 func readNtpProperty(c *gin.Context) {
+	serialMutex.Lock()
+	defer serialMutex.Unlock()
+	property := c.Param("prop")
 	operation := "read"
 	module := "ntp-server"
-	property := c.Param("prop")
-	value := "0000000000000000000000000000000000000"
+	value := ""
 
 	err := axi.Operate(&operation, &module, &property, &value)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{property: value})
 
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	c.JSON(http.StatusOK, gin.H{property: value})
 }
 
 func writeNtpProperty(c *gin.Context) {
+	serialMutex.Lock()
+	defer serialMutex.Unlock()
 	var data map[string]string
 	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -206,7 +204,7 @@ func writeNtpProperty(c *gin.Context) {
 	operation := "write"
 	module := "ntp-server"
 	property := c.Param("prop")
-
+	//value := ""
 	value := data[property]
 
 	err := axi.Operate(&operation, &module, &property, &value)
@@ -588,7 +586,7 @@ func initDataBase() {
 		log.Fatal("Failed to connect to database: ", err)
 	}
 
-	err = db.AutoMigrate(&User{}, &SnmpV1V2cUser{}, &SnmpV3User{})
+	err = db.AutoMigrate(&User{}, &SnmpV1V2cUser{}, &SnmpV3User{}, &Ntp{})
 
 	if err != nil {
 		log.Fatal("Failed to migrate database: ", err)

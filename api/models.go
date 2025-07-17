@@ -34,6 +34,7 @@ type Snmp struct {
 }
 
 type Ntp struct {
+	gorm.Model
 	Version          string `json:"version"`
 	Instance         string `json:"instance"`
 	Mac              string `json:"mac"`

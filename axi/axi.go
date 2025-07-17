@@ -11,6 +11,7 @@ package axi
 import "C"
 import (
 	"errors"
+	"fmt"
 	"sync"
 	"unsafe"
 )
@@ -239,9 +240,13 @@ var mutex sync.Mutex
 const size = C.size_t(64)
 
 func init() {
-	//mutex.Lock()
-	//C.connect()
-	//C.readConfig()
+	err := Connect()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	ReadConfig()
+
 	////var mystring = ""
 	////fmt.Println(mystring)
 	////
@@ -252,8 +257,23 @@ func init() {
 	//mutex.Unlock()
 }
 
-func Operate(operation *string, module *string, property *string, value *string) error {
+func ReadConfig() {
+	C.readConfig()
+}
 
+func Connect() error {
+	err := C.connect()
+	if err != 0 {
+		return errors.New("failed to connect to serial port")
+	}
+	return nil
+}
+
+func Operate(operation *string, module *string, property *string, value *string) error {
+	err := Connect()
+	if err != nil {
+		fmt.Println(err)
+	}
 	op := C.CString(*operation)
 	mod := C.CString(*module)
 	prop := C.CString(*property)
@@ -264,21 +284,21 @@ func Operate(operation *string, module *string, property *string, value *string)
 	defer C.free(unsafe.Pointer(prop))
 	defer C.free(unsafe.Pointer(val))
 
-	mutex.Lock()
-	defer mutex.Unlock()
+	//mutex.Lock()
+	//defer mutex.Unlock()
 
-	err := C.connect()
-	C.readConfig()
+	//err := C.connect()
+	//C.readConfig()
+	//
+	//if err != 0 {
+	//	return errors.New("connection failed")
+	//}
 
-	if err != 0 {
-		return errors.New("connection failed")
-	}
-
-	err = C.Axi(op, mod, prop, val)
+	axiErr := C.Axi(op, mod, prop, val)
 
 	*value = C.GoString(val)
 
-	if err != 0 {
+	if axiErr != 0 {
 		return errors.New("axi failed")
 	}
 

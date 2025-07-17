@@ -21,7 +21,11 @@ var v1v2c_users []SnmpV1V2cUser
 
 func readSnmpV1V2cUsers(c *gin.Context) {
 
+	StopSnmpd()
+
 	readSnmpUsersFromFile()
+
+	StartSnmpd()
 
 	var users []SnmpV1V2cUser
 	result := db.Find(&users)
@@ -171,8 +175,9 @@ func deleteSnmpV1V2cUser(c *gin.Context) {
 		return
 	}
 
+	StopSnmpd()
 	removeSnmpV1V2cUserFromFile(userToDelete)
-
+	StartSnmpd()
 	if err := db.Delete(&userToDelete).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -197,8 +202,9 @@ func editSnmpV1V2cUser(c *gin.Context) {
 		return
 	}
 
+	StopSnmpd()
 	removeSnmpV1V2cUserFromFile(existingUser)
-
+	StartSnmpd()
 	var updateData SnmpV1V2cUser
 	if err := c.ShouldBindJSON(&updateData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

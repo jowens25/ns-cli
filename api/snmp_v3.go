@@ -16,9 +16,9 @@ import (
 var v3_users []SnmpV3User
 
 func readSnmpV3Users(c *gin.Context) {
-
+	StopSnmpd()
 	readSnmpUsersFromFile()
-
+	StartSnmpd()
 	var users []SnmpV3User
 	result := db.Find(&users)
 
@@ -163,9 +163,9 @@ func deleteSnmpV3User(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
-
+	StopSnmpd()
 	removeSnmpV3UserFromFile(userToDelete)
-
+	StartSnmpd()
 	if err := db.Delete(&userToDelete).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -188,9 +188,9 @@ func editSnmpV3User(c *gin.Context) {
 		}
 		return
 	}
-
+	StopSnmpd()
 	removeSnmpV3UserFromFile(existingUser)
-
+	StartSnmpd()
 	var updateData SnmpV3User
 	if err := c.ShouldBindJSON(&updateData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
