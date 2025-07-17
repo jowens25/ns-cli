@@ -10,7 +10,7 @@ int connect(void)
 
     // printf("write data array: %s\n", writeData);
 
-    int ser = serOpen(getenv(FPGA_PORT));
+    int ser = serOpen("/dev/ttymxc3");
     if (ser == -1)
     {
 
