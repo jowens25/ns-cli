@@ -26539,7 +26539,7 @@ this.c=c},
 b6e(){var s,r,q,p,o,n,m,l="10.1.10.205",k="5000",j=null,i=$.aa(),h=new A.hl(l,k,i)
 h.Ko()
 h.aj4()
-s=A.as(["version","","instance","","mac","","vlan_address","","vlan_status","","ip_mode","IPv4","ip_address","","unicast_mode","","multicast_mode","","broadcast_mode","","status","","stratum","","poll_interval","","precision","","reference_id","LOCL","leap59","","leap59_inprogress","","leap61","","leap61_inprogress","","utc_smearing","","utc_offset_status","","utc_offset_value","","requests","","responses","","requests_dropped","","broadcasts","","clear_counters",""],t.N,t.z)
+s=A.as(["version","","instance","","mac","","vlan_address","","vlan_status","","ip_mode","IPv4","ip_address","","unicast_mode","","multicast_mode","","broadcast_mode","","status","","stratum","","poll_interval","","precision","","reference_id","NULL","leap59","","leap59_inprogress","","leap61","","leap61_inprogress","","utc_smearing","","utc_offset_status","","utc_offset_value","","requests","","responses","","requests_dropped","","broadcasts","","clear_counters",""],t.N,t.z)
 r=A.a([],t.te)
 q=A.a([],t.MX)
 p=t.P5
@@ -88946,7 +88946,7 @@ s=o.e
 s.sbr(m.h(0,"vlan_address"))
 r=o.f
 r.sbr(m.h(0,"ip_address"))
-return A.ev(A.au(new A.az(new A.ab(16,16,16,16),A.bh(A.a([A.Y("Network: ",q,q,q,A.cr(q,q,q,q,q,q,q,q,q,q,q,q,q,q,B.am,q,q,!0,q,q,q,q,q,q,q,q),q,q),A.au(q,12,q),new A.kH(175,"MAC Address",n,new A.aur(b),q),new A.kH(175,"VLAN Address",s,new A.aus(b),q),new A.ek("VLAN Enabled",J.f(m.h(0,"vlan_status"),p),new A.aut(o,b),171,q),new A.w8(175,"IP Version",m.h(0,"ip_mode"),A.a(["IPv4","IPv6"],t.s),new A.auu(o,b),q,t.id),new A.kH(175,"IP Address",r,new A.auv(b),q),new A.ek("Unicast Enabled",J.f(m.h(0,"unicast_mode"),p),new A.auw(o,b),171,q),new A.ek("Multicast Enabled",J.f(m.h(0,"multicast_mode"),p),new A.aux(o,b),171,q),new A.ek("Broadcast Enabled",J.f(m.h(0,"broadcast_mode"),p),new A.auy(o,b),171,q)],t.p),B.x,B.l,B.o),q),q,1/0),q)},
+return A.ev(A.au(new A.az(new A.ab(16,16,16,16),A.bh(A.a([A.Y("Network: ",q,q,q,A.cr(q,q,q,q,q,q,q,q,q,q,q,q,q,q,B.am,q,q,!0,q,q,q,q,q,q,q,q),q,q),A.au(q,12,q),new A.kH(175,"MAC Address",n,new A.aur(b),q),new A.kH(175,"VLAN Address",s,new A.aus(b),q),new A.ek("VLAN Enabled",J.f(m.h(0,"vlan_status"),p),new A.aut(o,b),171,q),new A.w8(175,"IP Version",m.h(0,"ip_mode"),A.a(["IPv4","IPv6","NA"],t.s),new A.auu(o,b),q,t.id),new A.kH(175,"IP Address",r,new A.auv(b),q),new A.ek("Unicast Enabled",J.f(m.h(0,"unicast_mode"),p),new A.auw(o,b),171,q),new A.ek("Multicast Enabled",J.f(m.h(0,"multicast_mode"),p),new A.aux(o,b),171,q),new A.ek("Broadcast Enabled",J.f(m.h(0,"broadcast_mode"),p),new A.auy(o,b),171,q)],t.p),B.x,B.l,B.o),q),q,1/0),q)},
 $S:60}
 A.aur.prototype={
 $1(a){var s=this.a
@@ -89045,7 +89045,7 @@ s=p.e
 s.sbr(n.h(0,"poll_interval"))
 r=p.f
 r.sbr(n.h(0,"precision"))
-return A.ev(A.au(new A.az(new A.ab(16,16,16,16),A.bh(A.a([A.Y("ServerConfig: ",q,q,q,A.cr(q,q,q,q,q,q,q,q,q,q,q,q,q,q,B.am,q,q,!0,q,q,q,q,q,q,q,q),q,q),A.au(q,12,q),new A.kH(150,"Stratum",o,new A.auC(b),q),new A.kH(150,"Poll Interval",s,new A.auD(b),q),new A.kH(150,"Precision",r,new A.auE(b),q),new A.w8(150,"Reference ID:",n.h(0,"reference_id"),A.a(["NTP","NULL","LOCL","CESM","RBDM","PPS","IRIG","ACTS","USNO","PTB","TDF","DCF","MSF","WWV","WWVB","WWVH","CHU","LORC","OMEG","GPS"],t.s),new A.auF(p,b),q,t.id)],t.p),B.x,B.l,B.o),q),q,1/0),q)},
+return A.ev(A.au(new A.az(new A.ab(16,16,16,16),A.bh(A.a([A.Y("ServerConfig: ",q,q,q,A.cr(q,q,q,q,q,q,q,q,q,q,q,q,q,q,B.am,q,q,!0,q,q,q,q,q,q,q,q),q,q),A.au(q,12,q),new A.kH(150,"Stratum",o,new A.auC(b),q),new A.kH(150,"Poll Interval",s,new A.auD(b),q),new A.kH(150,"Precision",r,new A.auE(b),q),new A.w8(150,"Reference ID:",n.h(0,"reference_id"),A.a(["NTP","NULL","LOCL","CESM","RBDM","PPS","IRIG","ACTS","USNO","PTB","TDF","DCF","MSF","WWV","WWVB","WWVH","CHU","LORC","OMEG","GPS","NA"],t.s),new A.auF(p,b),q,t.id)],t.p),B.x,B.l,B.o),q),q,1/0),q)},
 $S:60}
 A.auC.prototype={
 $1(a){var s=this.a

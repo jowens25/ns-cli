@@ -23,9 +23,9 @@ import (
 
 const (
 	JWT_SECRET = "your-secret-key"
-	API_HOST   = "10.1.10.205"
+	API_HOST   = "0.0.0.0"
 	API_PORT   = ":5000"
-	WEB_HOST   = "10.1.10.205"
+	WEB_HOST   = "0.0.0.0"
 	WEB_PORT   = ":3000"
 	DB_PATH    = "./app.db"
 )
