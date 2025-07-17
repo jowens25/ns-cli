@@ -1,0 +1,34 @@
+As of 07/17/2025... 
+
+I am using 
+
+on my windows machine i build the web app
+
+    flutter build web - in project dir
+
+then copy it to the linux machine... 
+
+    scp -r .\build\web jowens@10.1.10.205:/home/jowens/Projects/NovusTimeServer
+
+then move the files into the... files dir in the web dir....
+
+then commit to git
+
+on the machine with docker run the script... ./run.bat
+
+this pulls from git, builds in a container the same linux as the variscite, copies the executable to the variscite over ssh....
+
+then in the variscite make sure to set the env var for the FPGA port..... export FPGA_PORT="/dev/ttymxc3" in our case for now
+
+then run ./myBin run.... this should start the stuff
+
+# build script
+
+flutter build web
+
+
+CC=aarch64-linux-gnu-gcc GOOS=linux GOARCH=arm64 CGO_ENABLED=1 go build -tags journald -o myBin
+
+go build -tags journald -o myBin
+
+scp myBin root@10.1.10.220:/root/Projects
