@@ -19,6 +19,9 @@
 #include <stdint.h>
 #include <ctype.h>
 #include <stddef.h>
+
+extern const char *FPGA_PORT;
+
 extern struct termios tty;
 
 int connect(void);

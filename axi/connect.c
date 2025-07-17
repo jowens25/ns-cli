@@ -10,7 +10,7 @@ int connect(void)
 
     // printf("write data array: %s\n", writeData);
 
-    int ser = serOpen("/dev/ttyUSB0");
+    int ser = serOpen(getenv(FPGA_PORT));
     if (ser == -1)
     {
 

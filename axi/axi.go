@@ -16,6 +16,10 @@ import (
 	"unsafe"
 )
 
+const (
+	FPGA_PORT = "FPGA_PORT"
+)
+
 //
 //type PpsSlaveApi struct {
 //	Version         string
