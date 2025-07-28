@@ -10,7 +10,7 @@ int connect(void)
 
     // printf("write data array: %s\n", writeData);
 
-    int ser = serOpen("/dev/ttymxc3");
+    int ser = serOpen("/dev/ttyUSB0");
     if (ser == -1)
     {
 

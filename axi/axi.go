@@ -246,7 +246,7 @@ const size = C.size_t(64)
 func init() {
 	err := Connect()
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 
 	ReadConfig()
