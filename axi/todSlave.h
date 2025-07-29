@@ -74,34 +74,14 @@ int readTodSlaveNrOfSatellitesInfo(char *nrofsatellitesinfo, size_t size);
 int readTodSlaveEnable(char *enable, size_t size);
 int readTodSlaveInputOk(char *inputok, size_t size);
 
-int writeTodSlaveVersion(char *version, size_t size);
-int writeTodSlaveInstance(char *instance, size_t size);
 int writeTodSlaveProtocol(char *protocol, size_t size);
 int writeTodSlaveGnss(char *gnss, size_t size);
 int writeTodSlaveMsgDisable(char *msgdisable, size_t size);
+int writeTodSlaveCorrection(char *correction, size_t size);
 int writeTodSlaveBaudRate(char *baudrate, size_t size);
 int writeTodSlaveInvertedPolarity(char *inverted, size_t size);
-int writeTodSlaveUtcOffset(char *utcoffset, size_t size);
-int writeTodSlaveUtcInfoValid(char *utcinfovalid, size_t size);
-int writeTodSlaveLeapAnnounce(char *leapannounce, size_t size);
-int writeTodSlaveLeap59(char *leap59, size_t size);
-int writeTodSlaveLeap61(char *leap61, size_t size);
-int writeTodSlaveLeapInfoValid(char *leapinfovalid, size_t size);
-int writeTodSlaveTimeToLeap(char *timetoleap, size_t size);
-int writeTodSlaveGnssFix(char *gnssfix, size_t size);
-int writeTodSlaveGnssFixOk(char *gnssfixok, size_t size);
-int writeTodSlaveSpoofingState(char *spoofingstate, size_t size);
-int writeTodSlaveFixAndSpoofingInfoValid(char *fixandspoofinginfovalid, size_t size);
-int writeTodSlaveJammingLevel(char *jamminglevel, size_t size);
-int writeTodSlaveJammingState(char *jammingstate, size_t size);
-int writeTodSlaveAntennaState(char *antennastate, size_t size);
-int writeTodSlaveAntennaAndJammingInfoValid(char *antennaandjamminginfovalid, size_t size);
-int writeTodSlaveNrOfSatellitesSeen(char *nrofsatellitesseen, size_t size);
-int writeTodSlaveNrOfSatellitesLocked(char *nrofsatelliteslocked, size_t size);
-int writeTodSlaveNrOfSatellitesInfo(char *nrofsatellitesinfo, size_t size);
+
 int writeTodSlaveEnable(char *enable, size_t size);
-int writeTodSlaveVersion(char *version, size_t size);
-int writeTodSlaveInputOk(char *inputok, size_t size);
 
 int hasTodSlave(char *in, size_t size);
 
