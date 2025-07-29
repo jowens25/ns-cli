@@ -61,6 +61,11 @@ func ReadConfig() error {
 
 func LoadConfig(fileName string) {
 
+	err := Connect()
+	if err != nil {
+		panic(err)
+	}
+
 	data, err := os.ReadFile(fileName)
 	if err != nil {
 		log.Fatal("file err: ", err)
