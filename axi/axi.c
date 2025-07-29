@@ -2,6 +2,7 @@
 #include "axi.h"
 #include "ntpServer.h"
 #include "ptpOc.h"
+#include "todSlave.h"
 #include "coreConfig.h"
 #include "config.h"
 int64_t temp_data = 0x00000000;
@@ -195,6 +196,36 @@ read_write_func timeServer[MAX_NUM_OPS][MAX_NUM_MODS][MAX_NUM_PROP] =
         [Write][PtpOrdinaryClock][PtpOcTimePropertiesDsJumpSecondsValue] = readPtpOcTimePropertiesDsJumpSecondsValue,
         [Write][PtpOrdinaryClock][PtpOcTimePropertiesDsNextJumpValue] = readPtpOcTimePropertiesDsNextJumpValue,
         [Write][PtpOrdinaryClock][PtpOcTimePropertiesDsDisplayNameValue] = readPtpOcTimePropertiesDsDisplayNameValue,
+
+        [Read][TodSlave][TodSlaveVersion] = readTodSlaveVersion,
+        [Read][TodSlave][TodSlaveInstance] = readTodSlaveInstance,
+        [Read][TodSlave][TodSlaveProtocol] = readTodSlaveProtocol,
+        [Read][TodSlave][TodSlaveGnss] = readTodSlaveGnss,
+        [Read][TodSlave][TodSlaveMsgDisable] = readTodSlaveMsgDisable,
+        [Read][TodSlave][TodSlaveCorrection] = readTodSlaveCorrection,
+        [Read][TodSlave][TodSlaveBaudRate] = readTodSlaveBaudRate,
+        [Read][TodSlave][TodSlaveInvertedPolarity] = readTodSlaveInvertedPolarity,
+        [Read][TodSlave][TodSlaveUtcOffset] = readTodSlaveUtcOffset,
+        [Read][TodSlave][TodSlaveUtcInfoValid] = readTodSlaveUtcInfoValid,
+        [Read][TodSlave][TodSlaveLeapAnnounce] = readTodSlaveLeapAnnounce,
+        [Read][TodSlave][TodSlaveLeap59] = readTodSlaveLeap59,
+        [Read][TodSlave][TodSlaveLeap61] = readTodSlaveLeap61,
+        [Read][TodSlave][TodSlaveLeapInfoValid] = readTodSlaveLeapInfoValid,
+        [Read][TodSlave][TodSlaveTimeToLeap] = readTodSlaveTimeToLeap,
+        [Read][TodSlave][TodSlaveGnssFix] = readTodSlaveGnssFix,
+        [Read][TodSlave][TodSlaveGnssFixOk] = readTodSlaveGnssFixOk,
+        [Read][TodSlave][TodSlaveSpoofingState] = readTodSlaveSpoofingState,
+        [Read][TodSlave][TodSlaveFixAndSpoofingInfoValid] = readTodSlaveFixAndSpoofingInfoValid,
+        [Read][TodSlave][TodSlaveJammingLevel] = readTodSlaveJammingLevel,
+        [Read][TodSlave][TodSlaveJammingState] = readTodSlaveJammingState,
+        [Read][TodSlave][TodSlaveAntennaState] = readTodSlaveAntennaState,
+        [Read][TodSlave][TodSlaveAntennaAndJammingInfoValid] = readTodSlaveAntennaAndJammingInfoValid,
+        [Read][TodSlave][TodSlaveNrOfSatellitesSeen] = readTodSlaveNrOfSatellitesSeen,
+        [Read][TodSlave][TodSlaveNrOfSatellitesLocked] = readTodSlaveNrOfSatellitesLocked,
+        [Read][TodSlave][TodSlaveNrOfSatellitesInfo] = readTodSlaveNrOfSatellitesInfo,
+        [Read][TodSlave][TodSlaveEnable] = readTodSlaveEnable,
+        [Read][TodSlave][TodSlaveInputOk] = readTodSlaveInputOk,
+
 };
 
 // int AxiRead(char *core, char *property, char *value)
@@ -261,6 +292,7 @@ int Axi(char *operation, char *core, char *property, char *value)
 
     if (property_id < 0)
     {
+
         return -1;
     }
 

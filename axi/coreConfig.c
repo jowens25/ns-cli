@@ -1,6 +1,7 @@
 #include "coreConfig.h"
 #include "ntpServer.h"
 #include "ptpOc.h"
+#include "todSlave.h"
 #include "axi.h"
 
 Ucm_CoreConfig cores[64];
@@ -15,20 +16,20 @@ char *coreNames[64] = {
     [Ucm_CoreConfig_IrigMasterCoreType] = "irigmaster",
     [Ucm_CoreConfig_PpsSlaveCoreType] = "ppsslave",
     [Ucm_CoreConfig_PpsMasterCoreType] = "ppsmaster",
-    [Ucm_CoreConfig_PtpOrdinaryClockCoreType] = "ptpordinaryclock",
+    [Ucm_CoreConfig_PtpOrdinaryClockCoreType] = "ptp oc",
     [Ucm_CoreConfig_PtpTransparentClockCoreType] = "ptptransparentclock",
     [Ucm_CoreConfig_PtpHybridClockCoreType] = "ptphybridclock",
     [Ucm_CoreConfig_RedHsrPrpCoreType] = "redhsrprp",
     [Ucm_CoreConfig_RtcSlaveCoreType] = "rtcslave",
     [Ucm_CoreConfig_RtcMasterCoreType] = "rtcmaster",
-    [Ucm_CoreConfig_TodSlaveCoreType] = "todslave",
+    [Ucm_CoreConfig_TodSlaveCoreType] = "tod_slave",
     [Ucm_CoreConfig_TodMasterCoreType] = "todmaster",
     [Ucm_CoreConfig_TapSlaveCoreType] = "tapslave",
     [Ucm_CoreConfig_DcfSlaveCoreType] = "dcfslave",
     [Ucm_CoreConfig_DcfMasterCoreType] = "dcfmaster",
     [Ucm_CoreConfig_RedTsnCoreType] = "redtsn",
     [Ucm_CoreConfig_TsnIicCoreType] = "tsniic",
-    [Ucm_CoreConfig_NtpServerCoreType] = "ntp-server",
+    [Ucm_CoreConfig_NtpServerCoreType] = "ntp server",
     [Ucm_CoreConfig_NtpClientCoreType] = "ntpclient",
     [Ucm_CoreConfig_ClkFrequencyGeneratorCoreType] = "clkfrequencygenerator",
     [Ucm_CoreConfig_SynceNodeCoreType] = "syncenode",
@@ -60,7 +61,7 @@ char **coreProperties[64] = {
     [Ucm_CoreConfig_RedHsrPrpCoreType] = PtpOcProperties,
     [Ucm_CoreConfig_RtcSlaveCoreType] = PtpOcProperties,
     [Ucm_CoreConfig_RtcMasterCoreType] = PtpOcProperties,
-    [Ucm_CoreConfig_TodSlaveCoreType] = PtpOcProperties,
+    [Ucm_CoreConfig_TodSlaveCoreType] = TodSlaveProperties,
     [Ucm_CoreConfig_TodMasterCoreType] = PtpOcProperties,
     [Ucm_CoreConfig_TapSlaveCoreType] = PtpOcProperties,
     [Ucm_CoreConfig_DcfSlaveCoreType] = PtpOcProperties,

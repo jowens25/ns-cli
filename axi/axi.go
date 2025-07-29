@@ -39,7 +39,7 @@ func init() {
 		panic(err)
 	}
 
-	LoadConfig("PtpGmNtpServer.ucm")
+	//LoadConfig("PtpGmNtpServer.ucm")
 }
 
 func Connect() error {
