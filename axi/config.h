@@ -6,6 +6,6 @@
 #define Ucm_Config_BaseAddrLReg 0x00000004
 #define Ucm_Config_BaseAddrHReg 0x00000008
 #define Ucm_Config_IrqMaskReg 0x0000000C
-void readConfig(void);
+int readConfig(void);
 
 #endif

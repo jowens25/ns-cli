@@ -20,255 +20,36 @@ const (
 	FPGA_PORT = "FPGA_PORT"
 )
 
-//
-//type PpsSlaveApi struct {
-//	Version         string
-//	InstanceNumber  string
-//	EnableStatus    string
-//	InvertedStatus  string
-//	InputOkStatus   string
-//	PulseWidthValue string
-//	CableDelayValue string
-//}
-//
-//var PpsSlave = PpsSlaveApi{
-//
-//	Version:         "version",
-//	InstanceNumber:  "instance-number",
-//	EnableStatus:    "enable-status",
-//	InvertedStatus:  "inverted-status",
-//	InputOkStatus:   "input-ok-status",
-//	PulseWidthValue: "pulse-width-value",
-//	CableDelayValue: "cable-delay-value",
-//}
-//
-//var PpsSlaveProperties = []string{
-//	PpsSlave.Version,
-//	PpsSlave.InstanceNumber,
-//	PpsSlave.EnableStatus,
-//	PpsSlave.InvertedStatus,
-//	PpsSlave.InputOkStatus,
-//	PpsSlave.PulseWidthValue,
-//	PpsSlave.CableDelayValue,
-//}
-
-//type NtpServerApi struct {
-//	Status               string
-//	InstanceNumber       string
-//	IpMode               string
-//	IpAddress            string
-//	MacAddress           string
-//	VlanStatus           string
-//	VlanAddress          string
-//	UnicastMode          string
-//	MulticastMode        string
-//	BroadcastMode        string
-//	PrecisionValue       string
-//	PollIntervalValue    string
-//	StratumValue         string
-//	ReferenceId          string
-//	SmearingStatus       string
-//	Leap61Progress       string
-//	Leap59Progress       string
-//	Leap61Status         string
-//	Leap59Status         string
-//	UtcOffsetStatus      string
-//	UtcOffsetValue       string
-//	RequestsValue        string
-//	ResponsesValue       string
-//	RequestsDroppedValue string
-//	BroadcastsValue      string
-//	ClearCountersStatus  string
-//	Version              string
-//	Root                 string
-//}
-//
-//var NtpServer = NtpServerApi{
-//	Status:               "status",
-//	InstanceNumber:       "instance",
-//	IpMode:               "ip-mode",
-//	IpAddress:            "ip-address",
-//	MacAddress:           "mac-address",
-//	VlanStatus:           "vlan-status",
-//	VlanAddress:          "vlan-address",
-//	UnicastMode:          "unicast",
-//	MulticastMode:        "multicast",
-//	BroadcastMode:        "broadcast",
-//	PrecisionValue:       "precision",
-//	PollIntervalValue:    "poll-interval",
-//	StratumValue:         "stratum",
-//	ReferenceId:          "reference-id",
-//	SmearingStatus:       "smearing-status",
-//	Leap61Progress:       "leap61-progress",
-//	Leap59Progress:       "leap59-progress",
-//	Leap61Status:         "leap61-status",
-//	Leap59Status:         "leap59-status",
-//	UtcOffsetStatus:      "utc-offset-status",
-//	UtcOffsetValue:       "utc-offset",
-//	RequestsValue:        "requests",
-//	ResponsesValue:       "responses",
-//	RequestsDroppedValue: "requestsdropped",
-//	BroadcastsValue:      "broadcasts",
-//	ClearCountersStatus:  "clearcounters",
-//	Version:              "version",
-//}
-
-//type PtpOcAPi struct {
-//	Version                                string //read only
-//	Status                                 string
-//	VlanStatus                             string
-//	VlanAddress                            string
-//	Profile                                string
-//	DefaultDsTwoStepStatus                 string
-//	DefaultDsSignalingStatus               string
-//	Layer                                  string
-//	DefaultDsSlaveOnlyStatus               string
-//	DefaultDsMasterOnlyStatus              string
-//	DefaultDsDisableOffsetCorrectionStatus string
-//	DefaultDsListedUnicastSlavesOnlyStatus string
-//	DelayMechanismValue                    string
-//	IpAddress                              string
-//	DefaultDsClockId                       string
-//	DefaultDsDomain                        string
-//	DefaultDsPriority1                     string
-//	DefaultDsPriority2                     string
-//	DefaultDsVariance                      string
-//	DefaultDsAccuracy                      string
-//	DefaultDsClass                         string
-//	DefaultDsShortId                       string
-//	DefaultDsInaccuracy                    string
-//	DefaultDsNumberOfPorts                 string // read only
-//	PortDsPeerDelayValue                   string
-//	PortDsState                            string
-//	PortDsPDelayReqLogMsgIntervalValue     string
-//	PortDsDelayReqLogMsgIntervalValue      string
-//	PortDsAnnounceReceiptTimeoutValue      string
-//	PortDsAnnounceLogMsgIntervalValue      string
-//	PortDsSyncReceiptTimeoutValue          string
-//	PortDsSyncLogMsgIntervalValue          string
-//	PortDsDelayReceiptTimeoutValue         string
-//	PortDsAsymmetryValue                   string
-//	PortDsMaxPeerDelayValue                string
-//	CurrentDsStepsRemovedValue             string
-//	CurrentDsOffsetValue                   string
-//	CurrentDsDelayValue                    string
-//	ParentDsParentClockIdValue             string
-//	ParentDsGmClockIdValue                 string
-//	ParentDsGmPriority1Value               string
-//	ParentDsGmPriority2Value               string
-//	ParentDsGmVarianceValue                string
-//	ParentDsGmAccuracyValue                string
-//	ParentDsGmClassValue                   string
-//	ParentDsGmShortIdValue                 string
-//	ParentDsGmInaccuracyValue              string
-//	ParentDsNwInaccuracyValue              string
-//	TimePropertiesDsTimeSourceValue        string
-//	TimePropertiesDsPtpTimescaleStatus     string
-//	TimePropertiesDsFreqTraceableStatus    string
-//	TimePropertiesDsTimeTraceableStatus    string
-//	TimePropertiesDsLeap61Status           string
-//	TimePropertiesDsLeap59Status           string
-//	TimePropertiesDsUtcOffsetValStatus     string
-//	TimePropertiesDsUtcOffsetValue         string
-//	TimePropertiesDsCurrentOffsetValue     string
-//	TimePropertiesDsJumpSecondsValue       string
-//	TimePropertiesDsNextJumpValue          string
-//	TimePropertiesDsDisplayNameValue       string
-//}
-//
-//var PtpOc = PtpOcAPi{
-//	Version:                                "version",
-//	Status:                                 "status",
-//	VlanStatus:                             "vlan-status",
-//	VlanAddress:                            "vlan-address",
-//	Profile:                                "profile",
-//	DefaultDsTwoStepStatus:                 "default-ds-two-step-status",
-//	DefaultDsSignalingStatus:               "default-ds-signaling-status",
-//	Layer:                                  "layer",
-//	DefaultDsSlaveOnlyStatus:               "default-ds-slave-only-status",
-//	DefaultDsMasterOnlyStatus:              "default-ds-master-only-status",
-//	DefaultDsDisableOffsetCorrectionStatus: "default-ds-disable-offset-correction-status",
-//	DefaultDsListedUnicastSlavesOnlyStatus: "default-ds-listed-unicast-slaves-only-status",
-//	DelayMechanismValue:                    "delay-mechanism-value",
-//	IpAddress:                              "ip-address",
-//	DefaultDsClockId:                       "default-ds-clock-id",
-//	DefaultDsDomain:                        "default-ds-domain",
-//	DefaultDsPriority1:                     "default-ds-priority1",
-//	DefaultDsPriority2:                     "default-ds-priority2",
-//	DefaultDsVariance:                      "default-ds-variance",
-//	DefaultDsAccuracy:                      "default-ds-accuracy",
-//	DefaultDsClass:                         "default-ds-class",
-//	DefaultDsShortId:                       "default-ds-shortid",
-//	DefaultDsInaccuracy:                    "default-ds-inaccuracy",
-//	DefaultDsNumberOfPorts:                 "default-ds-numberofports",
-//	PortDsPeerDelayValue:                   "port-ds-peer-delay-value",
-//	PortDsState:                            "port-ds-state",
-//	PortDsPDelayReqLogMsgIntervalValue:     "port-ds-p-delay-req-log-msg-interval-value",
-//	PortDsDelayReqLogMsgIntervalValue:      "port-ds-delay-req-log-msg-interval-value",
-//	PortDsAnnounceReceiptTimeoutValue:      "port-ds-announce-receipt-timeout-value",
-//	PortDsAnnounceLogMsgIntervalValue:      "port-ds-announce-log-msg-interval-value",
-//	PortDsSyncReceiptTimeoutValue:          "port-ds-sync-receipt-timeout-value",
-//	PortDsSyncLogMsgIntervalValue:          "port-ds-sync-log-msg-interval-value",
-//	PortDsDelayReceiptTimeoutValue:         "port-ds-delay-receipt-timeout-value",
-//	PortDsAsymmetryValue:                   "port-ds-asymmetry-value",
-//	PortDsMaxPeerDelayValue:                "port-ds-max-peer-delay-value",
-//	CurrentDsStepsRemovedValue:             "current-ds-steps-removed-value",
-//	CurrentDsOffsetValue:                   "current-ds-offset-value",
-//	CurrentDsDelayValue:                    "current-ds-delay-value",
-//	ParentDsParentClockIdValue:             "parent-ds-parent-clock-id-value",
-//	ParentDsGmClockIdValue:                 "parent-ds-gm-clock-id-value",
-//	ParentDsGmPriority1Value:               "parent-ds-gm-priority-1-value",
-//	ParentDsGmPriority2Value:               "parent-ds-gm-priority-2-value",
-//	ParentDsGmVarianceValue:                "parent-ds-gm-variance-value",
-//	ParentDsGmAccuracyValue:                "parent-ds-gm-accuracy-value",
-//	ParentDsGmClassValue:                   "parent-ds-gm-class-value",
-//	ParentDsGmShortIdValue:                 "parent-ds-gm-short-id-value",
-//	ParentDsGmInaccuracyValue:              "parent-ds-gm-inaccuracy-value",
-//	ParentDsNwInaccuracyValue:              "parent-ds-nw-inaccuracy-value",
-//	TimePropertiesDsTimeSourceValue:        "time-properties-ds-time-source-value",
-//	TimePropertiesDsPtpTimescaleStatus:     "time-properties-ds-ptp-time-scale-status",
-//	TimePropertiesDsFreqTraceableStatus:    "time-properties-ds-freq-traceable-status",
-//	TimePropertiesDsTimeTraceableStatus:    "time-properties-ds-time-traceable-status",
-//	TimePropertiesDsLeap61Status:           "time-properties-ds-leap61-status",
-//	TimePropertiesDsLeap59Status:           "time-properties-ds-leap59-status",
-//	TimePropertiesDsUtcOffsetValStatus:     "time-properties-ds-utc-offset-val-status",
-//	TimePropertiesDsUtcOffsetValue:         "time-properties-ds-utc-offset-value",
-//	TimePropertiesDsCurrentOffsetValue:     "time-properties-ds-current-offset-value",
-//	TimePropertiesDsJumpSecondsValue:       "time-properties-ds-jump-seconds-value",
-//	TimePropertiesDsNextJumpValue:          "time-properties-ds-next-jump-value",
-//	TimePropertiesDsDisplayNameValue:       "time-properties-ds-display-name-value",
-//}
-
 var mutex sync.Mutex
 
 const size = C.size_t(64)
 
 func init() {
+
 	err := Connect()
 	if err != nil {
 		panic(err)
 	}
 
-	ReadConfig()
-
-	////var mystring = ""
-	////fmt.Println(mystring)
-	////
-	////Read("module", "property", &mystring)
-	////
-	////fmt.Println(mystring)
-	//
-	//mutex.Unlock()
-}
-
-func ReadConfig() {
-	C.readConfig()
+	err = ReadConfig()
+	if err != nil {
+		panic(err)
+	}
 }
 
 func Connect() error {
 	err := C.connect()
 	if err != 0 {
 		return errors.New("failed to connect to serial port")
+	}
+	return nil
+}
+
+func ReadConfig() error {
+	err := C.readConfig()
+	if err != 0 {
+
+		return errors.New("failed to read config: " + fmt.Sprint(err))
 	}
 	return nil
 }

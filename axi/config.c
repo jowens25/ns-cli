@@ -4,11 +4,13 @@
 #include "coreConfig.h"
 //   read the core configuration
 
-void readConfig(void)
+int readConfig(void)
 {
 
+    int err = 0;
+
     Ucm_CoreConfig temp_config;
-    // int64_t temp_data = 0;
+    temp_data = 0;
     long type = 0;
 
     for (int i = 0; i < 256; i++)
@@ -20,12 +22,13 @@ void readConfig(void)
             {
 
                 printf("ERROR: not a conf block at the address expected: %d\n", i);
+                err = -1;
                 break;
             }
             else if (temp_data == 0)
             {
                 // printf("ERROR 2 \n");
-                // return -2;
+                // err = -2;
                 break;
             }
             else
@@ -74,6 +77,7 @@ void readConfig(void)
         else
         {
             // printf("ERROR 4 \n");
+            err = -3;
 
             break;
         }
@@ -89,7 +93,7 @@ void readConfig(void)
         else
         {
             // p/rintf("ERROR 5 \n");
-
+            err = -4;
             break;
         }
 
@@ -100,6 +104,7 @@ void readConfig(void)
         }
         else
         {
+            err = -5;
             // printf("ERROR 6 \n");
 
             break;
@@ -115,9 +120,12 @@ void readConfig(void)
 
             // printf("ERROR 7 \n");
             // cores[i] = temp_config;
+            err = -6;
             break;
 
             // ucm->core_config.append(temp_config);
         }
     }
+
+    return err;
 }

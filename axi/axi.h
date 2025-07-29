@@ -2,6 +2,8 @@
 
 #define AXI_H
 
+// temp port selection
+
 #ifdef __linux__
 #include <fcntl.h>   // linux
 #include <unistd.h>  // linux
@@ -20,7 +22,7 @@
 #include <ctype.h>
 #include <stddef.h>
 
-extern const char *FPGA_PORT;
+// extern const char *FPGA_PORT;
 
 extern struct termios tty;
 

@@ -23,9 +23,9 @@ import (
 
 const (
 	JWT_SECRET = "your-secret-key"
-	API_HOST   = "10.1.10.220"
+	API_HOST   = "API_HOST"
 	API_PORT   = ":5000"
-	WEB_HOST   = "10.1.10.220"
+	WEB_HOST   = "WEB_HOST"
 	WEB_PORT   = ":3000"
 	DB_PATH    = "./app.db"
 )
@@ -77,7 +77,7 @@ func RunApiServer() {
 	}
 	jsRouter.StaticFS("/", http.FS(webFS))
 
-	go jsRouter.Run(WEB_HOST + WEB_PORT)
+	go jsRouter.Run(os.Getenv(WEB_HOST) + WEB_PORT)
 
 	initDataBase()
 	r := gin.Default()
@@ -173,7 +173,7 @@ func RunApiServer() {
 
 	//readAllNtp()
 
-	r.Run(API_HOST + API_PORT)
+	r.Run(os.Getenv(API_HOST) + API_PORT)
 }
 
 func readNtpProperty(c *gin.Context) {
