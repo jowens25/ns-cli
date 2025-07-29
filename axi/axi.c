@@ -213,25 +213,30 @@ read_write_func timeServer[MAX_NUM_OPS][MAX_NUM_MODS][MAX_NUM_PROP] =
 //     return 0;
 // }
 //
-// int AxiWrite(char *core, char *property, char *value)
-//{
-//     int core_id = getCoreId(core);
-//     printf("core id: %d\n", core_id);
-//
-//     int property_id = getPropertyId(core_id, property);
-//     printf("property id: %d\n", property_id);
-//
-//     int err = timeServer[Write][core_id][property_id](value, 64);
-//
-//     if (err != 0)
-//     {
-//         return -1;
-//     }
-//
-//     printf("write -> %s -> %s -> %s\n", core, property, value);
-//
-//     return 0;
-// }
+int RawWrite(char *addr, char *data)
+{
+    char *err;
+    long raw_addr = strtol(addr, &err, 16);
+
+    if (err == addr || *err != '\0')
+    {
+        return -1;
+    }
+
+    long raw_data = strtol(data, &err, 16);
+
+    if (err == data || *err != '\0')
+    {
+        return -1;
+    }
+
+    if (writeRegister(raw_addr, &raw_data) != 0)
+    {
+        return -1;
+    }
+
+    return 0;
+}
 
 int Axi(char *operation, char *core, char *property, char *value)
 

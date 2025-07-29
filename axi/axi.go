@@ -12,6 +12,9 @@ import "C"
 import (
 	"errors"
 	"fmt"
+	"log"
+	"os"
+	"strings"
 	"sync"
 	"unsafe"
 )
@@ -35,6 +38,8 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
+	LoadConfig("PtpGmNtpServer.ucm")
 }
 
 func Connect() error {
@@ -52,6 +57,35 @@ func ReadConfig() error {
 		return errors.New("failed to read config: " + fmt.Sprint(err))
 	}
 	return nil
+}
+
+func LoadConfig(fileName string) {
+
+	data, err := os.ReadFile(fileName)
+	if err != nil {
+		log.Fatal("file err: ", err)
+	}
+
+	for _, line := range strings.Split(string(data), "\n") {
+		//fmt.Println(i, line)
+
+		if strings.Contains(line, "--") {
+			// a comment
+			continue
+
+		} else if strings.Contains(line, "$WC") {
+
+			line = strings.Trim(line, "\r\n")
+			lineParts := strings.Split(line, ",")
+
+			addr := C.CString(lineParts[1])
+			data := C.CString(lineParts[2])
+
+			C.RawWrite(addr, data)
+		}
+
+	}
+
 }
 
 func Operate(operation *string, module *string, property *string, value *string) error {

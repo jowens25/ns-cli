@@ -45,6 +45,7 @@ int setupTermios(int);
 
 int readRegister(int64_t addr, int64_t *data);
 int writeRegister(int64_t addr, int64_t *data);
+int RawWrite(char *addr, char *data);
 
 // int AxiRead(char *core, char *property, char *value);
 int Axi(char *operation, char *core, char *property, char *value);
