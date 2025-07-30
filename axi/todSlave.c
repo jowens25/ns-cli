@@ -734,9 +734,13 @@ int readTodSlaveNrOfSatellitesInfo(char *nrofsatellitesinfo, size_t size)
     return 0;
 }
 
-// int writeTodSlaveInputOk(char *inputok, size_t size)
-//{
-// }
+// ===========================================================================================
+// ===========================================================================================
+// ===========================================================================================
+// ===========================================================================================
+// ===========================================================================================
+// ===========================================================================================
+// ===========================================================================================
 
 int writeTodSlaveProtocol(char *protocol, size_t size)
 {
@@ -776,6 +780,7 @@ int writeTodSlaveProtocol(char *protocol, size_t size)
 
     return 0;
 }
+
 int writeTodSlaveGnss(char *gnss, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_TodSlaveCoreType].address_range_low;
@@ -826,6 +831,7 @@ int writeTodSlaveGnss(char *gnss, size_t size)
 
     return 0;
 }
+
 int writeTodSlaveMsgDisable(char *msgdisable, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_TodSlaveCoreType].address_range_low;
