@@ -22,6 +22,7 @@
         "ntpserver.h": "c",
         "stddef.h": "c",
         "ptpoc.h": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "todslave.h": "c"
     }
 }

@@ -2,6 +2,17 @@
 #include "coreConfig.h"
 #include "ppsSlave.h"
 
+char *PpsSlaveProperties[] = {
+    [PpsSlaveVersion] = "version",
+    [PpsSlaveInstanceNumber] = "instance",
+    [PpsSlaveStatus] = "status",
+    [PpsSlavePolarity] = "polarity",
+    [PpsSlaveInputOkStatus] = "input_ok",
+    [PpsSlavePulseWidthValue] = "pulse_width",
+    [PpsSlaveCableDelayValue] = "cable_delay",
+    [8] = "NULL",
+};
+
 int hasPpsSlave(char *in, size_t size)
 {
     if (Ucm_CoreConfig_PpsSlaveCoreType != cores[Ucm_CoreConfig_PpsSlaveCoreType].core_type)
@@ -61,7 +72,7 @@ int readPpsSlaveEnableStatus(char *status, size_t size)
     return 0;
 }
 
-int readPpsSlaveInvertedStatus(char *status, size_t size)
+int readPpsSlavePolarity(char *status, size_t size)
 {
     snprintf(status, size, "%s", "err");
 
@@ -219,7 +230,7 @@ int writePpsSlaveCableDelayValue(char *cable_delay, size_t size)
 //     return 0;
 // }
 
-int writePpsSlaveInvertedStatus(char *status, size_t size)
+int writePpsSlavePolarity(char *status, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PpsSlaveCoreType].address_range_low;
     temp_data = 0x00000000;
