@@ -519,3 +519,81 @@ int writeClkClockOffsetAdj(char *offsetadj, size_t size)
 
     return 0;
 }
+
+int writeClkClockSource(char *source, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_ClkClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 == strncmp(source, "NONE", size))
+    {
+        temp_data = 0x00000000;
+    }
+    else if (0 == strncmp(source, "TOD", size))
+    {
+        temp_data = 0x00000001;
+    }
+    else if (0 == strncmp(source, "IRIG", size))
+    {
+        temp_data = 0x00000002;
+    }
+    else if (0 == strncmp(source, "PPS", size))
+    {
+        temp_data = 0x00000003;
+    }
+    else if (0 == strncmp(source, "PTP", size))
+    {
+        temp_data = 0x00000004;
+    }
+    else if (0 == strncmp(source, "RTC", size))
+    {
+        temp_data = 0x00000005;
+    }
+    else if (0 == strncmp(source, "DCF", size))
+    {
+        temp_data = 0x00000006;
+    }
+    else if (0 == strncmp(source, "NTP", size))
+    {
+        temp_data = 0x00000007;
+    }
+    else if (0 == strncmp(source, "REG", size))
+    {
+        temp_data = 0x000000FE;
+    }
+    else if (0 == strncmp(source, "EXT", size))
+    {
+        temp_data = 0x000000FF;
+    }
+    else
+    {
+        temp_data = 0x00000000;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_ClkClock_SelectReg, &temp_data))
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+int writeClkClockInSyncThreshold(char *insyncthreshold, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_ClkClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    long temp_threshold = strtol(insyncthreshold, NULL, 10);
+
+    temp_data = temp_threshold;
+
+    if (0 != writeRegister(temp_addr + Ucm_ClkClock_InSyncThresholdReg, &temp_data))
+    {
+        snprintf(insyncthreshold, size, "%s", "NA");
+        return -1;
+    }
+
+    snprintf(insyncthreshold, size, "%ld", temp_data);
+
+    return 0;
+}

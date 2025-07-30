@@ -85,4 +85,6 @@ int readClkClockCorrectedOffset(char *correctedoffset, size_t size);
 int readClkClockCorrectedDrift(char *correcteddrift, size_t size);
 int readClkClockDate(char *date, size_t size);
 
+int writeClkClockInSyncThreshold(char *insyncthreshold, size_t size);
+
 #endif // CLK_CLOCK
