@@ -226,6 +226,14 @@ read_write_func timeServer[MAX_NUM_OPS][MAX_NUM_MODS][MAX_NUM_PROP] =
         [Read][TodSlave][TodSlaveEnable] = readTodSlaveEnable,
         [Read][TodSlave][TodSlaveInputOk] = readTodSlaveInputOk,
 
+        [Write][TodSlave][TodSlaveProtocol] = writeTodSlaveProtocol,
+        [Write][TodSlave][TodSlaveGnss] = writeTodSlaveGnss,
+        [Write][TodSlave][TodSlaveMsgDisable] = writeTodSlaveMsgDisable,
+        [Write][TodSlave][TodSlaveCorrection] = writeTodSlaveCorrection,
+        [Write][TodSlave][TodSlaveBaudRate] = writeTodSlaveBaudRate,
+        [Write][TodSlave][TodSlaveInvertedPolarity] = writeTodSlaveInvertedPolarity,
+        [Write][TodSlave][TodSlaveEnable] = writeTodSlaveEnable,
+
 };
 
 // int AxiRead(char *core, char *property, char *value)

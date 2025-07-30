@@ -737,3 +737,238 @@ int readTodSlaveNrOfSatellitesInfo(char *nrofsatellitesinfo, size_t size)
 // int writeTodSlaveInputOk(char *inputok, size_t size)
 //{
 // }
+
+int writeTodSlaveProtocol(char *protocol, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_TodSlaveCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    int64_t temp_ctrl = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_TodSlave_ControlReg, &temp_ctrl))
+    {
+        return -1;
+    }
+
+    temp_data = temp_ctrl & ~0x30000000;
+
+    if (0 == strncmp(protocol, "NMEA", size))
+    {
+        temp_data |= 0x00000000;
+    }
+    else if (0 == strncmp(protocol, "UBX", size))
+    {
+        temp_data |= 0x10000000;
+    }
+    else if (0 == strncmp(protocol, "TSIP", size))
+    {
+        temp_data |= 0x20000000;
+    }
+    else
+    {
+        temp_data = temp_ctrl;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_TodSlave_ControlReg, &temp_data))
+    {
+        return -1;
+    }
+
+    return 0;
+}
+int writeTodSlaveGnss(char *gnss, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_TodSlaveCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    int64_t temp_ctrl = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_TodSlave_ControlReg, &temp_ctrl))
+    {
+        return -1;
+    }
+
+    temp_data = temp_ctrl & ~0x0F000000;
+
+    if (0 == strncmp(gnss, "ALL", size))
+    {
+        temp_data |= 0x00000000;
+    }
+    else if (0 == strncmp(gnss, "COMBINED", size))
+    {
+        temp_data |= 0x01000000;
+    }
+    else if (0 == strncmp(gnss, "GPS", size))
+    {
+        temp_data |= 0x02000000;
+    }
+    else if (0 == strncmp(gnss, "GLONASS", size))
+    {
+        temp_data |= 0x03000000;
+    }
+    else if (0 == strncmp(gnss, "GALILEO", size))
+    {
+        temp_data |= 0x04000000;
+    }
+    else if (0 == strncmp(gnss, "BEIDOU", size))
+    {
+        temp_data |= 0x05000000;
+    }
+    else
+    {
+        temp_data |= temp_ctrl & 0x0F000000;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_TodSlave_ControlReg, &temp_data))
+    {
+        return -1;
+    }
+
+    return 0;
+}
+int writeTodSlaveMsgDisable(char *msgdisable, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_TodSlaveCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    int64_t temp_ctrl = 0x00000000;
+
+    if (0 != readRegister(temp_addr + Ucm_TodSlave_ControlReg, &temp_ctrl))
+    {
+        return -1;
+    }
+
+    temp_data = temp_ctrl & ~0x00FF0000;
+
+    temp_data |= ((strtol(msgdisable, NULL, 16) & 0xFF) << 16);
+
+    if (0 != writeRegister(temp_addr + Ucm_TodSlave_ControlReg, &temp_data))
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+int writeTodSlaveCorrection(char *correction, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_TodSlaveCoreType].address_range_low;
+    temp_data = 0x00000000;
+    long temp_correction = 0;
+    correction = &correction[2];
+    temp_correction = strtol(correction, NULL, 16);
+    temp_data |= temp_correction;
+
+    if (0 != writeRegister(temp_addr + Ucm_TodSlave_CorrectionReg, &temp_data))
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+int writeTodSlaveBaudRate(char *baudrate, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_TodSlaveCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 == strncmp(baudrate, "1200", size))
+    {
+        temp_data = 0x00000000;
+    }
+    else if (0 == strncmp(baudrate, "2400", size))
+    {
+        temp_data = 0x0000001;
+    }
+    else if (0 == strncmp(baudrate, "4800", size))
+    {
+        temp_data = 0x00000002;
+    }
+    else if (0 == strncmp(baudrate, "9600", size))
+    {
+        temp_data = 0x00000003;
+    }
+    else if (0 == strncmp(baudrate, "19200", size))
+    {
+        temp_data = 0x00000004;
+    }
+    else if (0 == strncmp(baudrate, "38400", size))
+    {
+        temp_data = 0x00000005;
+    }
+    else if (0 == strncmp(baudrate, "57600", size))
+    {
+        temp_data = 0x00000006;
+    }
+    else if (0 == strncmp(baudrate, "115200", size))
+    {
+        temp_data = 0x00000007;
+    }
+    else if (0 == strncmp(baudrate, "230400", size))
+    {
+        temp_data = 0x00000008;
+    }
+    else if (0 == strncmp(baudrate, "460800", size))
+    {
+        temp_data = 0x00000009;
+    }
+    else if (0 == strncmp(baudrate, "921600", size))
+    {
+        temp_data = 0x000000A;
+    }
+    else if (0 == strncmp(baudrate, "1000000", size))
+    {
+        temp_data = 0x0000000B;
+    }
+    else if (0 == strncmp(baudrate, "2000000", size))
+    {
+        temp_data = 0x0000000C;
+    }
+    else
+    {
+        temp_data = 0x00000000;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_TodSlave_UartBaudRateReg, &temp_data))
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+int writeTodSlaveInvertedPolarity(char *inverted, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_TodSlaveCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    if (0 == strncmp(inverted, "disabled", size))
+    {
+        temp_data |= 0x00000001; // no inversion
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_TodSlave_PolarityReg, &temp_data))
+    {
+        return -1;
+    }
+    return 0;
+}
+
+int writeTodSlaveEnable(char *enable, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_TodSlaveCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    temp_data &= ~0x0000000F;
+
+    if (0 == strncmp(enable, "enabled", size))
+    {
+        temp_data |= 0x00000001;
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_TodSlave_ControlReg, &temp_data))
+    {
+        return -1;
+    }
+    return 0;
+}

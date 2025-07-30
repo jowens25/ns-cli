@@ -80,7 +80,7 @@ int readRegister(int64_t addr, int64_t *data)
     }
 
     *data = (int64_t)strtol(hexData, NULL, 16);
-    // printf("Read Response: %s \n", readData);
+    printf("Read Response: %s \n", readData);
 
     return 0;
 }

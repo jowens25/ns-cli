@@ -72,7 +72,7 @@ func LoadConfig(fileName string) {
 	}
 
 	for _, line := range strings.Split(string(data), "\n") {
-		//fmt.Println(i, line)
+		//fmt.Println(line)
 
 		if strings.Contains(line, "--") {
 			// a comment

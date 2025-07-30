@@ -44,8 +44,8 @@ to quickly create a Cobra application.`,
 func init() {
 	rootCmd.AddCommand(deviceCmd)
 
-	deviceCmd.Flags().StringP("load", "l", "", "load a config file")
-	deviceCmd.Flags().StringP("dump", "d", "", "dump a config file")
+	deviceCmd.Flags().BoolP("load", "l", false, "load a config file")
+	deviceCmd.Flags().BoolP("dump", "d", false, "dump a config file")
 	deviceCmd.Flags().BoolP("connect", "c", false, "attempt to connect to FPGA")
 	// Here you will define your flags and configuration settings.
 
