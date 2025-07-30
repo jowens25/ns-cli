@@ -181,7 +181,7 @@ func readNtpProperty(c *gin.Context) {
 	defer serialMutex.Unlock()
 	property := c.Param("prop")
 	operation := "read"
-	module := "ntp-server"
+	module := "ntp"
 	value := ""
 
 	err := axi.Operate(&operation, &module, &property, &value)
@@ -202,7 +202,7 @@ func writeNtpProperty(c *gin.Context) {
 		return
 	}
 	operation := "write"
-	module := "ntp-server"
+	module := "ntp"
 	property := c.Param("prop")
 	//value := ""
 	value := data[property]
