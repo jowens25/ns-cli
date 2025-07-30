@@ -508,14 +508,21 @@ int readClkClockDate(char *date, size_t size)
 int writeClkClockDriftAdj(char *driftadj, size_t size)
 {
 
-    strncpy(ClockDriftAdjEnable, driftadj, size);
+    strncpy(ClockDriftAdjEnable, driftadj, strlen(driftadj));
 
     return 0;
 }
 
 int writeClkClockOffsetAdj(char *offsetadj, size_t size)
 {
-    strncpy(ClockOffsetAdjEnable, offsetadj, size);
+    strncpy(ClockOffsetAdjEnable, offsetadj, strlen(offsetadj));
+
+    return 0;
+}
+
+int writeClkClockTimeAdj(char *timeadj, size_t size)
+{
+    strncpy(ClockTimeAdjEnable, timeadj, strlen(timeadj));
 
     return 0;
 }
@@ -593,7 +600,27 @@ int writeClkClockInSyncThreshold(char *insyncthreshold, size_t size)
         return -1;
     }
 
-    snprintf(insyncthreshold, size, "%ld", temp_data);
+    // snprintf(insyncthreshold, size, "%ld", temp_data);
+
+    return 0;
+}
+
+int writeClkClockSeconds(char *seconds, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_ClkClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    temp_data = strtol(seconds, NULL, 10);
+
+    if (0 != writeRegister(temp_addr + Ucm_ClkClock_TimeAdjValueHReg, &temp_data))
+    {
+        snprintf(seconds, size, "%s", "NA");
+        return -1;
+    }
+
+    // snprintf(insyncthreshold, size, "%ld", temp_data);
+
+    writeClkClockTimeAdj("disabled", size);
 
     return 0;
 }
