@@ -620,7 +620,108 @@ int writeClkClockSeconds(char *seconds, size_t size)
 
     // snprintf(insyncthreshold, size, "%ld", temp_data);
 
-    writeClkClockTimeAdj("disabled", size);
+    // writeClkClockTimeAdj("disabled", size);
+
+    return 0;
+}
+
+int writeClkClockNanoseconds(char *nanoseconds, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_ClkClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    temp_data = strtol(nanoseconds, NULL, 10);
+
+    if (0 != writeRegister(temp_addr + Ucm_ClkClock_TimeAdjValueLReg, &temp_data))
+    {
+        snprintf(nanoseconds, size, "%s", "NA");
+        return -1;
+    }
+
+    // snprintf(insyncthreshold, size, "%ld", temp_data);
+
+    // writeClkClockTimeAdj("disabled", size);
+
+    return 0;
+}
+
+int writeClkClockOffset(char *offset, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_ClkClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    long temp_offset = strtol(offset, NULL, 10);
+
+    if (temp_offset < 0)
+    {
+        temp_data = abs(temp_offset) | 0x80000000;
+    }
+    else
+    {
+        temp_data = abs(temp_offset);
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_ClkClock_OffsetAdjValueReg, &temp_data))
+    {
+        snprintf(offset, size, "%s", "NA");
+        return -1;
+    }
+
+    return 0;
+}
+
+int writeClkClockOffsetInterval(char *interval, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_ClkClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    long temp_interval = strtol(interval, NULL, 10);
+
+    if (0 != writeRegister(temp_addr + Ucm_ClkClock_OffsetAdjIntervalReg, &temp_interval))
+    {
+        snprintf(interval, size, "%s", "NA");
+        return -1;
+    }
+
+    return 0;
+}
+
+int writeClkClockDrift(char *drift, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_ClkClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    long temp_drift = strtol(drift, NULL, 10);
+
+    if (temp_drift < 0)
+    {
+        temp_data = abs(temp_drift) | 0x80000000;
+    }
+    else
+    {
+        temp_data = abs(temp_drift);
+    }
+
+    if (0 != writeRegister(temp_addr + Ucm_ClkClock_DriftAdjValueReg, &temp_data))
+    {
+        snprintf(drift, size, "%s", "NA");
+        return -1;
+    }
+
+    return 0;
+}
+int writeClkClockDriftInterval(char *driftinterval, size_t size)
+{
+    temp_addr = cores[Ucm_CoreConfig_ClkClockCoreType].address_range_low;
+    temp_data = 0x00000000;
+
+    long temp_interval = strtol(driftinterval, NULL, 10);
+
+    if (0 != writeRegister(temp_addr + Ucm_ClkClock_DriftAdjIntervalReg, &temp_interval))
+    {
+        snprintf(driftinterval, size, "%s", "NA");
+        return -1;
+    }
 
     return 0;
 }

@@ -87,4 +87,11 @@ int readClkClockDate(char *date, size_t size);
 
 int writeClkClockInSyncThreshold(char *insyncthreshold, size_t size);
 int writeClkClockSeconds(char *seconds, size_t size);
+int writeClkClockNanoseconds(char *seconds, size_t size);
+int writeClkClockOffset(char *offset, size_t size);
+int writeClkClockOffsetInterval(char *interval, size_t size);
+
+int writeClkClockDrift(char *drift, size_t size);
+int writeClkClockDriftInterval(char *driftinterval, size_t size);
+
 #endif // CLK_CLOCK
