@@ -10,7 +10,7 @@ char *PpsSlaveProperties[] = {
     [PpsSlaveInputOkStatus] = "input_ok",
     [PpsSlavePulseWidthValue] = "pulse_width",
     [PpsSlaveCableDelayValue] = "cable_delay",
-    [8] = "NULL",
+    [7] = "NULL",
 };
 
 int hasPpsSlave(char *in, size_t size)
@@ -202,33 +202,6 @@ int writePpsSlaveCableDelayValue(char *cable_delay, size_t size)
 
     return 0;
 }
-
-// int writePpsSlaveCableDelayValue(char *cable_delay, size_t size)
-//{
-//
-//     long temp_cable_delay = (strtol(cable_delay, NULL, 10)); // takes 0x44 and puts in the top of the ds3 reg -> 0x44000000
-//
-//     temp_addr = cores[Ucm_CoreConfig_PpsSlaveCoreType].address_range_low;
-//     temp_data = 0x00000000;
-//
-//     // if (0 != readRegister(temp_addr + Ucm_PpsSlave_CableDelayReg, &temp_data))
-//     //{
-//     //     return -2; // read current settings fails
-//     // }
-//
-//     temp_data = abs(temp_cable_delay) & 0x3FFFFFFF;
-//     if (temp_cable_delay < 0)
-//     {
-//         temp_data |= 0x80000000; // set sign bit
-//     }
-//
-//     if (0 != writeRegister(temp_addr + Ucm_PpsSlave_CableDelayReg, &temp_data))
-//     {
-//         return -3;
-//     }
-//
-//     return 0;
-// }
 
 int writePpsSlavePolarity(char *status, size_t size)
 {

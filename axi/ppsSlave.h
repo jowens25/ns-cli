@@ -18,7 +18,7 @@
 #define PpsSlavePulseWidthValue 5
 #define PpsSlaveCableDelayValue 6
 
-extern char *PpsSlaveProperties[];
+extern char *PpsSlaveProperties[8];
 
 int hasPpsSlave(char *in, size_t size);
 int readPpsSlaveVersion(char *value, size_t size);

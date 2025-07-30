@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "axi.h"
+#include "clkClock.h"
 #include "ntpServer.h"
 #include "ppsSlave.h"
 #include "ptpOc.h"
@@ -18,6 +19,35 @@ const char *FPGA_PORT = "FPGA_PORT";
 
 read_write_func timeServer[MAX_NUM_OPS][MAX_NUM_MODS][MAX_NUM_PROP] =
     {
+        [Read][ClkClock][ClkClockVersion] = readClkClockVersion,
+        [Read][ClkClock][ClkClockInstance] = readClkClockInstance,
+        [Read][ClkClock][ClkClockStatus] = readClkClockStatus,
+        [Read][ClkClock][ClkClockSeconds] = readClkClockSeconds,
+        [Read][ClkClock][ClkClockNanoseconds] = readClkClockNanoseconds,
+        //[Read][ClkClock][ClkClockTimeAdj] = readClkClockTimeAdj,
+        [Read][ClkClock][ClkClockInSync] = readClkClockInSync,
+        [Read][ClkClock][ClkClockInHoldover] = readClkClockInHoldover,
+        [Read][ClkClock][ClkClockInSyncThreshold] = readClkClockInSyncThreshold,
+        [Read][ClkClock][ClkClockSource] = readClkClockSource,
+        [Read][ClkClock][ClkClockDrift] = readClkClockDrift,
+        [Read][ClkClock][ClkClockDriftInterval] = readClkClockDriftInterval,
+        [Read][ClkClock][ClkClockDriftAdj] = readClkClockDriftAdj,
+        [Read][ClkClock][ClkClockOffset] = readClkClockOffset,
+        [Read][ClkClock][ClkClockOffsetInterval] = readClkClockOffsetInterval,
+        [Read][ClkClock][ClkClockOffsetAdj] = readClkClockOffsetAdj,
+        //[Read][ClkClock][ClkClockPiOffsetMulP] = readClkClockPiOffsetMulP,
+        //[Read][ClkClock][ClkClockPiOffsetDivP] = readClkClockPiOffsetDivP,
+        //[Read][ClkClock][ClkClockPiOffsetMulI] = readClkClockPiOffsetMulI,
+        //[Read][ClkClock][ClkClockPiOffsetDivI] = readClkClockPiOffsetDivI,
+        //[Read][ClkClock][ClkClockPiDriftMulP] = readClkClockPiDriftMulP,
+        //[Read][ClkClock][ClkClockPiDriftDivP] = readClkClockPiDriftDivP,
+        //[Read][ClkClock][ClkClockPiDriftMulI] = readClkClockPiDriftMulI,
+        //[Read][ClkClock][ClkClockPiDriftDivI] = readClkClockPiDriftDivI,
+        [Read][ClkClock][ClkClockPiSetCustomParameters] = readClkClockPiSetCustomParameters,
+        [Read][ClkClock][ClkClockCorrectedOffset] = readClkClockCorrectedOffset,
+        [Read][ClkClock][ClkClockCorrectedDrift] = readClkClockCorrectedDrift,
+        [Read][ClkClock][ClkClockDate] = readClkClockDate,
+
         [Read][PtpOrdinaryClock][PtpOcVersion] = readPtpOcVersion,
         [Read][PtpOrdinaryClock][PtpOcInstanceNumber] = readPtpOcInstanceNumber,
         [Read][PtpOrdinaryClock][PtpOcVlanAddress] = readPtpOcVlanAddress,
