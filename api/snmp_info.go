@@ -32,7 +32,7 @@ func readSnmpInfo(c *gin.Context) {
 				snmp.SysObjId = strings.Join(fields[1:], " ")
 			}
 
-			if strings.Contains(fields[0], "sysDescription") {
+			if strings.Contains(fields[0], "sysDescr") {
 				snmp.SysDescription = strings.Join(fields[1:], " ")
 			}
 
