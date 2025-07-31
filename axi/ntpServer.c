@@ -270,6 +270,7 @@ int readNtpServerPrecisionValue(char *value, size_t size)
     }
     // ui->NtpServerPrecisionValue->setText(QString::number((char)((temp_data >> 8) & 0x000000FF)));
     snprintf(value, size, "%d", (char)((temp_data >> 8) & 0x000000FF));
+    // snprintf(value, size, "%d", (char)((temp_data >> 8) & 0x000000FF));
 
     return 0;
 }
