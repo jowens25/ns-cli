@@ -25,7 +25,7 @@ const (
 	API_HOST   = "API_HOST"
 	API_PORT   = ":5000"
 	WEB_HOST   = "WEB_HOST"
-	WEB_PORT   = ":80"
+	WEB_PORT   = ":8080"
 	DB_PATH    = "./app.db"
 )
 

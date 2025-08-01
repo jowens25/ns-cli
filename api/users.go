@@ -90,7 +90,7 @@ func writeUser(c *gin.Context) {
 
 	switch newUser.Role {
 	case "admin":
-		AddAdmin(newUser.Username)
+		AddAdmin(newUser.Username, newUser.Password)
 	case "viewer":
 		AddUser(newUser.Username, newUser.Password)
 	default:
@@ -122,7 +122,7 @@ func deleteUser(c *gin.Context) {
 
 	if userToDelete.Role == "viewer" {
 		if err := db.Delete(&userToDelete).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 			return
 		}
 	}
@@ -137,13 +137,15 @@ func deleteUser(c *gin.Context) {
 
 			err := DeleteUser(userToDelete.Username)
 
+			fmt.Println(err)
+
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				c.JSON(http.StatusFailedDependency, gin.H{"error": err.Error()})
 				return
 			}
 
 			if err := db.Delete(&userToDelete).Error; err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 				return
 			}
 
@@ -330,11 +332,15 @@ func AdminNumber() (int, error) {
 
 func AddUser(username string, password string) error {
 	cmd := exec.Command("useradd", "-M", "-N", "-p", password, "-g", UserGroup, "-d", DefaultUserHome, username)
+	output, err := cmd.CombinedOutput()
+	fmt.Println(string(output), err)
 	return cmd.Run()
 }
 
-func AddAdmin(username string) error {
-	cmd := exec.Command("useradd", "-M", "-N", "-g", AdminGroup, "-G", UserGroup+","+AdminGroup, "-d", DefaultUserHome, username)
+func AddAdmin(username string, password string) error {
+	cmd := exec.Command("useradd", "-M", "-N", "-p", password, "-g", AdminGroup, "-G", UserGroup+","+AdminGroup, "-d", DefaultUserHome, username)
+	output, err := cmd.CombinedOutput()
+	fmt.Println(string(output), err)
 	return cmd.Run()
 }
 
@@ -373,7 +379,8 @@ func DeleteUser(username string) error {
 
 	// Delete the user
 	delCmd := exec.Command("userdel", username)
-	return delCmd.Run()
+	err = delCmd.Run()
+	return err
 }
 
 func CreatePassHistTemp() error {
