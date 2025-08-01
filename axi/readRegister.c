@@ -16,7 +16,7 @@ int readRegister(int64_t addr, int64_t *data)
     if (ser == -1)
     {
 
-        printf("Error opening serial port\n");
+        printf("r Error opening serial port\n");
         return -1;
     }
 

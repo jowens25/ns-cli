@@ -15,7 +15,7 @@ int connect(void)
     if (ser == -1)
     {
 
-        printf("Error opening serial port \n");
+        printf("c Error opening serial port \n");
         return -1;
     }
 
