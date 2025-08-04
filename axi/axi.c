@@ -9,7 +9,7 @@
 #include "config.h"
 int64_t temp_data = 0x00000000;
 int64_t temp_addr = 0x00000000;
-const char *FPGA_PORT = "FPGA_PORT";
+//const char *FPGA_PORT = "FPGA_PORT";
 
 #define MAX_NUM_PROP 256
 #define MAX_NUM_MODS 64

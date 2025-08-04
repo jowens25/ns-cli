@@ -43,10 +43,10 @@ func init() {
 }
 
 func Connect() error {
-	//err := C.connect()
-	//if err != 0 {
-	//	return errors.New("failed to connect to serial port")
-	//}
+	err := C.connect()
+	if err != 0 {
+		return errors.New("failed to connect to serial port")
+	}
 	return nil
 }
 

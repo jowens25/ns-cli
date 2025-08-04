@@ -33,6 +33,10 @@ to quickly create a Cobra application.`,
 			case "load":
 				axi.LoadConfig(args[0])
 
+			case "connect":
+				fmt.Println("connect called")
+				fmt.Println(axi.Connect())
+
 			default:
 				fmt.Println("only load works right now")
 			}

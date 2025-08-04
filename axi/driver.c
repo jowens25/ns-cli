@@ -1,10 +1,10 @@
 #include "axi.h"
 #include "ntpServer.h"
 #include "config.h"
-int pp()
+int driver() //switch to main to use
 {
 
-    // connect();
+    connect();
 
     // readConfig();
     //  char mac[32] = {0};

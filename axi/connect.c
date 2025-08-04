@@ -2,16 +2,16 @@
 //
 int connect(void)
 {
-    // printf("connect called");
+    printf("connect called\n");
 
     char connectCommand[] = "$CC*00\r\n";
     char writeData[64] = {0};
     char readData[64] = {0};
 
-    // printf("write data array: %s\n", writeData);
-    char *FPGA_PORT = getenv("FPGA_PORT");
+    //printf("write data array: %s\n", writeData);
+    //char *FPGA_PORT = getenv("FPGA_PORT");
 
-    int ser = serOpen(FPGA_PORT);
+    int ser = serOpen("/dev/ttyUSB0");
     if (ser == -1)
     {
 
@@ -19,10 +19,12 @@ int connect(void)
         return -1;
     }
 
+
+
     strcpy(writeData, connectCommand);
 
     int err = serWrite(ser, writeData, strlen(writeData));
-    usleep(1000); //
+    usleep(10000); //
 
     if (err != 0)
     {

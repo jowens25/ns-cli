@@ -10,9 +10,9 @@ int readRegister(int64_t addr, int64_t *data)
     char hexData[64] = {0};
     char hexChecksum[3] = {0};
 
-    char *FPGA_PORT = getenv("FPGA_PORT");
+    //char *FPGA_PORT = getenv("FPGA_PORT");
 
-    int ser = serOpen(FPGA_PORT);
+    int ser = serOpen("/dev/ttyUSB0");
     if (ser == -1)
     {
 
@@ -45,7 +45,7 @@ int readRegister(int64_t addr, int64_t *data)
         return -1;
     }
 
-    usleep(1000);
+    usleep(10000);
     // receive message
     err = serRead(ser, readData, sizeof(readData));
     if (err != 0)

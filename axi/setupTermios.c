@@ -3,7 +3,7 @@ struct termios tty;
 
 int setupTermios(int fd)
 {
-
+    //printf("setup termios\n");
     memset(&tty, 0, sizeof tty);
 
     if (tcgetattr(fd, &tty) != 0)
@@ -13,8 +13,10 @@ int setupTermios(int fd)
         return -1;
     }
 
-    cfsetospeed(&tty, B1000000); // Use a standard baud rate unless you know otherwise
-    cfsetispeed(&tty, B1000000);
+
+
+    cfsetospeed(&tty, B115200); // Use a standard baud rate unless you know otherwise
+    cfsetispeed(&tty, B115200);
 
     tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;
     tty.c_iflag &= ~IGNBRK;
