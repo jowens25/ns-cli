@@ -9,9 +9,9 @@ int connect(void)
     char readData[64] = {0};
 
     //printf("write data array: %s\n", writeData);
-    //char *FPGA_PORT = getenv("FPGA_PORT");
+    char *FPGA_PORT = getenv("FPGA_PORT");
 
-    int ser = serOpen("/dev/ttyUSB0");
+    int ser = serOpen(FPGA_PORT);
     if (ser == -1)
     {
 

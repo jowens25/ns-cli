@@ -10,9 +10,9 @@ int readRegister(int64_t addr, int64_t *data)
     char hexData[64] = {0};
     char hexChecksum[3] = {0};
 
-    //char *FPGA_PORT = getenv("FPGA_PORT");
+    char *FPGA_PORT = getenv("FPGA_PORT");
 
-    int ser = serOpen("/dev/ttyUSB0");
+    int ser = serOpen(FPGA_PORT);
     if (ser == -1)
     {
 
