@@ -53,8 +53,8 @@ int writeRegister(int64_t addr, int64_t *data)
         return -1;
     }
 
-    usleep(3000);
-    //  receive message
+    // usleep(2000);
+    //   receive message
     err = serRead(ser, readData, sizeof(readData));
     if (err != 0)
     {
@@ -78,7 +78,7 @@ int writeRegister(int64_t addr, int64_t *data)
         return -1;
     }
 
-    if (isChecksumCorrect(readData))
+    if (isChecksumCorrect(readData) != 0)
     {
         printf("wrong checksum \n");
         return -1;

@@ -3,7 +3,7 @@ struct termios tty;
 
 int setupTermios(int fd)
 {
-    //printf("setup termios\n");
+    // printf("setup termios\n");
     memset(&tty, 0, sizeof tty);
 
     if (tcgetattr(fd, &tty) != 0)
@@ -13,8 +13,6 @@ int setupTermios(int fd)
         return -1;
     }
 
-
-
     cfsetospeed(&tty, B115200); // Use a standard baud rate unless you know otherwise
     cfsetispeed(&tty, B115200);
 
@@ -22,8 +20,11 @@ int setupTermios(int fd)
     tty.c_iflag &= ~IGNBRK;
     tty.c_lflag = 0;
     tty.c_oflag = 0;
-    tty.c_cc[VMIN] = 0;
+    // tty.c_cc[VSTOP] =
+    // tty.c_cc[VMIN] = 3;  // no blocking 1
     tty.c_cc[VTIME] = 1; // .10 second timeout
+
+    tty.c_lflag |= ICANON; // Enable canonical mode
 
     tty.c_iflag &= ~(IXON | IXOFF | IXANY);
     tty.c_cflag |= (CLOCAL | CREAD);

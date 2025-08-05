@@ -15,14 +15,14 @@ int connect(void)
     if (ser == -1)
     {
 
-        printf("c Error opening serial port %s\n");
+        printf("c Error opening serial port\n");
         return -1;
     }
 
     strcpy(writeData, connectCommand);
 
     int err = serWrite(ser, writeData, strlen(writeData));
-    usleep(3000); //
+    // usleep(2000); //
 
     if (err != 0)
     {

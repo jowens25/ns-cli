@@ -508,21 +508,21 @@ int readClkClockDate(char *date, size_t size)
 int writeClkClockDriftAdj(char *driftadj, size_t size)
 {
 
-    strncpy(ClockDriftAdjEnable, driftadj, strlen(driftadj));
+    strncpy(ClockDriftAdjEnable, driftadj, size);
 
     return 0;
 }
 
 int writeClkClockOffsetAdj(char *offsetadj, size_t size)
 {
-    strncpy(ClockOffsetAdjEnable, offsetadj, strlen(offsetadj));
+    strncpy(ClockOffsetAdjEnable, offsetadj, size);
 
     return 0;
 }
 
 int writeClkClockTimeAdj(char *timeadj, size_t size)
 {
-    strncpy(ClockTimeAdjEnable, timeadj, strlen(timeadj));
+    strncpy(ClockTimeAdjEnable, timeadj, size);
 
     return 0;
 }
