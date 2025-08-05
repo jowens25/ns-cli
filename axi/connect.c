@@ -8,23 +8,21 @@ int connect(void)
     char writeData[64] = {0};
     char readData[64] = {0};
 
-    //printf("write data array: %s\n", writeData);
-    char *FPGA_PORT = getenv("FPGA_PORT");
+    // printf("write data array: %s\n", writeData);
+    char *FPGA_PORT = getenv("/dev/ttyUSB0");
 
     int ser = serOpen(FPGA_PORT);
     if (ser == -1)
     {
 
-        printf("c Error opening serial port \n");
+        printf("c Error opening serial port %s\n");
         return -1;
     }
-
-
 
     strcpy(writeData, connectCommand);
 
     int err = serWrite(ser, writeData, strlen(writeData));
-    usleep(10000); //
+    usleep(1000); //
 
     if (err != 0)
     {
@@ -39,7 +37,7 @@ int connect(void)
         return -1;
     }
 
-    serClose(ser);
+    // serClose(ser);
 
     if (isChecksumCorrect(readData) != 0)
     {

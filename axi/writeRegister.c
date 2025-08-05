@@ -53,8 +53,8 @@ int writeRegister(int64_t addr, int64_t *data)
         return -1;
     }
 
-    usleep(10000);
-    // receive message
+    usleep(1000);
+    //  receive message
     err = serRead(ser, readData, sizeof(readData));
     if (err != 0)
     {
@@ -62,7 +62,7 @@ int writeRegister(int64_t addr, int64_t *data)
         return -1;
     }
     // close
-    serClose(ser);
+    // serClose(ser);
 
     if (isErrorResponse(readData))
     {
@@ -72,7 +72,9 @@ int writeRegister(int64_t addr, int64_t *data)
 
     if (!isWriteResponse(readData))
     {
+
         printf("missing write response \n");
+        printf("read data: %s\n", readData);
         return -1;
     }
 

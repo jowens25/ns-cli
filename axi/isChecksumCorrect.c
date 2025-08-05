@@ -6,7 +6,7 @@ int isChecksumCorrect(char *message)
     char calculatedChecksum[64];
     char *messageChecksum;
     char *cmdAddressData;
-    printf("check sum: %s\n", message);
+    // printf("check sum: %s\n", message);
 
     // printf("is checksum correct message: %s\n", message);
 

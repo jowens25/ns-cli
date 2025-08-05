@@ -63,11 +63,11 @@ func LoadConfig(fileName string) {
 
 	fmt.Println("LOAD CONFIG CALLED")
 
-	//err := Connect()
-	//if err != nil {
-	//	log.Println(err)
-	//	log.Println("load config failed")
-	//}
+	err := Connect()
+	if err != nil {
+		log.Println(err)
+		log.Println("load config failed")
+	}
 
 	data, err := os.ReadFile(fileName)
 	if err != nil {
@@ -99,12 +99,12 @@ func LoadConfig(fileName string) {
 func Operate(operation *string, module *string, property *string, value *string) error {
 
 	fmt.Println("OPERATE CALLED")
-	//err := Connect()
-	//
-	//if err != nil {
-	//	log.Println(err)
-	//	return errors.New("operate failed to connect")
-	//}
+	err := Connect()
+
+	if err != nil {
+		log.Println(err)
+		return errors.New("operate failed to connect")
+	}
 	op := C.CString(*operation)
 	mod := C.CString(*module)
 	prop := C.CString(*property)

@@ -34,8 +34,12 @@ to quickly create a Cobra application.`,
 				axi.LoadConfig(args[0])
 
 			case "connect":
-				fmt.Println("connect called")
+				fmt.Println("connect cmd called")
 				fmt.Println(axi.Connect())
+
+			case "read":
+				fmt.Println("read config")
+				fmt.Println(axi.ReadConfig())
 
 			default:
 				fmt.Println("only load works right now")
@@ -51,6 +55,7 @@ func init() {
 	deviceCmd.Flags().BoolP("load", "l", false, "load a config file")
 	deviceCmd.Flags().BoolP("dump", "d", false, "dump a config file")
 	deviceCmd.Flags().BoolP("connect", "c", false, "attempt to connect to FPGA")
+	deviceCmd.Flags().BoolP("read", "r", false, "read config")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
