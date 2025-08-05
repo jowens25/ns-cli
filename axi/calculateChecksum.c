@@ -3,7 +3,7 @@
 //
 unsigned char calculateChecksum(char *data)
 {
-    char out[3] = {0};
+    // char out[3] = {0};
 
     unsigned char checksum = 0;
     for (int i = 1; i < strlen(data); i++)

@@ -9,7 +9,7 @@
 #include "config.h"
 int64_t temp_data = 0x00000000;
 int64_t temp_addr = 0x00000000;
-//const char *FPGA_PORT = "FPGA_PORT";
+// const char *FPGA_PORT = "FPGA_PORT";
 
 #define MAX_NUM_PROP 256
 #define MAX_NUM_MODS 64
@@ -389,17 +389,14 @@ int Axi(char *operation, char *core, char *property, char *value)
     return 0;
 }
 
-int exec(int read, int module, int property, char *buf)
-{
-    //  timeServer[read][module][pro](buf, sizeof(buf));
-}
-
 int readOnly(char *buf, size_t size)
 {
     // snprintf(buf, size, "%s", "read-only");
     // return 0;
     //
     // exec("read", "ntp-server", "ip-address", )
+
+    return 0;
 }
 
 int writeOnly(char *buf, size_t size)

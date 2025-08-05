@@ -9,7 +9,7 @@ int readConfig(void)
 
     int err = 0;
 
-    Ucm_CoreConfig temp_config;
+    // Ucm_CoreConfig temp_config;
     temp_data = 0;
     long type = 0;
 
