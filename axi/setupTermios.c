@@ -36,8 +36,8 @@ int setupTermios(int fd)
     tty.c_lflag |= ICANON;
     tty.c_lflag &= ~(ECHO | ECHONL | ISIG | IEXTEN);
 
-    tty.c_cc[VMIN] = 1;   // Minimum characters to read
-    tty.c_cc[VTIME] = 10; // Timeout in deciseconds (1 second)
+    tty.c_cc[VMIN] = 1;  // Minimum characters to read
+    tty.c_cc[VTIME] = 1; // Timeout in deciseconds (1 second)
 
     if (tcsetattr(fd, TCSANOW, &tty) != 0)
     {
