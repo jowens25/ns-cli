@@ -16,20 +16,25 @@ int setupTermios(int fd)
     cfsetospeed(&tty, B115200); // Use a standard baud rate unless you know otherwise
     cfsetispeed(&tty, B115200);
 
-    tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;
-    tty.c_iflag &= ~IGNBRK;
-    tty.c_lflag = 0;
-    tty.c_oflag = 0;
-    // tty.c_cc[VSTOP] =
-    // tty.c_cc[VMIN] = 3;  // no blocking 1
-    tty.c_cc[VTIME] = 1; // .10 second timeout
-
-    tty.c_lflag |= ICANON; // Enable canonical mode
-
-    tty.c_iflag &= ~(IXON | IXOFF | IXANY);
-    tty.c_cflag |= (CLOCAL | CREAD);
-    tty.c_cflag &= ~(PARENB | PARODD);
+    // 8N1 configuration
+    tty.c_cflag &= ~CSIZE;
+    tty.c_cflag |= CS8;
+    tty.c_cflag &= ~PARENB;
     tty.c_cflag &= ~CSTOPB;
+    // tty.c_cflag &= ~CRTSCTS;
+    tty.c_cflag |= (CLOCAL | CREAD);
+
+    // Input processing for \r\n data
+    tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR);
+    tty.c_iflag |= ICRNL; // Convert \r to \n (helps canonical mode see \r\n as line end)
+    tty.c_iflag &= ~(IXON | IXOFF | IXANY);
+
+    // Output processing
+    tty.c_oflag &= ~OPOST;
+
+    // Enable canonical mode for line-buffered input
+    tty.c_lflag |= ICANON;
+    tty.c_lflag &= ~(ECHO | ECHONL | ISIG | IEXTEN);
 
     if (tcsetattr(fd, TCSANOW, &tty) != 0)
     {
@@ -40,5 +45,6 @@ int setupTermios(int fd)
         return -1;
     }
 
+    tcflush(fd, TCIOFLUSH);
     return 0;
 }

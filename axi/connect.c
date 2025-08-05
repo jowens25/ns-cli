@@ -2,7 +2,7 @@
 //
 int connect(void)
 {
-    printf("connect called\n");
+    // printf("connect called\n");
 
     char connectCommand[] = "$CC*00\r\n";
     char writeData[64] = {0};
@@ -46,7 +46,7 @@ int connect(void)
         return -1;
     }
 
-    printf("Connect: Success\n");
+    // printf("Connect: Success\n");
 
     return 0;
 }

@@ -29,17 +29,17 @@ const size = C.size_t(64)
 
 func init() {
 
-	//err := Connect()
-	//if err != nil {
-	//	panic(err)
-	//}
-	//
-	//err = ReadConfig()
-	//if err != nil {
-	//	panic(err)
-	//}
+	err := Connect()
+	if err != nil {
+		panic(err)
+	}
 
-	//LoadConfig("PtpGmNtpServer.ucm")
+	err = ReadConfig()
+	if err != nil {
+		panic(err)
+	}
+
+	LoadConfig("PtpGmNtpServer.ucm")
 }
 
 func Connect() error {
@@ -99,12 +99,16 @@ func LoadConfig(fileName string) {
 func Operate(operation *string, module *string, property *string, value *string) error {
 
 	fmt.Println("OPERATE CALLED")
-	err := Connect()
-
-	if err != nil {
-		log.Println(err)
-		return errors.New("operate failed to connect")
-	}
+	//err := Connect()
+	//if err != nil {
+	//	log.Println(err)
+	//	return errors.New("operate failed to connect")
+	//}
+	//err = ReadConfig()
+	//if err != nil {
+	//	log.Println(err)
+	//	return errors.New("operate failed to read config")
+	//}
 	op := C.CString(*operation)
 	mod := C.CString(*module)
 	prop := C.CString(*property)

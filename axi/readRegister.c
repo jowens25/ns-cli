@@ -35,7 +35,7 @@ int readRegister(int64_t addr, int64_t *data)
     strcat(writeData, hexChecksum);
     strcat(writeData, "\r\n");
 
-    printf("write data array: %s\n", writeData);
+    // printf("write data array: %s\n", writeData);
 
     // send message
     int err = serWrite(ser, writeData, strlen(writeData));
@@ -45,9 +45,11 @@ int readRegister(int64_t addr, int64_t *data)
         return -1;
     }
 
-    usleep(2000);
-    //   receive message
+    // usleep(50000);
+    //    receive message
     err = serRead(ser, readData, sizeof(readData));
+    // printf("read data: %s \n", readData);
+
     if (err != 0)
     {
         printf("read - serRead error\n");
@@ -80,7 +82,7 @@ int readRegister(int64_t addr, int64_t *data)
     }
 
     *data = (int64_t)strtol(hexData, NULL, 16);
-    printf("Read Response: %s \n", readData);
+    // printf("Read Response: %s \n", readData);
 
     return 0;
 }
