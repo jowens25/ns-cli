@@ -10,8 +10,24 @@ int isChecksumCorrect(char *message)
 
     // printf("is checksum correct message: %s\n", message);
 
+    if (0 == strlen(message))
+    {
+        return -1;
+    }
+
     cmdAddressData = strtok(message, "*");
+
+    if (cmdAddressData == NULL)
+    {
+        return -2;
+    }
+
     messageChecksum = strtok(NULL, "*"); // assign token to pointer then add a zero to end the string right after the two checksum digits
+
+    if (messageChecksum == NULL)
+    {
+        return -3;
+    }
 
     messageChecksum[2] = 0;
 
