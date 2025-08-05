@@ -22,7 +22,7 @@ int connect(void)
     strcpy(writeData, connectCommand);
 
     int err = serWrite(ser, writeData, strlen(writeData));
-    usleep(1000); //
+    usleep(3000); //
 
     if (err != 0)
     {

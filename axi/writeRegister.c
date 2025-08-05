@@ -53,7 +53,7 @@ int writeRegister(int64_t addr, int64_t *data)
         return -1;
     }
 
-    usleep(1000);
+    usleep(3000);
     //  receive message
     err = serRead(ser, readData, sizeof(readData));
     if (err != 0)
