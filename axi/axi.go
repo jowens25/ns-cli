@@ -34,12 +34,12 @@ func init() {
 		panic(err)
 	}
 
-	err = ReadConfig()
-	if err != nil {
-		panic(err)
-	}
-
-	LoadConfig("PtpGmNtpServer.ucm")
+	//err = ReadConfig()
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	//LoadConfig("PtpGmNtpServer.ucm")
 }
 
 func Connect() error {
