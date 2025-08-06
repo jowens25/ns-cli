@@ -21,23 +21,23 @@ int setupTermios(int fd)
     tty.c_cflag |= CS8;
     tty.c_cflag &= ~PARENB;
     tty.c_cflag &= ~CSTOPB;
-    // tty.c_cflag &= ~CRTSCTS;
+    // tty.c_cflag &= ~CRTSCTS; // Disable hardware flow control
     tty.c_cflag |= (CLOCAL | CREAD);
 
-    // Input processing for \r\n data
-    tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR);
-    // tty.c_iflag |= ICRNL; // Convert \r to \n (helps canonical mode see \r\n as line end)
+    // Input processing - disable all special processing
+    tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL);
     tty.c_iflag &= ~(IXON | IXOFF | IXANY);
 
-    // Output processing
+    // Output processing - raw output
     tty.c_oflag &= ~OPOST;
 
-    // Enable canonical mode for line-buffered input
-    tty.c_lflag |= ICANON;
+    // CRITICAL FIX: Disable canonical mode for character-by-character reading
+    tty.c_lflag &= ~ICANON; // Raw mode - read character by character
     tty.c_lflag &= ~(ECHO | ECHONL | ISIG | IEXTEN);
 
-    tty.c_cc[VMIN] = 1;   // Minimum characters to read
-    tty.c_cc[VTIME] = 15; // Timeout in deciseconds (1 second)
+    // Timeout settings for raw mode
+    tty.c_cc[VMIN] = 0;  // Don't wait for minimum characters
+    tty.c_cc[VTIME] = 5; // Timeout in deciseconds (0.5 seconds)
 
     if (tcsetattr(fd, TCSANOW, &tty) != 0)
     {
