@@ -52,8 +52,8 @@ int serRead(int ser, char data[], size_t dataLength)
 
     if (totalRead > 0)
     {
-        printf("Serial Read %d bytes: '%s'\n", totalRead, data);
+        // printf("Serial Read %d bytes: '%s'\n", totalRead, data);
     }
 
-    return totalRead;
+    return 0;
 }

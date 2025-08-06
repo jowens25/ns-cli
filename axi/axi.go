@@ -29,10 +29,10 @@ const size = C.size_t(64)
 
 func init() {
 
-	err := Connect()
-	if err != nil {
-		panic(err)
-	}
+	//err := Connect()
+	//if err != nil {
+	//	panic(err)
+	//}
 
 	//err = ReadConfig()
 	//if err != nil {

@@ -46,7 +46,7 @@ int connect(void)
         return -1;
     }
 
-    // printf("Connect: Success\n");
+    printf("Connect: Success\n");
 
     return 0;
 }
