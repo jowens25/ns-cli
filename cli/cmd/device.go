@@ -43,6 +43,10 @@ to quickly create a Cobra application.`,
 
 				fmt.Println(axi.GetCores())
 
+			case "reset":
+				fmt.Println("reset device")
+				axi.Reset()
+
 			default:
 				fmt.Println("only load works right now")
 			}
