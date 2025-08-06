@@ -23,6 +23,8 @@
         "stddef.h": "c",
         "ptpoc.h": "c",
         "typeinfo": "c",
-        "todslave.h": "c"
+        "todslave.h": "c",
+        "cores.h": "c",
+        "clkclock.h": "c"
     }
 }

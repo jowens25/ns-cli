@@ -1,5 +1,5 @@
 #include "axi.h"
-#include "coreConfig.h"
+#include "cores.h"
 #include "ppsSlave.h"
 
 char *PpsSlaveProperties[] = {

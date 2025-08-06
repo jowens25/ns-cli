@@ -1,7 +1,8 @@
 
 #ifndef PPS_SLAVE_H
-
 #define PPS_SLAVE_H
+
+#include <stddef.h>
 
 #define Ucm_PpsSlave_ControlReg 0x00000000
 #define Ucm_PpsSlave_StatusReg 0x00000004

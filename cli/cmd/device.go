@@ -41,7 +41,7 @@ to quickly create a Cobra application.`,
 				fmt.Println("read config")
 				fmt.Println(axi.Connect())
 
-				fmt.Println(axi.ReadConfig())
+				fmt.Println(axi.GetCores())
 
 			default:
 				fmt.Println("only load works right now")

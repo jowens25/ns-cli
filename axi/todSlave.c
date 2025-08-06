@@ -1,5 +1,6 @@
+
 #include "axi.h"
-#include "coreConfig.h"
+#include "cores.h"
 #include "todSlave.h"
 
 char *TodSlaveProperties[] = {

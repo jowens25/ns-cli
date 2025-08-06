@@ -1,5 +1,5 @@
 #include "axi.h"
-#include "coreConfig.h"
+#include "cores.h"
 #include "ptpOc.h"
 #include <stddef.h>
 #define MIN(a, b) ((a) < (b) ? (a) : (b))

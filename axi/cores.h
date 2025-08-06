@@ -1,5 +1,16 @@
-#ifndef UCM_CORECONFIG_H
-#define UCM_CORECONFIG_H
+
+#ifndef CORES_H
+#define CORES_H
+
+// CORES STUFF
+#define Ucm_Config_BlockSize 16
+#define Ucm_Config_TypeInstanceReg 0x00000000
+#define Ucm_Config_BaseAddrLReg 0x00000004
+#define Ucm_Config_BaseAddrHReg 0x00000008
+#define Ucm_Config_IrqMaskReg 0x0000000C
+int getCores(void);
+
+// CORE CONFIG STUFF
 
 #define NumberPtpOcProperties 64
 #define NumberNtpServerProperties 32
@@ -97,4 +108,4 @@ int getPropertyId(int core, char *name);
 
 int getOperationId(char *name);
 
-#endif // Ucm_CoreConfig_H;
+#endif

@@ -2,7 +2,9 @@
 #ifndef PTP_OC_H
 
 #define PTP_OC_H
+
 #include <stddef.h>
+
 // registers
 #define Ucm_PtpOc_ControlReg 0x00000000
 #define Ucm_PtpOc_StatusReg 0x00000004

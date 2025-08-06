@@ -1,5 +1,5 @@
 #include "axi.h"
-#include "coreConfig.h"
+#include "cores.h"
 #include "clkClock.h"
 #include "time.h"
 char *ClkClockProperties[29] = {

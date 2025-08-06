@@ -1,7 +1,7 @@
 #include "axi.h"
 #include "ntpServer.h"
-#include "config.h"
-int driver() //switch to main to use
+#include "cores.h"
+int driver() // switch to main to use
 {
 
     connect();

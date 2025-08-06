@@ -26,7 +26,7 @@ to quickly create a Cobra application.`,
 
 		axi.Connect()
 
-		axi.ReadConfig()
+		axi.GetCores()
 
 		axi.LoadConfig("PtpGmNtpServer.ucm")
 

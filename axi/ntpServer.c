@@ -1,6 +1,6 @@
 
 #include "axi.h"
-#include "coreConfig.h"
+#include "cores.h"
 #include "ntpServer.h"
 
 char *NtpServerProperties[] = {

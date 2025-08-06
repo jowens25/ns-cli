@@ -26,7 +26,7 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			log.Println(err)
 		}
-		err = axi.ReadConfig()
+		err = axi.GetCores()
 		if err != nil {
 			log.Println(err)
 		}
