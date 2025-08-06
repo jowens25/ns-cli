@@ -74,7 +74,7 @@ int writeRegister(int64_t addr, int64_t *data)
     {
 
         printf("missing write response \n");
-        printf("read data: %s\n", readData);
+        // printf("read data: %s\n", readData);
         return -1;
     }
 
