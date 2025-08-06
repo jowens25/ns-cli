@@ -58,6 +58,8 @@ func init() {
 	deviceCmd.Flags().BoolP("dump", "d", false, "dump a config file")
 	deviceCmd.Flags().BoolP("connect", "c", false, "attempt to connect to FPGA")
 	deviceCmd.Flags().BoolP("read", "r", false, "read config")
+	deviceCmd.Flags().BoolP("reset", "s", false, "reset device")
+
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

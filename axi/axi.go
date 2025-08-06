@@ -34,6 +34,15 @@ func Connect() error {
 	return nil
 }
 
+func Reset() error {
+	err := C.reset()
+
+	if err != 0 {
+		return errors.New("failed to reset device")
+	}
+	return nil
+}
+
 func GetCores() error {
 	err := C.getCores()
 	if err != 0 {
