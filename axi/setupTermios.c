@@ -26,7 +26,7 @@ int setupTermios(int fd)
 
     // Input processing for \r\n data
     tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR);
-    tty.c_iflag |= ICRNL; // Convert \r to \n (helps canonical mode see \r\n as line end)
+    // tty.c_iflag |= ICRNL; // Convert \r to \n (helps canonical mode see \r\n as line end)
     tty.c_iflag &= ~(IXON | IXOFF | IXANY);
 
     // Output processing
@@ -36,8 +36,8 @@ int setupTermios(int fd)
     tty.c_lflag |= ICANON;
     tty.c_lflag &= ~(ECHO | ECHONL | ISIG | IEXTEN);
 
-    tty.c_cc[VMIN] = 1;  // Minimum characters to read
-    tty.c_cc[VTIME] = 1; // Timeout in deciseconds (1 second)
+    tty.c_cc[VMIN] = 1;   // Minimum characters to read
+    tty.c_cc[VTIME] = 15; // Timeout in deciseconds (1 second)
 
     if (tcsetattr(fd, TCSANOW, &tty) != 0)
     {
