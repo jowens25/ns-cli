@@ -4,11 +4,11 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"NovusTimeServer/api"
+	"NovusTimeServer/axi"
 	"fmt"
 
 	"github.com/spf13/cobra"
-
-	"api"
 )
 
 // runCmd represents the run command
@@ -24,7 +24,13 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("run called")
 
-		api.RunServers()
+		axi.Connect()
+
+		axi.GetCores()
+
+		axi.LoadConfig("PtpGmNtpServer.ucm")
+
+		api.RunApiServer()
 
 	},
 }
