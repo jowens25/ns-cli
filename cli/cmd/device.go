@@ -39,6 +39,7 @@ to quickly create a Cobra application.`,
 
 			case "read":
 				fmt.Println("read config")
+				fmt.Println(axi.Connect())
 
 				fmt.Println(axi.ReadConfig())
 
