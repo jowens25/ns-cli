@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"NovusTimeServer/api"
-	"NovusTimeServer/axi"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -24,11 +23,11 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("run called")
 
-		axi.Connect()
+		//axi.Connect()
 
-		axi.GetCores()
+		//axi.GetCores()
 
-		axi.LoadConfig("PtpGmNtpServer.ucm")
+		//axi.LoadConfig("PtpGmNtpServer.ucm")
 
 		api.RunApiServer()
 

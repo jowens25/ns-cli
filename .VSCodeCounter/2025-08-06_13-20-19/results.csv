@@ -1,0 +1,93 @@
+"filename", "language", "Shell Script", "Docker", "Batch", "YAML", "Go Work File", "Go", "C", "Markdown", "Go Module File", "Go Checksum File", "Properties", "C++", "JavaScript", "HTML", "GLSL", "JSON", "Makefile", "WebAssembly Text Format", "comment", "blank", "total"
+"/home/jowens/Projects/NovusTimeServer/.cobra.yaml", "YAML", 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4
+"/home/jowens/Projects/NovusTimeServer/Dockerfile", "Docker", 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 11
+"/home/jowens/Projects/NovusTimeServer/README.md", "Markdown", 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"/home/jowens/Projects/NovusTimeServer/api/api.go", "Go", 0, 0, 0, 0, 0, 280, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 80, 371
+"/home/jowens/Projects/NovusTimeServer/api/go.mod", "Go Module File", 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 44
+"/home/jowens/Projects/NovusTimeServer/api/go.sum", "Go Checksum File", 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 129
+"/home/jowens/Projects/NovusTimeServer/api/models.go", "Go", 0, 0, 0, 0, 0, 96, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 12, 109
+"/home/jowens/Projects/NovusTimeServer/api/snmp.go", "Go", 0, 0, 0, 0, 0, 160, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 42, 234
+"/home/jowens/Projects/NovusTimeServer/api/snmp_info.go", "Go", 0, 0, 0, 0, 0, 87, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 28, 121
+"/home/jowens/Projects/NovusTimeServer/api/snmp_v1v2c.go", "Go", 0, 0, 0, 0, 0, 197, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 63, 277
+"/home/jowens/Projects/NovusTimeServer/api/snmp_v3.go", "Go", 0, 0, 0, 0, 0, 205, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 53, 270
+"/home/jowens/Projects/NovusTimeServer/api/users.go", "Go", 0, 0, 0, 0, 0, 310, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 81, 403
+"/home/jowens/Projects/NovusTimeServer/axi/Makefile", "Makefile", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 9, 27
+"/home/jowens/Projects/NovusTimeServer/axi/axi.c", "C", 0, 0, 0, 0, 0, 0, 665, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 149, 898
+"/home/jowens/Projects/NovusTimeServer/axi/axi.go", "Go", 0, 0, 0, 0, 0, 77, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 30, 116
+"/home/jowens/Projects/NovusTimeServer/axi/axi.h", "C", 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 20, 62
+"/home/jowens/Projects/NovusTimeServer/axi/clkClock.c", "C", 0, 0, 0, 0, 0, 0, 577, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 129, 727
+"/home/jowens/Projects/NovusTimeServer/axi/clkClock.h", "C", 0, 0, 0, 0, 0, 0, 81, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 8, 98
+"/home/jowens/Projects/NovusTimeServer/axi/confSlave.c", "C", 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 11
+"/home/jowens/Projects/NovusTimeServer/axi/confSlave.h", "C++", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 4, 12
+"/home/jowens/Projects/NovusTimeServer/axi/cores.c", "C", 0, 0, 0, 0, 0, 0, 157, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 74, 40, 271
+"/home/jowens/Projects/NovusTimeServer/axi/cores.h", "C", 0, 0, 0, 0, 0, 0, 95, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 15, 112
+"/home/jowens/Projects/NovusTimeServer/axi/driver.c", "C", 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 6, 25
+"/home/jowens/Projects/NovusTimeServer/axi/go.mod", "Go Module File", 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4
+"/home/jowens/Projects/NovusTimeServer/axi/ntpServer.c", "C", 0, 0, 0, 0, 0, 0, 1503, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 91, 253, 1847
+"/home/jowens/Projects/NovusTimeServer/axi/ntpServer.h", "C", 0, 0, 0, 0, 0, 0, 107, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 15, 129
+"/home/jowens/Projects/NovusTimeServer/axi/ppsSlave.c", "C", 0, 0, 0, 0, 0, 0, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 57, 260
+"/home/jowens/Projects/NovusTimeServer/axi/ppsSlave.h", "C++", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 7, 37
+"/home/jowens/Projects/NovusTimeServer/axi/ptpOc.c", "C", 0, 0, 0, 0, 0, 0, 3811, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 282, 856, 4949
+"/home/jowens/Projects/NovusTimeServer/axi/ptpOc.h", "C", 0, 0, 0, 0, 0, 0, 242, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 16, 268
+"/home/jowens/Projects/NovusTimeServer/axi/todSlave.c", "C", 0, 0, 0, 0, 0, 0, 792, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 165, 981
+"/home/jowens/Projects/NovusTimeServer/axi/todSlave.h", "C", 0, 0, 0, 0, 0, 0, 79, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 89
+"/home/jowens/Projects/NovusTimeServer/cli/backupsnmd.conf", "Properties", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 0, 0, 27, 6, 56
+"/home/jowens/Projects/NovusTimeServer/cli/cmd/axi.go", "Go", 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 11, 57
+"/home/jowens/Projects/NovusTimeServer/cli/cmd/conf.go", "Go", 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 11, 45
+"/home/jowens/Projects/NovusTimeServer/cli/cmd/device.go", "Go", 0, 0, 0, 0, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 17, 77
+"/home/jowens/Projects/NovusTimeServer/cli/cmd/disable.go", "Go", 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 12, 58
+"/home/jowens/Projects/NovusTimeServer/cli/cmd/dump.go", "Go", 0, 0, 0, 0, 0, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 14, 89
+"/home/jowens/Projects/NovusTimeServer/cli/cmd/enable.go", "Go", 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 9, 41
+"/home/jowens/Projects/NovusTimeServer/cli/cmd/ip.go", "Go", 0, 0, 0, 0, 0, 34, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 12, 69
+"/home/jowens/Projects/NovusTimeServer/cli/cmd/ntp.go", "Go", 0, 0, 0, 0, 0, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 48, 12, 91
+"/home/jowens/Projects/NovusTimeServer/cli/cmd/pps.go", "Go", 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 42, 12, 84
+"/home/jowens/Projects/NovusTimeServer/cli/cmd/ptp.go", "Go", 0, 0, 0, 0, 0, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 46, 13, 90
+"/home/jowens/Projects/NovusTimeServer/cli/cmd/read.go", "Go", 0, 0, 0, 0, 0, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 12, 54
+"/home/jowens/Projects/NovusTimeServer/cli/cmd/root.go", "Go", 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 8, 42
+"/home/jowens/Projects/NovusTimeServer/cli/cmd/run.go", "Go", 0, 0, 0, 0, 0, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 14, 51
+"/home/jowens/Projects/NovusTimeServer/cli/cmd/stop.go", "Go", 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 11, 44
+"/home/jowens/Projects/NovusTimeServer/cli/cmd/write.go", "Go", 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 13, 47
+"/home/jowens/Projects/NovusTimeServer/cli/go.mod", "Go Module File", 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 11
+"/home/jowens/Projects/NovusTimeServer/cli/go.sum", "Go Checksum File", 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 11
+"/home/jowens/Projects/NovusTimeServer/cli/main.go", "Go", 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 5, 19
+"/home/jowens/Projects/NovusTimeServer/cli/snmpd.conf", "Properties", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 27, 9, 50
+"/home/jowens/Projects/NovusTimeServer/go.mod", "Go Module File", 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4
+"/home/jowens/Projects/NovusTimeServer/go.work", "Go Work File", 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 10
+"/home/jowens/Projects/NovusTimeServer/nsAgent/nsAgent/novusAgent.c", "C", 0, 0, 0, 0, 0, 0, 2596, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1573, 996, 5165
+"/home/jowens/Projects/NovusTimeServer/nsAgent/nsAgent/novusAgent.h", "C++", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 365, 0, 0, 0, 0, 0, 0, 20, 58, 443
+"/home/jowens/Projects/NovusTimeServer/nsAgent/nsAgent/nsRadioSer.c", "C", 0, 0, 0, 0, 0, 0, 69, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 38, 17, 124
+"/home/jowens/Projects/NovusTimeServer/nsAgent/nsAgent/nsRadioSer.h", "C++", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 15, 4, 23
+"/home/jowens/Projects/NovusTimeServer/nsAgent/nsAgent/nsStartup.c", "C", 0, 0, 0, 0, 0, 0, 353, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 146, 111, 610
+"/home/jowens/Projects/NovusTimeServer/nsAgent/nsAgent/nsStartup.h", "C++", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26, 0, 0, 0, 0, 0, 0, 15, 11, 52
+"/home/jowens/Projects/NovusTimeServer/nsAgent/nsAgent/nsStr.c", "C", 0, 0, 0, 0, 0, 0, 125, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 29, 218
+"/home/jowens/Projects/NovusTimeServer/nsAgent/nsAgent/nsStr.h", "C++", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 15, 4, 26
+"/home/jowens/Projects/NovusTimeServer/nsAgent/nsAgent/nsStrParser.c", "C", 0, 0, 0, 0, 0, 0, 769, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 286, 147, 1202
+"/home/jowens/Projects/NovusTimeServer/nsAgent/nsAgent/nsStrParser.h", "C++", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 240, 39, 300
+"/home/jowens/Projects/NovusTimeServer/nsAgent/nsAgent/nsTrap.c", "C", 0, 0, 0, 0, 0, 0, 150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 86, 65, 301
+"/home/jowens/Projects/NovusTimeServer/nsAgent/nsAgent/nsTrap.h", "C++", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 15, 9, 67
+"/home/jowens/Projects/NovusTimeServer/run.bat", "Batch", 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2
+"/home/jowens/Projects/NovusTimeServer/server/go.mod", "Go Module File", 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4
+"/home/jowens/Projects/NovusTimeServer/server/server.go", "Go", 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"/home/jowens/Projects/NovusTimeServer/useradmintools.sh", "Shell Script", 65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 20, 119
+"/home/jowens/Projects/NovusTimeServer/web/files/assets/AssetManifest.bin.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1
+"/home/jowens/Projects/NovusTimeServer/web/files/assets/AssetManifest.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1
+"/home/jowens/Projects/NovusTimeServer/web/files/assets/FontManifest.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1
+"/home/jowens/Projects/NovusTimeServer/web/files/assets/shaders/ink_sparkle.frag", "GLSL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 126, 0, 0, 0, 0, 0, 126
+"/home/jowens/Projects/NovusTimeServer/web/files/canvaskit/canvaskit.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 187, 0, 0, 0, 0, 0, 0, 6, 193
+"/home/jowens/Projects/NovusTimeServer/web/files/canvaskit/canvaskit.wasm", "WebAssembly Text Format", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128362, 0, 3990, 132352
+"/home/jowens/Projects/NovusTimeServer/web/files/canvaskit/chromium/canvaskit.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 187, 0, 0, 0, 0, 0, 0, 6, 193
+"/home/jowens/Projects/NovusTimeServer/web/files/canvaskit/chromium/canvaskit.wasm", "WebAssembly Text Format", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 106734, 0, 2906, 109640
+"/home/jowens/Projects/NovusTimeServer/web/files/canvaskit/skwasm.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 152, 0, 0, 0, 0, 0, 1, 6, 159
+"/home/jowens/Projects/NovusTimeServer/web/files/canvaskit/skwasm.wasm", "WebAssembly Text Format", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 55865, 0, 1675, 57540
+"/home/jowens/Projects/NovusTimeServer/web/files/canvaskit/skwasm_st.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 0, 0, 0, 6, 135
+"/home/jowens/Projects/NovusTimeServer/web/files/canvaskit/skwasm_st.wasm", "WebAssembly Text Format", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 55304, 0, 1678, 56982
+"/home/jowens/Projects/NovusTimeServer/web/files/flutter.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 1, 1, 5
+"/home/jowens/Projects/NovusTimeServer/web/files/flutter_bootstrap.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 1, 4, 17
+"/home/jowens/Projects/NovusTimeServer/web/files/flutter_service_worker.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 174, 0, 0, 0, 0, 0, 31, 3, 208
+"/home/jowens/Projects/NovusTimeServer/web/files/index.html", "HTML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 15, 5, 39
+"/home/jowens/Projects/NovusTimeServer/web/files/main.dart.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 146809, 0, 0, 0, 0, 0, 0, 1, 146810
+"/home/jowens/Projects/NovusTimeServer/web/files/manifest.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 35, 0, 0, 0, 1, 36
+"/home/jowens/Projects/NovusTimeServer/web/files/version.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1
+"/home/jowens/Projects/NovusTimeServer/web/go.mod", "Go Module File", 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4
+"/home/jowens/Projects/NovusTimeServer/web/web.go", "Go", 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 7
+"Total", "-", 65, 3, 2, 4, 8, 1875, 12415, 1, 55, 138, 37, 504, 147653, 19, 126, 39, 18, 346265, 3699, 14180, 527106

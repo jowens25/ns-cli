@@ -35,11 +35,11 @@ func Connect() error {
 }
 
 func Reset() error {
-	err := C.reset()
+	//err := C.reset()
 
-	if err != 0 {
-		return errors.New("failed to reset device")
-	}
+	//if err != 0 {
+	//	return errors.New("failed to reset device")
+	//}
 	return nil
 }
 

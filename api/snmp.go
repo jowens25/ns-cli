@@ -26,7 +26,7 @@ func readSnmpUsersFromFile() {
 	var createUsers []map[string]string
 	file, err := os.Open(os.Getenv(SNMP_CONFIG_PATH))
 	if err != nil {
-		log.Fatal("failed to open config file")
+		log.Fatal("failed to open config file", file.Name())
 	}
 	defer file.Close()
 

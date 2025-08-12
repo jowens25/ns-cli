@@ -2,9 +2,7 @@ package api
 
 import (
 	"NovusTimeServer/axi"
-	"NovusTimeServer/web"
 	"fmt"
-	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -38,15 +36,15 @@ func init() {
 
 func RunApiServer() {
 
-	jsRouter := gin.Default()
-
-	webFS, err := fs.Sub(web.Files, "files")
-	if err != nil {
-		panic(err)
-	}
-	jsRouter.StaticFS("/", http.FS(webFS))
-
-	go jsRouter.Run(os.Getenv(WEB_HOST) + WEB_PORT)
+	//jsRouter := gin.Default()
+	//
+	//webFS, err := fs.Sub(web.Files, "files")
+	//if err != nil {
+	//	panic(err)
+	//}
+	//jsRouter.StaticFS("/", http.FS(webFS))
+	//
+	//go jsRouter.Run(os.Getenv(WEB_HOST) + WEB_PORT)
 
 	initDataBase()
 	r := gin.Default()
