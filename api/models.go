@@ -33,6 +33,21 @@ type Snmp struct {
 	SysDescription string `json:"sys_description"`
 }
 
+type Telnet struct {
+	Status string `json:"status"`
+	Action string `json:"action"`
+}
+
+type Ssh struct {
+	Status string `json:"status"`
+	Action string `json:"action"`
+}
+
+type Http struct {
+	Status string `json:"status"`
+	Action string `json:"action"`
+}
+
 type Ntp struct {
 	gorm.Model
 	Version          string `json:"version"`

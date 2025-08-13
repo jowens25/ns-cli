@@ -184,31 +184,48 @@ func resetSnmpConfig(c *gin.Context) {
 func GetSnmpdStatus() string {
 	cmd := exec.Command("systemctl", "is-active", "snmpd")
 	out, err := cmd.CombinedOutput()
-	log.Println(err)
+	if err != nil {
+		log.Println(err)
+	}
 	log.Println("SNMPD STATUS: ", strings.TrimSpace(string(out)))
 	// status
 	return strings.TrimSpace(string(out))
 }
 
 func StopSnmpd() {
+
+	DisablePort("161")
+	DisablePort("162")
+
 	cmd := exec.Command("systemctl", "stop", "snmpd")
 	out, err := cmd.CombinedOutput()
-	log.Println(err)
+	if err != nil {
+		log.Println(err)
+	}
 	log.Println("STOP SNMPD: ", strings.TrimSpace(string(out)))
 }
 
 func StartSnmpd() {
+
+	EnablePort("161")
+	EnablePort("162")
+
 	cmd := exec.Command("systemctl", "start", "snmpd")
 	out, err := cmd.CombinedOutput()
-	log.Println(err)
+	if err != nil {
+		log.Println(err)
+	}
 	log.Println("START SNMPD: ", strings.TrimSpace(string(out)))
 }
 
 func RestartSnmpd() {
 	cmd := exec.Command("systemctl", "restart", "snmpd")
 	out, err := cmd.CombinedOutput()
-	log.Println(err)
-	log.Println("START SNMPD: ", strings.TrimSpace(string(out)))
+	if err != nil {
+		log.Println(err)
+	}
+
+	log.Println("RESTART SNMPD: ", strings.TrimSpace(string(out)))
 }
 
 func CopySnmpdConfig() {

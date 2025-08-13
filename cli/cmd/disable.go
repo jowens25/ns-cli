@@ -4,6 +4,7 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"NovusTimeServer/api"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -21,22 +22,27 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		//cmd.Flags().Visit(func(f *pflag.Flag) {
-		//
-		//	switch f.Name {
-		//	case "ssh":
-		//		axi.LoadConfig(args[0])
-		//
-		//	default:
-		//		fmt.Println("only load works right now")
-		//	}
-		//})
+		if len(args) > 0 {
+			switch args[0] {
+			case "telnet":
+				fmt.Println(api.StopTelnet())
+			case "ssh":
+				//fmt.Println(api.StopSsh())
+			case "http":
 
-		switch args[0] {
-		case "ssh":
-			fmt.Println("disable ssh")
-		case "telnet":
-			fmt.Println("disable telnet")
+			case "port":
+
+				if len(args) > 1 {
+					api.DisablePort(args[1])
+
+					fmt.Println("Disabled port: ", args[1])
+				}
+
+			default:
+
+			}
+		} else {
+			fmt.Println("please enter a protocol or port to Disable")
 		}
 
 	},

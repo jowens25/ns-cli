@@ -1,10 +1,10 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
+	"NovusTimeServer/api"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -21,7 +21,29 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("enable called")
+
+		if len(args) > 0 {
+			switch args[0] {
+			case "telnet":
+				fmt.Println(api.StartTelnet())
+			case "ssh":
+				fmt.Println(api.StartSsh())
+			case "http":
+
+			case "port":
+
+				if len(args) > 1 {
+					api.EnablePort(args[1])
+
+					fmt.Println("Enabled port: ", args[1])
+				}
+
+			default:
+
+			}
+		} else {
+			fmt.Println("please enter a protocol or port to enable")
+		}
 	},
 }
 

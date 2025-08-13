@@ -1,15 +1,14 @@
 package api
 
 import (
-	"NovusTimeServer/axi"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
@@ -23,7 +22,7 @@ const (
 	API_HOST   = "API_HOST"
 	API_PORT   = ":5000"
 	WEB_HOST   = "WEB_HOST"
-	WEB_PORT   = ":8080"
+	WEB_PORT   = ":80"
 	DB_PATH    = "./app.db"
 )
 
@@ -31,132 +30,6 @@ var serialMutex sync.Mutex
 
 func init() {
 	os.Setenv(SNMP_CONFIG_PATH, "/etc/snmp/snmpd.conf")
-
-}
-
-func RunApiServer() {
-
-	//jsRouter := gin.Default()
-	//
-	//webFS, err := fs.Sub(web.Files, "files")
-	//if err != nil {
-	//	panic(err)
-	//}
-	//jsRouter.StaticFS("/", http.FS(webFS))
-	//
-	//go jsRouter.Run(os.Getenv(WEB_HOST) + WEB_PORT)
-
-	initDataBase()
-	r := gin.Default()
-	r.SetTrustedProxies(nil)
-	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"}
-	corsConfig.AllowHeaders = []string{"Authorization", "Content-Type", "X-Request-ID"}
-	corsConfig.AllowCredentials = true
-	corsConfig.AllowAllOrigins = true
-	//corsConfig.AllowOrigins = []string{
-	//	"http://" + WEB_HOST + WEB_PORT,
-	//	"http://" + API_HOST + API_PORT,
-	//}
-
-	//r.Use(corsConfig)
-	r.Use(cors.New(corsConfig))
-
-	r.Use(gin.Recovery())
-
-	// api version group
-	v1 := r.Group("/api/v1")
-
-	// public routes
-	v1.POST("/auth/login", loginHandler)
-
-	protected := v1.Group("/")
-	protected.Use(authorizationMiddleware())
-	{
-		protected.POST("/logout", logoutHandler)
-
-		protected.GET("/health", healthHandler)
-
-		protected.GET("/users", readUsers)
-		protected.POST("/users", writeUser)
-		protected.PATCH("/users/:id", editUser)
-		protected.DELETE("/users/:id", deleteUser)
-
-		snmpGroup := protected.Group("/snmp")
-
-		snmpGroup.GET("/v1v2c_user", readSnmpV1V2cUsers)
-		snmpGroup.POST("/v1v2c_user", writeSnmpV1V2cUser)
-		snmpGroup.PATCH("/v1v2c_user/:id", editSnmpV1V2cUser)
-		snmpGroup.DELETE("/v1v2c_user/:id", deleteSnmpV1V2cUser)
-
-		snmpGroup.GET("v3_user", readSnmpV3Users)
-		snmpGroup.POST("v3_user", writeSnmpV3User)
-		snmpGroup.PATCH("v3_user/:id", editSnmpV3User)
-		snmpGroup.DELETE("v3_user/:id", deleteSnmpV3User)
-
-		snmpGroup.GET("/info", readSnmpInfo)
-		snmpGroup.PATCH("/info", writeSnmpInfo)
-		snmpGroup.GET("/reset_config", resetSnmpConfig)
-
-		protected.GET("/ntp/:prop", readNtpProperty)
-		protected.POST("/ntp/:prop", writeNtpProperty)
-
-	}
-
-	// 404 handler
-	r.NoRoute(func(c *gin.Context) {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error":   "Endpoint not found",
-			"path":    c.Request.URL.Path,
-			"method":  c.Request.Method,
-			"message": "The requested resource could not be found",
-		})
-	})
-
-	r.Run(os.Getenv(API_HOST) + API_PORT)
-}
-
-func readNtpProperty(c *gin.Context) {
-	serialMutex.Lock()
-	defer serialMutex.Unlock()
-	property := c.Param("prop")
-	operation := "read"
-	module := "ntp"
-	value := ""
-
-	err := axi.Operate(&operation, &module, &property, &value)
-
-	if err != nil {
-		log.Println("axi operate error in ntp read")
-		log.Println(err.Error())
-
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{property: value})
-}
-
-func writeNtpProperty(c *gin.Context) {
-	serialMutex.Lock()
-	defer serialMutex.Unlock()
-	var data map[string]string
-	if err := c.ShouldBindJSON(&data); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	operation := "write"
-	module := "ntp"
-	property := c.Param("prop")
-	//value := ""
-	value := data[property]
-
-	err := axi.Operate(&operation, &module, &property, &value)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{property: value})
 
 }
 
@@ -363,6 +236,38 @@ func createDefaultUser() {
 
 		db.Create(&snmpV1V2User)
 
+	}
+
+}
+
+func SetIp(ip string, gw string) {
+
+	file, err := os.Open("/etc/network/interfaces")
+
+	if err != nil {
+		log.Println(err)
+	}
+	defer file.Close()
+
+	var lines []string
+
+	newAddressLine := fmt.Sprintf("address %s", ip)
+	newGatewayLine := fmt.Sprintf("gateway %s", gw)
+
+	lines = append(lines, []string{"allow-hotplug eth0"}...)
+	lines = append(lines, []string{"no-auto-down eth0"}...)
+	lines = append(lines, []string{"iface eth0 inet static"}...)
+	lines = append(lines, []string{newAddressLine}...)
+	lines = append(lines, []string{"netmask 255.255.255.0"}...)
+	lines = append(lines, []string{newGatewayLine}...)
+	lines = append(lines, []string{"dns-nameservers 8.8.8.8 8.8.4.4"}...)
+	lines = append(lines, []string{"# Local loopback"}...)
+	lines = append(lines, []string{"auto lo"}...)
+	lines = append(lines, []string{"iface lo inet loopback"}...)
+
+	err = os.WriteFile("/etc/network/interfaces", []byte(strings.Join(lines, "\n")+"\n"), 0644)
+	if err != nil {
+		log.Fatal("failed to write file:", err)
 	}
 
 }
