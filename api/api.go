@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"net/http"
@@ -240,7 +241,7 @@ func createDefaultUser() {
 
 }
 
-func SetIp(ip string, gw string) {
+func SetIpAndGw(ip string, gw ...string) {
 
 	file, err := os.Open("/etc/network/interfaces")
 
@@ -250,24 +251,28 @@ func SetIp(ip string, gw string) {
 	defer file.Close()
 
 	var lines []string
+	scanner := bufio.NewScanner(file)
+	// read all the lines, find placements
+	for scanner.Scan() {
+		line := scanner.Text()
 
-	newAddressLine := fmt.Sprintf("address %s", ip)
-	newGatewayLine := fmt.Sprintf("gateway %s", gw)
+		if strings.Contains(line, "address") {
+			line = fmt.Sprintf("address %s", ip)
+		}
 
-	lines = append(lines, []string{"allow-hotplug eth0"}...)
-	lines = append(lines, []string{"no-auto-down eth0"}...)
-	lines = append(lines, []string{"iface eth0 inet static"}...)
-	lines = append(lines, []string{newAddressLine}...)
-	lines = append(lines, []string{"netmask 255.255.255.0"}...)
-	lines = append(lines, []string{newGatewayLine}...)
-	lines = append(lines, []string{"dns-nameservers 8.8.8.8 8.8.4.4"}...)
-	lines = append(lines, []string{"# Local loopback"}...)
-	lines = append(lines, []string{"auto lo"}...)
-	lines = append(lines, []string{"iface lo inet loopback"}...)
+		if len(gw) != 0 {
+			if strings.Contains(line, "gateway") {
+				line = fmt.Sprintf("gateway %s", gw[0])
+			}
+
+		}
+
+		lines = append(lines, line)
+
+	}
 
 	err = os.WriteFile("/etc/network/interfaces", []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
 		log.Fatal("failed to write file:", err)
 	}
-
 }

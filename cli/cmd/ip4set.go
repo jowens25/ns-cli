@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"NovusTimeServer/api"
-	"fmt"
 
 	"github.com/spf13/cobra"
 )
@@ -13,17 +12,19 @@ import (
 // ip4setCmd represents the ip4set command
 var ip4setCmd = &cobra.Command{
 	Use:   "ip4set",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "ip4set ip gw",
+	Long: `Use this command to update the ip address and/or gateway 
+in /etc/network/interfaces ip4set <ip>, ip4set <ip> <gw>`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("ip4set called")
+		if len(args) == 0 {
+			cmd.Help()
+		} else if len(args) == 1 {
+			api.SetIpAndGw(args[0])
 
-		api.SetIp(args[0], args[1])
+		} else if len(args) == 2 {
+			api.SetIpAndGw(args[0], args[1])
+		}
+
 	},
 }
 
