@@ -11,9 +11,9 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:     "nts",
-	Short:   "Novus Time Server configuration tool",
-	Long:    "Novus Time Server configuration tool is used for updating the parameters in Novus Power Products Time Servers",
+	Use:     "nct",
+	Short:   "Novus Configuration Tool",
+	Long:    "Novus Configuration is a tool for configuring Novus products",
 	Version: "0.0.1",
 	Run: func(cmd *cobra.Command, args []string) {
 	},

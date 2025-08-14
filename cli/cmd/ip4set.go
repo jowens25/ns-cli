@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"NovusTimeServer/api"
+	"fmt"
 
 	"github.com/spf13/cobra"
 )
@@ -24,6 +25,7 @@ in /etc/network/interfaces ip4set <ip>, ip4set <ip> <gw>`,
 		} else if len(args) == 2 {
 			api.SetIpAndGw(args[0], args[1])
 		}
+		fmt.Println("Please reboot for changes to take effect")
 
 	},
 }

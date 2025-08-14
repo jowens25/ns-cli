@@ -18,7 +18,7 @@ func startJsServer() {
 	}
 	jsRouter.StaticFS("/", http.FS(webFS))
 
-	go jsRouter.Run("10.1.10.205" + WEB_PORT)
+	go jsRouter.Run(GetOutboundIP().String() + WEB_PORT)
 }
 
 func startApiServer() {
@@ -98,5 +98,5 @@ func startApiServer() {
 		})
 	})
 
-	apiRouter.Run("10.1.10.205" + API_PORT)
+	apiRouter.Run(GetOutboundIP().String() + API_PORT)
 }
