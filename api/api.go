@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"strings"
 	"sync"
 	"time"
@@ -275,4 +276,11 @@ func SetIpAndGw(ip string, gw ...string) {
 	if err != nil {
 		log.Fatal("failed to write file:", err)
 	}
+
+	cmd := exec.Command("systemctl", "restart", "networking")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Println(err, string(out))
+	}
+
 }
