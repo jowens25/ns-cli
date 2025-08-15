@@ -23,7 +23,8 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("raw called")
 
-		api.SendRaw(args[0])
+		api.SendRaw([]byte(args[0]))
+
 	},
 }
 
