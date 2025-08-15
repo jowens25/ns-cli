@@ -60,7 +60,7 @@ func DisableInterface(i string) {
 		log.Fatal("failed to write file:", err)
 	}
 
-	cmd = exec.Command("systemctl", "restart", "networking")
+	cmd = exec.Command("systemctl", "stop", "networking")
 
 	out, err = cmd.CombinedOutput()
 	if err != nil {
@@ -101,7 +101,7 @@ func EnableInterface(i string) {
 		log.Fatal("failed to write file:", err)
 	}
 
-	cmd = exec.Command("systemctl", "restart", "networking")
+	cmd = exec.Command("systemctl", "start", "networking")
 
 	out, err = cmd.CombinedOutput()
 	if err != nil {
