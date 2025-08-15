@@ -8,7 +8,12 @@ import (
 	"go.bug.st/serial"
 )
 
-func SendRaw(r []byte) {
+var FileDescriptor string = "/dev/ttymxc2"
+
+func SendRaw(r string) {
+
+	write_data := make([]byte, 0, 64)
+	read_data := make([]byte, 64)
 
 	mode := &serial.Mode{
 		BaudRate: 115200,
@@ -17,34 +22,38 @@ func SendRaw(r []byte) {
 		StopBits: serial.OneStopBit,
 	}
 
-	port, err := serial.Open("/dev/ttymxc2", mode)
+	port, err := serial.Open(FileDescriptor, mode)
 	if err != nil {
-		log.Println("failed to open serial device", err)
+		port.Close()
+		log.Fatal("serial open err: ", err)
 	}
-	defer port.Close()
 
 	port.SetReadTimeout(time.Millisecond)
 
-	r = append(r, 0x0D)
+	write_data = append(write_data, "$SAVEFL"...)
+	write_data = append(write_data, '\r')
+	write_data = append(write_data, '\n')
 
-	r = append(r, 0x0A)
-
-	_, err = port.Write(r)
+	n, err := port.Write(write_data)
 
 	if err != nil {
-		log.Println("failed to write to serial device: %w", err)
+		log.Fatal("write error: ", err)
 	}
 
-	readBuffer := make([]byte, 64)
-
-	n, err := port.Read(readBuffer)
-	if err != nil {
-		log.Fatalf("failed to read from serial port: %v", err)
-	}
 	if n == 0 {
-		fmt.Println("No data received, exiting read loop.")
+		log.Fatal("response: none")
 	}
-	fmt.Printf("Received %d bytes: %s\n", n, string(readBuffer))
-	// Add logic to process received data or break from the loop based on your needs
 
+	n, err = port.Read(read_data)
+	port.Close()
+
+	if err != nil {
+		log.Fatal("read error: ", err)
+	}
+
+	if n == 0 {
+		log.Fatal("response: none")
+	}
+	read_string := string(read_data)
+	fmt.Println(read_string)
 }
