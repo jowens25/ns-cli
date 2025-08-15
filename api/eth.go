@@ -28,17 +28,17 @@ func DisableInterface(i string) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		if strings.Contains(line, "auto") {
-			line = "# " + line
+		if strings.Contains(line, "auto "+i) {
+			line = "#" + line
 		}
-		if strings.Contains(line, "allow-auto") {
-			line = "# " + line
+		if strings.Contains(line, "allow-auto "+i) {
+			line = "#" + line
 		}
-		if strings.Contains(line, "allow-hotplug") {
-			line = "# " + line
+		if strings.Contains(line, "allow-hotplug "+i) {
+			line = "#" + line
 		}
-		if strings.Contains(line, "allow-class") {
-			line = "# " + line
+		if strings.Contains(line, "allow-class "+i) {
+			line = "#" + line
 		}
 
 		lines = append(lines, line)
@@ -79,17 +79,17 @@ func EnableInterface(i string) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		if strings.HasPrefix(line, "# auto") {
-			line = strings.TrimPrefix(line, "# ")
+		if strings.HasPrefix(line, "# auto") || strings.HasPrefix(line, "#auto") {
+			line = strings.TrimPrefix(line, "#")
 		}
-		if strings.Contains(line, "# allow-auto") {
-			line = strings.TrimPrefix(line, "# ")
+		if strings.Contains(line, "# allow-auto") || strings.HasPrefix(line, "#allow-auto") {
+			line = strings.TrimPrefix(line, "#")
 		}
-		if strings.Contains(line, "# allow-hotplug") {
-			line = strings.TrimPrefix(line, "# ")
+		if strings.Contains(line, "# allow-hotplug") || strings.HasPrefix(line, "#allow-hotplug") {
+			line = strings.TrimPrefix(line, "#")
 		}
-		if strings.Contains(line, "# allow-class") {
-			line = strings.TrimPrefix(line, "# ")
+		if strings.Contains(line, "# allow-class") || strings.HasPrefix(line, "#allow-class") {
+			line = strings.TrimPrefix(line, "#")
 		}
 
 		lines = append(lines, line)
