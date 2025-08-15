@@ -44,7 +44,7 @@ func SendRaw(r []byte) {
 	if n == 0 {
 		fmt.Println("No data received, exiting read loop.")
 	}
-	fmt.Printf("Received %d bytes: %s\n", n, string(readBuffer[:n]))
+	fmt.Printf("Received %d bytes: %s\n", n, string(readBuffer))
 	// Add logic to process received data or break from the loop based on your needs
 
 }
