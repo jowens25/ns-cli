@@ -79,18 +79,17 @@ func EnableInterface(i string) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		if after, ok := strings.CutPrefix(line, "# auto"); ok {
-			line = after
+		if strings.HasPrefix(line, "# auto") {
+			line = strings.TrimPrefix(line, "# ")
 		}
-
-		if after, ok := strings.CutPrefix(line, "# allow-auto"); ok {
-			line = after
+		if strings.Contains(line, "# allow-auto") {
+			line = strings.TrimPrefix(line, "# ")
 		}
-		if after, ok := strings.CutPrefix(line, "# allow-hotplug"); ok {
-			line = after
+		if strings.Contains(line, "# allow-hotplug") {
+			line = strings.TrimPrefix(line, "# ")
 		}
-		if after, ok := strings.CutPrefix(line, "# allow-class"); ok {
-			line = after
+		if strings.Contains(line, "# allow-class") {
+			line = strings.TrimPrefix(line, "# ")
 		}
 
 		lines = append(lines, line)

@@ -35,3 +35,15 @@
 2025/08/15 10:37:46 SNMPD:  active
 2025/08/15 11:00:15 inactive
  exit status 3
+2025/08/15 14:01:52  exec: "ifdown": executable file not found in $PATH
+2025/08/15 14:01:52 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 14:02:25  exec: "ifup": executable file not found in $PATH
+2025/08/15 14:02:25 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 14:03:17  exec: "ifup": executable file not found in $PATH
+2025/08/15 14:03:17 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 14:03:27  exec: "ifup": executable file not found in $PATH
+2025/08/15 14:03:27 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
