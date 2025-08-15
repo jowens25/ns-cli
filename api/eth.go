@@ -7,9 +7,20 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 var directives = []string{"auto", "allow-auto", "allow-hotplug", "allow-class"}
+
+func waitingDots() {
+	fmt.Print("Please wait")
+
+	for range 5 {
+		fmt.Print(".")
+		time.Sleep(1 * time.Second)
+	}
+	fmt.Println()
+}
 
 func commentDirectiveLines(l string, i string) string {
 	for _, directive := range directives {
@@ -100,6 +111,8 @@ func EnableInterface(i string) {
 	if err != nil {
 		log.Fatal("failed to write file:", err)
 	}
+
+	waitingDots()
 
 	cmd = exec.Command("systemctl", "start", "networking")
 

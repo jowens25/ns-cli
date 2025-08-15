@@ -113,3 +113,10 @@
 2025/08/15 15:21:34  exec: "ifup": executable file not found in $PATH
 2025/08/15 15:21:34 Failed to restart networking.service: Unit networking.service not found.
  exit status 5
+2025/08/15 15:34:03  exec: "ifup": executable file not found in $PATH
+2025/08/15 15:34:26  exec: "ifup": executable file not found in $PATH
+2025/08/15 15:34:31 Failed to start networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 15:34:47  exec: "ifup": executable file not found in $PATH
+2025/08/15 15:34:52 Failed to start networking.service: Unit networking.service not found.
+ exit status 5
