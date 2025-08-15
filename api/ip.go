@@ -65,3 +65,32 @@ func SetIpAndGw(ip string, gw ...string) {
 	}
 
 }
+
+func GetIpAndGw() string {
+
+	file, err := os.Open("/etc/network/interfaces")
+
+	if err != nil {
+		log.Println(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	out := ""
+	// read all the lines, find placements
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if strings.Contains(line, "address") {
+			out = out + " " + line
+		}
+
+		if strings.Contains(line, "gateway") {
+			out = out + " " + line
+		}
+
+	}
+
+	return out
+
+}
