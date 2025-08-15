@@ -1,0 +1,37 @@
+2025/08/15 09:45:18 inactive
+ exit status 3
+2025/08/15 09:45:22 inactive
+ exit status 3
+2025/08/15 09:58:36 inactive
+ exit status 3
+2025/08/15 09:58:38 inactive
+ exit status 3
+2025/08/15 09:58:39 inactive
+ exit status 3
+2025/08/15 10:18:00 Database initialized successfully
+2025/08/15 10:18:04 SNMPD:  inactive
+2025/08/15 10:18:04 incomplete snmp entry
+2025/08/15 10:18:04 [#group group name sec.model sec.name]
+2025/08/15 10:18:04 FOR LOOP OVER GROUPS
+2025/08/15 10:18:04 SNMPD:  inactive
+2025/08/15 10:18:04 incomplete snmp entry
+2025/08/15 10:18:04 [#group group name sec.model sec.name]
+2025/08/15 10:18:04 FOR LOOP OVER GROUPS
+2025/08/15 10:18:05 SNMPD:  active
+2025/08/15 10:18:05 SNMPD:  active
+2025/08/15 10:37:42 inactive
+ exit status 3
+2025/08/15 10:37:45 SNMPD:  inactive
+2025/08/15 10:37:45 incomplete snmp entry
+2025/08/15 10:37:45 [#group group name sec.model sec.name]
+2025/08/15 10:37:45 FOR LOOP OVER GROUPS
+2025/08/15 10:37:45 SNMPD:  inactive
+2025/08/15 10:37:45 incomplete snmp entry
+2025/08/15 10:37:45 [#group group name sec.model sec.name]
+2025/08/15 10:37:45 FOR LOOP OVER GROUPS
+2025/08/15 10:37:45 inactive
+ exit status 3
+2025/08/15 10:37:46 SNMPD:  active
+2025/08/15 10:37:46 SNMPD:  active
+2025/08/15 11:00:15 inactive
+ exit status 3

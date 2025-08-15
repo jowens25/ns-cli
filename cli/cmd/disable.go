@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 // disableCmd represents the disable command
@@ -21,43 +22,59 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		hasFlags := false
+		cmd.Flags().Visit(func(f *pflag.Flag) {
+			hasFlags = true
+			switch f.Name {
 
-		if len(args) > 0 {
-			switch args[0] {
+			case "all":
+				api.StopTelnet()
+				api.StopSsh()
+				api.StopHttp()
 			case "telnet":
-				fmt.Println(api.StopTelnet())
+				api.StopTelnet()
 			case "ssh":
-				//fmt.Println(api.StopSsh())
+				api.StopSsh()
 			case "http":
+				api.StopHttp()
 
 			case "port":
+				if len(args) != 0 {
+					port := args[0]
+					api.DisablePort(port)
+				} else {
+					fmt.Println("missing port")
 
-				if len(args) > 1 {
-					api.DisablePort(args[1])
+				}
 
-					fmt.Println("Disabled port: ", args[1])
+			case "interface":
+				if len(args) != 0 {
+					intf := args[0]
+					api.DisableInterface(intf)
+				} else {
+					fmt.Println("missing interface")
+
 				}
 
 			default:
-
+				fmt.Println(cmd.Help())
 			}
-		} else {
-			fmt.Println("please enter a protocol or port to Disable")
-		}
 
+		})
+		if !hasFlags {
+			cmd.Help()
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(disableCmd)
 
-	// Here you will define your flags and configuration settings.
+	disableCmd.Flags().BoolP("telnet", "t", false, "disable telnet")
+	disableCmd.Flags().BoolP("ssh", "s", false, "disable ssh")
+	disableCmd.Flags().BoolP("http", "g", false, "disable http")
+	disableCmd.Flags().BoolP("port", "p", false, "disable port")
+	disableCmd.Flags().BoolP("all", "a", false, "disable insecure protocols")
+	disableCmd.Flags().BoolP("interface", "i", false, "disable interface")
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// disableCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// disableCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

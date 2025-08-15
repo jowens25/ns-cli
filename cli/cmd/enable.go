@@ -8,55 +8,70 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 // enableCmd represents the enable command
 var enableCmd = &cobra.Command{
 	Use:   "enable",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "enable ports and protocols",
+	Long: `This command can be used to enable common protocols such as 
+ssh, telnet, snmp and http and additional ports.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		hasFlags := false
 
-		if len(args) > 0 {
-			switch args[0] {
+		cmd.Flags().Visit(func(f *pflag.Flag) {
+			hasFlags = true
+
+			switch f.Name {
+			case "all":
+				api.StartTelnet()
+				api.StartSsh()
+				api.StartHttp()
 			case "telnet":
-				fmt.Println(api.StartTelnet())
+				api.StartTelnet()
 			case "ssh":
-				fmt.Println(api.StartSsh())
+				api.StartSsh()
 			case "http":
+				api.StartHttp()
 
 			case "port":
+				if len(args) != 0 {
+					port := args[1]
+					api.DisablePort(port)
+				} else {
+					fmt.Println("missing port")
 
-				if len(args) > 1 {
-					api.EnablePort(args[1])
+				}
 
-					fmt.Println("Enabled port: ", args[1])
+			case "interface":
+				if len(args) != 0 {
+					intf := args[0]
+					api.EnableInterface(intf)
+				} else {
+					fmt.Println("missing interface")
+
 				}
 
 			default:
-
 			}
-		} else {
-			fmt.Println("please enter a protocol or port to enable")
+		})
+
+		if !hasFlags {
+			cmd.Help()
 		}
+
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(enableCmd)
 
-	// Here you will define your flags and configuration settings.
+	enableCmd.Flags().BoolP("telnet", "t", false, "enable telnet")
+	enableCmd.Flags().BoolP("ssh", "s", false, "enable ssh")
+	enableCmd.Flags().BoolP("http", "g", false, "enable http")
+	enableCmd.Flags().BoolP("port", "p", false, "enable port")
+	enableCmd.Flags().BoolP("all", "a", false, "enable insecure protocols")
+	enableCmd.Flags().BoolP("interface", "i", false, "enable an interface")
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// enableCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// enableCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

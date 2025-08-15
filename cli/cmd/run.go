@@ -29,7 +29,7 @@ to quickly create a Cobra application.`,
 
 		//axi.LoadConfig("PtpGmNtpServer.ucm")
 
-		api.StartHttp()
+		api.RunApp()
 
 	},
 }

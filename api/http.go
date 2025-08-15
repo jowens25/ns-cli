@@ -1,69 +1,26 @@
 package api
 
 import (
-	"fmt"
-	"log"
 	"net/http"
-	"os"
-	"os/exec"
-	"strconv"
-	"strings"
-	"syscall"
 
 	"github.com/gin-gonic/gin"
 )
 
 func StopHttp() {
 
-	DisablePort(WEB_PORT)
-	DisablePort(API_PORT)
-
-	data, err := os.ReadFile("server.pid")
-	if err != nil {
-		log.Fatalf("Could not read PID file: %v", err)
-	}
-	pid, _ := strconv.Atoi(string(data))
-	process, err := os.FindProcess(pid)
-	if err != nil {
-		log.Fatalf("Could not find process: %v", err)
-	}
-	process.Signal(syscall.SIGTERM)
+	DisablePort("80")
 
 }
 
 func StartHttp() {
 
-	EnablePort(WEB_PORT)
-	EnablePort(API_PORT)
-
-	pid := os.Getpid()
-	os.WriteFile("server.pid", []byte(fmt.Sprintf("%d", pid)), 0644)
-
-	startJsServer()
-
-	initDataBase()
-
-	startApiServer()
+	EnablePort("80")
 
 }
 
 func GetHttpStatus() string {
 
-	data, err := os.ReadFile("server.pid")
-	if err != nil {
-		log.Fatalf("Could not read PID file: %v", err)
-	}
-
-	pid, _ := strconv.Atoi(string(data))
-
-	cmdStr := fmt.Sprintf("[ -d /proc/%d ] && echo active", pid)
-	cmd := exec.Command("bash", "-c", cmdStr)
-
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Println(err)
-	}
-	return strings.TrimSpace(string(out))
+	return GetPortStatus("80")
 }
 
 func readHttpStatus(c *gin.Context) {

@@ -5,14 +5,20 @@ package main
 
 import (
 	"NovusTimeServer/cli/cmd"
+	"log"
+	"os"
 )
 
 func main() {
 
+	logFile, err := os.OpenFile("app.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+	if err != nil {
+		log.Fatalf("error opening log file: %v", err)
+	}
+	defer logFile.Close()
+
+	log.SetOutput(logFile)
+
 	cmd.Execute()
 
-	//buf := make([]byte, 1024)
-	////n := runtime.Stack(buf, true)
-	////fmt.Printf("Number of bytes written: %d\n", n)
-	//fmt.Printf("All goroutines:\n%s", buf[:n])
 }

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os/exec"
@@ -14,46 +15,42 @@ func InitTelnetConfig() {
 	cmd := exec.Command("cp", "telnet.socket", "/etc/systemd/system/telnet.socket")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Println(err)
+		log.Println(string(out), err)
 	}
 
 	cmd = exec.Command("cp", "telnet@.service", "/etc/systemd/system/telnet@.service")
 	out, err = cmd.CombinedOutput()
 	if err != nil {
-		log.Println(err)
-
+		log.Println(string(out), err)
 	}
+
 	log.Println(strings.TrimSpace(string(out)))
 
 }
 
-func StopTelnet() string {
+func StopTelnet() {
 
 	DisablePort("23")
 
 	cmd := exec.Command("systemctl", "stop", "telnet.socket")
 	out, err := cmd.CombinedOutput()
-
 	if err != nil {
-		log.Println(err)
+		log.Println(string(out), err)
 	}
-
-	return strings.TrimSpace(string(out))
+	fmt.Println("telnet: ", GetTelnetStatus())
 
 }
 
-func StartTelnet() string {
+func StartTelnet() {
 
 	EnablePort("23")
 
 	cmd := exec.Command("systemctl", "start", "telnet.socket")
 	out, err := cmd.CombinedOutput()
-
 	if err != nil {
-		log.Println(err)
+		log.Println(string(out), err)
 	}
-
-	return strings.TrimSpace(string(out))
+	fmt.Println("telnet: ", GetTelnetStatus())
 
 }
 
@@ -61,7 +58,7 @@ func GetTelnetStatus() string {
 	cmd := exec.Command("systemctl", "is-active", "telnet.socket")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Println(err)
+		log.Println(string(out), err)
 	}
 	return strings.TrimSpace(string(out))
 }

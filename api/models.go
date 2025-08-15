@@ -102,16 +102,15 @@ type SnmpV3User struct {
 
 type SnmpTrap struct {
 	gorm.Model
-	Version              string `json:"version"`
-	User                 string `json:"user"`
-	DestinationIpVersion string `json:"destination_ip_version"`
-	DestinationIp        string `json:"destination_ip"`
-	Port                 string `json:"port"`
-	EngineId             string `json:"engine_id"`
-	AuthType             string `json:"auth_type"`
-	AuthPassphrase       string `json:"auth_passphrase"`
-	PrivType             string `json:"priv_type"`
-	PrivPassphrase       string `json:"priv_passphrase"`
+	Version        string `json:"version"`
+	Community      string `json:"user"`
+	DestinationIp  string `json:"destination_ip"`
+	Port           string `json:"port"`
+	EngineId       string `json:"engine_id"`
+	AuthType       string `json:"auth_type"`
+	AuthPassphrase string `json:"auth_passphrase"`
+	PrivType       string `json:"priv_type"`
+	PrivPassphrase string `json:"priv_passphrase"`
 }
 
 // JWT Claims

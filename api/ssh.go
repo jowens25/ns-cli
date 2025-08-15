@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os/exec"
@@ -9,30 +10,46 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func StopSsh() string {
+func StopSsh() {
+
 	DisablePort("22")
 
-	cmd := exec.Command("systemctl", "stop", "ssh", "&&", "systemctl", "stop", "ssh.socket")
+	cmd := exec.Command("systemctl", "stop", "ssh")
 	out, err := cmd.CombinedOutput()
-
 	if err != nil {
-		log.Println(err)
+		log.Println(string(out), err)
 	}
 
-	return strings.TrimSpace(string(out))
+	cmd = exec.Command("systemctl", "stop", "ssh.socket")
+	out, err = cmd.CombinedOutput()
+
+	if err != nil {
+		log.Println(string(out), err)
+	}
+
+	fmt.Println("ssh: ", GetSshStatus())
+
 }
 
-func StartSsh() string {
+func StartSsh() {
+
 	EnablePort("22")
 
-	cmd := exec.Command("systemctl", "start", "ssh", "&&", "systemctl", "start", "ssh.socket")
+	cmd := exec.Command("systemctl", "start", "ssh")
 	out, err := cmd.CombinedOutput()
 
 	if err != nil {
-		log.Println(err)
+		log.Println(string(out), err)
 	}
 
-	return strings.TrimSpace(string(out))
+	cmd = exec.Command("systemctl", "start", "ssh.socket")
+	out, err = cmd.CombinedOutput()
+
+	if err != nil {
+		log.Println(string(out), err)
+	}
+
+	fmt.Println("ssh: ", GetSshStatus())
 
 }
 
@@ -40,7 +57,7 @@ func GetSshStatus() string {
 	cmd := exec.Command("systemctl", "is-active", "ssh")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Println(err)
+		log.Println(string(out), err)
 	}
 	return strings.TrimSpace(string(out))
 }

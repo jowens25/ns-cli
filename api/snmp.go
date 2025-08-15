@@ -2,6 +2,7 @@ package api
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -183,12 +184,7 @@ func resetSnmpConfig(c *gin.Context) {
 
 func GetSnmpdStatus() string {
 	cmd := exec.Command("systemctl", "is-active", "snmpd")
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Println(err)
-	}
-	log.Println("SNMPD STATUS: ", strings.TrimSpace(string(out)))
-	// status
+	out, _ := cmd.CombinedOutput()
 	return strings.TrimSpace(string(out))
 }
 
@@ -198,11 +194,9 @@ func StopSnmpd() {
 	DisablePort("162")
 
 	cmd := exec.Command("systemctl", "stop", "snmpd")
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Println(err)
-	}
-	log.Println("STOP SNMPD: ", strings.TrimSpace(string(out)))
+	out, _ := cmd.CombinedOutput()
+	fmt.Println(out)
+	log.Println("SNMPD: ", GetSnmpdStatus())
 }
 
 func StartSnmpd() {
@@ -211,21 +205,16 @@ func StartSnmpd() {
 	EnablePort("162")
 
 	cmd := exec.Command("systemctl", "start", "snmpd")
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Println(err)
-	}
-	log.Println("START SNMPD: ", strings.TrimSpace(string(out)))
+	out, _ := cmd.CombinedOutput()
+	fmt.Println(out)
+	log.Println("SNMPD: ", GetSnmpdStatus())
 }
 
 func RestartSnmpd() {
 	cmd := exec.Command("systemctl", "restart", "snmpd")
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Println(err)
-	}
-
-	log.Println("RESTART SNMPD: ", strings.TrimSpace(string(out)))
+	out, _ := cmd.CombinedOutput()
+	fmt.Println(out)
+	log.Println("SNMPD: ", GetSnmpdStatus())
 }
 
 func CopySnmpdConfig() {
@@ -234,8 +223,7 @@ func CopySnmpdConfig() {
 	log.Println(dest)
 
 	cmd := exec.Command("cp", "snmpd.conf", dest)
-	out, err := cmd.CombinedOutput()
-	log.Println(err)
+	out, _ := cmd.CombinedOutput()
 	log.Println(strings.TrimSpace(string(out)))
 }
 

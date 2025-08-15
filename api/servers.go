@@ -1,25 +1,11 @@
 package api
 
 import (
-	"NovusTimeServer/web"
-	"io/fs"
 	"net/http"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
-
-func startJsServer() {
-	jsRouter := gin.Default()
-
-	webFS, err := fs.Sub(web.Files, "files")
-	if err != nil {
-		panic(err)
-	}
-	jsRouter.StaticFS("/", http.FS(webFS))
-
-	go jsRouter.Run(GetOutboundIP().String() + WEB_PORT)
-}
 
 func startApiServer() {
 	apiRouter := gin.Default()
@@ -98,5 +84,5 @@ func startApiServer() {
 		})
 	})
 
-	apiRouter.Run(GetOutboundIP().String() + API_PORT)
+	apiRouter.Run("0.0.0.0" + API_PORT)
 }
