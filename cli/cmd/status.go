@@ -28,6 +28,18 @@ to quickly create a Cobra application.`,
 			hasFlags = true
 
 			switch f.Name {
+
+			case "interface":
+
+				if len(args) != 0 {
+					intf := args[0]
+
+					fmt.Println(api.GetInterfaceStatus(intf))
+				} else {
+					fmt.Println("missing interface")
+
+				}
+
 			case "telnet":
 				fmt.Println(api.GetTelnetStatus())
 			case "ssh":
@@ -64,4 +76,6 @@ func init() {
 	statusCmd.Flags().BoolP("ssh", "s", false, "show status of ssh")
 	statusCmd.Flags().BoolP("http", "g", false, "show status of http")
 	statusCmd.Flags().BoolP("port", "p", false, "show status of port")
+	statusCmd.Flags().BoolP("interface", "i", false, "show status of interfaces")
+
 }

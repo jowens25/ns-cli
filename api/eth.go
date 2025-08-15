@@ -2,11 +2,32 @@ package api
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
 )
+
+var directives = []string{"auto", "allow-auto", "allow-hotplug", "allow-class"}
+
+func commentDirectiveLines(l string, i string) string {
+	for _, directive := range directives {
+		if strings.Contains(l, directive+" "+i) && !strings.HasPrefix(l, "#") {
+			return "#" + l
+		}
+	}
+	return l
+}
+
+func uncommentDirectiveLines(l string, i string) string {
+	for _, directive := range directives {
+		if strings.Contains(l, directive+" "+i) && strings.HasPrefix(l, "#") {
+			return l[1:]
+		}
+	}
+	return l
+}
 
 func DisableInterface(i string) {
 	cmd := exec.Command("ifdown", i)
@@ -28,18 +49,7 @@ func DisableInterface(i string) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		if strings.Contains(line, "auto "+i) {
-			line = "#" + line
-		}
-		if strings.Contains(line, "allow-auto "+i) {
-			line = "#" + line
-		}
-		if strings.Contains(line, "allow-hotplug "+i) {
-			line = "#" + line
-		}
-		if strings.Contains(line, "allow-class "+i) {
-			line = "#" + line
-		}
+		line = commentDirectiveLines(line, i)
 
 		lines = append(lines, line)
 
@@ -56,6 +66,7 @@ func DisableInterface(i string) {
 	if err != nil {
 		log.Println(string(out), err)
 	}
+	fmt.Println(i+": ", GetInterfaceStatus(i))
 
 }
 
@@ -79,18 +90,7 @@ func EnableInterface(i string) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		if strings.HasPrefix(line, "# auto") || strings.HasPrefix(line, "#auto") {
-			line = strings.TrimPrefix(line, "#")
-		}
-		if strings.Contains(line, "# allow-auto") || strings.HasPrefix(line, "#allow-auto") {
-			line = strings.TrimPrefix(line, "#")
-		}
-		if strings.Contains(line, "# allow-hotplug") || strings.HasPrefix(line, "#allow-hotplug") {
-			line = strings.TrimPrefix(line, "#")
-		}
-		if strings.Contains(line, "# allow-class") || strings.HasPrefix(line, "#allow-class") {
-			line = strings.TrimPrefix(line, "#")
-		}
+		line = uncommentDirectiveLines(line, i)
 
 		lines = append(lines, line)
 
@@ -107,4 +107,31 @@ func EnableInterface(i string) {
 	if err != nil {
 		log.Println(string(out), err)
 	}
+
+	fmt.Println(i+": ", GetInterfaceStatus(i))
+
+}
+
+func GetInterfaceStatus(i string) string {
+
+	file, err := os.Open("/etc/network/interfaces")
+
+	if err != nil {
+		log.Println(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	// read all the lines, find placements
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		for _, directive := range directives {
+			if strings.Contains(line, directive+" "+i) && !strings.HasPrefix(line, "#") {
+				return "active"
+			}
+		}
+	}
+
+	return "inactive"
 }

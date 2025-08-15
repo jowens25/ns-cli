@@ -47,3 +47,69 @@
 2025/08/15 14:03:27  exec: "ifup": executable file not found in $PATH
 2025/08/15 14:03:27 Failed to restart networking.service: Unit networking.service not found.
  exit status 5
+2025/08/15 14:12:08  exec: "ifup": executable file not found in $PATH
+2025/08/15 14:12:08 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 14:12:54  exec: "ifdown": executable file not found in $PATH
+2025/08/15 14:12:55 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 14:13:53  exec: "ifdown": executable file not found in $PATH
+2025/08/15 14:13:53 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 14:14:48  exec: "ifup": executable file not found in $PATH
+2025/08/15 14:14:48 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 14:18:54  exec: "ifdown": executable file not found in $PATH
+2025/08/15 14:18:54 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 14:19:51  exec: "ifdown": executable file not found in $PATH
+2025/08/15 14:19:51 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 14:19:58  exec: "ifdown": executable file not found in $PATH
+2025/08/15 14:19:58 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 14:23:15  exec: "ifdown": executable file not found in $PATH
+2025/08/15 14:23:15 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 14:23:23  exec: "ifdown": executable file not found in $PATH
+2025/08/15 14:23:23 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 14:23:30  exec: "ifup": executable file not found in $PATH
+2025/08/15 14:23:30 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 14:25:45  exec: "ifdown": executable file not found in $PATH
+2025/08/15 14:25:45 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 14:42:16  exec: "ifup": executable file not found in $PATH
+2025/08/15 14:42:16 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 14:42:33  exec: "ifdown": executable file not found in $PATH
+2025/08/15 14:42:33 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 15:15:50  exec: "ifup": executable file not found in $PATH
+2025/08/15 15:15:50 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 15:16:09  exec: "ifdown": executable file not found in $PATH
+2025/08/15 15:16:09 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 15:17:38  exec: "ifup": executable file not found in $PATH
+2025/08/15 15:17:38 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 15:18:48  exec: "ifdown": executable file not found in $PATH
+2025/08/15 15:18:48 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 15:19:04  exec: "ifdown": executable file not found in $PATH
+2025/08/15 15:19:04 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 15:19:17  exec: "ifup": executable file not found in $PATH
+2025/08/15 15:19:17 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 15:19:27  exec: "ifup": executable file not found in $PATH
+2025/08/15 15:19:27 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 15:21:17  exec: "ifdown": executable file not found in $PATH
+2025/08/15 15:21:17 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
+2025/08/15 15:21:34  exec: "ifup": executable file not found in $PATH
+2025/08/15 15:21:34 Failed to restart networking.service: Unit networking.service not found.
+ exit status 5
