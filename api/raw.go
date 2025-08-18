@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func ReadLikeCat() {
+func SendRaw(rawString string) {
 	file, err := os.OpenFile("/dev/ttymxc2", os.O_RDWR, 0)
 	if err != nil {
 		log.Fatal(err)
