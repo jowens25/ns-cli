@@ -5,7 +5,9 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"os"
 	"strings"
+	"time"
 
 	"go.bug.st/serial"
 )
@@ -15,8 +17,8 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 	write_data := make([]byte, 0, 64)
 	read_data := make([]byte, 64)
 
-	mcu_port := "/dev/ttymxc2"
-	//test_port := os.Stdout.Name()
+	//mcu_port := "/dev/ttymxc2"
+	mcu_port := os.Stdout.Name()
 
 	mode := &serial.Mode{
 		BaudRate: 115200,
@@ -28,6 +30,8 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 		log.Fatal("serial open err: ", err)
 	}
 	defer port.Close()
+
+	port.SetReadTimeout(time.Millisecond * 100)
 
 	command = "$" + command
 
