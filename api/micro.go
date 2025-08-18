@@ -11,7 +11,7 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 	//read_data := make([]byte, 256)
 
 	mcu_port := "/dev/ttymxc2"
-	mcu_port = os.Stdout.Name()
+	//mcu_port = os.Stdout.Name()
 
 	file, err := os.OpenFile(mcu_port, os.O_WRONLY, 0644)
 
