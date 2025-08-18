@@ -11,8 +11,8 @@ import (
 
 func MicroWrite(command string, responseMarker string, parameter ...string) string {
 
-	write_data := make([]byte, 256)
-	read_data := make([]byte, 256)
+	write_data := make([]byte, 64)
+	read_data := make([]byte, 64)
 
 	mcu_port := "/dev/ttymxc2"
 	//test_port := os.Stdout.Name()
@@ -48,7 +48,7 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 		fmt.Println(err)
 	}
 
-	fmt.Println(string(read_data))
+	//fmt.Println(string(read_data))
 
 	scanner := bufio.NewScanner(bytes.NewReader(read_data))
 
