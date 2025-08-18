@@ -22,6 +22,9 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 
 	mode := &serial.Mode{
 		BaudRate: 115200,
+		DataBits: 8,
+		Parity:   serial.NoParity,
+		StopBits: serial.OneStopBit,
 	}
 
 	port, err := serial.Open(mcu_port, mode)
