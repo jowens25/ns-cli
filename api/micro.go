@@ -17,9 +17,7 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 
 	if err != nil {
 		fmt.Println(err)
-		return "err"
 	}
-	defer file.Close()
 
 	command = "$" + command
 
@@ -36,22 +34,34 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 	write_data = append(write_data, '\n')
 
 	_, err = file.Write(write_data)
+	file.Close()
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	fmt.Println(string(write_data))
 
-	file.Close()
+	outputFile, err := os.OpenFile(mcu_port, os.O_RDONLY, 0644)
+
+	if err != nil {
+		fmt.Println(err)
+		return "err"
+	}
+	defer file.Close()
 
 	//var read_byte byte
-	//
-	//_, err = port.Read(read_byte)
-	//
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
-	//
+	read_data := make([]byte, 256)
+	n, err := outputFile.Read(read_data)
+	outputFile.Close()
+
+	fmt.Println("read: ", n)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(string(read_data))
+
 	//scanner := bufio.NewScanner(bytes.NewReader(read_data))
 	//
 	//for scanner.Scan() {
