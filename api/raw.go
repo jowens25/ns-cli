@@ -35,7 +35,7 @@ func SendRaw(rawString string) {
 	}
 	defer file.Close()
 
-	buffer := make([]byte, 256)
+	buffer := make([]byte, 0, 256)
 	for {
 		n, err := file.Read(buffer)
 		if err != nil {
