@@ -2,79 +2,62 @@ package api
 
 import (
 	"fmt"
+	"log"
 	"os"
 )
 
+func MakeCommand(cmd string, param ...string) []byte {
+
+	out := []byte("$" + cmd)
+
+	if len(param) > 0 {
+		out = append(out, '=')
+	}
+
+	checksum := CalculateChecksum(out)
+	out = append(out, '*')
+	out = append(out, checksum...)
+	out = append(out, '\r')
+	out = append(out, '\n')
+
+	return out
+
+}
+
 func MicroWrite(command string, responseMarker string, parameter ...string) string {
 
-	//write_data := make([]byte, 256)
-	//read_data := make([]byte, 256)
-
 	mcu_port := "/dev/ttymxc2"
-	//mcu_port = os.Stdout.Name()
 
-	file, err := os.OpenFile(mcu_port, os.O_WRONLY, 0644)
+	cmd := MakeCommand(command, parameter...)
 
-	if err != nil {
-		fmt.Println(err)
-	}
+	read_data := make([]byte, 512)
 
-	command = "$" + command
-
-	if len(parameter) > 0 {
-		command = command + "=" + parameter[0]
-	}
-
-	write_data := []byte(command)
-
-	checksum := CalculateChecksum(write_data)
-	write_data = append(write_data, '*')
-	write_data = append(write_data, checksum...)
-	write_data = append(write_data, '\r')
-	write_data = append(write_data, '\n')
-
-	_, err = file.Write(write_data)
-	file.Close()
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	fmt.Println(string(write_data))
-
-	outputFile, err := os.OpenFile(mcu_port, os.O_RDONLY, 0644)
+	f, err := os.OpenFile(mcu_port, os.O_RDWR, 0644)
 
 	if err != nil {
-		fmt.Println(err)
-		return "err"
+		log.Fatal(err)
 	}
-	defer file.Close()
+	defer f.Close()
 
-	//var read_byte byte
-	read_data := make([]byte, 256)
-	n, err := outputFile.Read(read_data)
-	outputFile.Close()
-
-	fmt.Println("read: ", n)
+	n, err := f.Write(cmd)
 
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
-	fmt.Println(string(read_data))
+	if n > 0 {
+		fmt.Println("wrote: ", n, " bytes")
+	}
 
-	//scanner := bufio.NewScanner(bytes.NewReader(read_data))
-	//
-	//for scanner.Scan() {
-	//	line := scanner.Text()
-	//
-	//	if strings.Contains(line, responseMarker) {
-	//		return line
-	//	} else {
-	//		return "No response?"
-	//	}
-	//
-	//}
-	//return "err"
+	n, err = f.Read(read_data)
 
-	return "end"
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if n > 0 {
+		fmt.Println("read: ", n, " bytes")
+	}
+
+	return string(read_data)
 }
