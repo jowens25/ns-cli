@@ -4,19 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"syscall"
-	"time"
+	"strings"
 )
-
-func FlushSerialBuffer(f *os.File) error {
-	fd := int(f.Fd())
-	_, _, errno := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd),
-		uintptr(0x540B), uintptr(2)) // TCFLSH ioctl
-	if errno != 0 {
-		return errno
-	}
-	return nil
-}
 
 func MakeCommand(cmd string, param ...string) []byte {
 
@@ -42,11 +31,9 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 
 	cmd := MakeCommand(command, parameter...)
 
-	read_data := make([]byte, 512)
+	read_data := make([]byte, 1024)
 
 	f, err := os.OpenFile(mcu_port, os.O_RDWR, 0644)
-
-	FlushSerialBuffer(f)
 
 	if err != nil {
 		log.Fatal(err)
@@ -54,8 +41,6 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 	defer f.Close()
 
 	n, err := f.Write(cmd)
-
-	time.Sleep(time.Millisecond * 50)
 
 	if err != nil {
 		log.Fatal(err)
@@ -65,15 +50,25 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 		fmt.Println("wrote: ", n, " bytes")
 	}
 
-	n, err = f.Read(read_data)
+	for {
 
-	if err != nil {
-		log.Fatal(err)
+		n, err = f.Read(read_data)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if n > 0 {
+			fmt.Println("read: ", n, " bytes")
+		}
+
+		fmt.Println(string(read_data))
+
+		if strings.Contains(string(read_data), responseMarker) {
+			return string(read_data)
+		}
+
 	}
 
-	if n > 0 {
-		fmt.Println("read: ", n, " bytes")
-	}
-
-	return string(read_data)
+	//return string(read_data)
 }
