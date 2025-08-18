@@ -40,6 +40,8 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 	defer f.Close()
 
 	n, err := f.Write(cmd)
+	n, err = f.Write(cmd)
+	n, err = f.Write(cmd)
 
 	if err != nil {
 		log.Fatal(err)
