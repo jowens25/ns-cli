@@ -49,35 +49,38 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 			log.Fatal(err)
 		}
 
+		if n > 0 {
+			fmt.Println("read: ", n, " bytes")
+			fmt.Println(string(temp_data))
+			continue
+		}
+
 		// reading zero i think would mean theres no nmea crap to get in the way...
-		if n == 0 {
 
-			n, err = f.Write(cmd)
+		n, err = f.Write(cmd)
 
-			if err != nil {
-				log.Fatal(err)
-			}
+		if err != nil {
+			log.Fatal(err)
+		}
 
-			if n > 0 {
-				fmt.Println("wrote: ", n, " bytes")
-			}
+		if n > 0 {
+			fmt.Println("wrote: ", n, " bytes")
+		}
 
-			n, err = f.Read(read_data)
+		n, err = f.Read(read_data)
 
-			if err != nil {
-				log.Fatal(err)
-			}
+		if err != nil {
+			log.Fatal(err)
+		}
 
-			if n > 0 {
-				fmt.Println("read: ", n, " bytes")
-			}
+		if n > 0 {
+			fmt.Println("read: ", n, " bytes")
+		}
 
-			fmt.Println(string(read_data))
+		fmt.Println(string(read_data))
 
-			if strings.Contains(string(read_data), responseMarker) {
-				return string(read_data)
-			}
-
+		if strings.Contains(string(read_data), responseMarker) {
+			return string(read_data)
 		}
 
 	}
