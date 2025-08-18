@@ -10,7 +10,7 @@ import (
 
 var FileDescriptor string = "/dev/ttymxc2"
 
-func SendRaw(r string) {
+func SendRaw(rawString string) {
 
 	write_data := make([]byte, 0, 64)
 	read_data := make([]byte, 64)
@@ -30,7 +30,7 @@ func SendRaw(r string) {
 
 	port.SetReadTimeout(time.Millisecond)
 
-	write_data = append(write_data, "$SAVEFL"...)
+	write_data = append(write_data, rawString...)
 	write_data = append(write_data, '\r')
 	write_data = append(write_data, '\n')
 
