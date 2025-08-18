@@ -35,7 +35,7 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 	write_data = append(write_data, '\r')
 	write_data = append(write_data, '\n')
 
-	_, err = file.Write(write_data)
+	_, err = file.Write([]byte(write_data))
 	if err != nil {
 		fmt.Println(err)
 	}
