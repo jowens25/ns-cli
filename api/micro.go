@@ -11,7 +11,7 @@ import (
 
 func MicroWrite(command string, responseMarker string, parameter ...string) string {
 
-	write_data := make([]byte, 64)
+	write_data := make([]byte, 0, 64)
 	read_data := make([]byte, 64)
 
 	mcu_port := "/dev/ttymxc2"
@@ -42,27 +42,28 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 		fmt.Println(err)
 	}
 
-	_, err = file.Read(read_data)
+	for {
 
-	if err != nil {
-		fmt.Println(err)
-	}
+		_, err = file.Read(read_data)
 
-	//fmt.Println(string(read_data))
-
-	scanner := bufio.NewScanner(bytes.NewReader(read_data))
-
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		if strings.Contains(line, responseMarker) {
-			return line
-		} else {
-			return "No response?"
+		if err != nil {
+			fmt.Println(err)
 		}
 
+		scanner := bufio.NewScanner(bytes.NewReader(read_data))
+
+		for scanner.Scan() {
+			line := scanner.Text()
+
+			if strings.Contains(line, responseMarker) {
+				return line
+			} else {
+				return "No response?"
+			}
+
+		}
 	}
 
-	return "mcu error"
+	//return "mcu error"
 
 }
