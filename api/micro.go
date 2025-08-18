@@ -5,8 +5,9 @@ import (
 	"bytes"
 	"fmt"
 	"log"
-	"os"
 	"strings"
+
+	"go.bug.st/serial"
 )
 
 func MicroWrite(command string, responseMarker string, parameter ...string) string {
@@ -17,12 +18,16 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 	mcu_port := "/dev/ttymxc2"
 	//test_port := os.Stdout.Name()
 
-	file, err := os.OpenFile(mcu_port, os.O_RDWR, 0)
-	if err != nil {
-		file.Close()
-		log.Fatal(err)
+	mode := &serial.Mode{
+		BaudRate: 115200,
 	}
-	defer file.Close()
+
+	port, err := serial.Open(mcu_port, mode)
+	if err != nil {
+		port.Close()
+		log.Fatal("serial open err: ", err)
+	}
+	defer port.Close()
 
 	command = "$" + command
 
@@ -37,33 +42,28 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 	write_data = append(write_data, '\r')
 	write_data = append(write_data, '\n')
 
-	_, err = file.Write(write_data)
+	_, err = port.Write(write_data)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	for {
+	_, err = port.Read(read_data)
 
-		_, err = file.Read(read_data)
-
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		scanner := bufio.NewScanner(bytes.NewReader(read_data))
-
-		for scanner.Scan() {
-			line := scanner.Text()
-
-			if strings.Contains(line, responseMarker) {
-				return line
-			} else {
-				return "No response?"
-			}
-
-		}
+	if err != nil {
+		fmt.Println(err)
 	}
 
-	//return "mcu error"
+	scanner := bufio.NewScanner(bytes.NewReader(read_data))
 
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if strings.Contains(line, responseMarker) {
+			return line
+		} else {
+			return "No response?"
+		}
+
+	}
+	return "err"
 }
