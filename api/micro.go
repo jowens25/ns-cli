@@ -31,7 +31,8 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 
 	cmd := MakeCommand(command, parameter...)
 
-	read_data := make([]byte, 1024)
+	read_data := make([]byte, 64)
+	temp_data := make([]byte, 64)
 
 	f, err := os.OpenFile(mcu_port, os.O_RDWR, 0644)
 
@@ -40,35 +41,46 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 	}
 	defer f.Close()
 
-	n, err := f.Write(cmd)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if n > 0 {
-		fmt.Println("wrote: ", n, " bytes")
-	}
-
 	for {
 
-		n, err = f.Read(read_data)
+		n, err := f.Read(temp_data)
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		if n > 0 {
-			fmt.Println("read: ", n, " bytes")
-		}
+		// reading zero i think would mean theres no nmea crap to get in the way...
+		if n == 0 {
 
-		fmt.Println(string(read_data))
+			n, err = f.Write(cmd)
 
-		if strings.Contains(string(read_data), responseMarker) {
-			return string(read_data)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			if n > 0 {
+				fmt.Println("wrote: ", n, " bytes")
+			}
+
+			n, err = f.Read(read_data)
+
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			if n > 0 {
+				fmt.Println("read: ", n, " bytes")
+			}
+
+			fmt.Println(string(read_data))
+
+			if strings.Contains(string(read_data), responseMarker) {
+				return string(read_data)
+			}
+
 		}
 
 	}
 
-	//return string(read_data)
+	return string(read_data)
 }
