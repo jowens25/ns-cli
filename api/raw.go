@@ -24,11 +24,11 @@ func SendRaw(rawString string) {
 
 	port, err := serial.Open(FileDescriptor, mode)
 	if err != nil {
-		port.Close()
 		log.Fatal("serial open err: ", err)
 	}
+	defer port.Close()
 
-	port.SetReadTimeout(time.Millisecond)
+	port.SetReadTimeout(time.Millisecond * 100)
 
 	write_data = append(write_data, rawString...)
 	write_data = append(write_data, '\r')
@@ -44,8 +44,9 @@ func SendRaw(rawString string) {
 		log.Fatal("response: none")
 	}
 
-	n, err = port.Read(read_data)
-	port.Close()
+	for read_data[len(read_data)] != '\n' {
+		n, err = port.Read(read_data)
+	}
 
 	if err != nil {
 		log.Fatal("read error: ", err)
