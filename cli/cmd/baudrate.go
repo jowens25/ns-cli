@@ -4,6 +4,7 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"NovusTimeServer/api"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -23,6 +24,18 @@ Available baudrates are 19200, 38400, 57600, 115200, 230400.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("baudrate called")
+
+		if len(args) == 0 {
+			response := api.MicroWrite("BAUDNV", "BAUDNV")
+			fmt.Println(response)
+
+		} else if len(args) == 1 {
+			response := api.MicroWrite("BAUDNV", "BAUDNV", args[0])
+			fmt.Println(response)
+		} else {
+			cmd.Help()
+		}
+
 	},
 }
 

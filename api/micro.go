@@ -6,15 +6,18 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 )
 
-func SendRaw(command string, responseMarker string, parameter ...string) {
+func MicroWrite(command string, responseMarker string, parameter ...string) string {
 
-	//buffer := make([]byte, 128)
 	write_data := make([]byte, 256)
 	read_data := make([]byte, 256)
 
-	file, err := os.OpenFile("/dev/ttymxc2", os.O_RDWR, 0)
+	mcu_port := "/dev/ttymxc2"
+	//test_port := os.Stdout.Name()
+
+	file, err := os.OpenFile(mcu_port, os.O_RDWR, 0)
 	if err != nil {
 		file.Close()
 		log.Fatal(err)
@@ -52,8 +55,14 @@ func SendRaw(command string, responseMarker string, parameter ...string) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		fmt.Println(line) // print first line??
+		if strings.Contains(line, responseMarker) {
+			return line
+		} else {
+			return "No response?"
+		}
 
 	}
+
+	return "mcu error"
 
 }
