@@ -30,7 +30,9 @@ func SendRaw(rawString string) {
 	write_data = append(write_data, '\r')
 	write_data = append(write_data, '\n')
 
-	file.Write(write_data)
+	n, err := file.Write(write_data)
+	fmt.Println(err)
+	fmt.Println("wrote: ", n)
 
 	for {
 		n, err := file.Read(read_data)
