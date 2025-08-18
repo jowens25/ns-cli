@@ -1,19 +1,15 @@
 package api
 
 import (
-	"bufio"
-	"bytes"
 	"fmt"
 	"log"
 	"os"
-	"strings"
 )
 
 func SendRaw(rawString string) {
 
 	//buffer := make([]byte, 128)
 	write_data := make([]byte, 0, 64)
-	read_data := make([]byte, 0, 64)
 
 	file, err := os.OpenFile("/dev/ttymxc2", os.O_RDWR, 0)
 	if err != nil {
@@ -34,28 +30,20 @@ func SendRaw(rawString string) {
 	fmt.Println(err)
 	fmt.Println("wrote: ", n)
 
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	buffer := make([]byte, 256)
 	for {
-		n, err := file.Read(read_data)
+		n, err := file.Read(buffer)
 		if err != nil {
 			break
 		}
 		if n > 0 {
-			//fmt.Print(string(buffer[:n]))
-			break
+			fmt.Print(string(buffer[:n]))
 		}
-	}
-
-	scanner := bufio.NewScanner(bytes.NewReader(read_data))
-
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		if strings.Contains(line, rawString) {
-			fmt.Println(line)
-		} else {
-			fmt.Println("No response?")
-		}
-
 	}
 
 }
