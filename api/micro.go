@@ -1,39 +1,25 @@
 package api
 
 import (
-	"bufio"
-	"bytes"
 	"fmt"
-	"log"
-	"strings"
-	"time"
-
-	"go.bug.st/serial"
+	"os"
 )
 
 func MicroWrite(command string, responseMarker string, parameter ...string) string {
 
-	write_data := make([]byte, 0, 64)
-	read_data := make([]byte, 64)
+	//write_data := make([]byte, 256)
+	//read_data := make([]byte, 256)
 
 	mcu_port := "/dev/ttymxc2"
-	//mcu_port := os.Stdout.Name()
+	mcu_port = os.Stdout.Name()
 
-	mode := &serial.Mode{
-		BaudRate: 115200,
-		DataBits: 8,
-		Parity:   serial.NoParity,
-		StopBits: serial.OneStopBit,
-	}
+	file, err := os.OpenFile(mcu_port, os.O_WRONLY, 0644)
 
-	port, err := serial.Open(mcu_port, mode)
 	if err != nil {
-		port.Close()
-		log.Fatal("serial open err: ", err)
+		fmt.Println(err)
+		return "err"
 	}
-	defer port.Close()
-
-	port.SetReadTimeout(time.Millisecond * 100)
+	defer file.Close()
 
 	command = "$" + command
 
@@ -41,35 +27,42 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 		command = command + "=" + parameter[0]
 	}
 
-	write_data = append(write_data, command...)
+	write_data := []byte(command)
+
 	checksum := CalculateChecksum(write_data)
 	write_data = append(write_data, '*')
 	write_data = append(write_data, checksum...)
 	write_data = append(write_data, '\r')
 	write_data = append(write_data, '\n')
 
-	_, err = port.Write(write_data)
+	_, err = file.Write(write_data)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	_, err = port.Read(read_data)
+	file.Close()
 
-	if err != nil {
-		fmt.Println(err)
-	}
+	//var read_byte byte
+	//
+	//_, err = port.Read(read_byte)
+	//
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
+	//
+	//scanner := bufio.NewScanner(bytes.NewReader(read_data))
+	//
+	//for scanner.Scan() {
+	//	line := scanner.Text()
+	//
+	//	if strings.Contains(line, responseMarker) {
+	//		return line
+	//	} else {
+	//		return "No response?"
+	//	}
+	//
+	//}
+	//return "err"
 
-	scanner := bufio.NewScanner(bytes.NewReader(read_data))
-
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		if strings.Contains(line, responseMarker) {
-			return line
-		} else {
-			return "No response?"
-		}
-
-	}
-	return "err"
+	return "end"
 }
