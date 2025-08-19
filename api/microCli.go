@@ -80,7 +80,7 @@ func ReadWriteMicro(command string, responseMarker string, parameter ...string) 
 		//fmt.Println("read: ", n, " bytes")
 	}
 
-	//fmt.Println(string(read_data))
+	fmt.Println(string(read_data))
 
 	scanner := bufio.NewScanner(bytes.NewReader(read_data))
 	time.Sleep(time.Microsecond * 100)
