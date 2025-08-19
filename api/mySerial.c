@@ -3,9 +3,9 @@
 
 #include "mySerial.h"
 
-void append(char *src, char *dest)
+void append(char *dest, char *src, size_t dest_size)
 {
-    strncat(dest, src, sizeof(dest) - strlen(dest) - 1);
+    strncat(dest, src, dest_size - strlen(dest) - 1);
 }
 
 unsigned char CalculateChecksum(char *data)
@@ -15,10 +15,15 @@ unsigned char CalculateChecksum(char *data)
     unsigned char checksum = 0;
     for (int i = 1; i < strlen(data); i++)
     {
+        if ('$' == data[i])
+        {
+            continue;
+        }
         if ('*' == data[i])
         {
             break;
         }
+
         checksum = checksum ^ data[i];
     }
 
@@ -65,7 +70,77 @@ int IsChecksumCorrect(char *message)
     return -1;
 }
 
-int WriteThenRead(char *command, char *parameter)
+int ReadValue(char *command)
+{
+    char writeData[64] = {0};
+    char readData[64] = {0};
+    // char tempData[32] = {0};
+    char hexAddr[64] = {0};
+    char hexData[64] = {0};
+    char hexChecksum[3] = {0};
+
+    int ser = MySerialOpen("/dev/ttyUSB0");
+    if (ser == -1)
+    {
+
+        printf("r Error opening serial port\n");
+        return -1;
+    }
+
+    // build message
+    append(writeData, "$", sizeof(writeData));
+
+    append(writeData, command, sizeof(writeData));
+
+    append(writeData, "*", sizeof(writeData));
+
+    char checksum = CalculateChecksum(writeData);
+    sprintf(hexChecksum, "%02X", checksum); // convert to hex string
+
+    append(writeData, hexChecksum, sizeof(writeData));
+    append(writeData, "\r\n", sizeof(writeData));
+
+    printf("writeRegister: %s", writeData);
+
+    // send message
+    int err = MySerialWrite(ser, writeData, strlen(writeData));
+    if (err != 0)
+    {
+        printf("serWrite error");
+        return -1;
+    }
+
+    // usleep(50000);
+    //    receive message
+    err = MySerialRead(ser, readData, sizeof(readData));
+    printf("read data: %s \n", readData);
+
+    if (err != 0)
+    {
+        printf("read - serRead error\n");
+        return -1;
+    }
+    // close
+    MySerialClose(ser);
+
+    if (IsChecksumCorrect(readData) != 0)
+    {
+        printf("read reg - wrong checksum\n");
+        return -1;
+    }
+
+    for (int i = 0; i < 8; i++)
+    {
+        hexData[i] = readData[i + 17];
+    }
+
+    //*data = (int64_t)strtol(hexData, NULL, 16);
+    // printf("Read Response: %s \n", readData);
+
+    return 0;
+}
+
+int WriteValue(char *command, char *parameter)
 {
     char writeData[64] = {0};
     char readData[64] = {0};
@@ -83,24 +158,17 @@ int WriteThenRead(char *command, char *parameter)
     }
 
     // build message
-    append(writeData, "$");
-
-    append(writeData, command);
-
-    if (strlen(parameter) != 0)
-    {
-        append(writeData, "=");
-
-        append(writeData, parameter);
-    }
-
-    append(writeData, "*");
+    append(writeData, "$", sizeof(writeData));
+    append(writeData, command, sizeof(writeData));
+    append(writeData, "=", sizeof(writeData));
+    append(writeData, parameter, sizeof(writeData));
+    append(writeData, "*", sizeof(writeData));
 
     char checksum = CalculateChecksum(writeData);
     sprintf(hexChecksum, "%02X", checksum); // convert to hex string
 
-    append(writeData, hexChecksum);
-    append(writeData, "\r\n");
+    append(writeData, hexChecksum, sizeof(writeData));
+    append(writeData, "\r\n", sizeof(writeData));
 
     printf("writeRegister: %s", writeData);
 

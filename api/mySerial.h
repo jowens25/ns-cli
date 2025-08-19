@@ -36,6 +36,7 @@ int IsChecksumCorrect(char *message);
 
 int SetupTermios(int);
 
-int WriteThenRead(char *cmd, char *param);
+int WriteValue(char *cmd, char *param);
+int ReadValue(char *cmd);
 
 #endif // MY_SERIAL_H

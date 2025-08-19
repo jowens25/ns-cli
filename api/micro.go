@@ -13,7 +13,24 @@ import (
 	"unsafe"
 )
 
-func WriteToMicro(command *string, responseMarker *string, parameter *string) error {
+func ReadMicro(command *string) error {
+
+	c := C.CString(*command)
+
+	defer C.free(unsafe.Pointer(c))
+
+	axiErr := C.ReadValue(c)
+
+	//*value = C.GoString(val)
+
+	if axiErr != 0 {
+		return errors.New("axi failed")
+	}
+
+	return nil
+}
+
+func WriteMicro(command *string, parameter *string) error {
 
 	c := C.CString(*command)
 	p := C.CString(*parameter)
@@ -21,7 +38,7 @@ func WriteToMicro(command *string, responseMarker *string, parameter *string) er
 	defer C.free(unsafe.Pointer(c))
 	defer C.free(unsafe.Pointer(p))
 
-	axiErr := C.WriteThenRead(c, p)
+	axiErr := C.WriteValue(c, p)
 
 	//*value = C.GoString(val)
 
