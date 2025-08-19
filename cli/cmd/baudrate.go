@@ -23,9 +23,6 @@ Available baudrates are 19200, 38400, 57600, 115200, 230400.
 <baudrate=115200> to set the rate.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("baudrate called")
-
-		//baudCmd := "BAUDNV"
 
 		if len(args) == 0 {
 

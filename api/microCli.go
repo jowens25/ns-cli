@@ -7,6 +7,7 @@ import "C"
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"log"
 	"strings"
 
@@ -19,6 +20,7 @@ func MakeCommand(cmd string, param ...string) []byte {
 
 	if len(param) > 0 {
 		out = append(out, '=')
+		out = append(out, []byte(param[0])...)
 	}
 
 	checksum := CalculateChecksum(out)
@@ -56,6 +58,8 @@ func ReadWriteMicro(command string, responseMarker string, parameter ...string) 
 	port.ResetOutputBuffer()
 
 	n, err := port.Write(cmd)
+
+	fmt.Println(string(cmd))
 
 	if err != nil {
 		log.Fatal(err)
