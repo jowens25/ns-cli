@@ -25,12 +25,15 @@ Available baudrates are 19200, 38400, 57600, 115200, 230400.
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("baudrate called")
 
+		baudCmd := "BAUDNV"
+		emptyString := " "
+
 		if len(args) == 0 {
-			response := api.MicroWrite("BAUDNV", "BAUDNV")
+			response := api.WriteToMicro(&baudCmd, &baudCmd, &emptyString)
 			fmt.Println(response)
 
 		} else if len(args) == 1 {
-			response := api.MicroWrite("BAUDNV", "BAUDNV", args[0])
+			response := api.WriteToMicro(&baudCmd, &baudCmd, &args[0])
 			fmt.Println(response)
 		} else {
 			cmd.Help()

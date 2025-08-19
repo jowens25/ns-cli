@@ -1,11 +1,36 @@
 package api
 
+/*
+#include "mySerial.h"
+*/
+import "C"
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
 	"strings"
+	"unsafe"
 )
+
+func WriteToMicro(command *string, responseMarker *string, parameter *string) error {
+
+	c := C.CString(*command)
+	p := C.CString(*parameter)
+
+	defer C.free(unsafe.Pointer(c))
+	defer C.free(unsafe.Pointer(p))
+
+	axiErr := C.WriteThenRead(c, p)
+
+	//*value = C.GoString(val)
+
+	if axiErr != 0 {
+		return errors.New("axi failed")
+	}
+
+	return nil
+}
 
 func MakeCommand(cmd string, param ...string) []byte {
 
@@ -31,6 +56,7 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 
 	cmd := MakeCommand(command, parameter...)
 
+	temp_data := make([]byte, 2)
 	read_data := make([]byte, 64)
 
 	f, err := os.OpenFile(mcu_port, os.O_RDWR, 0644)
@@ -42,7 +68,7 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 
 	for {
 
-		n, err := f.Read(read_data)
+		n, err := f.Read(temp_data)
 
 		if err != nil {
 			log.Fatal(err)
@@ -54,7 +80,7 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 
 		// reading less than a full small buffer i think would mean that we are at the end of the nmea transmit...
 
-		if n < len(read_data) {
+		if n < len(temp_data) {
 
 			n, err = f.Write(cmd)
 
