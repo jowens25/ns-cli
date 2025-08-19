@@ -47,7 +47,7 @@ overwrites flash memory with defaults.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if len(args) == 0 {
-			response := api.ReadWriteMicro("RESETALL", "FLASH")
+			response := api.ReadWriteMicro("RESETALL", "RESETALL")
 			fmt.Println(response)
 
 		} else {
