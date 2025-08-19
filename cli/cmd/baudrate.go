@@ -29,26 +29,12 @@ Available baudrates are 19200, 38400, 57600, 115200, 230400.
 
 		if len(args) == 0 {
 
-			api.ReadWriteMicro("BAUDNV", "BAUDNV")
-			//response := api.ReadMicro(&baudCmd)
-			//fmt.Println(response)
-
-			//err := os.WriteFile("/dev/ttymxc2", []byte("$BAUDNV\r\n"), 0660)
-			//if err != nil {
-			//	log.Fatalf("Failed to write file: %v", err)
-			//}
-			//
-			//filebytes, err := os.ReadFile("/dev/ttymxc2")
-			//
-			//fmt.Println(string(filebytes))
-			//
-			//if err != nil {
-			//	log.Fatalf("Failed to read file: %v", err)
-			//}
+			response := api.ReadWriteMicro("BAUDNV", "BAUDNV")
+			fmt.Println(response)
 
 		} else if len(args) == 1 {
-			//response := api.WriteMicro(&baudCmd, &args[0])
-			//fmt.Println(response)
+			response := api.ReadWriteMicro("BAUDNV", "BAUDNV", args[0])
+			fmt.Println(response)
 		} else {
 			cmd.Help()
 		}
