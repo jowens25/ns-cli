@@ -4,8 +4,9 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"NovusTimeServer/api"
 	"fmt"
+	"log"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -25,15 +26,28 @@ Available baudrates are 19200, 38400, 57600, 115200, 230400.
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("baudrate called")
 
-		baudCmd := "BAUDNV"
+		//baudCmd := "BAUDNV"
 
 		if len(args) == 0 {
-			response := api.ReadMicro(&baudCmd)
-			fmt.Println(response)
+			//response := api.ReadMicro(&baudCmd)
+			//fmt.Println(response)
+
+			err := os.WriteFile("/dev/ttymxc2", []byte("$BAUDNV/r/n"), 0660)
+			if err != nil {
+				log.Fatalf("Failed to write file: %v", err)
+			}
+
+			filebytes, err := os.ReadFile("/dev/ttymxc2")
+
+			fmt.Println(string(filebytes))
+
+			if err != nil {
+				log.Fatalf("Failed to read file: %v", err)
+			}
 
 		} else if len(args) == 1 {
-			response := api.WriteMicro(&baudCmd, &args[0])
-			fmt.Println(response)
+			//response := api.WriteMicro(&baudCmd, &args[0])
+			//fmt.Println(response)
 		} else {
 			cmd.Help()
 		}
