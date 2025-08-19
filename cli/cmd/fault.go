@@ -29,7 +29,7 @@ Number format must be in the form <n.nn> (from 0.05 to 0.95)
 		cmd.Flags().Visit(func(f *pflag.Flag) {
 
 			switch f.Name {
-			case "a":
+			case "threshold a":
 				cmdRoot := "FLTTHRA"
 
 				if len(args) == 0 {
@@ -44,7 +44,7 @@ Number format must be in the form <n.nn> (from 0.05 to 0.95)
 					cmd.Help()
 				}
 
-			case "b":
+			case "threshold b":
 				cmdRoot := "FLTTHRB"
 				if len(args) == 0 {
 
