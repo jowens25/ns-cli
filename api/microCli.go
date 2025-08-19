@@ -54,22 +54,22 @@ func ReadWriteMicro(command string, responseMarker string, parameter ...string) 
 	}
 	defer port.Close()
 
-	port.ResetInputBuffer()
-	port.ResetOutputBuffer()
-
-	n, err := port.Write(cmd)
-
-	fmt.Println(string(cmd))
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if n > 0 {
-		//fmt.Println("wrote: ", n, " bytes")
-	}
-
 	for range 5 {
+
+		port.ResetInputBuffer()
+		port.ResetOutputBuffer()
+
+		n, err := port.Write(cmd)
+
+		fmt.Println(string(cmd))
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if n > 0 {
+			//fmt.Println("wrote: ", n, " bytes")
+		}
 
 		n, err = port.Read(read_data)
 
