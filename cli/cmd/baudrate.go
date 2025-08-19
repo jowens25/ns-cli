@@ -26,14 +26,13 @@ Available baudrates are 19200, 38400, 57600, 115200, 230400.
 		fmt.Println("baudrate called")
 
 		baudCmd := "BAUDNV"
-		emptyString := " "
 
 		if len(args) == 0 {
-			response := api.WriteToMicro(&baudCmd, &baudCmd, &emptyString)
+			response := api.ReadMicro(&baudCmd)
 			fmt.Println(response)
 
 		} else if len(args) == 1 {
-			response := api.WriteToMicro(&baudCmd, &baudCmd, &args[0])
+			response := api.WriteMicro(&baudCmd, &args[0])
 			fmt.Println(response)
 		} else {
 			cmd.Help()
