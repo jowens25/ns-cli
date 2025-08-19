@@ -4,6 +4,13 @@ package api
 #include "mySerial.h"
 */
 import "C"
+import (
+	"fmt"
+	"log"
+	"strings"
+
+	"go.bug.st/serial"
+)
 
 //func ReadMicro(command *string) error {
 //
@@ -59,79 +66,69 @@ func MakeCommand(cmd string, param ...string) []byte {
 
 }
 
-//func MicroWrite(command string, responseMarker string, parameter ...string) string {
+func MicroWrite(command string, responseMarker string, parameter ...string) string {
+
+	mode := &serial.Mode{
+		BaudRate: 38400, // Adjust to match your device
+		DataBits: 8,
+		Parity:   serial.NoParity,
+		StopBits: serial.OneStopBit,
+	}
+
+	mcu_port := "/dev/ttymxc2"
+
+	cmd := MakeCommand(command, parameter...)
+
+	read_data := make([]byte, 64)
+
+	port, err := serial.Open(mcu_port, mode)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer port.Close()
+
+	port.ResetInputBuffer()
+	port.ResetOutputBuffer()
+
+	n, err := port.Write(cmd)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if n > 0 {
+		fmt.Println("wrote: ", n, " bytes")
+	}
+
+	n, err = port.Read(read_data)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if n > 0 {
+		fmt.Println("read: ", n, " bytes")
+	}
+
+	fmt.Println(string(read_data))
+
+	if strings.Contains(string(read_data), responseMarker) {
+		return string(read_data)
+	}
+
+	return string(read_data)
+}
+
+//func echoPort(cmd string, param ...string) {
 //
-//	mcu_port := "/dev/ttymxc2"
+//	exec.Command("echo", string(MakeCommand(cmd)))
 //
-//	cmd := MakeCommand(command, parameter...)
-//
-//	temp_data := make([]byte, 2)
-//	read_data := make([]byte, 64)
-//
-//	f, err := os.OpenFile(mcu_port, os.O_RDWR, 0644)
-//
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//	defer f.Close()
-//
-//	for {
-//
-//		n, err := f.Read(temp_data)
-//
-//		if err != nil {
-//			log.Fatal(err)
-//		}
-//
-//		if n > 0 {
-//			fmt.Println("read: ", n, " bytes")
-//		}
-//
-//		// reading less than a full small buffer i think would mean that we are at the end of the nmea transmit...
-//
-//		if n < len(temp_data) {
-//
-//			n, err = f.Write(cmd)
-//
-//			if err != nil {
-//				log.Fatal(err)
-//			}
-//
-//			if n > 0 {
-//				fmt.Println("wrote: ", n, " bytes")
-//			}
-//
-//			n, err = f.Read(read_data)
-//
-//			if err != nil {
-//				log.Fatal(err)
-//			}
-//
-//			if n > 0 {
-//				fmt.Println("read: ", n, " bytes")
-//			}
-//
-//			fmt.Println(string(read_data))
-//
-//			if strings.Contains(string(read_data), responseMarker) {
-//				return string(read_data)
-//			}
-//
-//		}
-//
-//	}
-//
-//	return string(read_data)
 //}
-
-func echoPort(cmd string) {
-
-}
-
-func catPort(cmd string) {
-
-}
-
-func GrepIt(cmd string) {
-
-}
+//
+//func catPort(cmd string) {
+//
+//}
+//
+//func GrepIt(cmd string) {
+//
+//}
