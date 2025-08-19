@@ -79,7 +79,7 @@ int ReadValue(char *command)
     char hexData[64] = {0};
     char hexChecksum[3] = {0};
 
-    int ser = MySerialOpen("/dev/ttyUSB0");
+    int ser = MySerialOpen("/dev/ttymxc2");
     if (ser == -1)
     {
 
