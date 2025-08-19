@@ -315,8 +315,8 @@ int SetupTermios(int fd)
         return -1;
     }
 
-    cfsetospeed(&mcu_tty, B115200); // Use a standard baud rate unless you know otherwise
-    cfsetispeed(&mcu_tty, B115200);
+    cfsetospeed(&mcu_tty, B38400); // Use a standard baud rate unless you know otherwise
+    cfsetispeed(&mcu_tty, B38400);
 
     // 8N1 configuration
     mcu_tty.c_cflag &= ~CSIZE;
