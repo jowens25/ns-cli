@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"go.bug.st/serial"
 )
@@ -54,46 +55,43 @@ func ReadWriteMicro(command string, responseMarker string, parameter ...string) 
 	}
 	defer port.Close()
 
-	for range 5 {
+	port.ResetInputBuffer()
+	port.ResetOutputBuffer()
 
-		port.ResetInputBuffer()
-		port.ResetOutputBuffer()
+	n, err := port.Write(cmd)
 
-		n, err := port.Write(cmd)
+	fmt.Println(string(cmd))
 
-		fmt.Println(string(cmd))
+	if err != nil {
+		log.Fatal(err)
+	}
 
-		if err != nil {
-			log.Fatal(err)
+	if n > 0 {
+		//fmt.Println("wrote: ", n, " bytes")
+	}
+
+	n, err = port.Read(read_data)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if n > 0 {
+		//fmt.Println("read: ", n, " bytes")
+	}
+
+	fmt.Println(string(read_data))
+
+	scanner := bufio.NewScanner(bytes.NewReader(read_data))
+	time.Sleep(time.Microsecond * 10)
+	// read all the lines, find placements
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if strings.Contains(line, responseMarker) {
+			return line
 		}
 
-		if n > 0 {
-			//fmt.Println("wrote: ", n, " bytes")
-		}
-
-		n, err = port.Read(read_data)
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		if n > 0 {
-			//fmt.Println("read: ", n, " bytes")
-		}
-
-		fmt.Println(string(read_data))
-
-		scanner := bufio.NewScanner(bytes.NewReader(read_data))
-		//time.Sleep(time.Microsecond * 100)
-		// read all the lines, find placements
-		for scanner.Scan() {
-			line := scanner.Text()
-
-			if strings.Contains(line, responseMarker) {
-				return line
-			}
-
-		}
 	}
 
 	return command + " error"
