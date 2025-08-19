@@ -47,7 +47,7 @@ func ReadWriteMicro(command string, responseMarker string, parameter ...string) 
 
 	cmd := MakeCommand(command, parameter...)
 
-	read_data := make([]byte, 64)
+	read_data := make([]byte, 512)
 
 	port, err := serial.Open(mcu_port, mode)
 	if err != nil {
@@ -80,7 +80,7 @@ func ReadWriteMicro(command string, responseMarker string, parameter ...string) 
 		//fmt.Println("read: ", n, " bytes")
 	}
 
-	fmt.Println(string(read_data))
+	//fmt.Println(string(read_data))
 
 	scanner := bufio.NewScanner(bytes.NewReader(read_data))
 	time.Sleep(time.Microsecond * 10)
@@ -94,7 +94,7 @@ func ReadWriteMicro(command string, responseMarker string, parameter ...string) 
 
 	}
 
-	return command + " error"
+	return command + " error: partial response"
 }
 
 //func echoPort(cmd string, param ...string) {
