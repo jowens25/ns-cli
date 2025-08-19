@@ -37,7 +37,28 @@ authorized technician.`,
 	},
 }
 
+// calibrationCmd represents the calibration command
+var calSaveCmd = &cobra.Command{
+	Use:   "save",
+	Short: "Save Calibration Factors",
+	Long: `This command will translate all Calibration Factors
+to flash string and write. Data is then read back for
+verification, and result reported. This will update
+Cal Factors in flash to the current Cal Settings.`,
+	Run: func(cmd *cobra.Command, args []string) {
+
+		if len(args) == 0 {
+			response := api.ReadWriteMicro("SAVECAL", "SAVECAL")
+			fmt.Println(response)
+		} else {
+			cmd.Help()
+		}
+
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(calibrationCmd)
+	calibrationCmd.AddCommand(calSaveCmd)
 
 }
