@@ -32,7 +32,7 @@ Available baudrates are 19200, 38400, 57600, 115200, 230400.
 			//response := api.ReadMicro(&baudCmd)
 			//fmt.Println(response)
 
-			err := os.WriteFile("/dev/ttymxc2", []byte("$BAUDNV/r/n"), 0660)
+			err := os.WriteFile("/dev/ttymxc2", []byte("$BAUDNV\r\n"), 0660)
 			if err != nil {
 				log.Fatalf("Failed to write file: %v", err)
 			}
