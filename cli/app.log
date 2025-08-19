@@ -120,3 +120,8 @@
 2025/08/15 15:34:47  exec: "ifup": executable file not found in $PATH
 2025/08/15 15:34:52 Failed to start networking.service: Unit networking.service not found.
  exit status 5
+2025/08/19 12:23:58 Invalid serial port: error getting term settings: inappropriate ioctl for device
+2025/08/19 12:32:14 Invalid serial port: error getting term settings: inappropriate ioctl for device
+2025/08/19 12:42:31 Invalid serial port: error getting term settings: inappropriate ioctl for device
+2025/08/19 12:50:57 Invalid serial port: error getting term settings: inappropriate ioctl for device
+2025/08/19 13:16:52 Invalid serial port: error getting term settings: inappropriate ioctl for device

@@ -13,7 +13,7 @@ import (
 // ip4setCmd represents the ip4set command
 var ip = &cobra.Command{
 	Use:   "ip",
-	Short: "ip get / ip set",
+	Short: "IP4V Address",
 	Long: `Use this command to get or set the ip address and/or gateway 
 in /etc/network/interfaces ip set <ip>, ip set <ip> <gw>`,
 	Run: func(cmd *cobra.Command, args []string) {

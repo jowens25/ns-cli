@@ -13,15 +13,11 @@ import (
 // baudrateCmd represents the baudrate command
 var baudrateCmd = &cobra.Command{
 	Use:   "baudrate",
-	Short: "CLI Alias for $BAUDNV.",
-	Long: `Get / Set The RS232 Rear Panel Baud Rate. 
-
-This command can be used to assign and query the baud rate on rear panel RS232. (Default = 115200). 
-Available baudrates are 19200, 38400, 57600, 115200, 230400. 
-
-<baudrate> to get the current rate. 
-<baudrate> <115200> to set the rate.
-`,
+	Short: "RS232 Rear Panel Baud Rate",
+	Long: `Use this command to assign and query the baud 
+rate on rear panel RS232. (Default = 115200). Available 
+baudrates are 19200, 38400, 57600, 115200, 230400.`,
+	ValidArgs: []string{"19200", "38400", "57600", "115200", "230400"},
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if len(args) == 0 {
@@ -41,14 +37,4 @@ Available baudrates are 19200, 38400, 57600, 115200, 230400.
 
 func init() {
 	rootCmd.AddCommand(baudrateCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// baudrateCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// baudrateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

@@ -15,8 +15,8 @@ import (
 var enableCmd = &cobra.Command{
 	Use:   "enable",
 	Short: "enable ports and protocols",
-	Long: `This command can be used to enable common protocols such as 
-ssh, telnet, snmp and http and additional ports.`,
+	Long: `Use this command to enable insecure protocols such as 
+ssh, telnet, snmp and http, ports and ethernet port.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		hasFlags := false
 
@@ -38,7 +38,7 @@ ssh, telnet, snmp and http and additional ports.`,
 			case "port":
 				if len(args) != 0 {
 					port := args[1]
-					api.DisablePort(port)
+					api.EnablePort(port)
 				} else {
 					fmt.Println("missing port")
 
