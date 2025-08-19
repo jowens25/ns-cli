@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"log"
 	"strings"
-	"time"
 
 	"go.bug.st/serial"
 )
@@ -47,7 +46,7 @@ func ReadWriteMicro(command string, responseMarker string, parameter ...string) 
 
 	cmd := MakeCommand(command, parameter...)
 
-	read_data := make([]byte, 512)
+	read_data := make([]byte, 1024)
 
 	port, err := serial.Open(mcu_port, mode)
 	if err != nil {
@@ -83,7 +82,7 @@ func ReadWriteMicro(command string, responseMarker string, parameter ...string) 
 	//fmt.Println(string(read_data))
 
 	scanner := bufio.NewScanner(bytes.NewReader(read_data))
-	time.Sleep(time.Microsecond * 10)
+	//time.Sleep(time.Microsecond * 10)
 	// read all the lines, find placements
 	for scanner.Scan() {
 		line := scanner.Text()
