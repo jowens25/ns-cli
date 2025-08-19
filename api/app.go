@@ -31,7 +31,7 @@ func init() {
 
 }
 
-func RunApp() {
+func StartApp() {
 
 	pid := os.Getpid()
 	os.WriteFile("server.pid", []byte(fmt.Sprintf("%d", pid)), 0644)

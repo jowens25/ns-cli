@@ -34,6 +34,9 @@ telnet, ssh and http protocols, selected ports and the ethernet interface.`,
 			case "http":
 				api.StopHttp()
 
+			case "web":
+				api.StopApp()
+
 			case "port":
 				if len(args) != 0 {
 					port := args[0]
@@ -66,11 +69,12 @@ telnet, ssh and http protocols, selected ports and the ethernet interface.`,
 func init() {
 	rootCmd.AddCommand(disableCmd)
 
-	disableCmd.Flags().BoolP("telnet", "t", false, "disable telnet")
-	disableCmd.Flags().BoolP("ssh", "s", false, "disable ssh")
-	disableCmd.Flags().BoolP("http", "g", false, "disable http")
-	disableCmd.Flags().BoolP("port", "p", false, "disable port")
-	disableCmd.Flags().BoolP("all", "a", false, "disable insecure protocols")
-	disableCmd.Flags().BoolP("interface", "i", false, "disable interface")
+	disableCmd.Flags().Bool("telnet", false, "disable telnet")
+	disableCmd.Flags().Bool("ssh", false, "disable ssh")
+	disableCmd.Flags().Bool("http", false, "disable http")
+	disableCmd.Flags().Bool("port", false, "disable port")
+	disableCmd.Flags().Bool("all", false, "disable insecure protocols")
+	disableCmd.Flags().Bool("interface", false, "disable interface")
+	disableCmd.Flags().Bool("web", false, "disable web app")
 
 }

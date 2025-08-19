@@ -35,6 +35,9 @@ ssh, telnet, snmp and http, ports and ethernet port.`,
 			case "http":
 				api.StartHttp()
 
+			case "app":
+				api.StartApp()
+
 			case "port":
 				if len(args) != 0 {
 					port := args[1]
@@ -67,11 +70,12 @@ ssh, telnet, snmp and http, ports and ethernet port.`,
 func init() {
 	rootCmd.AddCommand(enableCmd)
 
-	enableCmd.Flags().BoolP("telnet", "t", false, "enable telnet")
-	enableCmd.Flags().BoolP("ssh", "s", false, "enable ssh")
-	enableCmd.Flags().BoolP("http", "g", false, "enable http")
-	enableCmd.Flags().BoolP("port", "p", false, "enable port")
-	enableCmd.Flags().BoolP("all", "a", false, "enable insecure protocols")
-	enableCmd.Flags().BoolP("interface", "i", false, "enable an interface")
+	enableCmd.Flags().Bool("telnet", false, "enable telnet")
+	enableCmd.Flags().Bool("ssh", false, "enable ssh")
+	enableCmd.Flags().Bool("http", false, "enable http")
+	enableCmd.Flags().Bool("port", false, "enable port")
+	enableCmd.Flags().Bool("all", false, "enable insecure protocols")
+	enableCmd.Flags().Bool("interface", false, "enable an interface")
+	enableCmd.Flags().Bool("web", false, "enable web app")
 
 }
