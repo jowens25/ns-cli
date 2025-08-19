@@ -69,28 +69,31 @@ func ReadWriteMicro(command string, responseMarker string, parameter ...string) 
 		//fmt.Println("wrote: ", n, " bytes")
 	}
 
-	n, err = port.Read(read_data)
+	for range 5 {
 
-	if err != nil {
-		log.Fatal(err)
-	}
+		n, err = port.Read(read_data)
 
-	if n > 0 {
-		//fmt.Println("read: ", n, " bytes")
-	}
-
-	fmt.Println(string(read_data))
-
-	scanner := bufio.NewScanner(bytes.NewReader(read_data))
-	//time.Sleep(time.Microsecond * 100)
-	// read all the lines, find placements
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		if strings.Contains(line, responseMarker) {
-			return line
+		if err != nil {
+			log.Fatal(err)
 		}
 
+		if n > 0 {
+			//fmt.Println("read: ", n, " bytes")
+		}
+
+		fmt.Println(string(read_data))
+
+		scanner := bufio.NewScanner(bytes.NewReader(read_data))
+		//time.Sleep(time.Microsecond * 100)
+		// read all the lines, find placements
+		for scanner.Scan() {
+			line := scanner.Text()
+
+			if strings.Contains(line, responseMarker) {
+				return line
+			}
+
+		}
 	}
 
 	return command + " error"
