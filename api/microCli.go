@@ -5,48 +5,13 @@ package api
 */
 import "C"
 import (
-	"fmt"
+	"bufio"
+	"bytes"
 	"log"
 	"strings"
 
 	"go.bug.st/serial"
 )
-
-//func ReadMicro(command *string) error {
-//
-//	c := C.CString(*command)
-//
-//	defer C.free(unsafe.Pointer(c))
-//
-//	axiErr := C.ReadValue(c)
-//
-//	//*value = C.GoString(val)
-//
-//	if axiErr != 0 {
-//		return errors.New("axi failed")
-//	}
-//
-//	return nil
-//}
-//
-//func WriteMicro(command *string, parameter *string) error {
-//
-//	c := C.CString(*command)
-//	p := C.CString(*parameter)
-//
-//	defer C.free(unsafe.Pointer(c))
-//	defer C.free(unsafe.Pointer(p))
-//
-//	axiErr := C.WriteValue(c, p)
-//
-//	//*value = C.GoString(val)
-//
-//	if axiErr != 0 {
-//		return errors.New("axi failed")
-//	}
-//
-//	return nil
-//}
 
 func MakeCommand(cmd string, param ...string) []byte {
 
@@ -66,7 +31,7 @@ func MakeCommand(cmd string, param ...string) []byte {
 
 }
 
-func MicroWrite(command string, responseMarker string, parameter ...string) string {
+func ReadWriteMicro(command string, responseMarker string, parameter ...string) string {
 
 	mode := &serial.Mode{
 		BaudRate: 38400, // Adjust to match your device
@@ -97,7 +62,7 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 	}
 
 	if n > 0 {
-		fmt.Println("wrote: ", n, " bytes")
+		//fmt.Println("wrote: ", n, " bytes")
 	}
 
 	n, err = port.Read(read_data)
@@ -107,16 +72,23 @@ func MicroWrite(command string, responseMarker string, parameter ...string) stri
 	}
 
 	if n > 0 {
-		fmt.Println("read: ", n, " bytes")
+		//fmt.Println("read: ", n, " bytes")
 	}
 
-	fmt.Println(string(read_data))
+	//fmt.Println(string(read_data))
 
-	if strings.Contains(string(read_data), responseMarker) {
-		return string(read_data)
+	scanner := bufio.NewScanner(bytes.NewReader(read_data))
+	// read all the lines, find placements
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if strings.Contains(line, responseMarker) {
+			return line
+		}
+
 	}
 
-	return string(read_data)
+	return command + " error"
 }
 
 //func echoPort(cmd string, param ...string) {
