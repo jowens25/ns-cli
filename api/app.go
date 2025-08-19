@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"strconv"
 	"sync"
 	"syscall"
@@ -31,10 +32,51 @@ func init() {
 
 }
 
+func InitNginxConfig() {
+
+	cmd := exec.Command("systemctl", "stop", "nginx")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(string(out), err)
+	}
+	fmt.Println(string(out), err)
+
+	cmd = exec.Command("cp", "selfsigned.key", "/etc/nginx/ssl/selfsigned.key")
+	out, err = cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(string(out), err)
+	}
+	fmt.Println(string(out), err)
+
+	cmd = exec.Command("cp", "selfsigned.crt", "/etc/nginx/ssl/selfsigned.crt")
+	out, err = cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(string(out), err)
+	}
+	fmt.Println(string(out), err)
+
+	cmd = exec.Command("cp", "nginx.conf", "/etc/nginx/nginx.conf")
+	out, err = cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(string(out), err)
+	}
+	fmt.Println(string(out), err)
+
+	cmd = exec.Command("systemctl", "start", "nginx")
+	out, err = cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(string(out), err)
+	}
+	fmt.Println(string(out), err)
+
+}
+
 func StartApp() {
 
 	pid := os.Getpid()
 	os.WriteFile("server.pid", []byte(fmt.Sprintf("%d", pid)), 0644)
+
+	InitNginxConfig()
 
 	initDataBase()
 

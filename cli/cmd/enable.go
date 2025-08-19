@@ -35,7 +35,7 @@ ssh, telnet, snmp and http, ports and ethernet port.`,
 			case "http":
 				api.StartHttp()
 
-			case "app":
+			case "web":
 				api.StartApp()
 
 			case "port":
