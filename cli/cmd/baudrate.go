@@ -20,7 +20,7 @@ This command can be used to assign and query the baud rate on rear panel RS232. 
 Available baudrates are 19200, 38400, 57600, 115200, 230400. 
 
 <baudrate> to get the current rate. 
-<baudrate=115200> to set the rate.
+<baudrate> <115200> to set the rate.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 
