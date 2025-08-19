@@ -48,7 +48,7 @@ Cal Factors in flash to the current Cal Settings.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if len(args) == 0 {
-			response := api.ReadWriteMicro("SAVECAL", "SAVECAL")
+			response := api.ReadWriteMicro("SAVECAL", "CAL")
 			fmt.Println(response)
 		} else {
 			cmd.Help()
