@@ -37,7 +37,7 @@ func StopTelnet() {
 	if err != nil {
 		log.Println(string(out), err)
 	}
-	fmt.Println("telnet: ", GetTelnetStatus())
+	fmt.Print("telnet: ", GetTelnetStatus())
 
 }
 
@@ -50,17 +50,17 @@ func StartTelnet() {
 	if err != nil {
 		log.Println(string(out), err)
 	}
-	fmt.Println("telnet: ", GetTelnetStatus())
+	fmt.Print("telnet: ", GetTelnetStatus())
 
 }
 
 func GetTelnetStatus() string {
 	cmd := exec.Command("systemctl", "is-active", "telnet.socket")
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Println(string(out), err)
+	output, err := cmd.CombinedOutput()
+	if ActiveOrInactive(output) {
+		return string(output)
 	}
-	return strings.TrimSpace(string(out))
+	return "error: " + err.Error()
 }
 
 func readTelnetStatus(c *gin.Context) {

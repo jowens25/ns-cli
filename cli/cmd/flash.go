@@ -13,7 +13,7 @@ import (
 // flashCmd represents the flash command
 var flashCmd = &cobra.Command{
 	Use:   "flash",
-	Short: "Save and reset flash",
+	Short: "flash settings",
 	Long:  `Use this command to save settings to flash or reset the flash.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
@@ -23,7 +23,7 @@ var flashCmd = &cobra.Command{
 // flashCmd represents the flash command
 var saveFlashCmd = &cobra.Command{
 	Use:   "save",
-	Short: "Save settings",
+	Short: "save settings",
 	Long:  `Saves all user settings to flash.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
@@ -41,7 +41,7 @@ var saveFlashCmd = &cobra.Command{
 // flashCmd represents the flash command
 var resetFlashCmd = &cobra.Command{
 	Use:   "reset",
-	Short: "Reset all flash settings to default",
+	Short: "reset all flash settings to default",
 	Long: `Resets all user settings to default values and
 overwrites flash memory with defaults.`,
 	Run: func(cmd *cobra.Command, args []string) {

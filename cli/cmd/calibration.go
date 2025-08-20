@@ -13,7 +13,7 @@ import (
 // calibrationCmd represents the calibration command
 var calibrationCmd = &cobra.Command{
 	Use:   "cal",
-	Short: "Calibration Factors",
+	Short: "calibration factors",
 	Long: `Query or set Cal Factors for specific ADC conversions. 
 See list of Cal Factors numbered for appropriate measurement 
 parameters. These settings should only be changed by an 
@@ -47,7 +47,7 @@ authorized technician.`,
 // calibrationCmd represents the calibration command
 var calSaveCmd = &cobra.Command{
 	Use:   "save",
-	Short: "Save Calibration Factors",
+	Short: "save calibration factors",
 	Long: `This command will translate all Calibration Factors
 to flash string and write. Data is then read back for
 verification, and result reported. This will update

@@ -17,17 +17,17 @@ func StopSsh() {
 	cmd := exec.Command("systemctl", "stop", "ssh")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Println(string(out), err)
+		log.Print(string(out), err)
 	}
 
 	cmd = exec.Command("systemctl", "stop", "ssh.socket")
 	out, err = cmd.CombinedOutput()
 
 	if err != nil {
-		log.Println(string(out), err)
+		log.Print(string(out), err)
 	}
 
-	fmt.Println("ssh: ", GetSshStatus())
+	fmt.Print("ssh: ", GetSshStatus())
 
 }
 
@@ -39,27 +39,36 @@ func StartSsh() {
 	out, err := cmd.CombinedOutput()
 
 	if err != nil {
-		log.Println(string(out), err)
+		log.Print(string(out), err)
 	}
 
 	cmd = exec.Command("systemctl", "start", "ssh.socket")
 	out, err = cmd.CombinedOutput()
 
 	if err != nil {
-		log.Println(string(out), err)
+		log.Print(string(out), err)
 	}
 
-	fmt.Println("ssh: ", GetSshStatus())
+	fmt.Print("ssh: ", GetSshStatus())
 
+}
+
+func ActiveOrInactive(inp []byte) bool {
+	temp := strings.TrimSpace(string(inp))
+
+	if temp == "active" || temp == "inactive" {
+		return true
+	}
+	return false
 }
 
 func GetSshStatus() string {
 	cmd := exec.Command("systemctl", "is-active", "ssh")
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Println(string(out), err)
+	output, err := cmd.CombinedOutput()
+	if ActiveOrInactive(output) {
+		return string(output)
 	}
-	return strings.TrimSpace(string(out))
+	return "error: " + err.Error()
 }
 
 func readSshStatus(c *gin.Context) {

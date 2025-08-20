@@ -71,7 +71,7 @@ ssh, telnet, snmp and http, ports and ethernet port.`,
 }
 
 func init() {
-	rootCmd.AddCommand(enableCmd)
+	//rootCmd.AddCommand(enableCmd)
 
 	enableCmd.Flags().Bool("telnet", false, "enable telnet")
 	enableCmd.Flags().Bool("ssh", false, "enable ssh")

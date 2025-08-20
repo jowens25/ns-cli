@@ -70,7 +70,7 @@ telnet, ssh and http protocols, selected ports and the ethernet interface.`,
 }
 
 func init() {
-	rootCmd.AddCommand(disableCmd)
+	//rootCmd.AddCommand(disableCmd)
 
 	disableCmd.Flags().Bool("telnet", false, "disable telnet")
 	disableCmd.Flags().Bool("ssh", false, "disable ssh")

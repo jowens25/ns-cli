@@ -2,6 +2,7 @@ package lib
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"log"
 	"os"
@@ -11,6 +12,33 @@ import (
 )
 
 var directives = []string{"auto", "allow-auto", "allow-hotplug", "allow-class"}
+
+func GetPhysicalEthStatus(ethPort string) string {
+	cmd := exec.Command("ethtool", ethPort)
+	out, err := cmd.CombinedOutput()
+
+	if strings.Contains(string(out), "Link detected: yes") {
+		status := ethPort
+		scanner := bufio.NewScanner(bytes.NewReader(out))
+		for scanner.Scan() {
+			line := scanner.Text()
+			if strings.Contains(line, "Speed: ") {
+				status = status + line[:7]
+			}
+			if strings.Contains(line, "Duplex: ") {
+				status = status + line[:8]
+
+			}
+
+		}
+		return status
+
+	} else if strings.Contains(string(out), "Link detected: no") {
+		return ethPort + " (Unplugged)"
+	} else {
+		return err.Error()
+	}
+}
 
 func waitingDots() {
 	fmt.Print("Please wait")
