@@ -14,7 +14,7 @@ import (
 // enableCmd represents the enable command
 var enableCmd = &cobra.Command{
 	Use:   "enable",
-	Short: "enable ports and protocols",
+	Short: "enable ports, protocols and interfaces",
 	Long: `Use this command to enable insecure protocols such as 
 ssh, telnet, snmp and http, ports and ethernet port.`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -56,6 +56,9 @@ ssh, telnet, snmp and http, ports and ethernet port.`,
 
 				}
 
+			case "sync":
+				api.ToggleNtpSync("yes")
+
 			default:
 			}
 		})
@@ -77,5 +80,6 @@ func init() {
 	enableCmd.Flags().Bool("all", false, "enable insecure protocols")
 	enableCmd.Flags().Bool("interface", false, "enable an interface")
 	enableCmd.Flags().Bool("web", false, "enable web app")
+	enableCmd.Flags().Bool("sync", false, "enable ntp synchronization")
 
 }

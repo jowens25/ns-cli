@@ -14,7 +14,7 @@ import (
 // disableCmd represents the disable command
 var disableCmd = &cobra.Command{
 	Use:   "disable",
-	Short: "Disable ports, protocols and interfaces.",
+	Short: "Disable ports, protocols and interfaces",
 	Long: `The disable command can be used to disable
 telnet, ssh and http protocols, selected ports and the ethernet interface.`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -55,6 +55,9 @@ telnet, ssh and http protocols, selected ports and the ethernet interface.`,
 
 				}
 
+			case "sync":
+				api.ToggleNtpSync("no")
+
 			default:
 				fmt.Println(cmd.Help())
 			}
@@ -76,5 +79,6 @@ func init() {
 	disableCmd.Flags().Bool("all", false, "disable insecure protocols")
 	disableCmd.Flags().Bool("interface", false, "disable interface")
 	disableCmd.Flags().Bool("web", false, "disable web app")
+	disableCmd.Flags().Bool("sync", false, "disable ntp synchronization")
 
 }

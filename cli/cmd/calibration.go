@@ -18,6 +18,13 @@ var calibrationCmd = &cobra.Command{
 See list of Cal Factors numbered for appropriate measurement 
 parameters. These settings should only be changed by an 
 authorized technician.`,
+	DisableFlagsInUseLine: true, // This hides [flags] from the usage line
+
+	Example: `
+  # Common usage patterns
+  cal <channel>			# return channel factor
+  cal <channel> <factor>	# sets new rate`,
+
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if len(args) == 0 {

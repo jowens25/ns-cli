@@ -262,3 +262,11 @@ See "systemctl status nginx.service" and "journalctl -xeu nginx.service" for det
 2025/08/19 15:46:47 SNMPD:  active
 2025/08/19 15:46:50 inactive
  exit status 3
+2025/08/19 16:27:50 Database initialized successfully
+2025/08/19 16:29:05 Database initialized successfully
+2025/08/19 16:29:16 inactive
+ exit status 3
+2025/08/20 08:12:05 Invalid serial port: error getting term settings: inappropriate ioctl for device
+2025/08/20 08:14:22 Invalid serial port: error getting term settings: inappropriate ioctl for device
+2025/08/20 08:22:19 Invalid serial port: error getting term settings: inappropriate ioctl for device
+2025/08/20 08:22:28 Invalid serial port: error getting term settings: inappropriate ioctl for device
