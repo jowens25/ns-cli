@@ -1,4 +1,4 @@
-package api
+package lib
 
 import (
 	"bufio"
@@ -7,19 +7,27 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-var v3_users []SnmpV3User
+// writeSnmpV1V2cUser creates entries in the snmpd config file for v1 and v2c users using a templated config file
+// Returns message v1v2c_user json
 
-func readSnmpV3Users(c *gin.Context) {
+var v1v2c_users []SnmpV1V2cUser
+
+func readSnmpV1V2cUsers(c *gin.Context) {
+
 	StopSnmpd()
+
 	readSnmpUsersFromFile()
+
 	StartSnmpd()
-	var users []SnmpV3User
+
+	var users []SnmpV1V2cUser
 	result := db.Find(&users)
 
 	if result.Error != nil {
@@ -28,22 +36,22 @@ func readSnmpV3Users(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 
-		"v3_users": users,
+		"v1v2c_users": users,
 	})
 
 }
 
-// writeSnmpV3User writes lines in the snmpd.conf for a v3 user
-// Returns "messge" and "v3_user"
-func writeSnmpV3User(c *gin.Context) {
-	var user SnmpV3User
+func writeSnmpV1V2cUser(c *gin.Context) {
+	var user SnmpV1V2cUser
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	result := db.Where("user_name = ?", user.UserName).FirstOrCreate(&user)
+	user.ComNumber = strconv.FormatInt(int64(len(v1v2c_users)), 10)
+
+	result := db.Where("community = ?", user.Community).FirstOrCreate(&user)
 
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
@@ -51,16 +59,16 @@ func writeSnmpV3User(c *gin.Context) {
 	}
 
 	StopSnmpd()
-	addSnmpV3UserToFile(user)
+	addSnmpV1V2cUserToFile(user)
 	StartSnmpd()
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "SNMP V3 User Created",
-		"v3_user": user,
+		"message":    "SNMP V1/V2c User Created",
+		"v1v2c_user": user,
 	})
 }
 
-func addSnmpV3UserToFile(user SnmpV3User) {
+func addSnmpV1V2cUserToFile(user SnmpV1V2cUser) {
 	file, err := os.Open(os.Getenv(SNMP_CONFIG_PATH))
 
 	if err != nil {
@@ -69,7 +77,7 @@ func addSnmpV3UserToFile(user SnmpV3User) {
 	defer file.Close()
 
 	lineCount := 0
-	createUserIndex := -1
+	userIndex := -1
 	groupIndex := -1
 
 	var lines []string
@@ -78,27 +86,30 @@ func addSnmpV3UserToFile(user SnmpV3User) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		if strings.Contains(line, "#createUser") {
-			createUserIndex = lineCount + 2 // skip the header and blank line
+		if strings.Contains(line, "#com2sec") {
+			userIndex = lineCount + 2 // skip the header and blank line
 		}
+
 		if strings.Contains(line, "#group") {
-			groupIndex = lineCount + 2
+			groupIndex = lineCount + 3
 		}
 
 		lines = append(lines, line)
 		lineCount++
 	}
 
-	newUserLine := fmt.Sprintf("createUser %s %s %s %s %s", user.UserName, user.AuthType, user.AuthPassphrase, user.PrivType, user.PrivPassphrase)
-	newGroupLine := fmt.Sprintf("group %s %s %s", user.GroupName, user.Version, user.UserName)
+	// seemingly no header found...
 
-	if createUserIndex < 0 {
+	newUserLine := fmt.Sprintf("com2sec comuser_%s %s %s", user.ComNumber, user.Source, user.Community)
+	newGroupLine := fmt.Sprintf("group %s %s comuser_%s", user.GroupName, user.Version, user.ComNumber)
+
+	if userIndex < 0 {
 		lines = append(lines, []string{"#-------------------------------------------------------------------------------"}...)
-		lines = append(lines, []string{"#createUser username [MD5|SHA] [passphrase] [DES] [passphrase]"}...)
+		lines = append(lines, []string{"#com2sec sec.name source community"}...)
 		lines = append(lines, []string{"#-------------------------------------------------------------------------------"}...)
 		lines = append(lines, []string{newUserLine}...)
 	} else {
-		lines = append(lines[:createUserIndex], append([]string{newUserLine}, lines[createUserIndex:]...)...)
+		lines = append(lines[:userIndex], append([]string{newUserLine}, lines[userIndex:]...)...)
 	}
 
 	if groupIndex < 0 {
@@ -117,10 +128,10 @@ func addSnmpV3UserToFile(user SnmpV3User) {
 	}
 }
 
-func removeSnmpV3UserFromFile(user SnmpV3User) {
+func removeSnmpV1V2cUserFromFile(user SnmpV1V2cUser) {
 
-	UserLineToDelete := fmt.Sprintf("createUser %s %s %s %s %s", user.UserName, user.AuthType, user.AuthPassphrase, user.PrivType, user.PrivPassphrase)
-	GroupLineToDelete := fmt.Sprintf("group %s %s %s", user.GroupName, user.Version, user.UserName)
+	UserLineToDelete := fmt.Sprintf("com2sec comuser_%s %s %s", user.ComNumber, user.Source, user.Community)
+	GroupLineToDelete := fmt.Sprintf("group %s %s comuser_%s", user.GroupName, user.Version, user.ComNumber)
 	log.Println(UserLineToDelete)
 	log.Println(GroupLineToDelete)
 	file, err := os.Open(os.Getenv(SNMP_CONFIG_PATH))
@@ -153,18 +164,19 @@ func removeSnmpV3UserFromFile(user SnmpV3User) {
 	}
 }
 
-func deleteSnmpV3User(c *gin.Context) {
+func deleteSnmpV1V2cUser(c *gin.Context) {
 
 	id := c.Param("id")
 
-	var userToDelete SnmpV3User
+	var userToDelete SnmpV1V2cUser
 
 	if err := db.First(&userToDelete, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
+
 	StopSnmpd()
-	removeSnmpV3UserFromFile(userToDelete)
+	removeSnmpV1V2cUserFromFile(userToDelete)
 	StartSnmpd()
 	if err := db.Delete(&userToDelete).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -176,10 +188,11 @@ func deleteSnmpV3User(c *gin.Context) {
 	})
 }
 
-func editSnmpV3User(c *gin.Context) {
+func editSnmpV1V2cUser(c *gin.Context) {
+
 	id := c.Param("id")
 
-	var existingUser SnmpV3User
+	var existingUser SnmpV1V2cUser
 	if err := db.First(&existingUser, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
@@ -188,10 +201,11 @@ func editSnmpV3User(c *gin.Context) {
 		}
 		return
 	}
+
 	StopSnmpd()
-	removeSnmpV3UserFromFile(existingUser)
+	removeSnmpV1V2cUserFromFile(existingUser)
 	StartSnmpd()
-	var updateData SnmpV3User
+	var updateData SnmpV1V2cUser
 	if err := c.ShouldBindJSON(&updateData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -199,46 +213,41 @@ func editSnmpV3User(c *gin.Context) {
 
 	updates := make(map[string]interface{})
 
-	// user name
-	if updateData.UserName != "" {
-		updates["user_name"] = updateData.UserName
-	}
-
-	// auth type
-	if updateData.AuthType != "" {
-		if !(updateData.AuthType == "MD5" || updateData.AuthType == "SHA") {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "wrong auth entry"})
+	if updateData.Version != "" {
+		if !(updateData.Version == "v1" || updateData.Version == "v2c") {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "wrong version entry"})
 			return
 		}
-		updates["auth_type"] = updateData.AuthType
-	}
-	// auth pass
-	if updateData.AuthPassphrase != "" {
-		updates["auth_passphrase"] = updateData.AuthPassphrase
+		updates["version"] = updateData.Version
 	}
 
-	// priv type
-	if updateData.PrivType != "" {
-		if !(updateData.PrivType == "AES" || updateData.PrivType == "DES") {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "wrong priv entry"})
-			return
-		}
-		updates["priv_type"] = updateData.PrivType
-	}
-
-	// priv pass
-	if updateData.PrivPassphrase != "" {
-		updates["priv_passphrase"] = updateData.PrivPassphrase
-	}
-
-	// priv type
 	if updateData.GroupName != "" {
-		if !(updateData.GroupName == "roprivgroup" || updateData.GroupName == "rwprivgroup") {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "wrong group entry"})
+		if !(updateData.GroupName == "ronoauthgroup" || updateData.GroupName == "rwnoauthgroup") {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "wrong group name entry"})
 			return
 		}
 		updates["group_name"] = updateData.GroupName
 	}
+
+	if updateData.Community != "" {
+		updates["community"] = updateData.Community
+	}
+
+	//if updateData.IpVersion != "" {
+	//	if !(updateData.IpVersion == "ipv4" || updateData.IpVersion == "ipv6") {
+	//		c.JSON(http.StatusBadRequest, gin.H{"error": "wrong ip version entry"})
+	//		return
+	//	}
+	//	updates["ip_version"] = updateData.IpVersion
+	//}
+
+	if updateData.Source != "" {
+		updates["source"] = updateData.Source
+	}
+
+	//if updateData.Ip6Address != "" {
+	//	updates["ip6_address"] = updateData.Ip6Address
+	//}
 
 	// Check if there's anything to update
 	if len(updates) == 0 {
@@ -253,17 +262,15 @@ func editSnmpV3User(c *gin.Context) {
 		return
 	}
 
-	var updatedUser SnmpV3User
+	var updatedUser SnmpV1V2cUser
 	if err := db.First(&updatedUser, id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch updated user"})
 		return
 	}
-
-	addSnmpV3UserToFile(updatedUser)
+	addSnmpV1V2cUserToFile(updatedUser)
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "User updated successfully",
-		"v3_user": updatedUser,
+		"message":    "User updated successfully",
+		"v1v2c_user": updatedUser,
 	})
-
 }

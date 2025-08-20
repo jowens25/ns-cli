@@ -1,4 +1,4 @@
-package api
+package lib
 
 import (
 	"github.com/golang-jwt/jwt/v5"

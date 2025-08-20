@@ -89,7 +89,7 @@ func LoadConfig(fileName string) {
 
 }
 
-func Operate(operation *string, module *string, property *string, value *string) error {
+func Operation(operation *string, module *string, property *string, value *string) error {
 
 	fmt.Println("OPERATE CALLED")
 

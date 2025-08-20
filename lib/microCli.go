@@ -1,8 +1,5 @@
-package api
+package lib
 
-/*
-#include "mySerial.h"
-*/
 import "C"
 import (
 	"bufio"

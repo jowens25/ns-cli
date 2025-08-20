@@ -1,4 +1,4 @@
-package api
+package lib
 
 import (
 	"NovusTimeServer/axi"
@@ -16,7 +16,7 @@ func readNtpProperty(c *gin.Context) {
 	module := "ntp"
 	value := ""
 
-	err := axi.Operate(&operation, &module, &property, &value)
+	err := axi.Operation(&operation, &module, &property, &value)
 
 	if err != nil {
 		log.Println("axi operate error in ntp read")
@@ -43,7 +43,7 @@ func writeNtpProperty(c *gin.Context) {
 	//value := ""
 	value := data[property]
 
-	err := axi.Operate(&operation, &module, &property, &value)
+	err := axi.Operation(&operation, &module, &property, &value)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
