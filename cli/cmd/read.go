@@ -1,5 +1,3 @@
-//go:build timeserver
-
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 */
@@ -30,7 +28,7 @@ var readCmd = &cobra.Command{
 
 		op := "read"
 		val := ""
-		axi.Operate(&op, &args[0], &args[1], &val)
+		axi.Operation(&op, &args[0], &args[1], &val)
 
 	},
 }

@@ -4,7 +4,7 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"NovusTimeServer/api"
+	"NovusTimeServer/lib"
 	"fmt"
 	"os/exec"
 
@@ -32,7 +32,8 @@ time <hh> <mm> <ss>	# sets new time`,
 
 		} else if len(args) == 3 {
 
-			api.ToggleNtpSync("no")
+			lib.ToggleNtpSync("no")
+			fmt.Println("disabling synchronization")
 
 			myCmd := exec.Command("timedatectl", "set-time", args[0]+":"+args[1]+":"+args[2])
 			out, err := myCmd.CombinedOutput()

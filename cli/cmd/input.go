@@ -4,7 +4,7 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"NovusTimeServer/api"
+	"NovusTimeServer/lib"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -33,11 +33,11 @@ var selectCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 
-			response := api.ReadWriteMicro("INP", "INP")
+			response := lib.ReadWriteMicro("INP", "INP")
 			fmt.Println(response)
 
 		} else if len(args) == 1 {
-			response := api.ReadWriteMicro("INP", "INP", args[0])
+			response := lib.ReadWriteMicro("INP", "INP", args[0])
 			fmt.Println(response)
 		} else {
 			cmd.Help()
@@ -67,11 +67,11 @@ than 0.3V. (from 0.05V to 1.00V)
 
 				if len(args) == 0 {
 
-					response := api.ReadWriteMicro(cmdRoot, cmdRoot)
+					response := lib.ReadWriteMicro(cmdRoot, cmdRoot)
 					fmt.Println(response)
 
 				} else if len(args) == 1 {
-					response := api.ReadWriteMicro(cmdRoot, cmdRoot, args[0])
+					response := lib.ReadWriteMicro(cmdRoot, cmdRoot, args[0])
 					fmt.Println(response)
 				} else {
 					cmd.Help()
@@ -81,11 +81,11 @@ than 0.3V. (from 0.05V to 1.00V)
 				cmdRoot := "INPTHR1"
 				if len(args) == 0 {
 
-					response := api.ReadWriteMicro(cmdRoot, cmdRoot)
+					response := lib.ReadWriteMicro(cmdRoot, cmdRoot)
 					fmt.Println(response)
 
 				} else if len(args) == 1 {
-					response := api.ReadWriteMicro(cmdRoot, cmdRoot, args[0])
+					response := lib.ReadWriteMicro(cmdRoot, cmdRoot, args[0])
 					fmt.Println(response)
 				} else {
 					cmd.Help()
@@ -114,11 +114,11 @@ lock. If $PRLK is enabled, $PRHR is disabled. Requires CAN bus connector.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 
-			response := api.ReadWriteMicro("PRLK", "PRLK")
+			response := lib.ReadWriteMicro("PRLK", "PRLK")
 			fmt.Println(response)
 
 		} else if len(args) == 1 {
-			response := api.ReadWriteMicro("PRLK", "PRLK", args[0])
+			response := lib.ReadWriteMicro("PRLK", "PRLK", args[0])
 			fmt.Println(response)
 		} else {
 			cmd.Help()
@@ -140,11 +140,11 @@ $PRLK is disabled. Requires CAN`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 
-			response := api.ReadWriteMicro("PRLK", "PRLK")
+			response := lib.ReadWriteMicro("PRLK", "PRLK")
 			fmt.Println(response)
 
 		} else if len(args) == 1 {
-			response := api.ReadWriteMicro("PRLK", "PRLK", args[0])
+			response := lib.ReadWriteMicro("PRLK", "PRLK", args[0])
 			fmt.Println(response)
 		} else {
 			cmd.Help()
@@ -172,11 +172,11 @@ from Input A. Number format must be in the form <n.nn> (from 0.05 to 0.95)`,
 
 				if len(args) == 0 {
 
-					response := api.ReadWriteMicro(cmdRoot, cmdRoot)
+					response := lib.ReadWriteMicro(cmdRoot, cmdRoot)
 					fmt.Println(response)
 
 				} else if len(args) == 1 {
-					response := api.ReadWriteMicro(cmdRoot, cmdRoot, args[0])
+					response := lib.ReadWriteMicro(cmdRoot, cmdRoot, args[0])
 					fmt.Println(response)
 				} else {
 					cmd.Help()
@@ -186,11 +186,11 @@ from Input A. Number format must be in the form <n.nn> (from 0.05 to 0.95)`,
 				cmdRoot := "FLTTHRB"
 				if len(args) == 0 {
 
-					response := api.ReadWriteMicro(cmdRoot, cmdRoot)
+					response := lib.ReadWriteMicro(cmdRoot, cmdRoot)
 					fmt.Println(response)
 
 				} else if len(args) == 1 {
-					response := api.ReadWriteMicro(cmdRoot, cmdRoot, args[0])
+					response := lib.ReadWriteMicro(cmdRoot, cmdRoot, args[0])
 					fmt.Println(response)
 				} else {
 					cmd.Help()

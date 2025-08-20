@@ -4,7 +4,7 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"NovusTimeServer/api"
+	"NovusTimeServer/lib"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -31,11 +31,11 @@ authorized technician.`,
 			cmd.Help()
 
 		} else if len(args) == 1 {
-			response := api.ReadWriteMicro("CAL"+args[0], "CAL")
+			response := lib.ReadWriteMicro("CAL"+args[0], "CAL")
 			fmt.Println(response)
 
 		} else if len(args) == 2 {
-			response := api.ReadWriteMicro("CAL"+args[0], "CAL", args[1])
+			response := lib.ReadWriteMicro("CAL"+args[0], "CAL", args[1])
 			fmt.Println(response)
 		} else {
 			cmd.Help()
@@ -55,7 +55,7 @@ Cal Factors in flash to the current Cal Settings.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if len(args) == 0 {
-			response := api.ReadWriteMicro("SAVECAL", "CAL")
+			response := lib.ReadWriteMicro("SAVECAL", "CAL")
 			fmt.Println(response)
 		} else {
 			cmd.Help()

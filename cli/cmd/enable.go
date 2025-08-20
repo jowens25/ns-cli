@@ -4,7 +4,7 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"NovusTimeServer/api"
+	"NovusTimeServer/lib"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -25,23 +25,23 @@ ssh, telnet, snmp and http, ports and ethernet port.`,
 
 			switch f.Name {
 			case "all":
-				api.StartTelnet()
-				api.StartSsh()
-				api.StartHttp()
+				lib.StartTelnet()
+				lib.StartSsh()
+				lib.StartHttp()
 			case "telnet":
-				api.StartTelnet()
+				lib.StartTelnet()
 			case "ssh":
-				api.StartSsh()
+				lib.StartSsh()
 			case "http":
-				api.StartHttp()
+				lib.StartHttp()
 
 			case "web":
-				api.StartApp()
+				lib.StartApp()
 
 			case "port":
 				if len(args) != 0 {
 					port := args[1]
-					api.EnablePort(port)
+					lib.EnablePort(port)
 				} else {
 					fmt.Println("missing port")
 
@@ -50,14 +50,14 @@ ssh, telnet, snmp and http, ports and ethernet port.`,
 			case "interface":
 				if len(args) != 0 {
 					intf := args[0]
-					api.EnableInterface(intf)
+					lib.EnableInterface(intf)
 				} else {
 					fmt.Println("missing interface")
 
 				}
 
 			case "sync":
-				api.ToggleNtpSync("yes")
+				lib.ToggleNtpSync("yes")
 
 			default:
 			}

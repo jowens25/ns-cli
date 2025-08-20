@@ -4,7 +4,7 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"NovusTimeServer/api"
+	"NovusTimeServer/lib"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -29,11 +29,11 @@ baudrates are 19200, 38400, 57600, 115200, 230400.`,
 
 		if len(args) == 0 {
 
-			response := api.ReadWriteMicro("BAUDNV", "BAUDNV")
+			response := lib.ReadWriteMicro("BAUDNV", "BAUDNV")
 			fmt.Println(response)
 
 		} else if len(args) == 1 {
-			response := api.ReadWriteMicro("BAUDNV", "BAUDNV", args[0])
+			response := lib.ReadWriteMicro("BAUDNV", "BAUDNV", args[0])
 			fmt.Println(response)
 		} else {
 			cmd.Help()

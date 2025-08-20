@@ -4,7 +4,7 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"NovusTimeServer/api"
+	"NovusTimeServer/lib"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -34,24 +34,24 @@ to quickly create a Cobra application.`,
 				if len(args) != 0 {
 					intf := args[0]
 
-					fmt.Println(api.GetInterfaceStatus(intf))
+					fmt.Println(lib.GetInterfaceStatus(intf))
 				} else {
 					fmt.Println("missing interface")
 
 				}
 
 			case "telnet":
-				fmt.Println(api.GetTelnetStatus())
+				fmt.Println(lib.GetTelnetStatus())
 			case "ssh":
-				fmt.Println(api.GetSshStatus())
+				fmt.Println(lib.GetSshStatus())
 			case "http":
-				fmt.Println(api.GetHttpStatus())
+				fmt.Println(lib.GetHttpStatus())
 
 			case "port":
 
 				if len(args) != 0 {
 					port := args[0]
-					fmt.Println(api.GetPortStatus(port))
+					fmt.Println(lib.GetPortStatus(port))
 				} else {
 					fmt.Println("missing port")
 

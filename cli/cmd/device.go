@@ -1,14 +1,8 @@
-//go:build timeserver
-
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 */
 package cmd
 
-/*
-#include "serialInterface.h"
-#include "axi.h"
-*/
 import (
 	"NovusTimeServer/axi"
 	"fmt"

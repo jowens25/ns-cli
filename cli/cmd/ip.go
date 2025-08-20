@@ -4,7 +4,7 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"NovusTimeServer/api"
+	"NovusTimeServer/lib"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -20,10 +20,10 @@ in /etc/network/interfaces ip set <ip>, ip set <ip> <gw>`,
 		//if len(args) == 0 {
 		cmd.Help()
 		//} else if len(args) == 1 {
-		//	api.SetIpAndGw(args[0])
+		//	lib.SetIpAndGw(args[0])
 		//
 		//} else if len(args) == 2 {
-		//	api.SetIpAndGw(args[0], args[1])
+		//	lib.SetIpAndGw(args[0], args[1])
 		//}
 		//fmt.Println("Please reboot for changes to take effect")
 
@@ -37,7 +37,7 @@ var get = &cobra.Command{
 	Long: `Use this command to get the ip address and/or gateway 
 in /etc/network/interfaces ip get`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(api.GetIpAndGw())
+		fmt.Println(lib.GetIpAndGw())
 
 	},
 }
@@ -53,10 +53,10 @@ in /etc/network/interfaces ip set <ip>, ip set <ip> <gw>`,
 			cmd.Help()
 			return
 		} else if len(args) == 1 {
-			api.SetIpAndGw(args[0])
+			lib.SetIpAndGw(args[0])
 
 		} else if len(args) == 2 {
-			api.SetIpAndGw(args[0], args[1])
+			lib.SetIpAndGw(args[0], args[1])
 		}
 		fmt.Println("Please reboot for changes to take effect")
 

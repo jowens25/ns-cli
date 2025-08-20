@@ -4,7 +4,7 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"NovusTimeServer/api"
+	"NovusTimeServer/lib"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -28,7 +28,7 @@ var saveFlashCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if len(args) == 0 {
-			response := api.ReadWriteMicro("SAVEFL", "SAVED")
+			response := lib.ReadWriteMicro("SAVEFL", "SAVED")
 			fmt.Println(response)
 
 		} else {
@@ -47,7 +47,7 @@ overwrites flash memory with defaults.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if len(args) == 0 {
-			response := api.ReadWriteMicro("RESETALL", "RESETALL")
+			response := lib.ReadWriteMicro("RESETALL", "RESETALL")
 			fmt.Println(response)
 
 		} else {
