@@ -14,7 +14,7 @@ import (
 // timeCmd represents the time command
 var timeCmd = &cobra.Command{
 	Use:                   "time",
-	Short:                 "Display or set the system time",
+	Short:                 "display or set the system time",
 	Long:                  `Use this command to get and set system time.`,
 	DisableFlagsInUseLine: true,
 	Example: `time			# return current time

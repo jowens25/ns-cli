@@ -14,7 +14,7 @@ import (
 // sshCmd represents the ssh command
 var sshCmd = &cobra.Command{
 	Use:   "ssh",
-	Short: "ssh Configuration",
+	Short: "ssh configuration",
 	Long: `Use this command to control and configure ssh.
 Enable, Disable, Status, Configure.`,
 	Run: func(cmd *cobra.Command, args []string) {

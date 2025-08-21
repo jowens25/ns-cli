@@ -13,9 +13,9 @@ import (
 
 var inputCmd = &cobra.Command{
 	Use:   "input",
-	Short: "Input A, B channel settings",
-	Long: `Use this command to get and set 
-input channel priority, fault threshold and low voltage threshold.`,
+	Short: "input a, b channel settings",
+	Long: `Use this command to get and set input channel 
+priority, fault threshold and low voltage threshold.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},
@@ -154,7 +154,7 @@ $PRLK is disabled. Requires CAN`,
 
 // faultCmd represents the fault command
 var faultCmd = &cobra.Command{
-	Use:   "fault",
+	Use:   "fault [flags] <n.nn>",
 	Short: "Input channel Fault Threshold Factor",
 	Long: `Use this command to assign and query the 
 ratio at which the Channel output monitors report a fault. 
@@ -162,6 +162,7 @@ For example, if the FLTTHRA is set to "0.15", the Channel
 Fault Word will report an error if the measured value is 
 greater or less than ±15% of its target value, when sourced 
 from Input A. Number format must be in the form <n.nn> (from 0.05 to 0.95)`,
+	DisableFlagsInUseLine: true,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		cmd.Flags().Visit(func(f *pflag.Flag) {

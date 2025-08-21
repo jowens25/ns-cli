@@ -14,7 +14,7 @@ import (
 // telnetCmd represents the telnet command
 var telnetCmd = &cobra.Command{
 	Use:   "telnet",
-	Short: "telnet Configuration",
+	Short: "telnet configuration",
 	Long: `Use this command to control and configure telnet.
 Enable, Disable, Status, Configure.`,
 	Run: func(cmd *cobra.Command, args []string) {

@@ -13,7 +13,7 @@ import (
 // portCmd represents the port command
 var portCmd = &cobra.Command{
 	Use:   "port",
-	Short: "ethernet port",
+	Short: "network port",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
