@@ -49,22 +49,6 @@ and see their status.`,
 			cmd.Help()
 		}
 	},
-	/*
-		 		if len(args) == 0 {
-					response := lib.GetPhysicalEthStatus("eth0")
-					fmt.Println(response)
-
-				} else if len(args) == 1 {
-					lib.SetHostname(args[0])
-					response := lib.GetHostname()
-					fmt.Print(response)
-
-				} else {
-					cmd.Help()
-				}
-			},
-	*/
-
 }
 
 func init() {

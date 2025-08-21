@@ -5,13 +5,10 @@ import (
 	"bytes"
 	"fmt"
 	"log"
-	"os"
 	"os/exec"
 	"strings"
 	"time"
 )
-
-var directives = []string{"auto", "allow-auto", "allow-hotplug", "allow-class"}
 
 func GetInterfacePhysicalStatus(myInterface string) string {
 	cmd := exec.Command("ethtool", myInterface)
@@ -27,12 +24,9 @@ func GetInterfacePhysicalStatus(myInterface string) string {
 			}
 			if strings.Contains(line, "Duplex: ") {
 				status = status + line[8:] + ")"
-
 			}
-
 		}
 		return status
-
 	} else if strings.Contains(string(out), "Link detected: no") {
 		return myInterface + " (Unplugged)"
 	} else {
@@ -50,128 +44,81 @@ func waitingDots() {
 	fmt.Println()
 }
 
-func commentDirectiveLines(l string, i string) string {
-	for _, directive := range directives {
-		if strings.Contains(l, directive+" "+i) && !strings.HasPrefix(l, "#") {
-			return "#" + l
-		}
-	}
-	return l
-}
-
-func uncommentDirectiveLines(l string, i string) string {
-	for _, directive := range directives {
-		if strings.Contains(l, directive+" "+i) && strings.HasPrefix(l, "#") {
-			return l[1:]
-		}
-	}
-	return l
-}
-
-func DisableInterface(i string) {
-	cmd := exec.Command("ifdown", i)
+func DisableInterface(i string) string {
+	cmd := exec.Command("nmcli", "connection", "modify", i, "connection.autoconnect", "no")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Println(string(out), err)
+		log.Println("Failed to disable autoconnect:", string(out), err)
 	}
 
-	file, err := os.Open("/etc/network/interfaces")
-
-	if err != nil {
-		log.Println(err)
-	}
-	defer file.Close()
-
-	var lines []string
-	scanner := bufio.NewScanner(file)
-	// read all the lines, find placements
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		line = commentDirectiveLines(line, i)
-
-		lines = append(lines, line)
-
-	}
-
-	err = os.WriteFile("/etc/network/interfaces", []byte(strings.Join(lines, "\n")+"\n"), 0644)
-	if err != nil {
-		log.Fatal("failed to write file:", err)
-	}
-
-	cmd = exec.Command("systemctl", "stop", "networking")
-
+	cmd = exec.Command("nmcli", "connection", "down", i)
 	out, err = cmd.CombinedOutput()
 	if err != nil {
-		log.Println(string(out), err)
+		log.Println("Failed to bring down connection:", string(out), err)
 	}
-	fmt.Println(i+": ", GetInterfaceNetworkStatus(i))
 
+	return GetInterfaceNetworkStatus(i)
 }
 
-func EnableInterface(i string) {
-	cmd := exec.Command("ifup", i)
+func EnableInterface(i string) string {
+
+	cmd := exec.Command("nmcli", "-t", "-f", "NAME", "connection", "show", i)
 	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Println(string(out), err)
+
+	if err != nil || strings.TrimSpace(string(out)) == "" {
+		cmd = exec.Command("nmcli", "connection", "add", "type", "ethernet", "ifname", i, "con-name", i)
+		out, err = cmd.CombinedOutput()
+		if err != nil {
+			log.Println("Failed to create connection:", string(out), err)
+			return "failed to create connection"
+		}
 	}
 
-	file, err := os.Open("/etc/network/interfaces")
-
+	cmd = exec.Command("nmcli", "connection", "modify", i, "connection.autoconnect", "yes")
+	out, err = cmd.CombinedOutput()
 	if err != nil {
-		log.Println(err)
-	}
-	defer file.Close()
-
-	var lines []string
-	scanner := bufio.NewScanner(file)
-	// read all the lines, find placements
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		line = uncommentDirectiveLines(line, i)
-
-		lines = append(lines, line)
-
+		log.Println("Failed to enable autoconnect:", string(out), err)
 	}
 
-	err = os.WriteFile("/etc/network/interfaces", []byte(strings.Join(lines, "\n")+"\n"), 0644)
+	cmd = exec.Command("nmcli", "connection", "up", i)
+	out, err = cmd.CombinedOutput()
 	if err != nil {
-		log.Fatal("failed to write file:", err)
+		log.Println("Failed to bring up connection:", string(out), err)
 	}
 
 	waitingDots()
 
-	cmd = exec.Command("systemctl", "start", "networking")
-
-	out, err = cmd.CombinedOutput()
-	if err != nil {
-		log.Println(string(out), err)
-	}
-
-	fmt.Println(i+": ", GetInterfaceNetworkStatus(i))
-
+	return GetInterfaceNetworkStatus(i)
 }
 
 func GetInterfaceNetworkStatus(i string) string {
-
-	file, err := os.Open("/etc/network/interfaces")
-
+	cmd := exec.Command("nmcli", "-t", "-f", "connection.autoconnect", "connection", "show", i)
+	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Println(err)
+		return "inactive"
 	}
-	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-	// read all the lines, find placements
-	for scanner.Scan() {
-		line := scanner.Text()
+	autoconnect := strings.TrimSpace(string(out))
+	if autoconnect == "yes" {
+		cmd = exec.Command("nmcli", "-t", "-f", "DEVICE,STATE", "device", "status")
+		out, err = cmd.CombinedOutput()
+		if err != nil {
+			return "active" // autoconnect is yes, assume active even if we can't check device state
+		}
 
-		for _, directive := range directives {
-			if strings.Contains(line, directive+" "+i) && !strings.HasPrefix(line, "#") {
-				return "active"
+		lines := strings.Split(string(out), "\n")
+		for _, line := range lines {
+			parts := strings.Split(line, ":")
+			if len(parts) >= 2 && parts[0] == i {
+				state := parts[1]
+				if state == "connected" || state == "connecting" {
+					return "active"
+				}
 			}
 		}
+
+		// Connection exists and autoconnect is yes, but device might be down
+		return "active"
 	}
 
 	return "inactive"

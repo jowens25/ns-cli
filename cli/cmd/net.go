@@ -6,8 +6,8 @@ import (
 
 var networkCmd = &cobra.Command{
 	Use:   "net",
-	Short: "Display network configuration",
-	Long:  `Use this command to see a network configuration overview.`,
+	Short: "network configuraton",
+	Long:  `Use this command to configure ip address, gateway, connection status and more.`,
 	Run: func(cmd *cobra.Command, args []string) {
 	},
 }
