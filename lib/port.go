@@ -23,7 +23,7 @@ func GetPhysicalEthStatus(ethPort string) string {
 		for scanner.Scan() {
 			line := scanner.Text()
 			if strings.Contains(line, "Speed: ") {
-				status = status + "(" + line[7:]
+				status = status + " (" + line[8:]
 			}
 			if strings.Contains(line, "Duplex: ") {
 				status = status + line[8:] + ")"
