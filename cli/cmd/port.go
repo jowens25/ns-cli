@@ -1,78 +1,40 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
+
 */
 package cmd
 
 import (
-	"NovusTimeServer/lib"
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 )
 
 // portCmd represents the port command
 var portCmd = &cobra.Command{
 	Use:   "port",
-	Short: "network port",
-	Long: `Use this command to enable or disable network ports
-and see their status.`,
+	Short: "A brief description of your command",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-
-		hasFlags := false
-
-		cmd.Flags().Visit(func(f *pflag.Flag) {
-			hasFlags = true
-
-			if len(args) > 0 {
-
-				switch f.Name {
-
-				case "enable":
-					lib.EnableInterface(args[0])
-				case "disable":
-					lib.DisableInterface(args[0])
-				case "status":
-					fmt.Println(lib.GetInterfaceNetworkStatus(args[0]))
-				case "phy":
-					fmt.Println(lib.GetInterfacePhysicalStatus(args[0]))
-
-				default:
-					cmd.Help()
-				}
-			} else {
-				fmt.Println("please enter an interface (eth0)")
-			}
-		})
-
-		if !hasFlags {
-			cmd.Help()
-		}
+		fmt.Println("port called")
 	},
-	/*
-		 		if len(args) == 0 {
-					response := lib.GetPhysicalEthStatus("eth0")
-					fmt.Println(response)
-
-				} else if len(args) == 1 {
-					lib.SetHostname(args[0])
-					response := lib.GetHostname()
-					fmt.Print(response)
-
-				} else {
-					cmd.Help()
-				}
-			},
-	*/
-
 }
 
 func init() {
 	rootCmd.AddCommand(portCmd)
 
-	portCmd.Flags().BoolP("enable", "e", false, "enable network interface")
-	portCmd.Flags().BoolP("disable", "d", false, "disable network interface")
-	portCmd.Flags().BoolP("status", "s", false, "network interface status")
-	portCmd.Flags().BoolP("phy", "p", false, "network port (physical) status")
+	// Here you will define your flags and configuration settings.
 
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// portCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// portCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

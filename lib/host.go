@@ -2,7 +2,6 @@ package lib
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -43,7 +42,10 @@ func replaceHostname(newHostname string) {
 		if strings.Contains(line, currentHost) {
 			fields := strings.Fields(line)
 			if len(fields) == 2 {
+				// host and ip
 				line = fields[0] + "\t" + newHostname
+				//fmt.Println("new line to add? ", line)
+			}
 		}
 		lines = append(lines, line)
 	}
