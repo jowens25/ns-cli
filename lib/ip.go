@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"log"
+	"net"
 	"os/exec"
 	"strings"
 )
@@ -31,6 +32,31 @@ func GetIPv4Address(i string) string {
 	return "ipv4 error"
 }
 
+func GetIPv4Netmask(iface string) string {
+	cmd := exec.Command("ip", "a", "show", "dev", iface)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalf("failed to run ip command: %v", err)
+	}
+
+	scanner := bufio.NewScanner(bytes.NewReader(out))
+	for scanner.Scan() {
+		line := scanner.Text()
+		if strings.Contains(strings.TrimSpace(line), "inet ") && !strings.Contains(line, "inet6") {
+			fields := strings.Fields(line)
+			if len(fields) > 1 {
+				_, ipnet, err := net.ParseCIDR(fields[1])
+				if err != nil {
+					return "parse error"
+				}
+				mask := ipnet.Mask
+				return net.IP(mask).String()
+			}
+		}
+	}
+	return "ipv4 error"
+}
+
 func GetIPv6Address(i string) string {
 	cmd := exec.Command("ip", "a", "show", "dev", i)
 	out, err := cmd.CombinedOutput()
@@ -52,6 +78,31 @@ func GetIPv6Address(i string) string {
 		}
 	}
 	return "ipv6 error"
+}
+
+func GetIPv6Netmask(iface string) string {
+	cmd := exec.Command("ip", "a", "show", "dev", iface)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalf("failed to run ip command: %v", err)
+	}
+
+	scanner := bufio.NewScanner(bytes.NewReader(out))
+	for scanner.Scan() {
+		line := scanner.Text()
+		if strings.Contains(line, "inet6") {
+			fields := strings.Fields(line)
+			if len(fields) > 1 {
+				_, ipnet, err := net.ParseCIDR(fields[1])
+				if err != nil {
+					return "parse error"
+				}
+				mask := ipnet.Mask
+				return net.IP(mask).String()
+			}
+		}
+	}
+	return "ipv4 error"
 }
 
 // Set static IPv4 address using nmcli

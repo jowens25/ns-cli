@@ -12,7 +12,7 @@ import (
 
 // ip6tablesCmd represents the ip6tables command
 var ip6tablesInstallCmd = &cobra.Command{
-	Use:   "iptables-install",
+	Use:   "ip6tables-install",
 	Short: "install iptables",
 	Long:  `Use this command to reset the Ip6 tables.`,
 	Run: func(cmd *cobra.Command, args []string) {

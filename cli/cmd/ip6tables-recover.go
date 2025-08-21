@@ -12,7 +12,7 @@ import (
 
 // iptablesCmd represents the iptables command
 var ip6tablesRecoverCmd = &cobra.Command{
-	Use:   "iptables-recover",
+	Use:   "ip6tables-recover",
 	Short: "recover iptables",
 	Long:  `Use this command to reset the Ip4 tables.`,
 	Run: func(cmd *cobra.Command, args []string) {
