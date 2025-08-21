@@ -89,7 +89,7 @@ func readSnmpUsersFromFile() {
 	//fmt.Println(groups)
 	//fmt.Println(communities)
 	//fmt.Println(createUsers)
-	log.Println("FOR LOOP OVER GROUPS")
+	//log.Println("FOR LOOP OVER GROUPS")
 	for _, group := range groups {
 		for _, community := range communities {
 			if community["sec_name"] == group["sec_name"] {
