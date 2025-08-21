@@ -13,12 +13,12 @@ import (
 
 var directives = []string{"auto", "allow-auto", "allow-hotplug", "allow-class"}
 
-func GetPhysicalEthStatus(ethPort string) string {
-	cmd := exec.Command("ethtool", ethPort)
+func GetInterfacePhysicalStatus(myInterface string) string {
+	cmd := exec.Command("ethtool", myInterface)
 	out, err := cmd.CombinedOutput()
 
 	if strings.Contains(string(out), "Link detected: yes") {
-		status := ethPort
+		status := myInterface
 		scanner := bufio.NewScanner(bytes.NewReader(out))
 		for scanner.Scan() {
 			line := scanner.Text()
@@ -34,7 +34,7 @@ func GetPhysicalEthStatus(ethPort string) string {
 		return status
 
 	} else if strings.Contains(string(out), "Link detected: no") {
-		return ethPort + " (Unplugged)"
+		return myInterface + " (Unplugged)"
 	} else {
 		return err.Error()
 	}
@@ -105,7 +105,7 @@ func DisableInterface(i string) {
 	if err != nil {
 		log.Println(string(out), err)
 	}
-	fmt.Println(i+": ", GetInterfaceStatus(i))
+	fmt.Println(i+": ", GetInterfaceNetworkStatus(i))
 
 }
 
@@ -149,11 +149,11 @@ func EnableInterface(i string) {
 		log.Println(string(out), err)
 	}
 
-	fmt.Println(i+": ", GetInterfaceStatus(i))
+	fmt.Println(i+": ", GetInterfaceNetworkStatus(i))
 
 }
 
-func GetInterfaceStatus(i string) string {
+func GetInterfaceNetworkStatus(i string) string {
 
 	file, err := os.Open("/etc/network/interfaces")
 

@@ -32,9 +32,9 @@ to quickly create a Cobra application.`,
 			case "interface":
 
 				if len(args) != 0 {
-					intf := args[0]
+					//intf := args[0]
 
-					fmt.Println(lib.GetInterfaceStatus(intf))
+					//	fmt.Println(lib.GetInterfaceStatus(intf))
 				} else {
 					fmt.Println("missing interface")
 

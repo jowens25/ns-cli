@@ -33,12 +33,9 @@ and see their status.`,
 				case "disable":
 					lib.DisableInterface(args[0])
 				case "status":
-
-					fmt.Println(lib.GetInterfaceStatus(args[0]))
-
+					fmt.Println(lib.GetInterfaceNetworkStatus(args[0]))
 				case "phy":
-
-					fmt.Println(lib.GetPhysicalEthStatus(args[0]))
+					fmt.Println(lib.GetInterfacePhysicalStatus(args[0]))
 
 				default:
 					cmd.Help()

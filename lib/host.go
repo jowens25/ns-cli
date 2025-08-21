@@ -2,6 +2,7 @@ package lib
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -32,7 +33,7 @@ func replaceHostname(newHostname string) {
 	}
 	defer file.Close()
 
-	currentHost := GetHostname()
+	currentHost := strings.TrimSpace(GetHostname())
 	var lines []string
 
 	scanner := bufio.NewScanner(file)
@@ -42,9 +43,7 @@ func replaceHostname(newHostname string) {
 		if strings.Contains(line, currentHost) {
 			fields := strings.Fields(line)
 			if len(fields) == 2 {
-				// host and ip
 				line = fields[0] + "\t" + newHostname
-			}
 		}
 		lines = append(lines, line)
 	}
