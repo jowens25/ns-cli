@@ -1,16 +1,36 @@
 package lib
 
 import (
-	"fmt"
 	"os/exec"
+	"strings"
 )
 
-func ToggleNtpSync(state string) {
+func GetTime() string {
 
-	myCmd := exec.Command("timedatectl", "set-ntp", state)
+	myCmd := exec.Command("date", "+%T")
 	out, err := myCmd.CombinedOutput()
 	if err != nil {
-		fmt.Println(string(out), err)
+		return err.Error()
 	}
-	fmt.Print(string(out))
+
+	return strings.TrimSpace(string(out))
+
+}
+
+func SetTime(date []string) string {
+
+	if len(date) != 3 {
+		return "error"
+	}
+	hour := date[0]
+	minute := date[1]
+	second := date[2]
+
+	myCmd := exec.Command("date", "-s", hour+":"+minute+":"+second)
+	_, err := myCmd.CombinedOutput()
+	if err != nil {
+		return err.Error()
+	}
+
+	return GetTime()
 }

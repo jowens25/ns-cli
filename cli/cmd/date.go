@@ -6,7 +6,6 @@ package cmd
 import (
 	"NovusTimeServer/lib"
 	"fmt"
-	"os/exec"
 
 	"github.com/spf13/cobra"
 )
@@ -22,24 +21,11 @@ date <yyyy> <mm> <dd>	# sets new date`,
 
 		if len(args) == 0 {
 
-			myCmd := exec.Command("timedatectl", "status")
-			out, err := myCmd.CombinedOutput()
-			if err != nil {
-				fmt.Println(string(out), err)
-			}
-			fmt.Print(string(out))
+			fmt.Println(lib.GetDate())
 
 		} else if len(args) == 3 {
 
-			lib.ToggleNtpSync("no")
-			fmt.Println("disabling synchronization")
-
-			myCmd := exec.Command("timedatectl", "set-time", args[0]+"-"+args[1]+"-"+args[2])
-			out, err := myCmd.CombinedOutput()
-			if err != nil {
-				fmt.Println(string(out), err)
-			}
-			fmt.Print(string(out))
+			fmt.Println(lib.SetDate(args))
 
 		} else {
 			cmd.Help()

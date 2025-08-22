@@ -1,6 +1,3 @@
-/*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -8,50 +5,60 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 )
 
-// portCmd represents the port command
-var portCmd = &cobra.Command{
+var interfaceCmd = &cobra.Command{
 	Use:   "port",
-	Short: "network port",
-	Long:  `Use this command to enable or disable specific ports.`,
+	Short: "network interface",
+	Long:  `Use this command to manage network ports and see their status.`,
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		if phy {
+			fmt.Println(lib.GetPortPhysicalState(args[0]))
+		} else {
+			fmt.Println(lib.GetInterfaceNetworkStatus(args[0]))
 
-		hasFlags := false
-
-		cmd.Flags().Visit(func(f *pflag.Flag) {
-			hasFlags = true
-
-			if len(args) > 0 {
-
-				switch f.Name {
-
-				case "enable":
-					lib.EnablePort(args[0])
-				case "disable":
-					lib.DisablePort(args[0])
-				case "status":
-					fmt.Println(lib.GetPortStatus(args[0]))
-
-				default:
-					cmd.Help()
-				}
-			} else {
-				fmt.Println("please enter an interface (eth0)")
-			}
-		})
-
-		if !hasFlags {
-			cmd.Help()
 		}
 	},
 }
 
-func init() {
-	rootCmd.AddCommand(portCmd)
+var enableCmd = &cobra.Command{
+	Use:   "enable [port]",
+	Short: "Enable a network interface",
+	Args:  cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		lib.EnableInterface(args[0])
+	},
+}
 
-	portCmd.Flags().BoolP("enable", "e", false, "enable network port")
-	portCmd.Flags().BoolP("disable", "d", false, "disable network port")
-	portCmd.Flags().BoolP("status", "s", false, "network port status")
+var disableCmd = &cobra.Command{
+	Use:   "disable [intf]",
+	Short: "Disable a network interface",
+	Args:  cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		lib.DisableInterface(args[0])
+	},
+}
+
+var listCmd = &cobra.Command{
+	Use:   "ls",
+	Short: "List network interfaces",
+	Args:  cobra.ExactArgs(0),
+	Run: func(cmd *cobra.Command, args []string) {
+
+		fmt.Println(lib.GetInterfaces())
+
+	},
+}
+
+var phy bool
+
+func init() {
+
+	rootCmd.AddCommand(interfaceCmd)
+	interfaceCmd.AddCommand(listCmd)
+	interfaceCmd.AddCommand(enableCmd)
+	interfaceCmd.AddCommand(disableCmd)
+	interfaceCmd.Flags().BoolVarP(&phy, "phy", "p", false, "show physical status")
+
 }
