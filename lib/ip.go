@@ -3,9 +3,13 @@ package lib
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"log"
 	"net"
+	"os"
 	"os/exec"
+	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -30,6 +34,12 @@ func GetIPv4Address(i string) string {
 		}
 	}
 	return "ipv4 error"
+}
+
+func OutputIp4vInfo(iface string) {
+	fmt.Println("Ip Address: ", GetIPv4Address(iface))
+	fmt.Println("Netmask:    ", GetIPv4Netmask(iface))
+	fmt.Println("Gateway:    ", GetGateway(iface))
 }
 
 func GetIPv4Netmask(iface string) string {
@@ -106,7 +116,8 @@ func GetIPv6Netmask(iface string) string {
 }
 
 // Set static IPv4 address using nmcli
-func SetStaticIPv4(interfaceName, ipAddress, gateway, dns string) error {
+func SetStaticIPv4(interfaceName, ipAddress, netmask, gateway string, dns ...string) error {
+
 	// Check if connection exists, create if it doesn't
 	cmd := exec.Command("nmcli", "-t", "-f", "NAME", "connection", "show", interfaceName)
 	out, err := cmd.CombinedOutput()
@@ -148,8 +159,9 @@ func SetStaticIPv4(interfaceName, ipAddress, gateway, dns string) error {
 	}
 
 	// Set DNS if provided
-	if dns != "" {
-		cmd = exec.Command("nmcli", "connection", "modify", interfaceName, "ipv4.dns", dns)
+	if len(dns) != 0 {
+		dnsString := strings.Join(dns, " ")
+		cmd = exec.Command("nmcli", "connection", "modify", interfaceName, "ipv4.dns", dnsString)
 		out, err = cmd.CombinedOutput()
 		if err != nil {
 			log.Printf("Failed to set DNS: %s %v", string(out), err)
@@ -441,12 +453,12 @@ func GetDNSServers(interfaceName string) (primary, secondary string) {
 	cmd := exec.Command("nmcli", "-t", "-f", "ipv4.dns", "connection", "show", interfaceName)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		return "", ""
+		return "err", "1"
 	}
 
 	dnsStr := strings.TrimSpace(string(out))
 	if dnsStr == "" || dnsStr == "--" {
-		return "", ""
+		return "none", "none"
 	}
 
 	// Split by comma or space
@@ -591,4 +603,419 @@ func SetGateway(interfaceName, gateway string) error {
 	}
 
 	return nil
+}
+
+type Route struct {
+	Destination string
+	Gateway     string
+	Interface   string
+	Metric      int
+}
+
+// getNetworkInterfaces returns a list of all network interfaces
+func getNetworkInterfaces() ([]string, error) {
+	interfaces, err := net.Interfaces()
+	if err != nil {
+		return nil, err
+	}
+
+	var ifaceNames []string
+	for _, iface := range interfaces {
+		// Skip loopback interfaces
+		if iface.Flags&net.FlagLoopback == 0 {
+			ifaceNames = append(ifaceNames, iface.Name)
+		}
+	}
+	return ifaceNames, nil
+}
+
+// isInterfaceActive checks if an interface has an IP address assigned
+func isInterfaceActive(ifaceName string) bool {
+	iface, err := net.InterfaceByName(ifaceName)
+	if err != nil {
+		return false
+	}
+
+	addrs, err := iface.Addrs()
+	if err != nil {
+		return false
+	}
+
+	// Check if interface has any non-loopback addresses
+	for _, addr := range addrs {
+		if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil { // IPv4 address
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// parseRoutingTable reads and parses /proc/net/route
+func parseRoutingTable() (map[string][]Route, error) {
+	file, err := os.Open("/proc/net/route")
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	routes := make(map[string][]Route)
+	scanner := bufio.NewScanner(file)
+
+	// Skip header line
+	scanner.Scan()
+
+	for scanner.Scan() {
+		fields := strings.Fields(scanner.Text())
+		if len(fields) < 8 {
+			continue
+		}
+
+		iface := fields[0]
+		destHex := fields[1]
+		gwHex := fields[2]
+		metricStr := fields[6]
+
+		// Convert hex destination to IP
+		dest, err := hexToIP(destHex)
+		if err != nil {
+			continue
+		}
+
+		// Convert hex gateway to IP
+		gateway, err := hexToIP(gwHex)
+		if err != nil {
+			continue
+		}
+
+		// Parse metric
+		metric, err := strconv.Atoi(metricStr)
+		if err != nil {
+			metric = 0
+		}
+
+		// Determine CIDR notation for destination
+		var destCIDR string
+		if dest == "0.0.0.0" {
+			destCIDR = "0.0.0.0/0" // Default route
+		} else {
+			// For simplicity, assume /32 for host routes and /24 for network routes
+			// In a real implementation, you'd parse the netmask from field[7]
+			if strings.HasSuffix(dest, ".0") {
+				destCIDR = dest + "/24"
+			} else {
+				destCIDR = dest + "/32"
+			}
+		}
+
+		route := Route{
+			Destination: destCIDR,
+			Gateway:     gateway,
+			Interface:   iface,
+			Metric:      metric,
+		}
+
+		routes[iface] = append(routes[iface], route)
+	}
+
+	return routes, scanner.Err()
+}
+
+// hexToIP converts a hex string to IP address string
+func hexToIP(hexStr string) (string, error) {
+	if len(hexStr) != 8 {
+		return "", fmt.Errorf("invalid hex string length")
+	}
+
+	// Convert hex to bytes (little-endian format in /proc/net/route)
+	var bytes []byte
+	for i := len(hexStr); i > 0; i -= 2 {
+		b, err := strconv.ParseUint(hexStr[i-2:i], 16, 8)
+		if err != nil {
+			return "", err
+		}
+		bytes = append(bytes, byte(b))
+	}
+
+	ip := net.IP(bytes)
+	return ip.String(), nil
+}
+
+// displayRoutingTable formats and displays the routing table like routes4 command
+func displayRoutingTable() error {
+	// Get all network interfaces
+	interfaces, err := getNetworkInterfaces()
+	if err != nil {
+		return fmt.Errorf("failed to get network interfaces: %v", err)
+	}
+
+	// Parse routing table
+	routes, err := parseRoutingTable()
+	if err != nil {
+		return fmt.Errorf("failed to parse routing table: %v", err)
+	}
+
+	// Sort interfaces for consistent output
+	sort.Strings(interfaces)
+
+	// Display routing table for each interface
+	for _, iface := range interfaces {
+		fmt.Printf("%s routing table:\n", iface)
+
+		if !isInterfaceActive(iface) {
+			fmt.Println("Interface not activated")
+			fmt.Println()
+			continue
+		}
+
+		ifaceRoutes, exists := routes[iface]
+		if !exists || len(ifaceRoutes) == 0 {
+			fmt.Println("No routes found")
+			fmt.Println()
+			continue
+		}
+
+		// Display routes for this interface
+		for i, route := range ifaceRoutes {
+			fmt.Printf("%d: %s via %s dev %s metric %d\n",
+				i, route.Destination, route.Gateway, route.Interface, route.Metric)
+		}
+		fmt.Println()
+	}
+
+	return nil
+}
+
+// Routes4 is the main function that mimics the routes4 command
+func Routes4() {
+	if err := displayRoutingTable(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+}
+
+type Route6 struct {
+	Destination string
+	Gateway     string
+	Interface   string
+	Metric      int
+}
+
+// isInterfaceActiveIPv6 checks if an interface has an IPv6 address assigned
+func isInterfaceActiveIPv6(ifaceName string) bool {
+	iface, err := net.InterfaceByName(ifaceName)
+	if err != nil {
+		return false
+	}
+
+	addrs, err := iface.Addrs()
+	if err != nil {
+		return false
+	}
+
+	// Check if interface has any IPv6 addresses (excluding link-local)
+	for _, addr := range addrs {
+		if ipnet, ok := addr.(*net.IPNet); ok {
+			if ipnet.IP.To16() != nil && ipnet.IP.To4() == nil {
+				// Skip link-local addresses (fe80::/10)
+				if !ipnet.IP.IsLinkLocalUnicast() {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+// getInterfaceByIndex returns interface name by index
+func getInterfaceByIndex(index int) string {
+	iface, err := net.InterfaceByIndex(index)
+	if err != nil {
+		return fmt.Sprintf("if%d", index)
+	}
+	return iface.Name
+}
+
+// parseIPv6RoutingTable reads and parses /proc/net/ipv6_route
+func parseIPv6RoutingTable() (map[string][]Route6, error) {
+	file, err := os.Open("/proc/net/ipv6_route")
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	routes := make(map[string][]Route6)
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		fields := strings.Fields(scanner.Text())
+		if len(fields) < 10 {
+			continue
+		}
+
+		destHex := fields[0]
+		destPrefixLen := fields[1]
+		//srcHex := fields[2]
+		//srcPrefixLen := fields[3]
+		nextHopHex := fields[4]
+		metricHex := fields[5]
+		//refCnt := fields[6]
+		//useCnt := fields[7]
+		flags := fields[8]
+		ifaceIndex := fields[9]
+
+		// Skip routes with certain flags (e.g., cached routes)
+		if strings.Contains(flags, "00000001") { // RTF_UP flag should be set
+			// Convert interface index to name
+			ifaceIdx, err := strconv.Atoi(ifaceIndex)
+			if err != nil {
+				continue
+			}
+			ifaceName := getInterfaceByIndex(ifaceIdx)
+
+			// Convert hex destination to IPv6
+			dest, err := hexToIPv6(destHex)
+			if err != nil {
+				continue
+			}
+
+			// Convert prefix length
+			prefixLen, err := strconv.Atoi(destPrefixLen)
+			if err != nil {
+				prefixLen = 128
+			}
+
+			// Convert hex next hop to IPv6
+			nextHop, err := hexToIPv6(nextHopHex)
+			if err != nil {
+				continue
+			}
+
+			// Convert metric from hex
+			metric, err := strconv.ParseInt(metricHex, 16, 32)
+			if err != nil {
+				metric = 0
+			}
+
+			// Format destination with prefix
+			var destCIDR string
+			if dest == "::" && prefixLen == 0 {
+				destCIDR = "::/0" // Default route
+			} else {
+				destCIDR = fmt.Sprintf("%s/%d", dest, prefixLen)
+			}
+
+			// Format gateway (next hop)
+			gateway := nextHop
+			if gateway == "::" {
+				gateway = "::" // On-link route
+			}
+
+			route := Route6{
+				Destination: destCIDR,
+				Gateway:     gateway,
+				Interface:   ifaceName,
+				Metric:      int(metric),
+			}
+
+			routes[ifaceName] = append(routes[ifaceName], route)
+		}
+	}
+
+	return routes, scanner.Err()
+}
+
+// hexToIPv6 converts a 32-character hex string to IPv6 address
+func hexToIPv6(hexStr string) (string, error) {
+	if len(hexStr) != 32 {
+		return "", fmt.Errorf("invalid hex string length: expected 32, got %d", len(hexStr))
+	}
+
+	// Convert hex string to bytes
+	var bytes []byte
+	for i := 0; i < len(hexStr); i += 2 {
+		b, err := strconv.ParseUint(hexStr[i:i+2], 16, 8)
+		if err != nil {
+			return "", err
+		}
+		bytes = append(bytes, byte(b))
+	}
+
+	ip := net.IP(bytes)
+	return ip.String(), nil
+}
+
+// displayIPv6RoutingTable formats and displays the IPv6 routing table
+func displayIPv6RoutingTable() error {
+	// Get all network interfaces
+	interfaces, err := getNetworkInterfaces()
+	if err != nil {
+		return fmt.Errorf("failed to get network interfaces: %v", err)
+	}
+
+	// Parse IPv6 routing table
+	routes, err := parseIPv6RoutingTable()
+	if err != nil {
+		return fmt.Errorf("failed to parse IPv6 routing table: %v", err)
+	}
+
+	// Sort interfaces for consistent output
+	sort.Strings(interfaces)
+
+	// Display routing table for each interface
+	for _, iface := range interfaces {
+		fmt.Printf("%s IPv6 routing table:\n", iface)
+
+		if !isInterfaceActiveIPv6(iface) {
+			fmt.Println("Interface not activated")
+			fmt.Println()
+			continue
+		}
+
+		ifaceRoutes, exists := routes[iface]
+		if !exists || len(ifaceRoutes) == 0 {
+			fmt.Println("No IPv6 routes found")
+			fmt.Println()
+			continue
+		}
+
+		// Display routes for this interface
+		for i, route := range ifaceRoutes {
+			fmt.Printf("%d: %s via %s dev %s metric %d\n",
+				i, route.Destination, route.Gateway, route.Interface, route.Metric)
+		}
+		fmt.Println()
+	}
+
+	return nil
+}
+
+// Routes6 is the main function that displays IPv6 routing tables
+func Routes6() {
+	if err := displayIPv6RoutingTable(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+}
+
+// Combined function to show both IPv4 and IPv6 routes
+func RoutesAll() {
+	fmt.Println("=== IPv4 Routing Tables ===")
+	if err := displayRoutingTable(); err != nil {
+		fmt.Fprintf(os.Stderr, "IPv4 Error: %v\n", err)
+	}
+
+	fmt.Println("\n=== IPv6 Routing Tables ===")
+	if err := displayIPv6RoutingTable(); err != nil {
+		fmt.Fprintf(os.Stderr, "IPv6 Error: %v\n", err)
+	}
+}
+
+func main() {
+	if len(os.Args) > 1 && os.Args[1] == "all" {
+		RoutesAll()
+	} else {
+		Routes6()
+	}
 }

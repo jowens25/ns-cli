@@ -17,37 +17,25 @@ var interfaceCmd = &cobra.Command{
 	Short: "network interface",
 	Long: `Use this command to enable or disable network ports
 and see their status.`,
+	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-
-		hasFlags := false
-
+		myInterface := args[0]
 		cmd.Flags().Visit(func(f *pflag.Flag) {
-			hasFlags = true
 
-			if len(args) > 0 {
+			switch f.Name {
+			case "enable":
+				lib.EnableInterface(myInterface)
+			case "disable":
+				lib.DisableInterface(myInterface)
+			case "phy":
+				fmt.Println(lib.GetInterfacePhysicalStatus(myInterface))
+			default:
+				fmt.Println(lib.GetInterfaceNetworkStatus(myInterface))
 
-				switch f.Name {
-
-				case "enable":
-					lib.EnableInterface(args[0])
-				case "disable":
-					lib.DisableInterface(args[0])
-				case "status":
-					fmt.Println(lib.GetInterfaceNetworkStatus(args[0]))
-				case "phy":
-					fmt.Println(lib.GetInterfacePhysicalStatus(args[0]))
-
-				default:
-					cmd.Help()
-				}
-			} else {
-				fmt.Println("please enter an interface (eth0)")
 			}
+
 		})
 
-		if !hasFlags {
-			cmd.Help()
-		}
 	},
 }
 
@@ -56,7 +44,6 @@ func init() {
 
 	interfaceCmd.Flags().BoolP("enable", "e", false, "enable network interface")
 	interfaceCmd.Flags().BoolP("disable", "d", false, "disable network interface")
-	interfaceCmd.Flags().BoolP("status", "s", false, "network interface status")
 	interfaceCmd.Flags().BoolP("phy", "p", false, "network interface (physical) status")
 
 }
