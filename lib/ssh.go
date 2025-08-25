@@ -2,6 +2,7 @@ package lib
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -53,6 +54,8 @@ func DisableSsh() {
 
 	RestartXinetd()
 
+	fmt.Println(GetSshStatus())
+
 }
 
 func EnableSsh() {
@@ -80,6 +83,7 @@ func EnableSsh() {
 	}
 
 	RestartXinetd()
+	fmt.Println(GetSshStatus())
 
 }
 

@@ -2,6 +2,7 @@ package lib
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -49,6 +50,8 @@ func DisableTelnet() {
 
 	RestartXinetd()
 
+	fmt.Println(GetTelnetStatus())
+
 }
 
 func EnableTelnet() {
@@ -76,6 +79,7 @@ func EnableTelnet() {
 	}
 
 	RestartXinetd()
+	fmt.Println(GetTelnetStatus())
 
 }
 

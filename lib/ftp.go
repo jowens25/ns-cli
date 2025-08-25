@@ -2,6 +2,7 @@ package lib
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -53,6 +54,8 @@ func DisableFtp() {
 
 	RestartXinetd()
 
+	fmt.Println(GetFtpStatus())
+
 }
 
 func EnableFtp() {
@@ -80,6 +83,8 @@ func EnableFtp() {
 	}
 
 	RestartXinetd()
+
+	fmt.Println(GetFtpStatus())
 
 }
 func GetFtpStatus() string {
