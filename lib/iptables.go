@@ -290,33 +290,33 @@ func BackupCurrentRules(backupPath string) error {
 }
 
 // Unrestrict - Clear network access restriction table
-func Unrestrict() error {
-	if err := checkRoot(); err != nil {
-		return err
-	}
-
-	fmt.Println("Clearing network access restriction tables...")
-
-	// Clear IPv4 restrictions
-	if err := clearIPv4Restrictions(); err != nil {
-		log.Printf("Warning: Failed to clear some IPv4 restrictions: %v", err)
-	}
-
-	// Clear IPv6 restrictions
-	if err := clearIPv6Restrictions(); err != nil {
-		log.Printf("Warning: Failed to clear some IPv6 restrictions: %v", err)
-	}
-
-	// Clear any custom restriction chains
-	if err := clearCustomRestrictionChains(); err != nil {
-		log.Printf("Warning: Failed to clear some custom chains: %v", err)
-	}
-
-	fmt.Println("Network access restriction tables cleared successfully.")
-	fmt.Println("All network traffic is now unrestricted.")
-
-	return nil
-}
+//func Unrestrict() error {
+//	if err := checkRoot(); err != nil {
+//		return err
+//	}
+//
+//	fmt.Println("Clearing network access restriction tables...")
+//
+//	// Clear IPv4 restrictions
+//	if err := clearIPv4Restrictions(); err != nil {
+//		log.Printf("Warning: Failed to clear some IPv4 restrictions: %v", err)
+//	}
+//
+//	// Clear IPv6 restrictions
+//	if err := clearIPv6Restrictions(); err != nil {
+//		log.Printf("Warning: Failed to clear some IPv6 restrictions: %v", err)
+//	}
+//
+//	// Clear any custom restriction chains
+//	if err := clearCustomRestrictionChains(); err != nil {
+//		log.Printf("Warning: Failed to clear some custom chains: %v", err)
+//	}
+//
+//	fmt.Println("Network access restriction tables cleared successfully.")
+//	fmt.Println("All network traffic is now unrestricted.")
+//
+//	return nil
+//}
 
 // Clear IPv4 network restrictions
 func clearIPv4Restrictions() error {
