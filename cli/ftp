@@ -8,7 +8,7 @@ service ftp
     user = root
     wait = no
     server = /usr/sbin/pure-ftpd
-    server_args = -l pam -E
+    server_args = -E
     log_on_success += DURATION
     log_on_failure += USERID
     instances = 20
