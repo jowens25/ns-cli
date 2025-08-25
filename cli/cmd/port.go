@@ -8,7 +8,7 @@ import (
 )
 
 var portCmd = &cobra.Command{
-	Use:   "port",
+	Use:   "port [port]",
 	Short: "network port",
 	Long:  `Use this command to manage network ports and see their status.`,
 	Args:  cobra.ExactArgs(1),
