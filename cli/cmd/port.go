@@ -7,16 +7,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var interfaceCmd = &cobra.Command{
+var portCmd = &cobra.Command{
 	Use:   "port",
-	Short: "network interface",
+	Short: "network port",
 	Long:  `Use this command to manage network ports and see their status.`,
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		if phy {
-			fmt.Println(lib.GetPortPhysicalState(args[0]))
+			fmt.Println(lib.GetPortPhysicalStatus(args[0]))
 		} else {
-			fmt.Println(lib.GetInterfaceNetworkStatus(args[0]))
+			fmt.Println(lib.GetPortConnectionStatus(args[0]))
 
 		}
 	},
@@ -24,30 +24,19 @@ var interfaceCmd = &cobra.Command{
 
 var enableCmd = &cobra.Command{
 	Use:   "enable [port]",
-	Short: "Enable a network interface",
+	Short: "Enable a network connection",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		lib.EnableInterface(args[0])
+		lib.PortConnect(args[0])
 	},
 }
 
 var disableCmd = &cobra.Command{
-	Use:   "disable [intf]",
-	Short: "Disable a network interface",
+	Use:   "disable [port]",
+	Short: "Disable a network connection",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		lib.DisableInterface(args[0])
-	},
-}
-
-var listCmd = &cobra.Command{
-	Use:   "ls",
-	Short: "List network interfaces",
-	Args:  cobra.ExactArgs(0),
-	Run: func(cmd *cobra.Command, args []string) {
-
-		fmt.Println(lib.GetInterfaces())
-
+		lib.PortDisconnect(args[0])
 	},
 }
 
@@ -55,10 +44,9 @@ var phy bool
 
 func init() {
 
-	rootCmd.AddCommand(interfaceCmd)
-	interfaceCmd.AddCommand(listCmd)
-	interfaceCmd.AddCommand(enableCmd)
-	interfaceCmd.AddCommand(disableCmd)
-	interfaceCmd.Flags().BoolVarP(&phy, "phy", "p", false, "show physical status")
+	rootCmd.AddCommand(portCmd)
+	portCmd.AddCommand(enableCmd)
+	portCmd.AddCommand(disableCmd)
+	portCmd.Flags().BoolVarP(&phy, "phy", "p", false, "show physical status")
 
 }

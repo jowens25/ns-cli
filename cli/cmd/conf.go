@@ -28,7 +28,7 @@ var confCmd = &cobra.Command{
 				fmt.Println("Hostname:     ", lib.GetHostname())
 				fmt.Println("Ip address:   ", lib.GetIPv4Address("enp3s0"))
 				fmt.Println("Gateway:      ", lib.GetGateway("enp3s0"))
-				fmt.Println("Interface:    ", lib.GetInterfacePhysicalStatus("enp3s0"))
+				fmt.Println("Interface:    ", lib.GetPortPhysicalStatus("enp3s0"))
 				fmt.Println("MAC:          ", lib.GetMacAddress("enp3s0"))
 				fmt.Println("IPv4 address: ", lib.GetIPv4Address("enp3s0"))
 
