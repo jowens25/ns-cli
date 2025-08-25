@@ -56,7 +56,7 @@ func DisableTelnet() {
 
 }
 
-func EnableTelnet() {
+func EnableTelnet() string {
 	telnetFile := "/etc/xinetd.d/telnet"
 	file, err := os.Open(telnetFile)
 	if err != nil {
@@ -82,6 +82,8 @@ func EnableTelnet() {
 	}
 
 	RestartXinetd()
+
+	return GetTelnetStatus()
 
 }
 

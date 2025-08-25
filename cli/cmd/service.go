@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"NovusTimeServer/lib"
+	"fmt"
 
 	"github.com/spf13/cobra"
 )
@@ -21,7 +22,7 @@ var serviceCmd = &cobra.Command{
 		case "ssh":
 		case "ftp":
 		case "telnet":
-			lib.GetTelnetStatus()
+			fmt.Println(lib.GetTelnetStatus())
 		case "http":
 		default:
 			cmd.Help()
