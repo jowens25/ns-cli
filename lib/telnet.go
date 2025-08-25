@@ -1,9 +1,10 @@
 package lib
 
 import (
-	"fmt"
+	"bufio"
 	"log"
 	"net/http"
+	"os"
 	"os/exec"
 	"strings"
 
@@ -12,14 +13,8 @@ import (
 
 func InitTelnetConfig() {
 
-	cmd := exec.Command("cp", "telnet.socket", "/etc/systemd/system/telnet.socket")
+	cmd := exec.Command("cp", "telnet", "/etc/xinetd.d/telnet")
 	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Println(string(out), err)
-	}
-
-	cmd = exec.Command("cp", "telnet@.service", "/etc/systemd/system/telnet@.service")
-	out, err = cmd.CombinedOutput()
 	if err != nil {
 		log.Println(string(out), err)
 	}
@@ -28,39 +23,81 @@ func InitTelnetConfig() {
 
 }
 
-func StopTelnet() {
-
-	DisablePort("23")
-
-	cmd := exec.Command("systemctl", "stop", "telnet.socket")
-	out, err := cmd.CombinedOutput()
+func DisableTelnet() {
+	telnetFile := "/etc/xinetd.d/telnet"
+	file, err := os.Open(telnetFile)
 	if err != nil {
-		log.Println(string(out), err)
+		log.Fatal("failed to open telnet file", file.Name())
 	}
-	fmt.Print("telnet: ", GetTelnetStatus())
+	defer file.Close()
+
+	var lines []string
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if strings.Contains(line, "disable = no") {
+			line = "\tdisable = yes"
+		}
+		lines = append(lines, line)
+	}
+
+	err = os.WriteFile(telnetFile, []byte(strings.Join(lines, "\n")+"\n"), 0644)
+	if err != nil {
+		log.Fatal("failed to hosts file:", err)
+	}
+
+	RestartXinetd()
 
 }
 
-func StartTelnet() {
-
-	EnablePort("23")
-
-	cmd := exec.Command("systemctl", "start", "telnet.socket")
-	out, err := cmd.CombinedOutput()
+func EnableTelnet() {
+	telnetFile := "/etc/xinetd.d/telnet"
+	file, err := os.Open(telnetFile)
 	if err != nil {
-		log.Println(string(out), err)
+		log.Fatal("failed to open telnet file", file.Name())
 	}
-	fmt.Print("telnet: ", GetTelnetStatus())
+	defer file.Close()
+
+	var lines []string
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if strings.Contains(line, "disable = yes") {
+			line = "\tdisable = no"
+		}
+		lines = append(lines, line)
+	}
+
+	err = os.WriteFile(telnetFile, []byte(strings.Join(lines, "\n")+"\n"), 0644)
+	if err != nil {
+		log.Fatal("failed to hosts file:", err)
+	}
+
+	RestartXinetd()
 
 }
 
 func GetTelnetStatus() string {
-	cmd := exec.Command("systemctl", "is-active", "telnet.socket")
-	output, err := cmd.CombinedOutput()
-	if ActiveOrInactive(output) {
-		return string(output)
+	telnetFile := "/etc/xinetd.d/telnet"
+	file, err := os.Open(telnetFile)
+	if err != nil {
+		log.Fatal("failed to open telnet file", file.Name())
 	}
-	return "error: " + err.Error()
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if strings.Contains(line, "disable = yes") {
+			return "disabled"
+		}
+	}
+	return "failed to get telnet status"
 }
 
 func readTelnetStatus(c *gin.Context) {
@@ -83,11 +120,11 @@ func writeTelnetStatus(c *gin.Context) {
 	}
 
 	if telnet.Action == "start" {
-		StartTelnet()
+		EnableTelnet()
 	}
 
 	if telnet.Action == "stop" {
-		StopTelnet()
+		DisableTelnet()
 	}
 
 	telnet.Status = GetTelnetStatus()
