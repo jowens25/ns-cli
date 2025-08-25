@@ -43,6 +43,10 @@ type Ssh struct {
 	Action string `json:"action"`
 }
 
+type Ftp struct {
+	Status string `json:"status"`
+	Action string `json:"action"`
+}
 type Http struct {
 	Status string `json:"status"`
 	Action string `json:"action"`
