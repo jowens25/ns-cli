@@ -2,7 +2,7 @@
 
 service ftp
 {
-    disable = yes
+    disable = no
     flags = NAMEINARGS IPv6
     socket_type = stream
     user = root
