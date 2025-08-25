@@ -25,6 +25,7 @@ var addCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		lib.AddAccess(args[0])
+		lib.AddNginxAccess(args[0])
 	},
 }
 
@@ -35,6 +36,7 @@ var removeCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		lib.RemoveAccess(args[0])
+		lib.RemoveNginxAccess(args[0])
 	},
 }
 

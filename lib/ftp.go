@@ -12,10 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func init() {
-	InitFtpConfig()
-}
-
 func InitFtpConfig() {
 
 	cmd := exec.Command("cp", "ftp", "/etc/xinetd.d/ftp")
@@ -87,6 +83,7 @@ func EnableFtp() {
 	fmt.Println(GetFtpStatus())
 
 }
+
 func GetFtpStatus() string {
 	ftpFile := "/etc/xinetd.d/ftp"
 	file, err := os.Open(ftpFile)
