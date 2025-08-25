@@ -26,9 +26,9 @@ Enable, Disable, Status, Configure.`,
 			switch f.Name {
 
 			case "enable":
-				lib.StartSsh()
+				lib.EnableSsh()
 			case "disable":
-				lib.StopSsh()
+				lib.DisableSsh()
 			case "status":
 				fmt.Print("ssh: ", lib.GetSshStatus())
 

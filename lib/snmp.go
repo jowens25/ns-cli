@@ -182,6 +182,15 @@ func resetSnmpConfig(c *gin.Context) {
 
 }
 
+func ActiveOrInactive(inp []byte) bool {
+	temp := strings.TrimSpace(string(inp))
+
+	if temp == "active" || temp == "inactive" {
+		return true
+	}
+	return false
+}
+
 func GetSnmpdStatus() string {
 	cmd := exec.Command("systemctl", "is-active", "snmpd")
 	output, err := cmd.CombinedOutput()

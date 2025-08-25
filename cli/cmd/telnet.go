@@ -26,9 +26,9 @@ Enable, Disable, Status, Configure.`,
 			switch f.Name {
 
 			case "enable":
-				lib.StartTelnet()
+				lib.EnableTelnet()
 			case "disable":
-				lib.StopTelnet()
+				lib.DisableTelnet()
 			case "status":
 				fmt.Println("telnet: ", lib.GetTelnetStatus())
 

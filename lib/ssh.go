@@ -1,74 +1,105 @@
 package lib
 
 import (
-	"fmt"
+	"bufio"
 	"log"
 	"net/http"
+	"os"
 	"os/exec"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-func StopSsh() {
+func InitSshConfig() {
 
-	DisablePort("22")
-
-	cmd := exec.Command("systemctl", "stop", "ssh")
+	cmd := exec.Command("cp", "ssh", "/etc/xinetd.d/ssh")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Print(string(out), err)
+		log.Println(string(out), err)
 	}
 
-	cmd = exec.Command("systemctl", "stop", "ssh.socket")
-	out, err = cmd.CombinedOutput()
-
-	if err != nil {
-		log.Print(string(out), err)
-	}
-
-	fmt.Print("ssh: ", GetSshStatus())
+	log.Println(strings.TrimSpace(string(out)))
 
 }
 
-func StartSsh() {
-
-	EnablePort("22")
-
-	cmd := exec.Command("systemctl", "start", "ssh")
-	out, err := cmd.CombinedOutput()
-
+func DisableSsh() {
+	sshFile := "/etc/xinetd.d/ssh"
+	file, err := os.Open(sshFile)
 	if err != nil {
-		log.Print(string(out), err)
+		log.Fatal("failed to open ssh file", file.Name())
+	}
+	defer file.Close()
+
+	var lines []string
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if strings.Contains(line, "disable = no") {
+			line = "\tdisable = yes"
+		}
+		lines = append(lines, line)
 	}
 
-	cmd = exec.Command("systemctl", "start", "ssh.socket")
-	out, err = cmd.CombinedOutput()
-
+	err = os.WriteFile(sshFile, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
-		log.Print(string(out), err)
+		log.Fatal("failed to hosts file:", err)
 	}
 
-	fmt.Print("ssh: ", GetSshStatus())
+	RestartXinetd()
 
 }
 
-func ActiveOrInactive(inp []byte) bool {
-	temp := strings.TrimSpace(string(inp))
-
-	if temp == "active" || temp == "inactive" {
-		return true
+func EnableSsh() {
+	sshFile := "/etc/xinetd.d/ssh"
+	file, err := os.Open(sshFile)
+	if err != nil {
+		log.Fatal("failed to open ssh file", file.Name())
 	}
-	return false
+	defer file.Close()
+
+	var lines []string
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if strings.Contains(line, "disable = yes") {
+			line = "\tdisable = no"
+		}
+		lines = append(lines, line)
+	}
+
+	err = os.WriteFile(sshFile, []byte(strings.Join(lines, "\n")+"\n"), 0644)
+	if err != nil {
+		log.Fatal("failed to ssh file:", err)
+	}
+
+	RestartXinetd()
+
 }
 
 func GetSshStatus() string {
-	cmd := exec.Command("systemctl", "is-active", "ssh")
-	output, err := cmd.CombinedOutput()
-	if ActiveOrInactive(output) {
-		return string(output)
+	sshFile := "/etc/xinetd.d/ssh"
+	file, err := os.Open(sshFile)
+	if err != nil {
+		log.Fatal("failed to open ssh file", file.Name())
 	}
-	return "error: " + err.Error()
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if strings.Contains(line, "disable = yes") {
+			return "inactive"
+		} else if strings.Contains(line, "disable = no") {
+			return "active"
+		}
+	}
+	return "failed to get ssh status"
 }
 
 func readSshStatus(c *gin.Context) {
@@ -91,11 +122,11 @@ func writeSshStatus(c *gin.Context) {
 	}
 
 	if ssh.Action == "start" {
-		StartSsh()
+		EnableSsh()
 	}
 
 	if ssh.Action == "stop" {
-		StopSsh()
+		DisableSsh()
 	}
 
 	ssh.Status = GetSshStatus()

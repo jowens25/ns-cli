@@ -11,6 +11,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func init() {
+	InitTelnetConfig()
+}
+
 func InitTelnetConfig() {
 
 	cmd := exec.Command("cp", "telnet", "/etc/xinetd.d/telnet")
@@ -74,7 +78,7 @@ func EnableTelnet() {
 
 	err = os.WriteFile(telnetFile, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
-		log.Fatal("failed to hosts file:", err)
+		log.Fatal("failed to telnet file:", err)
 	}
 
 	RestartXinetd()
@@ -94,7 +98,9 @@ func GetTelnetStatus() string {
 		line := scanner.Text()
 
 		if strings.Contains(line, "disable = yes") {
-			return "disabled"
+			return "inactive"
+		} else if strings.Contains(line, "disable = no") {
+			return "active"
 		}
 	}
 	return "failed to get telnet status"
