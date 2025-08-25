@@ -11,6 +11,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func init() {
+	InitFtpConfig()
+}
+
 func InitFtpConfig() {
 
 	cmd := exec.Command("cp", "ftp", "/etc/xinetd.d/ftp")

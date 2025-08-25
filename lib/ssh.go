@@ -11,6 +11,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func init() {
+	InitSshConfig()
+}
+
 func InitSshConfig() {
 
 	cmd := exec.Command("cp", "ssh", "/etc/xinetd.d/ssh")
