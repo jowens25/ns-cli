@@ -41,12 +41,11 @@ func DisableSsh() {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		if strings.Contains(line, "disable = no") {
-			line = "\tdisable = yes"
+		if strings.Contains(strings.TrimSpace(line), "disable = no") {
+			line = "    disable = yes"
 		}
 		lines = append(lines, line)
 	}
-
 	err = os.WriteFile(sshFile, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
 		log.Fatal("failed to hosts file:", err)
@@ -69,9 +68,8 @@ func EnableSsh() {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-
-		if strings.Contains(line, "disable = yes") {
-			line = "\tdisable = no"
+		if strings.Contains(strings.TrimSpace(line), "disable = yes") {
+			line = "    disable = no"
 		}
 		lines = append(lines, line)
 	}

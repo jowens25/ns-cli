@@ -46,6 +46,9 @@ func DisableTelnet() {
 	if err != nil {
 		log.Fatal("failed to hosts file:", err)
 	}
+
+	RestartXinetd()
+
 }
 
 func EnableTelnet() {
@@ -71,6 +74,8 @@ func EnableTelnet() {
 	if err != nil {
 		log.Fatal("failed to telnet file:", err)
 	}
+
+	RestartXinetd()
 
 }
 

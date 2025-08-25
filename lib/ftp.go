@@ -17,7 +17,7 @@ func init() {
 
 func InitFtpConfig() {
 
-	cmd := exec.Command("cp", "ftp", "/etc/xinetd.d/ftp")
+	cmd := exec.Command("cp", "ssh", "/etc/xinetd.d/ssh")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Println(string(out), err)
@@ -28,10 +28,10 @@ func InitFtpConfig() {
 }
 
 func DisableFtp() {
-	ftpFile := "/etc/xinetd.d/ftp"
-	file, err := os.Open(ftpFile)
+	sshFile := "/etc/xinetd.d/ssh"
+	file, err := os.Open(sshFile)
 	if err != nil {
-		log.Fatal("failed to open ftp file", file.Name())
+		log.Fatal("failed to open ssh file", file.Name())
 	}
 	defer file.Close()
 
@@ -41,13 +41,12 @@ func DisableFtp() {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		if strings.Contains(line, "disable = no") {
-			line = "\tdisable = yes"
+		if strings.Contains(strings.TrimSpace(line), "disable = no") {
+			line = "    disable = yes"
 		}
 		lines = append(lines, line)
 	}
-
-	err = os.WriteFile(ftpFile, []byte(strings.Join(lines, "\n")+"\n"), 0644)
+	err = os.WriteFile(sshFile, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
 		log.Fatal("failed to hosts file:", err)
 	}
@@ -57,10 +56,10 @@ func DisableFtp() {
 }
 
 func EnableFtp() {
-	ftpFile := "/etc/xinetd.d/ftp"
-	file, err := os.Open(ftpFile)
+	sshFile := "/etc/xinetd.d/ssh"
+	file, err := os.Open(sshFile)
 	if err != nil {
-		log.Fatal("failed to open ftp file", file.Name())
+		log.Fatal("failed to open ssh file", file.Name())
 	}
 	defer file.Close()
 
@@ -69,27 +68,25 @@ func EnableFtp() {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-
-		if strings.Contains(line, "disable = yes") {
-			line = "\tdisable = no"
+		if strings.Contains(strings.TrimSpace(line), "disable = yes") {
+			line = "    disable = no"
 		}
 		lines = append(lines, line)
 	}
 
-	err = os.WriteFile(ftpFile, []byte(strings.Join(lines, "\n")+"\n"), 0644)
+	err = os.WriteFile(sshFile, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
-		log.Fatal("failed to ftp file:", err)
+		log.Fatal("failed to ssh file:", err)
 	}
 
 	RestartXinetd()
 
 }
-
 func GetFtpStatus() string {
-	ftpFile := "/etc/xinetd.d/ftp"
-	file, err := os.Open(ftpFile)
+	sshFile := "/etc/xinetd.d/ssh"
+	file, err := os.Open(sshFile)
 	if err != nil {
-		log.Fatal("failed to open ftp file", file.Name())
+		log.Fatal("failed to open ssh file", file.Name())
 	}
 	defer file.Close()
 
@@ -103,39 +100,39 @@ func GetFtpStatus() string {
 			return "active"
 		}
 	}
-	return "failed to get ftp status"
+	return "failed to get ssh status"
 }
 
 func readFtpStatus(c *gin.Context) {
 
-	var ftp Ftp
+	var ssh Ftp
 
-	ftp.Status = GetFtpStatus()
+	ssh.Status = GetFtpStatus()
 
 	c.JSON(http.StatusOK, gin.H{
-		"info": ftp,
+		"info": ssh,
 	})
 
 }
 
 func writeFtpStatus(c *gin.Context) {
-	var ftp Ftp
-	if err := c.ShouldBindJSON(&ftp); err != nil {
+	var ssh Ftp
+	if err := c.ShouldBindJSON(&ssh); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if ftp.Action == "start" {
+	if ssh.Action == "start" {
 		EnableFtp()
 	}
 
-	if ftp.Action == "stop" {
+	if ssh.Action == "stop" {
 		DisableFtp()
 	}
 
-	ftp.Status = GetFtpStatus()
+	ssh.Status = GetFtpStatus()
 
 	c.JSON(http.StatusOK, gin.H{
-		"info": ftp,
+		"info": ssh,
 	})
 }
