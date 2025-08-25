@@ -20,7 +20,11 @@ var serviceCmd = &cobra.Command{
 
 		switch args[0] {
 		case "ssh":
+			fmt.Println(lib.GetSshStatus())
+
 		case "ftp":
+			fmt.Println(lib.GetFtpStatus())
+
 		case "telnet":
 			fmt.Println(lib.GetTelnetStatus())
 		case "http":
@@ -39,7 +43,9 @@ var serviceEnableCmd = &cobra.Command{
 
 		switch args[0] {
 		case "ssh":
+			lib.EnableSsh()
 		case "ftp":
+			lib.EnableFtp()
 		case "telnet":
 			lib.EnableTelnet()
 		case "http":
@@ -59,6 +65,7 @@ var serviceDisableCmd = &cobra.Command{
 		case "ssh":
 			lib.DisableSsh()
 		case "ftp":
+			lib.DisableFtp()
 		case "telnet":
 			lib.DisableTelnet()
 		case "http":
