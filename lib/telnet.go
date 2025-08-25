@@ -11,10 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func init() {
-	InitTelnetConfig()
-}
-
 func InitTelnetConfig() {
 
 	cmd := exec.Command("cp", "telnet", "/etc/xinetd.d/telnet")
@@ -41,22 +37,18 @@ func DisableTelnet() {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		if strings.Contains(line, "disable = no") {
-			line = "\tdisable = yes"
+		if strings.Contains(strings.TrimSpace(line), "disable = no") {
+			line = "    disable = yes"
 		}
 		lines = append(lines, line)
 	}
-
 	err = os.WriteFile(telnetFile, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
 		log.Fatal("failed to hosts file:", err)
 	}
-
-	RestartXinetd()
-
 }
 
-func EnableTelnet() string {
+func EnableTelnet() {
 	telnetFile := "/etc/xinetd.d/telnet"
 	file, err := os.Open(telnetFile)
 	if err != nil {
@@ -69,9 +61,8 @@ func EnableTelnet() string {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-
-		if strings.Contains(line, "disable = yes") {
-			line = "\tdisable = no"
+		if strings.Contains(strings.TrimSpace(line), "disable = yes") {
+			line = "    disable = no"
 		}
 		lines = append(lines, line)
 	}
@@ -80,10 +71,6 @@ func EnableTelnet() string {
 	if err != nil {
 		log.Fatal("failed to telnet file:", err)
 	}
-
-	RestartXinetd()
-
-	return GetTelnetStatus()
 
 }
 
@@ -99,9 +86,9 @@ func GetTelnetStatus() string {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		if strings.Contains(line, "disable = yes") {
+		if strings.Contains(strings.TrimSpace(line), "disable = yes") {
 			return "inactive"
-		} else if strings.Contains(line, "disable = no") {
+		} else if strings.Contains(strings.TrimSpace(line), "disable = no") {
 			return "active"
 		}
 	}
