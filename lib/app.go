@@ -44,7 +44,7 @@ func StartApp() {
 	pid := os.Getpid()
 	os.WriteFile("server.pid", []byte(fmt.Sprintf("%d", pid)), 0644)
 
-	InitNginxConfig()
+	//InitNginxConfig()
 
 	initDataBase()
 
