@@ -28,6 +28,7 @@ var serviceCmd = &cobra.Command{
 		case "telnet":
 			fmt.Println(lib.GetTelnetStatus())
 		case "http":
+
 		default:
 			cmd.Help()
 		}
@@ -49,6 +50,8 @@ var serviceEnableCmd = &cobra.Command{
 		case "telnet":
 			lib.EnableTelnet()
 		case "http":
+		case "app":
+			lib.StartApp()
 		default:
 			cmd.Help()
 		}
@@ -69,6 +72,8 @@ var serviceDisableCmd = &cobra.Command{
 		case "telnet":
 			lib.DisableTelnet()
 		case "http":
+		case "app":
+			lib.StopApp()
 		default:
 			cmd.Help()
 		}
