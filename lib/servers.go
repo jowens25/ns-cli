@@ -25,6 +25,8 @@ func startApiServer() {
 
 	apiRouter.Use(gin.Recovery())
 
+	apiRouter.GET("/health", healthHandler)
+
 	// api version group
 	v1 := apiRouter.Group("/api/v1")
 
@@ -35,8 +37,6 @@ func startApiServer() {
 	protected.Use(authorizationMiddleware())
 	{
 		protected.POST("/logout", logoutHandler)
-
-		protected.GET("/health", healthHandler)
 
 		protected.GET("/users", readUsers)
 		protected.POST("/users", writeUser)
