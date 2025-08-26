@@ -111,7 +111,7 @@ func RemoveAccess(ipAddress string) {
 
 func AddNginxAccess(ipAddress string) {
 	nginxFile := "/etc/nginx/nginx.conf"
-	nginxFile = "nginx.conf"
+	//nginxFile = "nginx.conf"
 
 	content, err := os.ReadFile(nginxFile)
 	if err != nil {
@@ -154,7 +154,7 @@ func AddNginxAccess(ipAddress string) {
 
 func RemoveNginxAccess(ipAddress string) {
 	nginxFile := "/etc/nginx/nginx.conf"
-	nginxFile = "nginx.conf"
+	//nginxFile = "nginx.conf"
 
 	content, err := os.ReadFile(nginxFile)
 	if err != nil {
