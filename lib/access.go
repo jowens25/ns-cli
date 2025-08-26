@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"slices"
 	"strings"
@@ -110,6 +111,7 @@ func RemoveAccess(ipAddress string) {
 
 func AddNginxAccess(ipAddress string) {
 	nginxFile := "/etc/nginx/nginx.conf"
+	//nginxFile = "nginx.conf"
 
 	content, err := os.ReadFile(nginxFile)
 	if err != nil {
@@ -122,11 +124,15 @@ func AddNginxAccess(ipAddress string) {
 
 	for _, line := range lines {
 
+		if strings.Contains(strings.TrimSpace(line), "allow all") {
+			continue
+		}
+
 		newLines = append(newLines, line)
 
 		if strings.Contains(strings.TrimSpace(line), "# Access Control") {
 
-			newLines = append(newLines, "\t\t\tallow "+ipAddress)
+			newLines = append(newLines, "\t\t\tallow "+ipAddress+";")
 
 		}
 
@@ -144,6 +150,7 @@ func AddNginxAccess(ipAddress string) {
 
 func RemoveNginxAccess(ipAddress string) {
 	nginxFile := "/etc/nginx/nginx.conf"
+	//nginxFile = "nginx.conf"
 
 	content, err := os.ReadFile(nginxFile)
 	if err != nil {
@@ -154,13 +161,25 @@ func RemoveNginxAccess(ipAddress string) {
 	lines := strings.Split(string(content), "\n")
 	var filteredLines []string
 
-	for _, line := range lines {
+	//var allowDirectiveCount int
+
+	lineNum := 0
+
+	for i, line := range lines {
+
+		if strings.Contains(strings.TrimSpace(line), "# Access Control") {
+			lineNum = i
+		}
 
 		if strings.Contains(strings.TrimSpace(line), ipAddress) {
 			continue
 		}
 
 		filteredLines = append(filteredLines, line)
+	}
+
+	if NumAllowDirectives(filteredLines) == 0 && !HasAllowAllDirective(filteredLines) {
+		filteredLines = slices.Insert(filteredLines, lineNum+1, "\t\t\tallow all;")
 	}
 
 	// Write back to file
@@ -172,3 +191,54 @@ func RemoveNginxAccess(ipAddress string) {
 	}
 	RestartNginx()
 }
+
+func NumAllowDirectives(lines []string) int {
+
+	num := 0
+
+	for _, line := range lines {
+
+		if strings.Contains(strings.TrimSpace(line), "allow") {
+
+			line = strings.TrimSuffix(line, ";")
+
+			fields := strings.Fields(line)
+
+			if net.ParseIP(fields[1]) != nil {
+				num += 1
+				continue
+			}
+
+			ip, _, err := net.ParseCIDR(fields[1])
+			if err == nil && ip != nil {
+				num += 1
+				continue
+			}
+
+		}
+
+	}
+
+	return num
+
+}
+
+func HasAllowAllDirective(lines []string) bool {
+
+	for _, line := range lines {
+
+		if strings.Contains(strings.TrimSpace(line), "allow all") {
+
+			return true
+
+		}
+
+	}
+
+	return false
+}
+
+// remove dir
+// if zero, add allow all
+
+// add dir, remove allow all

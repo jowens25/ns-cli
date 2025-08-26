@@ -49,11 +49,21 @@ var unrestrictCmd = &cobra.Command{
 	},
 }
 
+var countCmd = &cobra.Command{
+	Use:   "count",
+	Short: "reset network protocols",
+	Long:  `Use this command to reload the default configs that allow all network access`,
+	Run: func(cmd *cobra.Command, args []string) {
+		//fmt.Println(lib.NumAllowDirectives())
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(accessCmd)
 	accessCmd.AddCommand(unrestrictCmd)
 	accessCmd.AddCommand(addCmd)
 	accessCmd.AddCommand(removeCmd)
+	accessCmd.AddCommand(countCmd)
 
 	// Here you will define your flags and configuration settings.
 
