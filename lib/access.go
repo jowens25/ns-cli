@@ -111,7 +111,7 @@ func RemoveAccess(ipAddress string) {
 
 func AddNginxAccess(ipAddress string) {
 	nginxFile := "/etc/nginx/nginx.conf"
-	//nginxFile = "nginx.conf"
+	nginxFile = "nginx.conf"
 
 	content, err := os.ReadFile(nginxFile)
 	if err != nil {
@@ -134,6 +134,10 @@ func AddNginxAccess(ipAddress string) {
 
 			newLines = append(newLines, "\t\t\tallow "+ipAddress+";")
 
+			if !strings.Contains(strings.TrimSpace(line), "deny all;") {
+				newLines = append(newLines, "\t\t\tdeny all; ")
+
+			}
 		}
 
 	}
@@ -150,7 +154,7 @@ func AddNginxAccess(ipAddress string) {
 
 func RemoveNginxAccess(ipAddress string) {
 	nginxFile := "/etc/nginx/nginx.conf"
-	//nginxFile = "nginx.conf"
+	nginxFile = "nginx.conf"
 
 	content, err := os.ReadFile(nginxFile)
 	if err != nil {
@@ -180,6 +184,7 @@ func RemoveNginxAccess(ipAddress string) {
 
 	if NumAllowDirectives(filteredLines) == 0 && !HasAllowAllDirective(filteredLines) {
 		filteredLines = slices.Insert(filteredLines, lineNum+1, "\t\t\tallow all;")
+		filteredLines = RemoveDenyAll(filteredLines)
 	}
 
 	// Write back to file
@@ -236,6 +241,21 @@ func HasAllowAllDirective(lines []string) bool {
 	}
 
 	return false
+}
+
+func RemoveDenyAll(lines []string) []string {
+	var newLines []string
+	for _, line := range lines {
+
+		if !strings.Contains(strings.TrimSpace(line), "deny all") {
+
+			newLines = append(newLines, line)
+
+		}
+
+	}
+
+	return newLines
 }
 
 // remove dir
