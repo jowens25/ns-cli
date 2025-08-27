@@ -502,45 +502,6 @@ func GetSecondaryDNS(interfaceName string) string {
 }
 
 // Get gateway
-func GetIpGateway(interfaceName string) string {
-	cmd := exec.Command("nmcli", "dev", "show", interfaceName)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		return string(out)
-	}
-
-	lines := strings.SplitSeq(string(out), "\n")
-
-	for line := range lines {
-
-		if strings.Contains(line, "IP4.GATEWAY:") {
-			fields := strings.Fields(line)
-			return fields[1]
-		}
-	}
-	return "not found"
-
-}
-
-func GetIp6Gateway(interfaceName string) string {
-	cmd := exec.Command("nmcli", "dev", "show", interfaceName)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		return string(out)
-	}
-
-	lines := strings.SplitSeq(string(out), "\n")
-
-	for line := range lines {
-
-		if strings.Contains(line, "IP6.GATEWAY:") {
-			fields := strings.Fields(line)
-			return fields[1]
-		}
-	}
-	return "not found"
-
-}
 
 // Set gateway
 func SetGateway(interfaceName, gateway string) error {

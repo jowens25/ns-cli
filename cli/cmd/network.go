@@ -10,25 +10,31 @@ import (
 var networkCmd = &cobra.Command{
 	Use:   "network",
 	Short: "network configuration",
-	Long:  `Use this command to view overall network configuration.`,
+}
+
+var networkStatusCmd = &cobra.Command{
+	Use:   "status",
+	Short: "network configuration overview",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
 		itf := args[0]
 
+		if !lib.HasInterface(itf) {
+			return
+		}
+
 		fmt.Println("Hostname:", lib.GetHostname())
-		fmt.Println("Main IPv4 default gateway:", lib.GetIpGateway(itf))
-		fmt.Println("Main IPv6 default gateway:", lib.GetIp6Gateway(itf))
+		fmt.Println("Main IPv4 default gateway:", lib.GetIpv4Gateway(itf))
+		fmt.Println("Main IPv6 default gateway:", lib.GetIpv6Gateway(itf))
 		fmt.Println(itf, lib.GetPortSpeed(itf))
 		fmt.Println("MAC:", lib.GetIpv4MacAddress(itf))
 		fmt.Println(lib.GetIpv4Address(itf))
-		fmt.Println("DHCPv4:", itf, lib.GetIpv4DhcpState(itf))
+		fmt.Println("DHCPv4:", lib.GetIpv4DhcpState(itf))
 		fmt.Println("DNS 1:", lib.GetIpv4Dns1(itf))
 		fmt.Println("DNS 2:", lib.GetIpv4Dns2(itf))
 		fmt.Println(lib.GetIpv6Address(itf))
-		fmt.Println("DHCPv6:", itf, lib.GetIpv6DhcpState(itf))
-
-		//fmt.Println(lib.Get)
+		fmt.Println("DHCPv6:", lib.GetIpv6DhcpState(itf))
 
 	},
 }
@@ -78,6 +84,7 @@ var networkCmd = &cobra.Command{
 //	}
 func init() {
 	rootCmd.AddCommand(networkCmd)
+	networkCmd.AddCommand(networkStatusCmd)
 	//networkCmd.AddCommand(networkEnableCmd)
 	//networkCmd.AddCommand(networkDisableCmd)
 }

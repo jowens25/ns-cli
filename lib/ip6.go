@@ -28,6 +28,26 @@ func GetIpv6Address(i string) string {
 	return "ipv6 address not available"
 }
 
+func GetIpv6Gateway(i string) string {
+	cmd := exec.Command("nmcli", "dev", "show", i)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return string(out)
+	}
+
+	lines := strings.SplitSeq(string(out), "\n")
+
+	for line := range lines {
+
+		if strings.Contains(line, "IP6.GATEWAY:") {
+			fields := strings.Fields(line)
+			return fields[1]
+		}
+	}
+	return "not found"
+
+}
+
 func GetIpv6DhcpState(i string) string {
 	connection := GetConnectionNameFromDevice(i)
 

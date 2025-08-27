@@ -127,3 +127,13 @@ func GetPortSpeed(i string) string {
 
 	return "speed not available"
 }
+
+func HasInterface(i string) bool {
+	cmd := exec.Command("nmcli", "dev", "show", i)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(string(out))
+		return false
+	}
+	return true
+}

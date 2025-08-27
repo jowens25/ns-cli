@@ -48,6 +48,26 @@ func GetIpv4Netmask(i string) string {
 	return "ipv4 address not available"
 }
 
+func GetIpv4Gateway(i string) string {
+	cmd := exec.Command("nmcli", "dev", "show", i)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return string(out)
+	}
+
+	lines := strings.SplitSeq(string(out), "\n")
+
+	for line := range lines {
+
+		if strings.Contains(line, "IP4.GATEWAY:") {
+			fields := strings.Fields(line)
+			return fields[1]
+		}
+	}
+	return "not found"
+
+}
+
 func GetIpv4MacAddress(i string) string {
 	cmd := exec.Command("nmcli", "-f", "GENERAL.HWADDR", "dev", "show", i)
 	out, err := cmd.CombinedOutput()

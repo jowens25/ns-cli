@@ -76,8 +76,31 @@ var serviceDisableCmd = &cobra.Command{
 	},
 }
 
+var serviceStatusCmd = &cobra.Command{
+	Use:   "status [protocol | all]",
+	Short: "Get status of a network protocol",
+	Args:  cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+
+		switch args[0] {
+		case "ssh":
+			lib.DisableSsh()
+		case "ftp":
+			lib.DisableFtp()
+		case "telnet":
+			lib.DisableTelnet()
+		case "http":
+		case "app":
+			lib.StopApp()
+		default:
+			cmd.Help()
+		}
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(serviceCmd)
 	serviceCmd.AddCommand(serviceEnableCmd)
 	serviceCmd.AddCommand(serviceDisableCmd)
+	serviceCmd.AddCommand(serviceStatusCmd)
 }
