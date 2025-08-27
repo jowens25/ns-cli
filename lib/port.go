@@ -119,10 +119,10 @@ func GetPortSpeed(i string) string {
 		log.Fatal(err.Error())
 	}
 
-	fields := strings.Fields(string(out))
+	fields := strings.Split(string(out), ":")
 
 	if len(fields) == 2 {
-		return fields[1]
+		return strings.TrimSpace(fields[1])
 	}
 
 	return "speed not available"
