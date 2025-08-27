@@ -13,60 +13,6 @@ import (
 	"strings"
 )
 
-func GetIPv4Address(i string) string {
-	cmd := exec.Command("ip", "a", "show", "dev", i)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Fatal("ip a err")
-	}
-
-	if strings.Contains(string(out), i) {
-		scanner := bufio.NewScanner(bytes.NewReader(out))
-
-		for scanner.Scan() {
-			line := scanner.Text()
-			if strings.Contains(strings.TrimSpace(line), "inet") && !strings.Contains(line, "inet6") {
-				fields := strings.Fields(line)
-				if len(fields) > 1 {
-					return fields[1]
-				}
-			}
-		}
-	}
-	return "ipv4 error"
-}
-
-func OutputIp4vInfo(iface string) {
-	fmt.Println("Ip Address: ", GetIPv4Address(iface))
-	fmt.Println("Netmask:    ", GetIPv4Netmask(iface))
-	fmt.Println("Gateway:    ", GetGateway(iface))
-}
-
-func GetIPv4Netmask(iface string) string {
-	cmd := exec.Command("ip", "a", "show", "dev", iface)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Fatalf("failed to run ip command: %v", err)
-	}
-
-	scanner := bufio.NewScanner(bytes.NewReader(out))
-	for scanner.Scan() {
-		line := scanner.Text()
-		if strings.Contains(strings.TrimSpace(line), "inet ") && !strings.Contains(line, "inet6") {
-			fields := strings.Fields(line)
-			if len(fields) > 1 {
-				_, ipnet, err := net.ParseCIDR(fields[1])
-				if err != nil {
-					return "parse error"
-				}
-				mask := ipnet.Mask
-				return net.IP(mask).String()
-			}
-		}
-	}
-	return "ipv4 error"
-}
-
 func GetIPv6Address(i string) string {
 	cmd := exec.Command("ip", "a", "show", "dev", i)
 	out, err := cmd.CombinedOutput()
@@ -556,19 +502,44 @@ func GetSecondaryDNS(interfaceName string) string {
 }
 
 // Get gateway
-func GetGateway(interfaceName string) string {
-	cmd := exec.Command("nmcli", "-t", "-f", "ipv4.gateway", "connection", "show", interfaceName)
+func GetIpGateway(interfaceName string) string {
+	cmd := exec.Command("nmcli", "dev", "show", interfaceName)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		return ""
+		return string(out)
 	}
 
-	gateway := strings.TrimSpace(string(out))
-	if gateway == "" || gateway == "--" {
-		return ""
+	lines := strings.SplitSeq(string(out), "\n")
+
+	for line := range lines {
+
+		if strings.Contains(line, "IP4.GATEWAY:") {
+			fields := strings.Fields(line)
+			return fields[1]
+		}
+	}
+	return "not found"
+
+}
+
+func GetIp6Gateway(interfaceName string) string {
+	cmd := exec.Command("nmcli", "dev", "show", interfaceName)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return string(out)
 	}
 
-	return gateway
+	lines := strings.SplitSeq(string(out), "\n")
+
+	for line := range lines {
+
+		if strings.Contains(line, "IP6.GATEWAY:") {
+			fields := strings.Fields(line)
+			return fields[1]
+		}
+	}
+	return "not found"
+
 }
 
 // Set gateway

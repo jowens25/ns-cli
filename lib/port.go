@@ -111,3 +111,19 @@ func PortDisconnect(i string) {
 		log.Fatal(err.Error())
 	}
 }
+
+func GetPortSpeed(i string) string {
+	cmd := exec.Command("nmcli", "-f", "CAPABILITIES.SPEED", "dev", "show", i)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	fields := strings.Fields(string(out))
+
+	if len(fields) == 2 {
+		return fields[1]
+	}
+
+	return "speed not available"
+}
