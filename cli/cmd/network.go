@@ -46,8 +46,8 @@ var networkStatusCmd = &cobra.Command{
 //		Run: func(cmd *cobra.Command, args []string) {
 //
 //			switch args[0] {
-//			case "ssh":
-//				lib.EnableSsh()
+//			case "dhcp":
+//				lib.SetDHCPEnabled()
 //			case "ftp":
 //				lib.EnableFtp()
 //			case "telnet":

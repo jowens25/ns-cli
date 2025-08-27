@@ -11,31 +11,13 @@ var serviceCmd = &cobra.Command{
 	Use:   "service [protocol]",
 	Short: "ssh, ftp, telnet, http",
 	Long:  `Use this command to enable and disable insecure protocols.`,
-	Args:  cobra.ExactArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-
-		switch args[0] {
-		case "ssh":
-			fmt.Println(lib.GetSshStatus())
-
-		case "ftp":
-			fmt.Println(lib.GetFtpStatus())
-
-		case "telnet":
-			fmt.Println(lib.GetTelnetStatus())
-		case "http":
-
-		default:
-			cmd.Help()
-		}
-
-	},
 }
 
 var serviceEnableCmd = &cobra.Command{
-	Use:   "enable [protocol]",
-	Short: "Enable a network protocol",
-	Args:  cobra.ExactArgs(1),
+	Use:       "enable [protocol]",
+	Short:     "Enable a network protocol",
+	Args:      cobra.MinimumNArgs(1),
+	ValidArgs: []string{"all", "ssh", "ftp", "telnet", "http", "dhcp", "dhcp6", "app", "snmp"},
 	Run: func(cmd *cobra.Command, args []string) {
 
 		switch args[0] {
@@ -46,6 +28,13 @@ var serviceEnableCmd = &cobra.Command{
 		case "telnet":
 			lib.EnableTelnet()
 		case "http":
+		case "dhcp":
+			if len(args) > 1 {
+
+				lib.EnableDhcp4(args[1])
+			} else {
+				fmt.Println("Please enter an interface (eth0)")
+			}
 		case "app":
 			lib.StartApp()
 		default:
@@ -55,9 +44,11 @@ var serviceEnableCmd = &cobra.Command{
 }
 
 var serviceDisableCmd = &cobra.Command{
-	Use:   "disable [protocol]",
-	Short: "Disable a network protocol",
-	Args:  cobra.ExactArgs(1),
+	Use:       "disable [protocol]",
+	Short:     "Disable a network protocol",
+	Args:      cobra.MinimumNArgs(1),
+	ValidArgs: []string{"all", "ssh", "ftp", "telnet", "http", "dhcp", "dhcp6", "app", "snmp"},
+
 	Run: func(cmd *cobra.Command, args []string) {
 
 		switch args[0] {
@@ -68,6 +59,12 @@ var serviceDisableCmd = &cobra.Command{
 		case "telnet":
 			lib.DisableTelnet()
 		case "http":
+		case "dhcp":
+			if len(args) > 1 {
+				lib.DisableDhcp4(args[1])
+			} else {
+				fmt.Println("Please enter an interface (eth0)")
+			}
 		case "app":
 			lib.StopApp()
 		default:
@@ -77,28 +74,32 @@ var serviceDisableCmd = &cobra.Command{
 }
 
 var serviceStatusCmd = &cobra.Command{
-	Use:   "status [protocol | all]",
-	Short: "Get status of a network protocol",
-	Args:  cobra.ExactArgs(1),
+	Use:       "status [protocol | all]",
+	Short:     "Get status of a network protocol",
+	Args:      cobra.MinimumNArgs(1),
+	ValidArgs: []string{"all", "ssh", "ftp", "telnet", "http", "dhcp", "dhcp6", "app", "snmp"},
+
 	Run: func(cmd *cobra.Command, args []string) {
 
 		switch args[0] {
 		case "all":
-			fmt.Println("ftp: ", lib.GetFtpStatus())
+			fmt.Println("ftp:    ", lib.GetFtpStatus())
 			fmt.Println("telnet: ", lib.GetTelnetStatus())
-			fmt.Println("ssh: ", lib.GetSshStatus())
-			fmt.Println("http: ", lib.GetHttpStatus())
-			fmt.Println("snmp: ", lib.GetSnmpdStatus())
+			fmt.Println("ssh:    ", lib.GetSshStatus())
+			fmt.Println("http:   ", lib.GetHttpStatus())
+			fmt.Println("snmp:   ", lib.GetSnmpdStatus())
 		case "ssh":
-			fmt.Println("ssh: ", lib.GetSshStatus())
+			fmt.Println("ssh:    ", lib.GetSshStatus())
 		case "ftp":
-			fmt.Println("ftp: ", lib.GetFtpStatus())
+			fmt.Println("ftp:    ", lib.GetFtpStatus())
 		case "telnet":
 			fmt.Println("telnet: ", lib.GetTelnetStatus())
 		case "http":
-			fmt.Println("http: ", lib.GetHttpStatus())
+			fmt.Println("http:   ", lib.GetHttpStatus())
 		case "snmp":
-			fmt.Println("snmp: ", lib.GetSnmpdStatus())
+			fmt.Println("snmp:   ", lib.GetSnmpdStatus())
+		case "dhcp":
+
 		default:
 			cmd.Help()
 		}

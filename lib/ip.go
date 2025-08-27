@@ -2,7 +2,6 @@ package lib
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
 	"log"
 	"net"
@@ -12,54 +11,6 @@ import (
 	"strconv"
 	"strings"
 )
-
-func GetIPv6Address(i string) string {
-	cmd := exec.Command("ip", "a", "show", "dev", i)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Fatal("ip a err")
-	}
-
-	if strings.Contains(string(out), i) {
-		scanner := bufio.NewScanner(bytes.NewReader(out))
-
-		for scanner.Scan() {
-			line := scanner.Text()
-			if strings.Contains(line, "inet6") && !strings.Contains(line, "fe80") { // Skip link-local
-				fields := strings.Fields(line)
-				if len(fields) > 1 {
-					return fields[1]
-				}
-			}
-		}
-	}
-	return "ipv6 error"
-}
-
-func GetIPv6Netmask(iface string) string {
-	cmd := exec.Command("ip", "a", "show", "dev", iface)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Fatalf("failed to run ip command: %v", err)
-	}
-
-	scanner := bufio.NewScanner(bytes.NewReader(out))
-	for scanner.Scan() {
-		line := scanner.Text()
-		if strings.Contains(line, "inet6") {
-			fields := strings.Fields(line)
-			if len(fields) > 1 {
-				_, ipnet, err := net.ParseCIDR(fields[1])
-				if err != nil {
-					return "parse error"
-				}
-				mask := ipnet.Mask
-				return net.IP(mask).String()
-			}
-		}
-	}
-	return "ipv4 error"
-}
 
 // Set static IPv4 address using nmcli
 func SetStaticIPv4(interfaceName, ipAddress, netmask, gateway string, dns ...string) error {
@@ -279,57 +230,6 @@ func GetDHCPEnabled(interfaceName string) bool {
 		return false
 	}
 	return strings.TrimSpace(string(out)) == "auto"
-}
-
-// Set DHCP enabled/disabled for IPv4
-func SetDHCPEnabled(interfaceName string, enabled bool) error {
-	// Check if connection exists, create if it doesn't
-	cmd := exec.Command("nmcli", "-t", "-f", "NAME", "connection", "show", interfaceName)
-	out, err := cmd.CombinedOutput()
-
-	if err != nil || strings.TrimSpace(string(out)) == "" {
-		// Connection doesn't exist, create it
-		cmd = exec.Command("nmcli", "connection", "add", "type", "ethernet", "ifname", interfaceName, "con-name", interfaceName)
-		out, err = cmd.CombinedOutput()
-		if err != nil {
-			log.Printf("Failed to create connection: %s %v", string(out), err)
-			return err
-		}
-	}
-
-	if enabled {
-		// Enable DHCP
-		cmd = exec.Command("nmcli", "connection", "modify", interfaceName, "ipv4.method", "auto")
-		out, err = cmd.CombinedOutput()
-		if err != nil {
-			log.Printf("Failed to enable DHCP: %s %v", string(out), err)
-			return err
-		}
-
-		// Clear static settings
-		cmd = exec.Command("nmcli", "connection", "modify", interfaceName, "ipv4.addresses", "")
-		cmd.CombinedOutput()
-		cmd = exec.Command("nmcli", "connection", "modify", interfaceName, "ipv4.gateway", "")
-		cmd.CombinedOutput()
-	} else {
-		// Disable DHCP (set to manual)
-		cmd = exec.Command("nmcli", "connection", "modify", interfaceName, "ipv4.method", "manual")
-		out, err = cmd.CombinedOutput()
-		if err != nil {
-			log.Printf("Failed to disable DHCP: %s %v", string(out), err)
-			return err
-		}
-	}
-
-	// Apply changes
-	cmd = exec.Command("nmcli", "connection", "up", interfaceName)
-	out, err = cmd.CombinedOutput()
-	if err != nil {
-		log.Printf("Failed to bring up connection: %s %v", string(out), err)
-		return err
-	}
-
-	return nil
 }
 
 // Get domain/search domains

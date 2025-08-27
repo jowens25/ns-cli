@@ -107,6 +107,7 @@ func GetIpv4DhcpState(i string) string {
 }
 
 func GetConnectionNameFromDevice(i string) string {
+
 	cmd := exec.Command("nmcli", "-f", "GENERAL.CONNECTION", "dev", "show", i)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
