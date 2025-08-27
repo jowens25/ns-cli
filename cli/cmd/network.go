@@ -69,7 +69,7 @@ var dnsCmd = &cobra.Command{
 var ipCmd = &cobra.Command{
 	Use:   "ip [interface] [address]",
 	Short: "get and set ip address",
-	Args:  cobra.ExactArgs(1),
+	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
 		itf := args[0]

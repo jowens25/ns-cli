@@ -22,7 +22,7 @@ func GetIpv4Address(i string) string {
 		if len(fields) == 2 {
 			ip, _, err := net.ParseCIDR(strings.TrimSpace(fields[1]))
 			if err != nil {
-				fmt.Printf("Error parsing CIDR: %v\n", err)
+				//fmt.Printf("Error parsing CIDR: %v\n", err)
 				continue
 			}
 			return ip.String()
@@ -47,7 +47,7 @@ func GetIpv4Netmask(i string) string {
 		if len(fields) == 2 {
 			_, ipnet, err := net.ParseCIDR(strings.TrimSpace(fields[1]))
 			if err != nil {
-				fmt.Printf("Error parsing CIDR: %v\n", err)
+				//fmt.Printf("Error parsing CIDR: %v\n", err)
 				continue
 			}
 
