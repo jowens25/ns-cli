@@ -35,10 +35,10 @@ func GetIpv4Netmask(i string) string {
 		log.Fatal(err.Error())
 	}
 
-	fields := strings.Fields(string(out))
+	fields := strings.Split(string(out), ":")
 
 	if len(fields) == 2 {
-		_, ipnet, err := net.ParseCIDR(fields[1])
+		_, ipnet, err := net.ParseCIDR(strings.TrimSpace(fields[1]))
 		if err != nil {
 			fmt.Printf("Error parsing CIDR: %v\n", err)
 		}
