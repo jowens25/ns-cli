@@ -175,3 +175,51 @@ func GetIpv4Dns2(i string) string {
 
 	return "dns 2 not found"
 }
+
+func SetIpv4Dns(i string, dns ...string) {
+	connection := GetConnectionNameFromDevice(i)
+
+	if len(dns) == 0 {
+		log.Fatal("no DNS servers provided")
+	}
+
+	// Join multiple DNS addresses into a comma-separated string
+	dnsArg := dns[0]
+	if len(dns) > 1 {
+		dnsArg = dns[0] + "," + dns[1]
+	}
+
+	// Modify DNS
+	cmd := exec.Command("nmcli", "con", "modify", connection, "ipv4.dns", dnsArg)
+	if out, err := cmd.CombinedOutput(); err != nil {
+		log.Fatalf("failed to set dns: %v\n%s", err, string(out))
+	}
+
+	// Bring connection up
+	cmd = exec.Command("nmcli", "con", "up", connection)
+	if out, err := cmd.CombinedOutput(); err != nil {
+		log.Fatalf("failed to bring up connection: %v\n%s", err, string(out))
+	}
+}
+
+func SetIpv4Address(i string, address string) {
+
+	connection := GetConnectionNameFromDevice(i)
+
+	ip1 := net.ParseIP(address)
+	if ip1 != nil {
+		cmd := exec.Command("nmcli", "con", "modify", connection,
+			"ipv4.addresses", ip1.String(),
+			"ipv4.method", "manual")
+		if out, err := cmd.CombinedOutput(); err != nil {
+			log.Fatalf("failed to set ipv4 address: %v\n%s", err, string(out))
+		}
+
+		// Bring connection up
+		cmd = exec.Command("nmcli", "con", "up", connection)
+		if out, err := cmd.CombinedOutput(); err != nil {
+			log.Fatalf("failed to bring up connection: %v\n%s", err, string(out))
+		}
+	}
+
+}

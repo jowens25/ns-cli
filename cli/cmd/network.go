@@ -39,52 +39,59 @@ var networkStatusCmd = &cobra.Command{
 	},
 }
 
-//	var networkEnableCmd = &cobra.Command{
-//		Use:   "enable [protocol]",
-//		Short: "Enable a network protocol",
-//		Args:  cobra.ExactArgs(1),
-//		Run: func(cmd *cobra.Command, args []string) {
-//
-//			switch args[0] {
-//			case "dhcp":
-//				lib.SetDHCPEnabled()
-//			case "ftp":
-//				lib.EnableFtp()
-//			case "telnet":
-//				lib.EnableTelnet()
-//			case "http":
-//			case "app":
-//				lib.StartApp()
-//			default:
-//				cmd.Help()
-//			}
-//		},
-//	}
-//
-//	var networkDisableCmd = &cobra.Command{
-//		Use:   "disable [protocol]",
-//		Short: "Disable a network protocol",
-//		Args:  cobra.ExactArgs(1),
-//		Run: func(cmd *cobra.Command, args []string) {
-//
-//			switch args[0] {
-//			case "ssh":
-//				lib.DisableSsh()
-//			case "ftp":
-//				lib.DisableFtp()
-//			case "telnet":
-//				lib.DisableTelnet()
-//			case "http":
-//			case "app":
-//				lib.StopApp()
-//			default:
-//				cmd.Help()
-//			}
-//		},
-//	}
+var dnsCmd = &cobra.Command{
+	Use:   "dns [interface] [dns1] [dns2]",
+	Short: "get and set dns",
+
+	Run: func(cmd *cobra.Command, args []string) {
+
+		itf := args[0]
+
+		if !lib.HasInterface(itf) {
+			return
+		}
+
+		if len(args) == 2 {
+			lib.SetIpv4Dns(args[0], args[1])
+
+		}
+		if len(args) == 3 {
+			lib.SetIpv4Dns(args[0], args[1], args[2])
+
+		}
+
+		fmt.Println("DNS1:", lib.GetIpv4Dns1(args[0]))
+		fmt.Println("DNS2:", lib.GetIpv4Dns2(args[0]))
+
+	},
+}
+
+var ipCmd = &cobra.Command{
+	Use:   "ip [address] [netmask]",
+	Short: "get and set ip address",
+	Run: func(cmd *cobra.Command, args []string) {
+
+		itf := args[0]
+
+		if !lib.HasInterface(itf) {
+			return
+		}
+
+		if len(args) == 3 {
+			lib.SetIpv4Address(itf, args[1])
+		}
+
+		fmt.Println(lib.GetIpv4Address(itf))
+		fmt.Println(lib.GetIpv4Netmask(itf))
+
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(networkCmd)
 	networkCmd.AddCommand(networkStatusCmd)
+	networkCmd.AddCommand(dnsCmd)
+	networkCmd.AddCommand(ipCmd)
 	//networkCmd.AddCommand(networkEnableCmd)
 	//networkCmd.AddCommand(networkDisableCmd)
 }
