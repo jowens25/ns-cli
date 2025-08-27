@@ -9,16 +9,17 @@ import (
 )
 
 func GetIpv4Address(i string) string {
-	cmd := exec.Command("nmcli", "-f", "IP4.ADDRESS", "dev", "show", i)
+	connection := GetConnectionNameFromDevice(i)
+	cmd := exec.Command("nmcli", "-f", "ipv4.addresses", "con", "show", connection)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	fields := strings.Fields(string(out))
+	fields := strings.Split(string(out), ":")
 
 	if len(fields) == 2 {
-		ip, _, err := net.ParseCIDR(fields[1])
+		ip, _, err := net.ParseCIDR(strings.TrimSpace(fields[1]))
 		if err != nil {
 			fmt.Printf("Error parsing CIDR: %v\n", err)
 		}
@@ -29,7 +30,8 @@ func GetIpv4Address(i string) string {
 }
 
 func GetIpv4Netmask(i string) string {
-	cmd := exec.Command("nmcli", "-f", "IP4.ADDRESS", "dev", "show", i)
+	connection := GetConnectionNameFromDevice(i)
+	cmd := exec.Command("nmcli", "-f", "ipv4.addresses", "con", "show", connection)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Fatal(err.Error())
@@ -42,7 +44,9 @@ func GetIpv4Netmask(i string) string {
 		if err != nil {
 			fmt.Printf("Error parsing CIDR: %v\n", err)
 		}
-		return ipnet.Mask.String()
+
+		return net.IP(ipnet.Mask).String()
+
 	}
 
 	return "ipv4 address not available"
