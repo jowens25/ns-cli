@@ -31,22 +31,25 @@ func GetIpv4Address(i string) string {
 
 func GetIpv4Netmask(i string) string {
 	connection := GetConnectionNameFromDevice(i)
-	cmd := exec.Command("nmcli", "-f", "ipv4.addresses", "con", "show", connection)
+	cmd := exec.Command("nmcli", "-f", "ipv4.addresses,IP4.ADDRESS", "con", "show", connection)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	fields := strings.Split(string(out), ":")
+	for line := range strings.SplitSeq(string(out), "\n") {
+		fields := strings.Split(line, ":")
 
-	if len(fields) == 2 {
-		_, ipnet, err := net.ParseCIDR(strings.TrimSpace(fields[1]))
-		if err != nil {
-			fmt.Printf("Error parsing CIDR: %v\n", err)
+		if len(fields) == 2 {
+			_, ipnet, err := net.ParseCIDR(strings.TrimSpace(fields[1]))
+			if err != nil {
+				fmt.Printf("Error parsing CIDR: %v\n", err)
+				continue
+			}
+
+			return net.IP(ipnet.Mask).String()
+
 		}
-
-		return net.IP(ipnet.Mask).String()
-
 	}
 
 	return "ipv4 address not available"
