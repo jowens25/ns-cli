@@ -93,16 +93,10 @@ func init() {
 	rootCmd.AddCommand(ipCmd)
 	rootCmd.AddCommand(ip6Cmd)
 
-	ipCmd.Flags().BoolP("routes", "r", false, "routing table")
-	ipCmd.Flags().BoolP("dns", "d", false, "dns")
+	ipCmd.Flags().BoolP("routes", "r", false, "view routing table")
+	ipCmd.Flags().BoolP("dns", "d", false, "config dns")
 	ipCmd.Flags().BoolP("addr", "a", false, "configure address")
 	ipCmd.Flags().BoolP("mask", "m", false, "configure netmask")
 	ipCmd.Flags().BoolP("gate", "g", false, "configure gateway")
-
-	ip6Cmd.Flags().BoolP("routes", "r", false, "routing table")
-	ip6Cmd.Flags().BoolP("dns", "d", false, "dns")
-	ip6Cmd.Flags().BoolP("addr", "a", false, "configure address")
-	ip6Cmd.Flags().BoolP("mask", "m", false, "configure netmask")
-	ip6Cmd.Flags().BoolP("gate", "g", false, "configure gateway")
 
 }
