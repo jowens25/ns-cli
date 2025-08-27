@@ -83,15 +83,22 @@ var serviceStatusCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		switch args[0] {
+		case "all":
+			fmt.Println("ftp: ", lib.GetFtpStatus())
+			fmt.Println("telnet: ", lib.GetTelnetStatus())
+			fmt.Println("ssh: ", lib.GetSshStatus())
+			fmt.Println("http: ", lib.GetHttpStatus())
+			fmt.Println("snmp: ", lib.GetSnmpdStatus())
 		case "ssh":
-			lib.DisableSsh()
+			fmt.Println("ssh: ", lib.GetSshStatus())
 		case "ftp":
-			lib.DisableFtp()
+			fmt.Println("ftp: ", lib.GetFtpStatus())
 		case "telnet":
-			lib.DisableTelnet()
+			fmt.Println("telnet: ", lib.GetTelnetStatus())
 		case "http":
-		case "app":
-			lib.StopApp()
+			fmt.Println("http: ", lib.GetHttpStatus())
+		case "snmp":
+			fmt.Println("snmp: ", lib.GetSnmpdStatus())
 		default:
 			cmd.Help()
 		}
