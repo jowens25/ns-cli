@@ -67,7 +67,7 @@ var dnsCmd = &cobra.Command{
 }
 
 var ipCmd = &cobra.Command{
-	Use:   "ip [address] [netmask]",
+	Use:   "ip [interface] [address]",
 	Short: "get and set ip address",
 	Run: func(cmd *cobra.Command, args []string) {
 
@@ -77,7 +77,7 @@ var ipCmd = &cobra.Command{
 			return
 		}
 
-		if len(args) == 3 {
+		if len(args) == 2 {
 			lib.SetIpv4Address(itf, args[1])
 		}
 
