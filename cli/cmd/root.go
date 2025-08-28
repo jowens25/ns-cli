@@ -23,17 +23,16 @@ var rootCmd = &cobra.Command{
 func Execute() {
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 
-	bashFile, err := os.Create("/etc/bash_completion.d/ns.bash")
-
-	if err != nil {
-		log.Fatal("unable to open bash completion location")
+	if _, err := os.Stat("/etc/bash_completion.d/ns.bash"); err != nil {
+		bashFile, err := os.Create("/etc/bash_completion.d/ns.bash")
+		if err != nil {
+			log.Fatal("unable to create bash completion script: ", err.Error())
+		}
+		defer bashFile.Close()
+		rootCmd.GenBashCompletion(bashFile)
 	}
-	defer bashFile.Close()
 
-	rootCmd.Root().GenBashCompletion(bashFile)
-
-	err = rootCmd.Execute()
-	if err != nil {
+	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
 }
