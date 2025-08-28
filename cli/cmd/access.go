@@ -21,7 +21,6 @@ var accessCmd = &cobra.Command{
 var addCmd = &cobra.Command{
 	Use:   "add [ip address]",
 	Short: "add a node",
-	Long:  `Use this command to add an additional allows ip address.`,
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		lib.AddAccess(args[0])
@@ -32,7 +31,6 @@ var addCmd = &cobra.Command{
 var removeCmd = &cobra.Command{
 	Use:   "remove [ip address]",
 	Short: "remove a node",
-	Long:  `Use this command to remove an additional allows ip address.`,
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		lib.RemoveAccess(args[0])
@@ -42,19 +40,9 @@ var removeCmd = &cobra.Command{
 
 var unrestrictCmd = &cobra.Command{
 	Use:   "unrestrict",
-	Short: "reset network protocols",
-	Long:  `Use this command to reload the default configs that allow all network access`,
+	Short: "reset network restrictions",
 	Run: func(cmd *cobra.Command, args []string) {
 		lib.Unrestrict()
-	},
-}
-
-var countCmd = &cobra.Command{
-	Use:   "count",
-	Short: "reset network protocols",
-	Long:  `Use this command to reload the default configs that allow all network access`,
-	Run: func(cmd *cobra.Command, args []string) {
-		//fmt.Println(lib.NumAllowDirectives())
 	},
 }
 
@@ -63,7 +51,6 @@ func init() {
 	accessCmd.AddCommand(unrestrictCmd)
 	accessCmd.AddCommand(addCmd)
 	accessCmd.AddCommand(removeCmd)
-	accessCmd.AddCommand(countCmd)
 
 	// Here you will define your flags and configuration settings.
 

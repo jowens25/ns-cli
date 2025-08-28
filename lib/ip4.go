@@ -198,11 +198,13 @@ func SetIpv4Dns(i string, dns ...string) {
 func SetIpv4Address(i string, address string) {
 
 	connection := GetConnectionNameFromDevice(i)
+	currentGw := GetIpv4Gateway(i)
 
-	ip1 := net.ParseIP(address)
-	if ip1 != nil {
+	ip := net.ParseIP(address)
+	if ip != nil {
 		cmd := exec.Command("nmcli", "con", "modify", connection,
-			"ipv4.addresses", ip1.String(),
+			"ipv4.address", ip.String(),
+			"ipv4.gateway", currentGw,
 			"ipv4.method", "manual")
 		if out, err := cmd.CombinedOutput(); err != nil {
 			log.Fatalf("failed to set ipv4 address: %v\n%s", err, string(out))
@@ -219,11 +221,12 @@ func SetIpv4Address(i string, address string) {
 
 func SetIpv4Gateway(i string, address string) {
 	connection := GetConnectionNameFromDevice(i)
-
-	ip1 := net.ParseIP(address)
-	if ip1 != nil {
+	currentIp := GetIpv4Address(i)
+	gw := net.ParseIP(address)
+	if gw != nil {
 		cmd := exec.Command("nmcli", "con", "modify", connection,
-			"ipv4.gateway", ip1.String(),
+			"ipv4.gateway", gw.String(),
+			"ipv4.address", currentIp,
 			"ipv4.method", "manual")
 		if out, err := cmd.CombinedOutput(); err != nil {
 			log.Fatalf("failed to set ipv4 gateway: %v\n%s", err, string(out))
