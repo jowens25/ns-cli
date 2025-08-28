@@ -14,7 +14,7 @@ func GetDate() string {
 	}
 	fields := strings.Fields(strings.TrimSpace(string(out)))
 
-	return fields[2] + " " + fields[1] + " " + fields[6]
+	return fields[2] + " " + fields[1] + " " + fields[3] + " " + fields[6]
 }
 
 func SetDate(date []string) string {
