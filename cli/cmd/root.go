@@ -4,6 +4,7 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -22,7 +23,16 @@ var rootCmd = &cobra.Command{
 func Execute() {
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 
-	err := rootCmd.Execute()
+	bashFile, err := os.Create("/etc/bash_completion.d/ns.bash")
+
+	if err != nil {
+		log.Fatal("unable to open bash completion location")
+	}
+	defer bashFile.Close()
+
+	rootCmd.Root().GenBashCompletion(bashFile)
+
+	err = rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
 	}
