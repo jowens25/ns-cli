@@ -17,7 +17,7 @@ var gpsCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
-		response := lib.ReadWriteMicro("STAT", "STAT", args[0])
+		response := lib.ReadWriteMicro("STAT"+args[0], "STAT"+args[0])
 		fmt.Println(response)
 
 	},
