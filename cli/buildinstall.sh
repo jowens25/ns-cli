@@ -13,4 +13,7 @@ echo "Added permissions"
 rm ./ns
 echo "Remove local bin"
 
+source /etc/bash_completion
+source /etc/bash_completion.d/ns.bash
+
 ns -h
