@@ -4,7 +4,26 @@ import (
 	"fmt"
 	"log"
 	"os/exec"
+	"strings"
 )
+
+func GetIpv4DhcpState(i string) string {
+	connection := GetConnectionNameFromDevice(i)
+
+	cmd := exec.Command("nmcli", "-f", "ipv4.method", "con", "show", connection)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	fields := strings.Fields(string(out))
+
+	if len(fields) == 2 {
+		return fields[1]
+	}
+
+	return "dhcp state unknown"
+}
 
 // Set DHCP enabled/disabled for IPv4
 func EnableDhcp4(i string) error {
@@ -51,21 +70,33 @@ func DisableDhcp4(i string) error {
 		return fmt.Errorf("interface %q not found", i)
 	}
 
+	currentIp := GetIpv4Address(i)
+	currentGate := GetIpv4Gateway(i)
+
+	SetIpv4Address(i, currentIp)
+	SetIpv4Gateway(i, currentGate)
+
 	connection := GetConnectionNameFromDevice(i)
 
-	// Disable DHCP (set to manual)
-	cmd := exec.Command("nmcli", "connection", "modify", connection, "ipv4.method", "manual")
+	// Apply changes
+	cmd := exec.Command("nmcli", "connection", "up", connection)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Printf("Failed to disable DHCP: %s %v", string(out), err)
+		log.Printf("Failed to bring up connection: %s %v", string(out), err)
 		return err
 	}
 
-	// Apply changes
-	cmd = exec.Command("nmcli", "connection", "up", connection)
-	out, err = cmd.CombinedOutput()
+	return nil
+}
+
+// Set DHCP enabled/disabled for IPv4
+func RestartDhcp4() error {
+
+	// Disable DHCP (set to manual)
+	cmd := exec.Command("systemctl", "restart", "NetworkManager")
+	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Printf("Failed to bring up connection: %s %v", string(out), err)
+		log.Printf("Failed to restart DHCP: %s %v", string(out), err)
 		return err
 	}
 

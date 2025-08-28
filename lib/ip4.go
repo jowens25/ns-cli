@@ -99,24 +99,6 @@ func GetIpv4MacAddress(i string) string {
 	return "mac address not available"
 }
 
-func GetIpv4DhcpState(i string) string {
-	connection := GetConnectionNameFromDevice(i)
-
-	cmd := exec.Command("nmcli", "-f", "ipv4.method", "con", "show", connection)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	fields := strings.Fields(string(out))
-
-	if len(fields) == 2 {
-		return fields[1]
-	}
-
-	return "dhcp state unknown"
-}
-
 func GetConnectionNameFromDevice(i string) string {
 
 	cmd := exec.Command("nmcli", "-f", "GENERAL.CONNECTION", "dev", "show", i)
