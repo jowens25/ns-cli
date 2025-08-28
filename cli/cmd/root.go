@@ -14,7 +14,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:     "ns",
 	Short:   "NovuS Configuraton Tool",
-	Long:    "Novus Power Products Configuration Tool.",
+	Long:    "Novus Power Products Configuration Tool",
 	Version: "0.8.1",
 	Run: func(cmd *cobra.Command, args []string) {
 	},
@@ -38,5 +38,6 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.AddGroup(&cobra.Group{ID: "hw", Title: "Hardware Commands"})
 
 }

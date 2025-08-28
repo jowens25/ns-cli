@@ -9,7 +9,7 @@ import (
 
 var networkCmd = &cobra.Command{
 	Use:   "network",
-	Short: "network configuration",
+	Short: "configure network parameters",
 }
 
 // ---- STATUS ----

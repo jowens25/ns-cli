@@ -67,5 +67,6 @@ Cal Factors in flash to the current Cal Settings.`,
 func init() {
 	rootCmd.AddCommand(calibrationCmd)
 	calibrationCmd.AddCommand(calSaveCmd)
+	calibrationCmd.GroupID = "hw"
 
 }

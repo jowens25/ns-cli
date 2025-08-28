@@ -12,7 +12,7 @@ import (
 // accessCmd represents the access command
 var accessCmd = &cobra.Command{
 	Use:   "access",
-	Short: "network access",
+	Short: "define network access",
 	Long: `Use this command to set the network level access to the system. 
 	ex. 10.1.10.220/32 or 10.1.10.0/24.`,
 	Args: cobra.ExactArgs(1),
@@ -52,13 +52,4 @@ func init() {
 	accessCmd.AddCommand(addCmd)
 	accessCmd.AddCommand(removeCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// accessCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// accessCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

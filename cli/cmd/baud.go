@@ -44,4 +44,5 @@ baudrates are 19200, 38400, 57600, 115200, 230400.`,
 
 func init() {
 	rootCmd.AddCommand(baudrateCmd)
+	baudrateCmd.GroupID = "hw"
 }

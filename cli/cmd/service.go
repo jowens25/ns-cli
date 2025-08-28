@@ -9,8 +9,7 @@ import (
 
 var serviceCmd = &cobra.Command{
 	Use:   "service [protocol]",
-	Short: "ssh, ftp, telnet, http",
-	Long:  `Use this command to enable and disable insecure protocols.`,
+	Short: "manage system services",
 }
 
 var serviceEnableCmd = &cobra.Command{

@@ -9,7 +9,7 @@ import (
 
 var portCmd = &cobra.Command{
 	Use:   "port [port]",
-	Short: "ethernet port",
+	Short: "ethernet settings",
 }
 
 var portStatusCmd = &cobra.Command{

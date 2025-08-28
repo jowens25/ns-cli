@@ -11,8 +11,6 @@ import (
 var inputCmd = &cobra.Command{
 	Use:   "input",
 	Short: "input a, b channel settings",
-	Long: `Use this command to get and set input channel 
-priority, fault threshold and low voltage threshold.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},
@@ -20,7 +18,7 @@ priority, fault threshold and low voltage threshold.`,
 
 var selectCmd = &cobra.Command{
 	Use:   "select",
-	Short: "Input Channel Priority",
+	Short: "select input channel priority",
 	Long: `Use this command to get and set the input priority 
 	setting to A, B, Auto A, Auto B.
 0 = Select Input A
@@ -44,7 +42,7 @@ var selectCmd = &cobra.Command{
 
 var lowCmd = &cobra.Command{
 	Use:   "low",
-	Short: "Input Low Threshold Value",
+	Short: "input low threshold value",
 	Long: `Use this command to get and set the absolute voltage 
 threshold at which the input monitor reports input fault. 
 For example, if the THR is set to "0.3", the Channel Fault 
@@ -99,7 +97,7 @@ than 0.3V. (from 0.05V to 1.00V)
 
 var onLockCmd = &cobra.Command{
 	Use:   "lock",
-	Short: "Prioritize Input On Lock Status (Requires CAN Bus Connection)",
+	Short: "prioritize input on lock status (requires CAN bus connection)",
 	Long: `Use this command to set the priority input based on 
 GNSS and Loop Lock status of input source (CAN connected 
 Novus NR reference). When $PRLK is active, the input will
@@ -125,7 +123,7 @@ lock. If $PRLK is enabled, $PRHR is disabled. Requires CAN bus connector.`,
 
 var onHoldoverCmd = &cobra.Command{
 	Use:   "holdover",
-	Short: "Prioritize Input On Holdover Status (Requires CAN Bus Connection)",
+	Short: "prioritize input on holdover status (requires can bus connection)",
 	Long: `Use this command to set the priority input based on 
 valid holdover indicator of input source (CAN connected 
 Novus NR reference). When $PRHR is active, the input will
@@ -152,7 +150,7 @@ $PRLK is disabled. Requires CAN`,
 // faultCmd represents the fault command
 var faultCmd = &cobra.Command{
 	Use:   "fault [flags] <n.nn>",
-	Short: "Input channel Fault Threshold Factor",
+	Short: "input channel fault threshold factor",
 	Long: `Use this command to assign and query the 
 ratio at which the Channel output monitors report a fault. 
 For example, if the FLTTHRA is set to "0.15", the Channel 
@@ -221,5 +219,6 @@ func init() {
 
 	faultCmd.Flags().BoolP("threshold a", "a", false, "get / set fault threashold for input channel A")
 	faultCmd.Flags().BoolP("threshold b", "b", false, "get / set fault threashold for input channel B")
+	inputCmd.GroupID = "hw"
 
 }
