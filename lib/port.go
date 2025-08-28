@@ -61,19 +61,19 @@ func GetPortConnectionStatus(i string) string {
 		if strings.Contains(strings.TrimSpace(fields[0]), "GENERAL.STATE") {
 			switch fields[2] {
 			case "(connected)":
-				return "connection: up"
+				return "up"
 			case "(disconnected)":
-				return "connection: down"
+				return "down"
 			case "(unavailable)":
-				return "connection: unavailable"
+				return "unavailable"
 			default:
-				return "unable to determine connection state"
+				return "not found"
 			}
 		}
 
 	}
 
-	return "unable to determine connection state"
+	return "not found"
 }
 
 func GetConnections() string {
@@ -96,20 +96,38 @@ func waitingDots() {
 	fmt.Println()
 }
 
-func PortConnect(i string) {
-	cmd := exec.Command("nmcli", "device", "connect", i)
-	_, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Fatal(err.Error())
+func PortConnect(device string) error {
+	// First try to get existing connection
+	connection := GetConnectionNameFromDevice(device)
+
+	if connection != "" && connection != "--" {
+		// Use existing connection
+		cmd := exec.Command("nmcli", "connection", "up", connection)
+		_, err := cmd.CombinedOutput()
+		return err
 	}
+
+	// Fallback to device connect if no connection profile exists
+	cmd := exec.Command("nmcli", "device", "connect", device)
+	_, err := cmd.CombinedOutput()
+	return err
 }
 
-func PortDisconnect(i string) {
-	cmd := exec.Command("nmcli", "device", "disconnect", i)
-	_, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Fatal(err.Error())
+func PortDisconnect(device string) error {
+	// Get the active connection name
+	connection := GetConnectionNameFromDevice(device)
+
+	if connection != "" && connection != "--" {
+		// Disconnect the specific connection
+		cmd := exec.Command("nmcli", "connection", "down", connection)
+		_, err := cmd.CombinedOutput()
+		return err
 	}
+
+	// Fallback to device disconnect
+	cmd := exec.Command("nmcli", "device", "disconnect", device)
+	_, err := cmd.CombinedOutput()
+	return err
 }
 
 func GetPortSpeed(i string) string {
