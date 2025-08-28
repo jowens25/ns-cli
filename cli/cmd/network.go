@@ -89,11 +89,33 @@ var ipCmd = &cobra.Command{
 	},
 }
 
+var gwCmd = &cobra.Command{
+	Use:   "gw [interface] [address]",
+	Short: "get and set gateway address",
+	Args:  cobra.MinimumNArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+
+		itf := args[0]
+
+		if !lib.HasInterface(itf) {
+			return
+		}
+
+		if len(args) == 2 {
+			lib.SetIpv4Gateway(itf, args[1])
+		}
+
+		fmt.Println(lib.GetIpv4Gateway(itf))
+
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(networkCmd)
 	networkCmd.AddCommand(networkStatusCmd)
 	networkCmd.AddCommand(dnsCmd)
 	networkCmd.AddCommand(ipCmd)
+	networkCmd.AddCommand(gwCmd)
 	//networkCmd.AddCommand(networkEnableCmd)
 	//networkCmd.AddCommand(networkDisableCmd)
 }

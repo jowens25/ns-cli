@@ -234,3 +234,23 @@ func SetIpv4Address(i string, address string) {
 	}
 
 }
+
+func SetIpv4Gateway(i string, address string) {
+	connection := GetConnectionNameFromDevice(i)
+
+	ip1 := net.ParseIP(address)
+	if ip1 != nil {
+		cmd := exec.Command("nmcli", "con", "modify", connection,
+			"ipv4.gateway", ip1.String(),
+			"ipv4.method", "manual")
+		if out, err := cmd.CombinedOutput(); err != nil {
+			log.Fatalf("failed to set ipv4 gateway: %v\n%s", err, string(out))
+		}
+
+		// Bring connection up
+		cmd = exec.Command("nmcli", "con", "up", connection)
+		if out, err := cmd.CombinedOutput(); err != nil {
+			log.Fatalf("failed to bring up connection: %v\n%s", err, string(out))
+		}
+	}
+}
