@@ -22,7 +22,7 @@ func initDataBase() {
 		log.Fatal("Failed to connect to database: ", err)
 	}
 
-	err = db.AutoMigrate(&User{}, &SnmpV1V2cUser{}, &SnmpV3User{}, &Ntp{})
+	err = db.AutoMigrate(&User{}, &SnmpV1V2cUser{}, &SnmpV3User{}, &Ntp{}, &AllowedNode{})
 
 	if err != nil {
 		log.Fatal("Failed to migrate database: ", err)

@@ -168,7 +168,7 @@ func readXinetdAllowedNodes() {
 		new_allowed_nodes = append(new_allowed_nodes, node.Address)
 	}
 
-	db.Where("address NOT IN ?", new_allowed_nodes).Delete(&SnmpV1V2cUser{})
+	db.Where("address NOT IN ?", new_allowed_nodes).Delete(&AllowedNode{})
 }
 
 func addAccessToXinetdFile(ipAddress string) {
