@@ -9,18 +9,19 @@ import (
 
 func startApiServer() {
 	apiRouter := gin.Default()
-	apiRouter.SetTrustedProxies([]string{"localhost"})
+	//apiRouter.SetTrustedProxies([]string{"localhost"})
 
 	corsConfig := cors.DefaultConfig()
 
 	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"}
 	corsConfig.AllowHeaders = []string{"Authorization", "Content-Type", "X-Request-ID"}
 	corsConfig.AllowCredentials = true
-	corsConfig.AllowOrigins = []string{
-
-		"https://localhost",
-		"http://localhost",
-	}
+	//corsConfig.AllowOrigins = []string{
+	//
+	//	"https://localhost",
+	//	"http://localhost",
+	//}
+	corsConfig.AllowAllOrigins = true
 
 	apiRouter.Use(cors.New(corsConfig))
 
