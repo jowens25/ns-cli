@@ -35,7 +35,7 @@ func startApiServer() {
 	v1.GET("/health", healthHandler)
 
 	protected := v1.Group("/")
-	protected.Use(authorizationMiddleware())
+	//protected.Use(authorizationMiddleware())
 	{
 		protected.POST("/logout", logoutHandler)
 
@@ -71,9 +71,9 @@ func startApiServer() {
 		networkGroup.GET("/telnet", readTelnetStatus)
 		networkGroup.PATCH("/telnet", writeTelnetStatus)
 
-		networkGroup.GET("/acccess", readAccess)
-		networkGroup.POST("/access", writeAccess)
-		networkGroup.DELETE("/access", deleteAccess)
+		networkGroup.GET("/access", readAllowedNodes)
+		networkGroup.POST("/access", writeAllowedNodes)
+		networkGroup.DELETE("/access", deleteAllowedNode)
 
 		//networkGroup.GET("/reset_network", resetNetworkConfig)
 

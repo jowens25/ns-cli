@@ -23,8 +23,8 @@ var addCmd = &cobra.Command{
 	Short: "add a node",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		lib.AddAccess(args[0])
-		lib.AddNginxAccess(args[0])
+
+		lib.AddAccessToFiles(args[0])
 	},
 }
 
@@ -33,8 +33,8 @@ var removeCmd = &cobra.Command{
 	Short: "remove a node",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		lib.RemoveAccess(args[0])
-		lib.RemoveNginxAccess(args[0])
+		lib.RemoveAccessFromFiles(args[0])
+
 	},
 }
 

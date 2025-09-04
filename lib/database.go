@@ -82,6 +82,24 @@ func createDefaultUser() {
 
 		db.Create(&snmpV1V2User)
 
+		//access := Access{
+		//
+		//	Node: "10.1.10.1",
+		//}
+		//db.Create(&access)
+		//
+		//access = Access{
+		//
+		//	Node: "10.1.10.2",
+		//}
+		//db.Create(&access)
+		//access = Access{
+		//
+		//	Node: "10.1.10.3",
+		//}
+		//
+		//db.Create(&access)
+
 	}
 
 }

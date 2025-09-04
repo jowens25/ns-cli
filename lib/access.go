@@ -11,10 +11,90 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
+
+// ======================================= Handlers =======================================
+var allowed_nodes []AllowedNode
+
+func readAllowedNodes(c *gin.Context) {
+
+	readXinetdAllowedNodes()
+
+	var currentNodes []AllowedNode
+
+	result := db.Find(&currentNodes)
+
+	if result.Error != nil {
+		log.Println(result.Error)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"allowed_nodes": currentNodes,
+	})
+}
+
+func writeAllowedNodes(c *gin.Context) {
+	var node AllowedNode
+
+	if err := c.ShouldBindJSON(&node); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	result := db.Where("address = ?", node.Address).FirstOrCreate(&node)
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	AddAccessToFiles(node.Address)
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":      "Node Added",
+		"allowed_node": node,
+	})
+}
+
+func deleteAllowedNode(c *gin.Context) {
+	id := c.Param("id")
+
+	var nodeToDelete AllowedNode
+
+	if err := db.First(&nodeToDelete, id).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	RemoveAccessFromFiles(nodeToDelete.Address)
+
+	if err := db.Delete(&nodeToDelete).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Node removed successfully",
+	})
+}
+
+func unrestrictNetworkAccess(c *gin.Context) {
+
+	Unrestrict()
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Network Access Reset",
+	})
+}
+
+// ========================================================================================
+
+// ======================================= Functions =======================================
 
 // reset the network restriction, update webserver config, and xinetd.d configs
 func Unrestrict() {
+	db.Unscoped().Where("1 = 1").Delete(&AllowedNode{}) // hard delete
 	InitFtpConfig()
 	InitSshConfig()
 	InitTelnetConfig()
@@ -23,7 +103,75 @@ func Unrestrict() {
 	RestartNginx()
 }
 
-func AddAccess(ipAddress string) {
+func AddAccessToFiles(addr string) {
+	addAccessToNginxFile(addr)
+	addAccessToXinetdFile(addr)
+}
+
+func RemoveAccessFromFiles(addr string) {
+	removeAccessFromNginxFile(addr)
+	removeAccessFromXinetdFile(addr)
+}
+
+func readXinetdAllowedNodes() {
+
+	allowed_nodes = nil
+
+	sshFile := "/etc/xinetd.d/ssh"
+
+	content, err := os.ReadFile(sshFile)
+	if err != nil {
+		log.Printf("failed to read config file %s: %v", sshFile, err)
+	}
+
+	for line := range strings.SplitSeq(string(content), "\n") {
+
+		if strings.Contains(strings.TrimSpace(line), "only_from") {
+
+			fields := strings.Fields(line)
+
+			if net.ParseIP(fields[2]) != nil {
+				var node AllowedNode
+				node.Address = fields[2]
+				allowed_nodes = append(allowed_nodes, node)
+				continue
+			}
+
+			ip, _, err := net.ParseCIDR(fields[2])
+			if err == nil && ip != nil {
+				var node AllowedNode
+				node.Address = fields[2]
+				allowed_nodes = append(allowed_nodes, node)
+				continue
+			}
+
+		}
+
+	}
+
+	// update the datebase to reflect the files
+	var new_allowed_nodes []string
+
+	for _, node := range allowed_nodes {
+
+		// look up the user by user name
+		result := db.Where("address = ?", node.Address).First(&AllowedNode{})
+		if result.Error == gorm.ErrRecordNotFound {
+			// Create new user
+			db.Create(&node)
+
+		} else {
+			// Update existing user
+			db.Where("address = ?", node.Address).Updates(&node)
+		}
+
+		new_allowed_nodes = append(new_allowed_nodes, node.Address)
+	}
+
+	db.Where("address NOT IN ?", new_allowed_nodes).Delete(&SnmpV1V2cUser{})
+}
+
+func addAccessToXinetdFile(ipAddress string) {
 	ftpFile := "/etc/xinetd.d/ftp"
 	telnetFile := "/etc/xinetd.d/telnet"
 	sshFile := "/etc/xinetd.d/ssh"
@@ -71,7 +219,7 @@ func AddAccess(ipAddress string) {
 
 }
 
-func RemoveAccess(ipAddress string) {
+func removeAccessFromXinetdFile(ipAddress string) {
 	ftpFile := "/etc/xinetd.d/ftp"
 	telnetFile := "/etc/xinetd.d/telnet"
 	sshFile := "/etc/xinetd.d/ssh"
@@ -112,7 +260,7 @@ func RemoveAccess(ipAddress string) {
 
 }
 
-func AddNginxAccess(ipAddress string) {
+func addAccessToNginxFile(ipAddress string) {
 	nginxFile := "/etc/nginx/nginx.conf"
 	//nginxFile = "nginx.conf"
 
@@ -155,7 +303,7 @@ func AddNginxAccess(ipAddress string) {
 	RestartNginx()
 }
 
-func RemoveNginxAccess(ipAddress string) {
+func removeAccessFromNginxFile(ipAddress string) {
 	nginxFile := "/etc/nginx/nginx.conf"
 	//nginxFile = "nginx.conf"
 
@@ -185,9 +333,9 @@ func RemoveNginxAccess(ipAddress string) {
 		filteredLines = append(filteredLines, line)
 	}
 
-	if NumAllowDirectives(filteredLines) == 0 && !HasAllowAllDirective(filteredLines) {
+	if numAllowDirectives(filteredLines) == 0 && !hasAllowAllDirective(filteredLines) {
 		filteredLines = slices.Insert(filteredLines, lineNum+1, "\t\t\tallow all;")
-		filteredLines = RemoveDenyAll(filteredLines)
+		filteredLines = removeDenyAll(filteredLines)
 	}
 
 	// Write back to file
@@ -200,7 +348,7 @@ func RemoveNginxAccess(ipAddress string) {
 	RestartNginx()
 }
 
-func NumAllowDirectives(lines []string) int {
+func numAllowDirectives(lines []string) int {
 
 	num := 0
 
@@ -231,7 +379,7 @@ func NumAllowDirectives(lines []string) int {
 
 }
 
-func HasAllowAllDirective(lines []string) bool {
+func hasAllowAllDirective(lines []string) bool {
 
 	for _, line := range lines {
 
@@ -246,7 +394,7 @@ func HasAllowAllDirective(lines []string) bool {
 	return false
 }
 
-func RemoveDenyAll(lines []string) []string {
+func removeDenyAll(lines []string) []string {
 	var newLines []string
 	for _, line := range lines {
 
@@ -259,59 +407,4 @@ func RemoveDenyAll(lines []string) []string {
 	}
 
 	return newLines
-}
-
-func readAccess(c *gin.Context) {
-
-	var allowedNodes []Access
-
-	result := db.Model(&Access{}).Find(&allowedNodes)
-
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"nodes": allowedNodes,
-	})
-
-}
-
-func writeAccess(c *gin.Context) {
-
-	var newAccess Access
-
-	if err := c.ShouldBindJSON(&newAccess); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	result := db.Create(&newAccess)
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-		return
-	}
-
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "Node added",
-	})
-}
-
-func deleteAccess(c *gin.Context) {
-
-	accessID := c.Param("id")
-
-	var accessToDelete Access
-
-	if err := db.First(&accessToDelete, accessID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Access not found"})
-		return
-	}
-
-	if err := db.Delete(&accessToDelete).Error; err != nil {
-		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
-		return
-	}
-
 }

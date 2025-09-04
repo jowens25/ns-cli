@@ -117,9 +117,9 @@ type SnmpTrap struct {
 	PrivPassphrase string `json:"priv_passphrase"`
 }
 
-type Access struct {
+type AllowedNode struct {
 	gorm.Model
-	Node string `json:"node"`
+	Address string `json:"address"`
 }
 
 // JWT Claims
