@@ -71,6 +71,10 @@ func startApiServer() {
 		networkGroup.GET("/telnet", readTelnetStatus)
 		networkGroup.PATCH("/telnet", writeTelnetStatus)
 
+		networkGroup.GET("/acccess", readAccess)
+		networkGroup.POST("/access", writeAccess)
+		networkGroup.DELETE("/access", deleteAccess)
+
 		//networkGroup.GET("/reset_network", resetNetworkConfig)
 
 	}
@@ -85,5 +89,6 @@ func startApiServer() {
 		})
 	})
 
-	apiRouter.Run("localhost" + API_PORT)
+	apiRouter.Run("0.0.0.0" + API_PORT) // development
+	//apiRouter.Run("localhost" + API_PORT) // offical
 }

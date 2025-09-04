@@ -5,9 +5,12 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/http"
 	"os"
 	"slices"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 // reset the network restriction, update webserver config, and xinetd.d configs
@@ -258,7 +261,57 @@ func RemoveDenyAll(lines []string) []string {
 	return newLines
 }
 
-// remove dir
-// if zero, add allow all
+func readAccess(c *gin.Context) {
 
-// add dir, remove allow all
+	var allowedNodes []Access
+
+	result := db.Model(&Access{}).Find(&allowedNodes)
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"nodes": allowedNodes,
+	})
+
+}
+
+func writeAccess(c *gin.Context) {
+
+	var newAccess Access
+
+	if err := c.ShouldBindJSON(&newAccess); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	result := db.Create(&newAccess)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Node added",
+	})
+}
+
+func deleteAccess(c *gin.Context) {
+
+	accessID := c.Param("id")
+
+	var accessToDelete Access
+
+	if err := db.First(&accessToDelete, accessID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Access not found"})
+		return
+	}
+
+	if err := db.Delete(&accessToDelete).Error; err != nil {
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+		return
+	}
+
+}
