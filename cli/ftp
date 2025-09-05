@@ -12,8 +12,6 @@ service ftp
     log_on_success += DURATION
     log_on_failure += USERID
     instances = 20
-    only_from = 10.1.10.1/24
-    only_from += 192.168.0.1/24
 }
 
 # End /etc/xinetd.d/ftp<Paste>
