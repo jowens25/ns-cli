@@ -100,14 +100,27 @@ func Unrestrict() {
 	InitNginxConfig()
 	RestartXinetd()
 	RestartNginx()
+
 }
 
 func AddAccessToFiles(addr string) {
+
+	_, _, err := net.ParseCIDR(addr)
+	if err != nil {
+		fmt.Println("invalid ip")
+		return
+	}
+
 	addAccessToNginxFile(addr)
 	addAccessToXinetdFile(addr)
 }
 
 func RemoveAccessFromFiles(addr string) {
+	_, _, err := net.ParseCIDR(addr)
+	if err != nil {
+		fmt.Println("invalid ip")
+		return
+	}
 	removeAccessFromNginxFile(addr)
 	removeAccessFromXinetdFile(addr)
 }
@@ -174,15 +187,6 @@ func addAccessToXinetdFile(ipAddress string) {
 	ftpFile := "/etc/xinetd.d/ftp"
 	telnetFile := "/etc/xinetd.d/telnet"
 	sshFile := "/etc/xinetd.d/ssh"
-
-	if net.ParseIP(ipAddress) != nil {
-		return
-	}
-
-	ip, _, err := net.ParseCIDR(ipAddress)
-	if err == nil && ip != nil {
-		return
-	}
 
 	configs := []string{ftpFile, telnetFile, sshFile}
 
@@ -278,75 +282,46 @@ func addAccessToNginxFile(ipAddress string) {
 	}
 
 	lines := strings.Split(string(content), "\n")
-	var newLines []string
 
-	for _, line := range lines {
-
-		if strings.Contains(strings.TrimSpace(line), "allow all") {
-			continue
-		}
-
-		newLines = append(newLines, line)
-
-		if strings.Contains(strings.TrimSpace(line), "# Access Control") {
-
-			newLines = append(newLines, "\t\t\tallow "+ipAddress+";")
-
-			if !strings.Contains(strings.TrimSpace(line), "deny all;") {
-				newLines = append(newLines, "\t\t\tdeny all; ")
-
-			}
-		}
-
-	}
-
-	// Write back to file
-	newContent := strings.Join(newLines, "\n")
-	err = os.WriteFile(nginxFile, []byte(newContent), 0644)
-	if err != nil {
-		log.Printf("failed to write config file %s: %v", nginxFile, err)
-
-	}
-	RestartNginx()
-}
-
-func removeAccessFromNginxFile(ipAddress string) {
-	nginxFile := "/etc/nginx/nginx.conf"
-	//nginxFile = "nginx.conf"
-
-	content, err := os.ReadFile(nginxFile)
-	if err != nil {
-		log.Printf("failed to read config file %s: %v", nginxFile, err)
-
-	}
-
-	lines := strings.Split(string(content), "\n")
-	var filteredLines []string
-
-	//var allowDirectiveCount int
-
-	lineNum := 0
+	var allowLineNum int = -1
+	var denyLineNum int = -1
+	var directiveLineNum int = -1
+	var accessLineNum int = -1
 
 	for i, line := range lines {
 
 		if strings.Contains(strings.TrimSpace(line), "# Access Control") {
-			lineNum = i
+			accessLineNum = i
+		}
+
+		if strings.Contains(strings.TrimSpace(line), "allow all") {
+			allowLineNum = i
+		}
+
+		if strings.Contains(strings.TrimSpace(line), "deny all") {
+			denyLineNum = i
 		}
 
 		if strings.Contains(strings.TrimSpace(line), ipAddress) {
-			continue
+			directiveLineNum = i
 		}
-
-		filteredLines = append(filteredLines, line)
 	}
 
-	if numAllowDirectives(filteredLines) == 0 && !hasAllowAllDirective(filteredLines) {
-		filteredLines = slices.Insert(filteredLines, lineNum+1, "\t\t\tallow all;")
-		filteredLines = removeDenyAll(filteredLines)
+	if allowLineNum > 0 {
+		lines = Pop(lines, allowLineNum)
+		lines = slices.Insert(lines, accessLineNum+1, "            allow "+ipAddress+";")
+		lines = slices.Insert(lines, accessLineNum+2, "            deny all;")
 	}
 
-	// Write back to file
-	newContent := strings.Join(filteredLines, "\n")
+	if denyLineNum > 0 {
+		lines = slices.Insert(lines, accessLineNum+1, "            allow "+ipAddress+";")
+	}
+
+	if directiveLineNum > 0 {
+		return
+	}
+
+	newContent := strings.Join(lines, "\n")
 	err = os.WriteFile(nginxFile, []byte(newContent), 0644)
 	if err != nil {
 		log.Printf("failed to write config file %s: %v", nginxFile, err)
@@ -355,63 +330,72 @@ func removeAccessFromNginxFile(ipAddress string) {
 	RestartNginx()
 }
 
-func numAllowDirectives(lines []string) int {
+// remove element from the slice
+func Pop(lines []string, index int) []string {
+	return slices.Delete(lines, index, index+1)
+}
 
-	num := 0
-
-	for _, line := range lines {
-
-		if strings.Contains(strings.TrimSpace(line), "allow") {
-
-			line = strings.TrimSuffix(line, ";")
-
-			fields := strings.Fields(line)
-
-			if net.ParseIP(fields[1]) != nil {
-				num += 1
-				continue
-			}
-
-			ip, _, err := net.ParseCIDR(fields[1])
-			if err == nil && ip != nil {
-				num += 1
-				continue
-			}
-
-		}
+func removeAccessFromNginxFile(ipAddress string) {
+	nginxFile := "/etc/nginx/nginx.conf"
+	content, err := os.ReadFile(nginxFile)
+	if err != nil {
+		log.Printf("failed to read nginxFile file %s: %v", nginxFile, err)
 
 	}
 
-	return num
+	lines := strings.Split(string(content), "\n")
 
-}
+	//var allowLineNum int = -1
+	var denyLineNum int = -1
+	var directiveLineNum int = -1
+	var accessLineNum int = -1
+	var directiveCount int = 0
 
-func hasAllowAllDirective(lines []string) bool {
+	for i, line := range lines {
 
-	for _, line := range lines {
+		if strings.Contains(strings.TrimSpace(line), "# Access Control") {
+			accessLineNum = i
+		}
 
 		if strings.Contains(strings.TrimSpace(line), "allow all") {
+			//allowLineNum = i
+		}
 
-			return true
+		if strings.Contains(strings.TrimSpace(line), "deny all") {
+			denyLineNum = i
+		}
 
+		if strings.Contains(strings.TrimSpace(line), ipAddress) {
+			directiveLineNum = i
+		}
+
+		if strings.Contains(strings.TrimSpace(line), "allow") {
+			directiveCount++
 		}
 
 	}
 
-	return false
-}
+	if directiveLineNum < 0 {
+		return
+	}
 
-func removeDenyAll(lines []string) []string {
-	var newLines []string
-	for _, line := range lines {
+	// last directive, remove and add allow
+	if directiveCount == 1 {
 
-		if !strings.Contains(strings.TrimSpace(line), "deny all") {
+		lines = Pop(lines, denyLineNum)
+		lines = Pop(lines, directiveLineNum)
+		lines = slices.Insert(lines, accessLineNum+1, "            allow all;")
 
-			newLines = append(newLines, line)
-
-		}
+	} else {
+		lines = Pop(lines, directiveLineNum)
 
 	}
 
-	return newLines
+	newContent := strings.Join(lines, "\n")
+	err = os.WriteFile(nginxFile, []byte(newContent), 0644)
+	if err != nil {
+		log.Printf("failed to write config file %s: %v", nginxFile, err)
+
+	}
+	RestartNginx()
 }

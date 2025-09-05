@@ -21,11 +21,11 @@ var v1v2c_users []SnmpV1V2cUser
 
 func readSnmpV1V2cUsers(c *gin.Context) {
 
-	StopSnmpd()
+	//StopSnmpd()
 
 	readSnmpUsersFromFile()
 
-	StartSnmpd()
+	//StartSnmpd()
 
 	var users []SnmpV1V2cUser
 	result := db.Find(&users)
