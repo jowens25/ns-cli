@@ -93,7 +93,7 @@ func unrestrictNetworkAccess(c *gin.Context) {
 
 // reset the network restriction, update webserver config, and xinetd.d configs
 func Unrestrict() {
-	db.Unscoped().Where("1 = 1").Delete(&AllowedNode{}) // hard delete
+	//db.Unscoped().Where("1 = 1").Delete(&AllowedNode{}) // hard delete
 	InitFtpConfig()
 	InitSshConfig()
 	InitTelnetConfig()
@@ -270,7 +270,6 @@ func removeAccessFromXinetdFile(ipAddress string) {
 
 func addAccessToNginxFile(ipAddress string) {
 	nginxFile := "/etc/nginx/nginx.conf"
-	//nginxFile = "nginx.conf"
 
 	content, err := os.ReadFile(nginxFile)
 	if err != nil {
