@@ -22,7 +22,6 @@ func readAllowedNodes(c *gin.Context) {
 	readXinetdAllowedNodes()
 
 	var currentNodes []AllowedNode
-
 	result := db.Find(&currentNodes)
 
 	if result.Error != nil {

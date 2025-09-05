@@ -73,7 +73,7 @@ func startApiServer() {
 
 		networkGroup.GET("/access", readAllowedNodes)
 		networkGroup.POST("/access", writeAllowedNodes)
-		networkGroup.DELETE("/access", deleteAllowedNode)
+		networkGroup.DELETE("/access/:id", deleteAllowedNode)
 
 		//networkGroup.GET("/reset_network", resetNetworkConfig)
 
