@@ -176,6 +176,15 @@ func addAccessToXinetdFile(ipAddress string) {
 	telnetFile := "/etc/xinetd.d/telnet"
 	sshFile := "/etc/xinetd.d/ssh"
 
+	if net.ParseIP(ipAddress) != nil {
+		return
+	}
+
+	ip, _, err := net.ParseCIDR(ipAddress)
+	if err == nil && ip != nil {
+		return
+	}
+
 	configs := []string{ftpFile, telnetFile, sshFile}
 
 	for _, config := range configs {
