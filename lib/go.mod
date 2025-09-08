@@ -14,6 +14,7 @@ require (
 require (
 	github.com/creack/goselect v0.1.2 // indirect
 	github.com/kr/text v0.2.0 // indirect
+	github.com/msteinert/pam v1.2.0 // indirect
 )
 
 require (

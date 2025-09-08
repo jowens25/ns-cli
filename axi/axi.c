@@ -379,7 +379,7 @@ int connect(void)
     if (ser == -1)
     {
 
-        printf("c Error opening serial port\n");
+        printf("connect Error opening serial port\n");
         return -1;
     }
 
@@ -760,7 +760,7 @@ int serOpen(char fileDescriptor[])
     int fd = open(fileDescriptor, O_RDWR | O_NOCTTY | O_SYNC);
     if (fd < 0)
     {
-        printf("open error\n");
+        printf("ser open error\n");
         return -1;
     }
 

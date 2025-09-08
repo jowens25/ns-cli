@@ -91,3 +91,208 @@ See "systemctl status nginx.service" and "journalctl -xeu nginx.service" for det
 2025/09/05 16:38:46 Request ID: 
 2025/09/05 16:39:41 Database initialized successfully
 2025/09/05 16:43:32 Database initialized successfully
+2025/09/05 16:44:22 incomplete snmp entry
+2025/09/05 16:44:22 [#group group name sec.model sec.name]
+2025/09/05 16:44:22 SNMPD:  inactive
+
+2025/09/05 16:44:22 incomplete snmp entry
+2025/09/05 16:44:22 [#group group name sec.model sec.name]
+2025/09/05 16:44:23 SNMPD:  active
+
+2025/09/05 16:44:29 SNMPD:  active
+
+2025/09/05 16:45:26 incomplete snmp entry
+2025/09/05 16:45:26 [#group group name sec.model sec.name]
+2025/09/05 16:45:26 SNMPD:  inactive
+
+2025/09/05 16:45:26 incomplete snmp entry
+2025/09/05 16:45:26 [#group group name sec.model sec.name]
+2025/09/05 16:45:27 SNMPD:  active
+
+2025/09/05 16:45:28 SNMPD:  active
+
+2025/09/05 16:45:35 Request ID: 
+2025/09/05 16:45:35 Request ID: 
+2025/09/08 10:50:27 Database initialized successfully
+2025/09/08 10:51:39 Database initialized successfully
+2025/09/08 10:52:11 Database initialized successfully
+2025/09/08 10:55:46 Database initialized successfully
+2025/09/08 11:30:36 Database initialized successfully
+2025/09/08 11:30:53 Request ID: 
+2025/09/08 11:30:53 Request ID: 
+2025/09/08 11:31:54 Database initialized successfully
+2025/09/08 11:31:56 incomplete snmp entry
+2025/09/08 11:31:56 [#group group name sec.model sec.name]
+2025/09/08 11:31:57 SNMPD:  inactive
+
+2025/09/08 11:31:57 incomplete snmp entry
+2025/09/08 11:31:57 [#group group name sec.model sec.name]
+2025/09/08 11:31:57 SNMPD:  active
+
+2025/09/08 11:32:00 Request ID: 
+2025/09/08 11:32:00 Request ID: 
+2025/09/08 12:05:34 Database initialized successfully
+2025/09/08 12:05:40 Request ID: 
+2025/09/08 12:05:40 Request ID: 
+2025/09/08 12:07:33 Database initialized successfully
+2025/09/08 12:07:36 Request ID: 
+2025/09/08 12:07:36 Request ID: 
+2025/09/08 12:08:12 Database initialized successfully
+2025/09/08 12:08:15 Request ID: 
+2025/09/08 12:08:15 Request ID: 
+2025/09/08 12:08:28 Database initialized successfully
+2025/09/08 12:08:30 Request ID: 
+2025/09/08 12:08:30 Request ID: 
+2025/09/08 12:09:01 Database initialized successfully
+2025/09/08 12:09:03 Request ID: 
+2025/09/08 12:09:03 Request ID: 
+2025/09/08 12:11:20 Database initialized successfully
+2025/09/08 12:11:24 Request ID: 
+2025/09/08 12:11:24 Request ID: 
+2025/09/08 12:16:35 Request ID: 
+2025/09/08 12:16:35 Request ID: 
+2025/09/08 12:16:51 Request ID: 
+2025/09/08 12:16:59 Database initialized successfully
+2025/09/08 12:17:03 Request ID: 
+2025/09/08 12:17:03 Request ID: 
+2025/09/08 12:21:27 Database initialized successfully
+2025/09/08 12:21:29 Request ID: 
+2025/09/08 12:21:29 Request ID: 
+2025/09/08 12:21:43 Request ID: 
+2025/09/08 12:21:43 Request ID: 
+2025/09/08 12:22:29 Database initialized successfully
+2025/09/08 12:23:16 Database initialized successfully
+2025/09/08 12:23:18 Request ID: 
+2025/09/08 12:23:18 Request ID: 
+2025/09/08 12:24:58 Database initialized successfully
+2025/09/08 12:25:01 Request ID: 
+2025/09/08 12:25:01 Request ID: 
+2025/09/08 12:26:51 Request ID: 
+2025/09/08 12:26:51 Request ID: 
+2025/09/08 12:28:06 Request ID: 
+2025/09/08 12:28:06 Request ID: 
+2025/09/08 12:30:16 Request ID: 
+2025/09/08 12:30:16 Request ID: 
+2025/09/08 12:33:38 Request ID: 
+2025/09/08 12:33:38 Request ID: 
+2025/09/08 12:34:15 Request ID: 
+2025/09/08 12:34:15 Request ID: 
+2025/09/08 12:34:32 Request ID: 
+2025/09/08 12:34:32 Request ID: 
+2025/09/08 12:34:46 Request ID: 
+2025/09/08 12:34:46 Request ID: 
+2025/09/08 12:36:24 Request ID: 
+2025/09/08 12:36:24 Request ID: 
+2025/09/08 12:36:30 Request ID: 
+2025/09/08 12:36:30 Request ID: 
+2025/09/08 12:36:58 Request ID: 
+2025/09/08 12:36:58 Request ID: 
+2025/09/08 12:37:40 Request ID: 
+2025/09/08 12:37:40 Request ID: 
+2025/09/08 12:37:43 Request ID: 
+2025/09/08 12:37:43 Request ID: 
+2025/09/08 12:37:54 Request ID: 
+2025/09/08 12:37:54 Request ID: 
+2025/09/08 12:39:04 Request ID: 
+2025/09/08 12:39:04 Request ID: 
+2025/09/08 12:41:48 Request ID: 
+2025/09/08 12:41:48 Request ID: 
+2025/09/08 12:41:51 Request ID: 
+2025/09/08 12:41:51 Request ID: 
+2025/09/08 12:42:10 Request ID: 
+2025/09/08 12:42:10 Request ID: 
+2025/09/08 12:42:15 Request ID: 
+2025/09/08 12:42:15 Request ID: 
+2025/09/08 12:42:26 Request ID: 
+2025/09/08 12:42:26 Request ID: 
+2025/09/08 12:42:29 Request ID: 
+2025/09/08 12:42:29 Request ID: 
+2025/09/08 12:43:43 Request ID: 
+2025/09/08 12:43:43 Request ID: 
+2025/09/08 12:46:18 Request ID: 
+2025/09/08 12:46:18 Request ID: 
+2025/09/08 12:53:09 Database initialized successfully
+2025/09/08 12:53:22 Request ID: 
+2025/09/08 12:53:22 Request ID: 
+2025/09/08 12:53:37 Request ID: 
+2025/09/08 12:53:37 Request ID: 
+2025/09/08 12:53:40 Request ID: 
+2025/09/08 12:53:40 Request ID: 
+2025/09/08 12:54:36 Database initialized successfully
+2025/09/08 12:54:40 Request ID: 
+2025/09/08 12:54:40 Request ID: 
+2025/09/08 12:55:08 Database initialized successfully
+2025/09/08 12:55:10 Request ID: 
+2025/09/08 12:55:10 Request ID: 
+2025/09/08 12:56:57 Database initialized successfully
+2025/09/08 12:57:00 Request ID: 
+2025/09/08 12:57:00 Request ID: 
+2025/09/08 13:15:37 Database initialized successfully
+2025/09/08 13:15:49 Request ID: 
+2025/09/08 13:15:49 Request ID: 
+2025/09/08 13:16:04 Request ID: 
+2025/09/08 13:16:04 Request ID: 
+2025/09/08 13:16:50 Request ID: 
+2025/09/08 13:16:50 Request ID: 
+2025/09/08 13:19:48 Database initialized successfully
+2025/09/08 13:19:49 Request ID: 
+2025/09/08 13:21:27 Request ID: 
+2025/09/08 13:21:27 Request ID: 
+2025/09/08 13:22:05 Request ID: 
+2025/09/08 13:22:45 Request ID: 
+2025/09/08 13:22:45 Request ID: 
+2025/09/08 13:23:02 Request ID: 
+2025/09/08 13:23:02 Request ID: 
+2025/09/08 13:23:11 Request ID: 
+2025/09/08 13:23:11 Request ID: 
+2025/09/08 13:24:05 Request ID: 
+2025/09/08 13:24:05 Request ID: 
+2025/09/08 13:24:17 Request ID: 
+2025/09/08 13:24:17 Request ID: 
+2025/09/08 13:24:35 Database initialized successfully
+2025/09/08 13:25:34 Request ID: 
+2025/09/08 13:25:34 Request ID: 
+2025/09/08 13:25:58 Database initialized successfully
+2025/09/08 13:26:01 Request ID: 
+2025/09/08 13:26:01 Request ID: 
+2025/09/08 13:28:32 Failed to migrate database: UNIQUE constraint failed: users.email
+2025/09/08 13:29:15 Database initialized successfully
+2025/09/08 13:29:19 Request ID: 
+2025/09/08 13:29:19 Request ID: 
+2025/09/08 13:29:22 Request ID: 
+2025/09/08 13:29:22 Request ID: 
+2025/09/08 13:29:40 Request ID: 
+2025/09/08 13:29:40 Request ID: 
+2025/09/08 13:30:05 Request ID: 
+2025/09/08 13:32:44 Request ID: 
+2025/09/08 13:32:44 Request ID: 
+2025/09/08 13:41:30 Database initialized successfully
+2025/09/08 13:41:59 Request ID: 
+2025/09/08 13:41:59 Request ID: 
+2025/09/08 13:45:29 Database initialized successfully
+2025/09/08 13:45:35 Request ID: 
+2025/09/08 13:45:35 Request ID: 
+2025/09/08 13:45:50 Request ID: 
+2025/09/08 13:45:50 Request ID: 
+2025/09/08 13:47:12 Request ID: 
+2025/09/08 13:47:12 Request ID: 
+2025/09/08 13:49:20 Request ID: 
+2025/09/08 13:49:20 Request ID: 
+2025/09/08 13:50:09 Request ID: 
+2025/09/08 13:50:09 Request ID: 
+2025/09/08 13:50:13 Request ID: 
+2025/09/08 13:50:13 Request ID: 
+2025/09/08 13:50:44 Request ID: 
+2025/09/08 13:50:44 Request ID: 
+2025/09/08 13:50:48 Request ID: 
+2025/09/08 14:04:42 Request ID: 
+2025/09/08 14:04:42 Request ID: 
+2025/09/08 14:04:45 Request ID: 
+2025/09/08 14:13:12 Request ID: 
+2025/09/08 14:13:12 Request ID: 
+2025/09/08 14:13:36 Request ID: 
+2025/09/08 14:13:36 Request ID: 
+2025/09/08 14:14:30 Database initialized successfully
+2025/09/08 14:15:28 Request ID: 
+2025/09/08 14:15:28 Request ID: 
+2025/09/08 14:15:31 Request ID: 

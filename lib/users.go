@@ -29,12 +29,9 @@ func readUsers(c *gin.Context) {
 	//requestID := c.GetString("request_id")
 	log.Printf("Request ID: %s\n", requestID)
 
-	var users []struct {
-		ID       int    `json:"id"`
-		Role     string `json:"role"`
-		Username string `json:"username"`
-		Email    string `json:"email"`
-	}
+	var users []User
+
+	getAdminUsers()
 
 	result := db.Model(&User{}).Select("id, role, username, email").Find(&users)
 
@@ -51,6 +48,49 @@ func readUsers(c *gin.Context) {
 		"request_id":  requestID, // Optionally include in the response
 
 	})
+
+}
+
+func getAdminUsers() {
+	///var users []User
+	cmd := exec.Command("getent", "group")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	lines := strings.SplitSeq(string(out), "\n")
+	var newUsernames []string
+
+	for line := range lines {
+		if strings.HasPrefix(line, "admin:") {
+			parts := strings.Split(line, ":")
+			if len(parts) >= 4 && parts[3] != "" {
+				usernames := strings.SplitSeq(parts[3], ",")
+				for username := range usernames {
+					var user User
+					user.Role = "admin"
+					user.Username = username
+
+					// look up the user by user name
+					result := db.Where("username = ?", user.Username).First(&User{})
+					if result.Error == gorm.ErrRecordNotFound {
+						// Create new user
+						db.Create(&user)
+
+					} else {
+						// Update existing user
+						db.Where("username = ?", user.Username).Updates(&user)
+					}
+
+					newUsernames = append(newUsernames, user.Username)
+
+				}
+				db.Where("username NOT IN ?", newUsernames).Delete(&User{})
+
+			}
+		}
+	}
 
 }
 
@@ -154,8 +194,8 @@ func deleteUser(c *gin.Context) {
 			})
 
 		} else {
-			c.JSON(http.StatusUnprocessableEntity, gin.H{
-				"error": "Cannot delete the last admin",
+			c.JSON(http.StatusOK, gin.H{
+				"error": "Cannot delete the last admin account",
 			})
 			return
 		}
