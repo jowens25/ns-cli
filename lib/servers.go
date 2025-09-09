@@ -39,10 +39,10 @@ func startApiServer() {
 	{
 		protected.POST("/logout", logoutHandler)
 
-		protected.GET("/users", readUsers)
-		protected.POST("/users", writeUser)
-		protected.PATCH("/users/:id", editUser)
-		protected.DELETE("/users/:id", deleteUser)
+		protected.GET("/users", readSystemUsers)
+		protected.POST("/users", writeSystemUser)
+		protected.PATCH("/users/:id", editSystemUser)
+		protected.DELETE("/users/:id", deleteSystemUser)
 
 		snmpGroup := protected.Group("/snmp")
 

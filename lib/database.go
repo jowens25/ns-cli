@@ -48,6 +48,8 @@ func createDefaultUser() {
 
 		AddAdmin("novus", "novus")
 
+		// /readUsersFromSystem()
+
 		//user := User{
 		//
 		//	Username: "admin",

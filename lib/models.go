@@ -7,10 +7,10 @@ import (
 
 type User struct {
 	gorm.Model
-	Role     string `json:"role" gorm:"not null"`
-	Username string `json:"username" gorm:"uniqueIndex;not null"`
-	Email    string `json:"email" gorm:"not null"`
-	Password string `json:"password" gorm:"not null"` // "-" excludes from JSON
+	Role     string `json:"role"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Password string `json:"password"` // "-" excludes from JSON
 
 }
 

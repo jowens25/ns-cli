@@ -206,3 +206,43 @@
 2025/09/09 09:42:11 [#group group name sec.model sec.name]
 2025/09/09 09:42:11 SNMPD:  active
 
+2025/09/09 09:44:33 Database initialized successfully
+2025/09/09 09:44:44 incomplete snmp entry
+2025/09/09 09:44:44 [#group group name sec.model sec.name]
+2025/09/09 09:44:45 SNMPD:  inactive
+
+2025/09/09 09:44:45 incomplete snmp entry
+2025/09/09 09:44:45 [#group group name sec.model sec.name]
+2025/09/09 09:44:45 SNMPD:  active
+
+2025/09/09 09:44:56 SNMPD:  active
+
+2025/09/09 09:45:00 SNMPD:  active
+
+2025/09/09 09:47:22 SNMPD:  inactive
+
+2025/09/09 09:47:22 should be here
+2025/09/09 09:47:22 /etc/snmp/snmpd.conf
+2025/09/09 09:47:22 
+2025/09/09 09:47:22 SNMPD:  active
+
+2025/09/09 09:47:22 incomplete snmp entry
+2025/09/09 09:47:22 [#group group name sec.model sec.name]
+2025/09/09 09:47:22 SNMPD:  inactive
+
+2025/09/09 09:47:22 incomplete snmp entry
+2025/09/09 09:47:22 [#group group name sec.model sec.name]
+2025/09/09 09:47:23 SNMPD:  active
+
+2025/09/09 09:47:24 incomplete snmp entry
+2025/09/09 09:47:24 [#group group name sec.model sec.name]
+2025/09/09 09:47:25 SNMPD:  inactive
+
+2025/09/09 09:47:25 incomplete snmp entry
+2025/09/09 09:47:25 [#group group name sec.model sec.name]
+2025/09/09 09:47:25 SNMPD:  active
+
+2025/09/09 09:47:28 SNMPD:  active
+
+2025/09/09 09:47:34 SNMPD:  active
+

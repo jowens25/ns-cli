@@ -193,6 +193,7 @@ func editSnmpV1V2cUser(c *gin.Context) {
 	id := c.Param("id")
 
 	var existingUser SnmpV1V2cUser
+
 	if err := db.First(&existingUser, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
@@ -205,6 +206,7 @@ func editSnmpV1V2cUser(c *gin.Context) {
 	StopSnmpd()
 	removeSnmpV1V2cUserFromFile(existingUser)
 	StartSnmpd()
+
 	var updateData SnmpV1V2cUser
 	if err := c.ShouldBindJSON(&updateData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
