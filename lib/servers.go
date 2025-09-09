@@ -75,6 +75,12 @@ func startApiServer() {
 		networkGroup.POST("/access", writeAllowedNodes)
 		networkGroup.DELETE("/access/:id", deleteAllowedNode)
 
+		securityGroup := protected.Group("/security")
+
+		securityGroup.GET("/policy", readSecurityPolicy)
+		securityGroup.POST("/policy", writeSecurityPolicy)
+		//securityGroup.GET("/policy")
+
 		//networkGroup.GET("/reset_network", resetNetworkConfig)
 
 	}

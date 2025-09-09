@@ -93,6 +93,19 @@ type SnmpV1V2cUser struct {
 	SecName   string `json:"sec_name"`
 }
 
+type SecurityPolicy struct {
+	gorm.Model
+	MinimumLength     string `json:"minimum_length"`
+	RequireUpper      string `json:"require_upper"`
+	RequireLower      string `json:"require_lower"`
+	RequireNumber     string `json:"require_number"`
+	RequireSpecial    string `json:"require_special"`
+	RequireNoUser     string `json:"require_nouser"`
+	MinimumAge        string `json:"minimum_age"`
+	MaximumAge        string `json:"maximum_age"`
+	ExpirationWarning string `json:"expiration_warning"`
+}
+
 type SnmpV3User struct {
 	gorm.Model
 	Version        string `json:"version"`

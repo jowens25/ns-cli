@@ -246,3 +246,194 @@
 
 2025/09/09 09:47:34 SNMPD:  active
 
+2025/09/09 10:02:49 Database initialized successfully
+2025/09/09 10:02:52 incomplete snmp entry
+2025/09/09 10:02:52 [#group group name sec.model sec.name]
+2025/09/09 10:02:53 SNMPD:  inactive
+
+2025/09/09 10:02:53 incomplete snmp entry
+2025/09/09 10:02:53 [#group group name sec.model sec.name]
+2025/09/09 10:02:53 SNMPD:  active
+
+2025/09/09 10:03:11 SNMPD:  active
+
+2025/09/09 10:05:43 Database initialized successfully
+2025/09/09 10:05:46 incomplete snmp entry
+2025/09/09 10:05:46 [#group group name sec.model sec.name]
+2025/09/09 10:05:47 SNMPD:  inactive
+
+2025/09/09 10:05:47 incomplete snmp entry
+2025/09/09 10:05:47 [#group group name sec.model sec.name]
+2025/09/09 10:05:47 SNMPD:  active
+
+2025/09/09 10:07:20 Database initialized successfully
+2025/09/09 10:07:23 incomplete snmp entry
+2025/09/09 10:07:23 [#group group name sec.model sec.name]
+2025/09/09 10:07:23 SNMPD:  inactive
+2025/09/09 10:07:23 incomplete snmp entry
+2025/09/09 10:07:23 [#group group name sec.model sec.name]
+2025/09/09 10:07:24 SNMPD:  active
+2025/09/09 10:07:36 incomplete snmp entry
+2025/09/09 10:07:36 [#group group name sec.model sec.name]
+2025/09/09 10:07:36 SNMPD:  inactive
+2025/09/09 10:07:36 incomplete snmp entry
+2025/09/09 10:07:36 [#group group name sec.model sec.name]
+2025/09/09 10:07:37 SNMPD:  active
+2025/09/09 10:09:59 incomplete snmp entry
+2025/09/09 10:09:59 [#group group name sec.model sec.name]
+2025/09/09 10:10:00 SNMPD:  inactive
+2025/09/09 10:10:00 incomplete snmp entry
+2025/09/09 10:10:00 [#group group name sec.model sec.name]
+2025/09/09 10:10:00 SNMPD:  active
+2025/09/09 10:14:00 incomplete snmp entry
+2025/09/09 10:14:00 [#group group name sec.model sec.name]
+2025/09/09 10:14:01 SNMPD:  inactive
+2025/09/09 10:14:01 incomplete snmp entry
+2025/09/09 10:14:01 [#group group name sec.model sec.name]
+2025/09/09 10:14:01 SNMPD:  active
+2025/09/09 10:14:40 incomplete snmp entry
+2025/09/09 10:14:40 [#group group name sec.model sec.name]
+2025/09/09 10:14:41 SNMPD:  inactive
+2025/09/09 10:14:41 incomplete snmp entry
+2025/09/09 10:14:41 [#group group name sec.model sec.name]
+2025/09/09 10:14:41 SNMPD:  active
+2025/09/09 10:16:04 incomplete snmp entry
+2025/09/09 10:16:04 [#group group name sec.model sec.name]
+2025/09/09 10:16:04 SNMPD:  inactive
+2025/09/09 10:16:04 incomplete snmp entry
+2025/09/09 10:16:04 [#group group name sec.model sec.name]
+2025/09/09 10:16:05 SNMPD:  active
+2025/09/09 10:23:15 incomplete snmp entry
+2025/09/09 10:23:15 [#group group name sec.model sec.name]
+2025/09/09 10:23:15 SNMPD:  inactive
+2025/09/09 10:23:15 incomplete snmp entry
+2025/09/09 10:23:15 [#group group name sec.model sec.name]
+2025/09/09 10:23:16 SNMPD:  active
+2025/09/09 10:23:17 incomplete snmp entry
+2025/09/09 10:23:17 [#group group name sec.model sec.name]
+2025/09/09 10:23:17 SNMPD:  inactive
+2025/09/09 10:23:17 incomplete snmp entry
+2025/09/09 10:23:17 [#group group name sec.model sec.name]
+2025/09/09 10:23:18 SNMPD:  active
+2025/09/09 10:23:21 incomplete snmp entry
+2025/09/09 10:23:21 [#group group name sec.model sec.name]
+2025/09/09 10:23:22 SNMPD:  inactive
+2025/09/09 10:23:22 incomplete snmp entry
+2025/09/09 10:23:22 [#group group name sec.model sec.name]
+2025/09/09 10:23:22 SNMPD:  active
+2025/09/09 10:23:47 incomplete snmp entry
+2025/09/09 10:23:47 [#group group name sec.model sec.name]
+2025/09/09 10:23:48 SNMPD:  inactive
+2025/09/09 10:23:48 incomplete snmp entry
+2025/09/09 10:23:48 [#group group name sec.model sec.name]
+2025/09/09 10:23:48 SNMPD:  active
+2025/09/09 10:34:15 incomplete snmp entry
+2025/09/09 10:34:15 [#group group name sec.model sec.name]
+2025/09/09 10:34:16 SNMPD:  inactive
+2025/09/09 10:34:16 incomplete snmp entry
+2025/09/09 10:34:16 [#group group name sec.model sec.name]
+2025/09/09 10:34:17 SNMPD:  active
+2025/09/09 10:37:10 incomplete snmp entry
+2025/09/09 10:37:10 [#group group name sec.model sec.name]
+2025/09/09 10:37:10 SNMPD:  inactive
+2025/09/09 10:37:10 incomplete snmp entry
+2025/09/09 10:37:10 [#group group name sec.model sec.name]
+2025/09/09 10:37:11 SNMPD:  active
+2025/09/09 10:39:23 incomplete snmp entry
+2025/09/09 10:39:23 [#group group name sec.model sec.name]
+2025/09/09 10:39:23 SNMPD:  inactive
+2025/09/09 10:39:23 incomplete snmp entry
+2025/09/09 10:39:23 [#group group name sec.model sec.name]
+2025/09/09 10:39:24 SNMPD:  active
+2025/09/09 10:39:42 incomplete snmp entry
+2025/09/09 10:39:42 [#group group name sec.model sec.name]
+2025/09/09 10:39:42 SNMPD:  inactive
+2025/09/09 10:39:42 incomplete snmp entry
+2025/09/09 10:39:42 [#group group name sec.model sec.name]
+2025/09/09 10:39:43 SNMPD:  active
+2025/09/09 10:39:57 incomplete snmp entry
+2025/09/09 10:39:57 [#group group name sec.model sec.name]
+2025/09/09 10:39:57 SNMPD:  inactive
+2025/09/09 10:39:57 incomplete snmp entry
+2025/09/09 10:39:57 [#group group name sec.model sec.name]
+2025/09/09 10:39:58 SNMPD:  active
+2025/09/09 10:45:32 Database initialized successfully
+2025/09/09 10:46:35 incomplete snmp entry
+2025/09/09 10:46:35 [#group group name sec.model sec.name]
+2025/09/09 10:46:36 SNMPD:  inactive
+2025/09/09 10:46:36 incomplete snmp entry
+2025/09/09 10:46:36 [#group group name sec.model sec.name]
+2025/09/09 10:46:36 SNMPD:  active
+2025/09/09 11:50:33 Database initialized successfully
+2025/09/09 12:02:46 Database initialized successfully
+2025/09/09 12:37:25 incomplete snmp entry
+2025/09/09 12:37:25 [#group group name sec.model sec.name]
+2025/09/09 12:37:25 SNMPD:  inactive
+2025/09/09 12:37:25 incomplete snmp entry
+2025/09/09 12:37:25 [#group group name sec.model sec.name]
+2025/09/09 12:37:26 SNMPD:  active
+2025/09/09 12:43:41 Database initialized successfully
+2025/09/09 12:46:29 incomplete snmp entry
+2025/09/09 12:46:29 [#group group name sec.model sec.name]
+2025/09/09 12:46:29 SNMPD:  inactive
+2025/09/09 12:46:29 incomplete snmp entry
+2025/09/09 12:46:29 [#group group name sec.model sec.name]
+2025/09/09 12:46:30 SNMPD:  active
+2025/09/09 12:46:31 incomplete snmp entry
+2025/09/09 12:46:31 [#group group name sec.model sec.name]
+2025/09/09 12:46:32 SNMPD:  inactive
+2025/09/09 12:46:32 incomplete snmp entry
+2025/09/09 12:46:32 [#group group name sec.model sec.name]
+2025/09/09 12:46:32 SNMPD:  active
+2025/09/09 13:01:45 Database initialized successfully
+2025/09/09 13:02:46 Database initialized successfully
+2025/09/09 13:42:33 Database initialized successfully
+2025/09/09 13:46:02 Database initialized successfully
+2025/09/09 13:46:51 Database initialized successfully
+2025/09/09 13:49:18 Database initialized successfully
+2025/09/09 13:55:03 Database initialized successfully
+2025/09/09 14:05:06 Database initialized successfully
+2025/09/09 14:05:13 incomplete snmp entry
+2025/09/09 14:05:13 [#group group name sec.model sec.name]
+2025/09/09 14:05:14 SNMPD:  inactive
+2025/09/09 14:05:14 incomplete snmp entry
+2025/09/09 14:05:14 [#group group name sec.model sec.name]
+2025/09/09 14:05:14 SNMPD:  active
+2025/09/09 14:15:10 Database initialized successfully
+2025/09/09 14:17:40 Database initialized successfully
+2025/09/09 14:18:11 Database initialized successfully
+2025/09/09 14:19:04 Database initialized successfully
+2025/09/09 14:20:56 Database initialized successfully
+2025/09/09 14:21:39 Database initialized successfully
+2025/09/09 14:23:35 Database initialized successfully
+2025/09/09 14:30:58 Database initialized successfully
+2025/09/09 14:31:57 failed to pwquality config file /etc/login.def: open /etc/login.def: no such file or directory
+2025/09/09 14:32:02 failed to pwquality config file /etc/login.def: open /etc/login.def: no such file or directory
+2025/09/09 14:32:21 failed to pwquality config file /etc/login.def: open /etc/login.def: no such file or directory
+2025/09/09 14:33:27 Database initialized successfully
+2025/09/09 14:33:31 failed to pwquality config file /etc/login.def: open /etc/login.def: no such file or directory
+2025/09/09 14:36:38 Database initialized successfully
+2025/09/09 14:36:42 failed to pwquality config file /etc/login.def: open /etc/login.def: no such file or directory
+2025/09/09 14:37:51 Database initialized successfully
+2025/09/09 14:37:53 failed to pwquality config file /etc/login.def: open /etc/login.def: no such file or directory
+2025/09/09 14:39:42 Database initialized successfully
+2025/09/09 14:39:44 failed to pwquality config file /etc/login.def: open /etc/login.def: no such file or directory
+2025/09/09 14:40:09 Database initialized successfully
+2025/09/09 14:40:12 failed to pwquality config file /etc/login.def: open /etc/login.def: no such file or directory
+2025/09/09 14:41:11 Database initialized successfully
+2025/09/09 14:41:15 failed to pwquality config file /etc/login.def: open /etc/login.def: no such file or directory
+2025/09/09 14:41:51 Database initialized successfully
+2025/09/09 14:41:54 failed to pwquality config file /etc/login.def: open /etc/login.def: no such file or directory
+2025/09/09 14:42:04 Database initialized successfully
+2025/09/09 14:42:14 failed to pwquality config file /etc/login.def: open /etc/login.def: no such file or directory
+2025/09/09 14:42:32 Database initialized successfully
+2025/09/09 14:43:07 failed to pwquality config file /etc/login.def: open /etc/login.def: no such file or directory
+2025/09/09 14:43:32 Database initialized successfully
+2025/09/09 14:43:34 failed to pwquality config file /etc/login.def: open /etc/login.def: no such file or directory
+2025/09/09 14:43:41 Database initialized successfully
+2025/09/09 14:43:43 failed to pwquality config file /etc/login.def: open /etc/login.def: no such file or directory
+2025/09/09 14:44:25 Database initialized successfully
+2025/09/09 14:44:45 Database initialized successfully
+2025/09/09 14:52:52 Database initialized successfully
+2025/09/09 14:54:44 Database initialized successfully
+2025/09/09 15:01:31 Database initialized successfully

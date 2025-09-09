@@ -61,6 +61,14 @@ func loginHandler(c *gin.Context) {
 
 	var user User
 
+	err := db.Where("username = ?", request.Username).First(&user).Error
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "unable to find username",
+		})
+		return
+	}
+
 	token, err := generateJWT(&user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
