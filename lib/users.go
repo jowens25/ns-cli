@@ -19,8 +19,8 @@ import (
 
 const (
 	DefaultUserHome = "/home/novus"
-	AdminGroup      = "admin"
-	UserGroup       = "user"
+	AdminGroup      = "novusadmin"
+	UserGroup       = "novususer"
 )
 
 func readUsers(c *gin.Context) {
@@ -31,7 +31,7 @@ func readUsers(c *gin.Context) {
 
 	var users []User
 
-	getAdminUsers()
+	getUsersFromSystem()
 
 	result := db.Model(&User{}).Select("id, role, username, email").Find(&users)
 
@@ -51,49 +51,6 @@ func readUsers(c *gin.Context) {
 
 }
 
-func getAdminUsers() {
-	///var users []User
-	cmd := exec.Command("getent", "group")
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	lines := strings.SplitSeq(string(out), "\n")
-	var newUsernames []string
-
-	for line := range lines {
-		if strings.HasPrefix(line, "admin:") {
-			parts := strings.Split(line, ":")
-			if len(parts) >= 4 && parts[3] != "" {
-				usernames := strings.SplitSeq(parts[3], ",")
-				for username := range usernames {
-					var user User
-					user.Role = "admin"
-					user.Username = username
-
-					// look up the user by user name
-					result := db.Where("username = ?", user.Username).First(&User{})
-					if result.Error == gorm.ErrRecordNotFound {
-						// Create new user
-						db.Create(&user)
-
-					} else {
-						// Update existing user
-						db.Where("username = ?", user.Username).Updates(&user)
-					}
-
-					newUsernames = append(newUsernames, user.Username)
-
-				}
-				db.Where("username NOT IN ?", newUsernames).Delete(&User{})
-
-			}
-		}
-	}
-
-}
-
 func writeUser(c *gin.Context) {
 
 	var newUser User
@@ -110,17 +67,17 @@ func writeUser(c *gin.Context) {
 	}
 
 	//if !(newUser.Role == "admin" || newUser.Role == "viewer") {
-	//	c.JSON(http.StatusBadRequest, gin.H{"error": "role must be 'admin' or 'viewer'"})
+	//	c.JSON(http.StatusBadRequest, add.H{"error": "role must be 'admin' or 'viewer'"})
 	//	return
 	//}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
+	//hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
 
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
-		return
-	}
-	newUser.Password = string(hashedPassword)
+	//if err != nil {
+	//	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+	//	return
+	//}
+	//newUser.Password = string(hashedPassword)
 
 	result := db.Create(&newUser)
 	if result.Error != nil {
@@ -130,9 +87,11 @@ func writeUser(c *gin.Context) {
 
 	switch newUser.Role {
 	case "admin":
-		AddAdmin(newUser.Username, newUser.Password)
+		err := AddAdmin(newUser.Username, newUser.Password)
+		fmt.Println(err)
 	case "viewer":
-		AddUser(newUser.Username, newUser.Password)
+		err := AddUser(newUser.Username, newUser.Password)
+		fmt.Println(err)
 	default:
 		c.JSON(http.StatusBadRequest, gin.H{"error": "failed to add user"})
 		return
@@ -149,59 +108,49 @@ func writeUser(c *gin.Context) {
 	})
 }
 
+// FIXED deleteUser function
 func deleteUser(c *gin.Context) {
-
 	userID := c.Param("id")
 
 	var userToDelete User
-
 	if err := db.First(&userToDelete, userID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
 
-	if userToDelete.Role == "viewer" {
-		if err := db.Delete(&userToDelete).Error; err != nil {
-			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
-			return
-		}
-	}
-
+	// Check if trying to delete the last admin
 	if userToDelete.Role == "admin" {
-
 		var count int64
-
 		db.Model(&User{}).Where("role = ?", "admin").Count(&count)
 
-		if count > 1 {
-
-			err := DeleteUser(userToDelete.Username)
-
-			fmt.Println(err)
-
-			if err != nil {
-				c.JSON(http.StatusFailedDependency, gin.H{"error": err.Error()})
-				return
-			}
-
-			if err := db.Delete(&userToDelete).Error; err != nil {
-				c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
-				return
-			}
-
-			c.JSON(http.StatusCreated, gin.H{
-				"message": "User deleted successfully",
-			})
-
-		} else {
-			c.JSON(http.StatusOK, gin.H{
+		if count <= 1 {
+			c.JSON(http.StatusBadRequest, gin.H{
 				"error": "Cannot delete the last admin account",
 			})
 			return
 		}
-
 	}
 
+	// Delete system user first
+	err := DeleteUser(userToDelete.Username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": fmt.Sprintf("Failed to delete system user: %v", err),
+		})
+		return
+	}
+
+	// Delete from database
+	if err := db.Delete(&userToDelete).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": fmt.Sprintf("Failed to delete user from database: %v", err),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User deleted successfully",
+	})
 }
 
 func editUser(c *gin.Context) {
@@ -280,14 +229,48 @@ func editUser(c *gin.Context) {
 	})
 }
 
-func SetUserPermissions(username string) error {
-	cmd := exec.Command("usermod", "-g", UserGroup, "-G", UserGroup, username)
-	return cmd.Run()
-}
+func getUsersFromSystem() {
+	///var users []User
+	cmd := exec.Command("getent", "group")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
-func SetAdministratorPermissions(username string) error {
-	cmd := exec.Command("usermod", "-g", AdminGroup, "-G", UserGroup+","+AdminGroup, username)
-	return cmd.Run()
+	lines := strings.SplitSeq(string(out), "\n")
+	var newUsernames []string
+
+	for line := range lines {
+		if strings.HasPrefix(line, "novusadmin:") || strings.HasPrefix(line, "novususer:") {
+			parts := strings.Split(line, ":")
+			role := parts[0]
+			if len(parts) >= 4 && parts[3] != "" {
+				usernames := strings.SplitSeq(parts[3], ",")
+				for username := range usernames {
+					var user User
+					user.Role = role
+					user.Username = username
+
+					// look up the user by user name
+					result := db.Where("username = ?", user.Username).First(&User{})
+					if result.Error == gorm.ErrRecordNotFound {
+						// Create new user
+						db.Create(&user)
+
+					} else {
+						// Update existing user
+						db.Where("username = ?", user.Username).Updates(&user)
+					}
+
+					newUsernames = append(newUsernames, user.Username)
+
+				}
+				db.Where("username NOT IN ?", newUsernames).Delete(&User{})
+
+			}
+		}
+	}
+
 }
 
 // IsUserAdmin returns true if user is admin-only (not factory)
@@ -371,30 +354,78 @@ func AdminNumber() (int, error) {
 }
 
 func AddUser(username string, password string) error {
-	cmd := exec.Command("useradd", "-M", "-N", "-p", password, "-g", UserGroup, "-d", DefaultUserHome, username)
+
+	// Create user account
+	cmd := exec.Command("useradd",
+		"-M",            // Don't create home directory
+		"-N",            // Don't create a group with the same name as the user
+		"-g", UserGroup, // Primary group
+		"-G", UserGroup,
+
+		"-d", DefaultUserHome, // Home directory
+		"-s", "/bin/bash", // Shell
+		username)
+
 	output, err := cmd.CombinedOutput()
-	fmt.Println(string(output), err)
-	return cmd.Run()
+	if err != nil {
+		return fmt.Errorf("failed to create user %s: %v\nOutput: %s", username, err, string(output))
+	}
+
+	// Set the password using chpasswd
+	passCmd := exec.Command("chpasswd")
+	passCmd.Stdin = strings.NewReader(fmt.Sprintf("%s:%s", username, password))
+	if output, err := passCmd.CombinedOutput(); err != nil {
+		return fmt.Errorf("failed to set password for %s: %v\nOutput: %s", username, err, string(output))
+	}
+
+	fmt.Printf("Successfully created user: %s\n", username)
+	return nil
 }
 
 func AddAdmin(username string, password string) error {
-	cmd := exec.Command("useradd", "-M", "-N", "-p", password, "-g", AdminGroup, "-G", UserGroup+","+AdminGroup, "-d", DefaultUserHome, username)
+
+	// Create admin account
+	cmd := exec.Command("useradd",
+		"-M",             // Don't create home directory
+		"-N",             // Don't create a group with the same name
+		"-g", AdminGroup, // Primary group
+		"-G", UserGroup+","+AdminGroup, // Secondary groups
+		"-d", DefaultUserHome, // Home directory
+		"-s", "/bin/bash", // Shell
+		username)
+
 	output, err := cmd.CombinedOutput()
-	fmt.Println(string(output), err)
-	return cmd.Run()
+	if err != nil {
+		return fmt.Errorf("failed to create admin %s: %v\nOutput: %s", username, err, string(output))
+	}
+
+	// Set the password using chpasswd
+	passCmd := exec.Command("chpasswd")
+	passCmd.Stdin = strings.NewReader(fmt.Sprintf("%s:%s", username, password))
+	if output, err := passCmd.CombinedOutput(); err != nil {
+		return fmt.Errorf("failed to set password for %s: %v\nOutput: %s", username, err, string(output))
+	}
+
+	fmt.Printf("Successfully created admin: %s\n", username)
+	return nil
 }
 
 func SetUsername(oldUsername, newUsername string) error {
 	cmd := exec.Command("usermod", "-l", newUsername, oldUsername)
+	output, err := cmd.CombinedOutput()
+	fmt.Println(string(output), err)
+
+	return err
+}
+
+func SetUserPermissions(username string) error {
+	cmd := exec.Command("usermod", "-g", UserGroup, "-G", UserGroup, username)
 	return cmd.Run()
 }
 
-func SetGroupUser(username string) error {
-	return SetUserPermissions(username)
-}
-
-func SetGroupAdmin(username string) error {
-	return SetAdministratorPermissions(username)
+func SetAdministratorPermissions(username string) error {
+	cmd := exec.Command("usermod", "-g", AdminGroup, "-G", UserGroup+","+AdminGroup, username)
+	return cmd.Run()
 }
 
 func DeleteUser(username string) error {
@@ -421,22 +452,4 @@ func DeleteUser(username string) error {
 	delCmd := exec.Command("userdel", username)
 	err = delCmd.Run()
 	return err
-}
-
-func CreatePassHistTemp() error {
-	file, err := os.Create("/etc/security/nopasswd")
-	if err != nil {
-		return err
-	}
-	file.Close()
-
-	// Set ownership to root:root
-	chownCmd := exec.Command("chown", "root:root", "/etc/security/nopasswd")
-	if err := chownCmd.Run(); err != nil {
-		return err
-	}
-
-	// Set permissions to 660
-	chmodCmd := exec.Command("chmod", "660", "/etc/security/nopasswd")
-	return chmodCmd.Run()
 }

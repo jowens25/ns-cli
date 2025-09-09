@@ -27,7 +27,7 @@ func initDataBase() {
 		log.Fatal("Failed to migrate database: ", err)
 	}
 
-	//createDefaultUser()
+	createDefaultUser()
 
 	//loadSystem()
 
@@ -39,72 +39,53 @@ func initDataBase() {
 //
 //}
 
-//func createDefaultUser() {
-//
-//	var userCount int64
-//	db.Model(&User{}).Count(&userCount)
-//
-//	if userCount == 0 {
-//		adminPassword, _ := bcrypt.GenerateFromPassword([]byte("admin"), bcrypt.DefaultCost)
-//
-//		user := User{
-//
-//			Username: "admin",
-//			Role:     "admin",
-//			Email:    "admin@novuspower.com",
-//			Password: string(adminPassword),
-//		}
-//
-//		db.Create(&user)
-//
-//		user = User{
-//
-//			Username: "viewer",
-//			Role:     "viewer",
-//			Email:    "viewer@novuspower.com",
-//			Password: string(adminPassword),
-//		}
-//
-//		db.Create(&user)
-//
-//		user = User{
-//
-//			Username: "factory",
-//			Role:     "admin",
-//			Email:    "factory@novuspower.com",
-//			Password: string(adminPassword),
-//		}
-//
-//		db.Create(&user)
-//
-//		snmpV1V2User := SnmpV1V2cUser{
-//			Version:   "v2c",
-//			GroupName: "read_write",
-//			Community: "myCommunity",
-//			//	IpVersion:  "ipv4",
-//			//	Ip4Address: "10.1.10.220",
-//		}
-//
-//		db.Create(&snmpV1V2User)
-//
-//		//access := Access{
-//		//
-//		//	Node: "10.1.10.1",
-//		//}
-//		//db.Create(&access)
-//		//
-//		//access = Access{
-//		//
-//		//	Node: "10.1.10.2",
-//		//}
-//		//db.Create(&access)
-//		//access = Access{
-//		//
-//		//	Node: "10.1.10.3",
-//		//}
-//		//
-//		//db.Create(&access)
-//
-//	}
-//
-//}
+func createDefaultUser() {
+
+	var userCount int64
+	db.Model(&User{}).Count(&userCount)
+
+	if userCount == 0 {
+
+		AddAdmin("novus", "novus")
+
+		//user := User{
+		//
+		//	Username: "admin",
+		//	Role:     "admin",
+		//	Email:    "",
+		//	Password: "admin",
+		//}
+		//
+		//db.Create(&user)
+		//
+		//snmpV1V2User := SnmpV1V2cUser{
+		//	Version:   "v2c",
+		//	GroupName: "read_write",
+		//	Community: "myCommunity",
+		//	//	IpVersion:  "ipv4",
+		//	//	Ip4Address: "10.1.10.220",
+		//}
+		//
+		//db.Create(&snmpV1V2User)
+
+		//access := Access{
+		//
+		//	Node: "10.1.10.1",
+		//}
+		//db.Create(&access)
+		//
+		//access = Access{
+		//
+		//	Node: "10.1.10.2",
+		//}
+		//db.Create(&access)
+		//access = Access{
+		//
+		//	Node: "10.1.10.3",
+		//}
+		//
+		//db.Create(&access)
+
+	}
+
+}
