@@ -16,12 +16,13 @@ func startApiServer() {
 	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"}
 	corsConfig.AllowHeaders = []string{"Authorization", "Content-Type", "X-Request-ID"}
 	corsConfig.AllowCredentials = true
-	//corsConfig.AllowOrigins = []string{
-	//
-	//	"https://localhost",
-	//	"http://localhost",
-	//}
-	corsConfig.AllowAllOrigins = true
+	// offical
+	corsConfig.AllowOrigins = []string{
+
+		"https://localhost",
+		"http://localhost",
+	}
+	//corsConfig.AllowAllOrigins = true // development
 
 	apiRouter.Use(cors.New(corsConfig))
 
@@ -96,6 +97,6 @@ func startApiServer() {
 		})
 	})
 
-	apiRouter.Run("0.0.0.0" + API_PORT) // development
-	//apiRouter.Run("localhost" + API_PORT) // offical
+	//apiRouter.Run("0.0.0.0" + API_PORT) // development
+	apiRouter.Run("localhost" + API_PORT) // offical
 }
