@@ -238,7 +238,7 @@ func setMinimumPasswordLength(minLen string) error {
 func getUppercaseRequired() (string, error) {
 	for _, line := range openConfigFile(pwqualityConf) {
 
-		if strings.HasPrefix(line, "# ucredit = -1") {
+		if strings.HasPrefix(line, "# ucredit = ") {
 			return "false", nil
 		}
 		if strings.HasPrefix(line, "ucredit = -1") {
@@ -277,7 +277,7 @@ func setUppercaseRequired(required string) error {
 func getLowercaseRequired() (string, error) {
 	for _, line := range openConfigFile(pwqualityConf) {
 
-		if strings.HasPrefix(line, "# lcredit = -1") {
+		if strings.HasPrefix(line, "# lcredit = ") {
 			return "false", nil
 		}
 		if strings.HasPrefix(line, "lcredit = -1") {
@@ -315,7 +315,7 @@ func setLowercaseRequired(required string) error {
 func getNumberRequired() (string, error) {
 	for _, line := range openConfigFile(pwqualityConf) {
 
-		if strings.HasPrefix(line, "# dcredit = -1") {
+		if strings.HasPrefix(line, "# dcredit = ") {
 			return "false", nil
 		}
 		if strings.HasPrefix(line, "dcredit = -1") {
@@ -353,7 +353,7 @@ func setNumberRequired(required string) error {
 func getSpecialRequired() (string, error) {
 	for _, line := range openConfigFile(pwqualityConf) {
 
-		if strings.HasPrefix(line, "# ocredit = -1") {
+		if strings.HasPrefix(line, "# ocredit = ") {
 			return "false", nil
 		}
 		if strings.HasPrefix(line, "ocredit = -1") {
@@ -391,7 +391,7 @@ func setSpecialRequired(required string) error {
 func getNoUserRequired() (string, error) {
 	for _, line := range openConfigFile(pwqualityConf) {
 
-		if strings.HasPrefix(line, "# usercheck = 1") {
+		if strings.HasPrefix(line, "# usercheck = ") {
 			return "false", nil
 		}
 		if strings.HasPrefix(line, "usercheck = 1") {

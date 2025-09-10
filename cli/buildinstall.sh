@@ -17,3 +17,5 @@ source /etc/bash_completion
 source /etc/bash_completion.d/ns.bash
 
 ns -h
+
+
