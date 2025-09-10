@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"fmt"
 	"log"
 
 	"gorm.io/driver/sqlite"
@@ -50,6 +51,12 @@ func createDefaultUser() {
 		user.Username = "novus"
 		user.Password = "Novus123!"
 		user.Role = "admin"
+
+		result := db.Where("username = ?", user.Username).FirstOrCreate(&user)
+		if result.Error != nil {
+			fmt.Println(result.Error.Error())
+			return
+		}
 
 		addAdminGroup()
 		addUserGroup()
