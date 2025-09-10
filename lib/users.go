@@ -457,3 +457,25 @@ func SetAdministratorPermissions(username string) error {
 	cmd := exec.Command("usermod", "-g", AdminGroup, "-G", UserGroup+","+AdminGroup, username)
 	return cmd.Run()
 }
+
+func addAdminGroup() {
+
+	thiscmd := exec.Command("groupadd", "novusadmin")
+	output, err := thiscmd.CombinedOutput()
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	fmt.Println(string(output))
+}
+
+func addUserGroup() {
+
+	thiscmd := exec.Command("groupadd", "novususer")
+	output, err := thiscmd.CombinedOutput()
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	fmt.Println(string(output))
+}

@@ -49,6 +49,10 @@ func createDefaultUser() {
 		var user User
 		user.Username = "novus"
 		user.Password = "Novus123!"
+		user.Role = "admin"
+
+		addAdminGroup()
+		addUserGroup()
 
 		addUserToSystem(user)
 
