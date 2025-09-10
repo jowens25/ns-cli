@@ -2,7 +2,6 @@ package lib
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,7 +11,6 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -56,7 +54,15 @@ func writeSystemUser(c *gin.Context) {
 		return
 	}
 
-	addUserToSystem(user)
+	passwordhint, err := addUserToSystem(user)
+	fmt.Println(passwordhint)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"error":    err.Error(),
+			"password": passwordhint,
+		})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "System user created",
@@ -121,83 +127,90 @@ func deleteSystemUser(c *gin.Context) {
 	})
 }
 
-func editSystemUser(c *gin.Context) {
-
-	id := c.Param("id")
-
-	var existingUser User
-
-	if err := db.First(&existingUser, id).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-		}
-		return
-	}
-
-	var updateData User
-	if err := c.ShouldBindJSON(&updateData); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	updates := make(map[string]any)
-
-	if updateData.Username != "" {
-		updates["username"] = updateData.Username
-	}
-
-	if updateData.Email != "" {
-		updates["email"] = updateData.Email
-	}
-
-	if updateData.Role != "" {
-		if !(updateData.Role == "admin" || updateData.Role == "viewer") {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "role must be 'admin' or 'viewer'"})
-			return
-		}
-		updates["role"] = updateData.Role
-	}
-
-	if updateData.Password != "" {
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(updateData.Password), bcrypt.DefaultCost)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
-			return
-		}
-		updates["password"] = string(hashedPassword)
-	}
-
-	// Check if there's anything to update
-	if len(updates) == 0 {
-		c.JSON(http.StatusOK, gin.H{"message": "No update"})
-		return
-	}
-
-	// Perform the update using the user ID
-	result := db.Model(&existingUser).Updates(updates)
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-		return
-	}
-
-	var updatedUser User
-	if err := db.First(&updatedUser, id).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch updated user"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": "User updated successfully",
-		"user": gin.H{
-			"id":       updatedUser.ID,
-			"role":     updatedUser.Role,
-			"username": updatedUser.Username,
-			"email":    updatedUser.Email,
-		},
-	})
-}
+//func editSystemUser(c *gin.Context) {//
+//
+//	id := c.Param("id")
+//
+//	var existingUser User
+//
+//	if err := db.First(&existingUser, id).Error; err != nil {
+//		if errors.Is(err, gorm.ErrRecordNotFound) {
+//			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+//		} else {
+//			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+//		}
+//		return
+//	}
+//
+//	var updateData User
+//	if err := c.ShouldBindJSON(&updateData); err != nil {
+//		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+//		return
+//	}
+//
+//	updates := make(map[string]any)
+//
+//	if updateData.Username != "" {
+//		updates["username"] = updateData.Username
+//	}
+//
+//	if updateData.Email != "" {
+//		updates["email"] = updateData.Email
+//	}
+//
+//	if updateData.Role != "" {
+//		if !(updateData.Role == "admin" || updateData.Role == "viewer") {
+//			c.JSON(http.StatusBadRequest, gin.H{"error": "role must be 'admin' or 'viewer'"})
+//			return
+//		}
+//		updates["role"] = updateData.Role
+//	}
+//
+//	if updateData.Password != "" {
+//
+//		changePassword()
+//
+//		passwordhint, err := changePassword(user)
+//		fmt.Println(passwordhint)
+//		if err != nil {
+//			c.JSON(http.StatusOK, gin.H{
+//				"error":    err.Error(),
+//				"password": passwordhint,
+//			})
+//			return
+//		}
+//
+//	}
+//
+//	// Check if there's anything to update
+//	if len(updates) == 0 {
+//		c.JSON(http.StatusOK, gin.H{"message": "No update"})
+//		return
+//	}
+//
+//	// Perform the update using the user ID
+//	result := db.Model(&existingUser).Updates(updates)
+//	if result.Error != nil {
+//		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+//		return
+//	}
+//
+//	var updatedUser User
+//	if err := db.First(&updatedUser, id).Error; err != nil {
+//		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch updated user"})
+//		return
+//	}
+//
+//	c.JSON(http.StatusOK, gin.H{
+//		"message": "User updated successfully",
+//		"user": gin.H{
+//			"id":       updatedUser.ID,
+//			"role":     updatedUser.Role,
+//			"username": updatedUser.Username,
+//			"email":    updatedUser.Email,
+//		},
+//	})
+//}
 
 func readUsersFromSystem() {
 	cmd := exec.Command("getent", "group")
@@ -340,30 +353,59 @@ func AdminNumber() (int, error) {
 	return adminOnlyCount, nil
 }
 
-func addUserToSystem(user User) {
+func changePassword(user User) (string, error) {
+	thiscmd := exec.Command("chpasswd")
+	thiscmd.Stdin = strings.NewReader(fmt.Sprintf("%s:%s", user.Username, user.Password))
+	output, err := thiscmd.CombinedOutput()
+	out := string(output)
+	if after, ok := strings.CutPrefix(out, "BAD PASSWORD:"); ok {
+		//removeUserFromSystem(user)
+		return after, fmt.Errorf("BAD PASSWORD")
+	}
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	return out, nil
+}
+
+func addUserToSystem(user User) (string, error) {
 	switch user.Role {
 	case "admin":
-		err := AddAdmin(user.Username, user.Password)
-		fmt.Println(err)
+		AddAdmin(user.Username, user.Password)
+
 	case "viewer":
-		err := AddUser(user.Username, user.Password)
-		fmt.Println(err)
+		AddUser(user.Username, user.Password)
+
 	default:
 		log.Println("not viewer or admin user")
-		//c.JSON(http.StatusBadRequest, gin.H{"error": "failed to add user"})
-		//return
 	}
+
+	thiscmd := exec.Command("chpasswd")
+	thiscmd.Stdin = strings.NewReader(fmt.Sprintf("%s:%s", user.Username, user.Password))
+	output, err := thiscmd.CombinedOutput()
+
+	out := string(output)
+	if after, ok := strings.CutPrefix(out, "BAD PASSWORD:"); ok {
+		removeUserFromSystem(user)
+		return after, fmt.Errorf("BAD PASSWORD")
+	}
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	return out, nil
 }
 
 func AddUser(username string, password string) error {
-
 	// Create user account
 	cmd := exec.Command("useradd",
 		"-M",            // Don't create home directory
 		"-N",            // Don't create a group with the same name as the user
 		"-g", UserGroup, // Primary group
-		"-G", UserGroup,
-
+		"-G", UserGroup, // Secondary groups
 		"-d", DefaultUserHome, // Home directory
 		"-s", "/bin/bash", // Shell
 		username)
@@ -373,19 +415,12 @@ func AddUser(username string, password string) error {
 		return fmt.Errorf("failed to create user %s: %v\nOutput: %s", username, err, string(output))
 	}
 
-	// Set the password using chpasswd
-	passCmd := exec.Command("chpasswd")
-	passCmd.Stdin = strings.NewReader(fmt.Sprintf("%s:%s", username, password))
-	if output, err := passCmd.CombinedOutput(); err != nil {
-		return fmt.Errorf("failed to set password for %s: %v\nOutput: %s", username, err, string(output))
-	}
-
 	fmt.Printf("Successfully created user: %s\n", username)
 	return nil
 }
 
+// AddAdmin creates an admin account with PAM password policy enforcement
 func AddAdmin(username string, password string) error {
-
 	// Create admin account
 	cmd := exec.Command("useradd",
 		"-M",             // Don't create home directory
@@ -399,13 +434,6 @@ func AddAdmin(username string, password string) error {
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("failed to create admin %s: %v\nOutput: %s", username, err, string(output))
-	}
-
-	// Set the password using chpasswd
-	passCmd := exec.Command("chpasswd")
-	passCmd.Stdin = strings.NewReader(fmt.Sprintf("%s:%s", username, password))
-	if output, err := passCmd.CombinedOutput(); err != nil {
-		return fmt.Errorf("failed to set password for %s: %v\nOutput: %s", username, err, string(output))
 	}
 
 	fmt.Printf("Successfully created admin: %s\n", username)

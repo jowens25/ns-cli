@@ -222,7 +222,7 @@ func setMinimumPasswordLength(minLen string) error {
 	var newLines []string
 	for _, line := range openConfigFile(pwqualityConf) {
 
-		if strings.Contains(line, "minlen") {
+		if strings.Contains(line, "minlen = ") {
 			line = "minlen = " + minLen
 		}
 
@@ -238,17 +238,13 @@ func setMinimumPasswordLength(minLen string) error {
 func getUppercaseRequired() (string, error) {
 	for _, line := range openConfigFile(pwqualityConf) {
 
-		if strings.Contains(line, "ucredit") {
-			parts := strings.Split(line, " = ")
-			if len(parts) == 2 {
-
-				if parts[1] == "-1" {
-					return "true", nil
-				} else {
-					return "false", nil
-				}
-			}
+		if strings.HasPrefix(line, "# ucredit = -1") {
+			return "false", nil
 		}
+		if strings.HasPrefix(line, "ucredit = -1") {
+			return "true", nil
+		}
+
 	}
 	return "false", fmt.Errorf("no ucredit set")
 }
@@ -281,16 +277,11 @@ func setUppercaseRequired(required string) error {
 func getLowercaseRequired() (string, error) {
 	for _, line := range openConfigFile(pwqualityConf) {
 
-		if strings.Contains(line, "lcredit") {
-			parts := strings.Split(line, " = ")
-			if len(parts) == 2 {
-
-				if parts[1] == "-1" {
-					return "true", nil
-				} else {
-					return "false", nil
-				}
-			}
+		if strings.HasPrefix(line, "# lcredit = -1") {
+			return "false", nil
+		}
+		if strings.HasPrefix(line, "lcredit = -1") {
+			return "true", nil
 		}
 	}
 	return "false", fmt.Errorf("no lcredit set")
@@ -324,16 +315,11 @@ func setLowercaseRequired(required string) error {
 func getNumberRequired() (string, error) {
 	for _, line := range openConfigFile(pwqualityConf) {
 
-		if strings.Contains(line, "dcredit") {
-			parts := strings.Split(line, " = ")
-			if len(parts) == 2 {
-
-				if parts[1] == "-1" {
-					return "true", nil
-				} else {
-					return "false", nil
-				}
-			}
+		if strings.HasPrefix(line, "# dcredit = -1") {
+			return "false", nil
+		}
+		if strings.HasPrefix(line, "dcredit = -1") {
+			return "true", nil
 		}
 	}
 	return "false", fmt.Errorf("no dcredit set")
@@ -367,16 +353,11 @@ func setNumberRequired(required string) error {
 func getSpecialRequired() (string, error) {
 	for _, line := range openConfigFile(pwqualityConf) {
 
-		if strings.Contains(line, "ocredit") {
-			parts := strings.Split(line, " = ")
-			if len(parts) == 2 {
-
-				if parts[1] == "-1" {
-					return "true", nil
-				} else {
-					return "false", nil
-				}
-			}
+		if strings.HasPrefix(line, "# ocredit = -1") {
+			return "false", nil
+		}
+		if strings.HasPrefix(line, "ocredit = -1") {
+			return "true", nil
 		}
 	}
 	return "false", fmt.Errorf("no ocredit set")
@@ -410,12 +391,11 @@ func setSpecialRequired(required string) error {
 func getNoUserRequired() (string, error) {
 	for _, line := range openConfigFile(pwqualityConf) {
 
-		if strings.Contains(strings.TrimSpace(line), "usercheck = 1") {
-			return "true", nil
-		}
-
-		if strings.Contains(strings.TrimSpace(line), "# usercheck = 1") {
+		if strings.HasPrefix(line, "# usercheck = 1") {
 			return "false", nil
+		}
+		if strings.HasPrefix(line, "usercheck = 1") {
+			return "true", nil
 		}
 	}
 	return "false", fmt.Errorf("no usercheck failure")
@@ -449,13 +429,13 @@ func setNoUserRequired(required string) error {
 func getMinimumPasswordAge() (string, error) {
 
 	for _, line := range openConfigFile(loginConf) {
-		print(line)
+
 		trimmed := strings.TrimSpace(line)
 		if trimmed == "" || strings.HasPrefix(trimmed, "#") {
 			continue
 		}
 		if strings.HasPrefix(trimmed, "PASS_MIN_DAYS") {
-			print(trimmed)
+
 			parts := strings.Fields(trimmed)
 			if len(parts) >= 2 {
 				return parts[1], nil
@@ -492,13 +472,13 @@ func setMinimumPasswordAge(days string) error {
 func getMaximumPasswordAge() (string, error) {
 
 	for _, line := range openConfigFile(loginConf) {
-		print(line)
+
 		trimmed := strings.TrimSpace(line)
 		if trimmed == "" || strings.HasPrefix(trimmed, "#") {
 			continue
 		}
 		if strings.HasPrefix(trimmed, "PASS_MAX_DAYS") {
-			print(trimmed)
+
 			parts := strings.Fields(trimmed)
 			if len(parts) >= 2 {
 				return parts[1], nil
@@ -535,13 +515,11 @@ func setMaximumPasswordAge(days string) error {
 func getPasswordAgeWarning() (string, error) {
 
 	for _, line := range openConfigFile(loginConf) {
-		print(line)
 		trimmed := strings.TrimSpace(line)
 		if trimmed == "" || strings.HasPrefix(trimmed, "#") {
 			continue
 		}
 		if strings.HasPrefix(trimmed, "PASS_WARN_AGE") {
-			print(trimmed)
 			parts := strings.Fields(trimmed)
 			if len(parts) >= 2 {
 				return parts[1], nil

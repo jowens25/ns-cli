@@ -41,7 +41,7 @@ func startApiServer() {
 
 		protected.GET("/users", readSystemUsers)
 		protected.POST("/users", writeSystemUser)
-		protected.PATCH("/users/:id", editSystemUser)
+		//protected.PATCH("/users/:id", editSystemUser)
 		protected.DELETE("/users/:id", deleteSystemUser)
 
 		snmpGroup := protected.Group("/snmp")
@@ -77,6 +77,7 @@ func startApiServer() {
 
 		securityGroup := protected.Group("/security")
 
+		//securityGroup.POST("/chpw", writeChangePassword)
 		securityGroup.GET("/policy", readSecurityPolicy)
 		securityGroup.POST("/policy", writeSecurityPolicy)
 		//securityGroup.GET("/policy")
