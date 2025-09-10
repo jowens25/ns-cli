@@ -46,7 +46,11 @@ func createDefaultUser() {
 
 	if userCount == 0 {
 
-		AddAdmin("novus", "novus")
+		var user User
+		user.Username = "novus"
+		user.Password = "Novus123!"
+
+		addUserToSystem(user)
 
 		// /readUsersFromSystem()
 
