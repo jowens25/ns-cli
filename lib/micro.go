@@ -33,18 +33,18 @@ func ReadWriteMicro(command string) (string, error) {
 	}
 
 	var lineBuf bytes.Buffer
-	single := make([]byte, 1)
+	buf := make([]byte, 64)
 	for {
-		n, err := port.Read(single)
+		n, err := port.Read(buf)
 		if err != nil {
 			return "", fmt.Errorf("read: %w", err)
 		}
-		if n > 0 {
-			b := single[0]
-			lineBuf.WriteByte(b)
-			if b == '\n' {
-				break
-			}
+		if n == 0 {
+			continue // or optionally break or timeout
+		}
+		lineBuf.Write(buf[:n])
+		if bytes.Contains(buf[:n], []byte{'\n'}) {
+			break
 		}
 	}
 	return lineBuf.String(), nil
