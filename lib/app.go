@@ -23,7 +23,7 @@ var serialMutex sync.Mutex
 
 func StartApp() {
 
-	logFile, err := os.OpenFile("app.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+	logFile, err := os.OpenFile(AppConfig.App.Log, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		log.Fatalf("error opening log file: %v", err)
 	}

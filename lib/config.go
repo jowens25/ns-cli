@@ -24,6 +24,7 @@ type Config struct {
 type ApplicationConfig struct {
 	Database string `mapstructure:"database"` // /etc/ns/app.db
 	Config   string `mapstructure:"config"`   // /etc/ns/config.toml
+	Log      string `mapstructure:"log"`      // /etc/ns/app.log
 }
 
 type ApiConfig struct {
@@ -82,6 +83,7 @@ func InitConfig() *Config {
 
 	viper.SetDefault("app.database", "/etc/ns/app.db")
 	viper.SetDefault("app.config", "/etc/ns/config.toml")
+	viper.SetDefault("app.log", "/etc/ns/app.log")
 
 	viper.SetDefault("api.port", "5000")
 	viper.SetDefault("api.host", "localhost")
