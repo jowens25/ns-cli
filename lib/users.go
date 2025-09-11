@@ -403,6 +403,7 @@ func AddUser(username string, password string) error {
 	}
 
 	fmt.Printf("Successfully created user: %s\n", username)
+
 	return nil
 }
 

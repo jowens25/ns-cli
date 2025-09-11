@@ -61,7 +61,11 @@ func createDefaultUser() {
 		addAdminGroup()
 		addUserGroup()
 
-		addUserToSystem(user)
+		warning, err := addUserToSystem(user)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+		fmt.Println(warning)
 
 		// /readUsersFromSystem()
 
