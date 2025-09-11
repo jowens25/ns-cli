@@ -188,9 +188,6 @@ func writeSecurityPolicy(c *gin.Context) {
 
 }
 
-var pwqualityConf string = "/etc/security/pwquality.conf"
-var loginConf string = "/etc/login.defs"
-
 func openConfigFile(f string) []string {
 	content, err := os.ReadFile(f)
 
@@ -203,7 +200,7 @@ func openConfigFile(f string) []string {
 
 func getMinimumPasswordLength() (string, error) {
 
-	for _, line := range openConfigFile(pwqualityConf) {
+	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.Contains(line, "minlen") {
 			parts := strings.Split(line, " = ")
@@ -220,7 +217,7 @@ func setMinimumPasswordLength(minLen string) error {
 	var err error = nil
 
 	var newLines []string
-	for _, line := range openConfigFile(pwqualityConf) {
+	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.Contains(line, "minlen = ") {
 			line = "minlen = " + minLen
@@ -230,13 +227,13 @@ func setMinimumPasswordLength(minLen string) error {
 	}
 
 	newContent := strings.Join(newLines, "\n")
-	err = os.WriteFile(pwqualityConf, []byte(newContent), 0644)
+	err = os.WriteFile(AppConfig.Pam.Path, []byte(newContent), 0644)
 	return err
 
 }
 
 func getUppercaseRequired() (string, error) {
-	for _, line := range openConfigFile(pwqualityConf) {
+	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.HasPrefix(line, "# ucredit = ") {
 			return "false", nil
@@ -253,7 +250,7 @@ func setUppercaseRequired(required string) error {
 	var err error = nil
 
 	var newLines []string
-	for _, line := range openConfigFile(pwqualityConf) {
+	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.Contains(line, "ucredit") {
 			if required == "true" {
@@ -269,13 +266,13 @@ func setUppercaseRequired(required string) error {
 	}
 
 	newContent := strings.Join(newLines, "\n")
-	err = os.WriteFile(pwqualityConf, []byte(newContent), 0644)
+	err = os.WriteFile(AppConfig.Pam.Path, []byte(newContent), 0644)
 	return err
 
 }
 
 func getLowercaseRequired() (string, error) {
-	for _, line := range openConfigFile(pwqualityConf) {
+	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.HasPrefix(line, "# lcredit = ") {
 			return "false", nil
@@ -291,7 +288,7 @@ func setLowercaseRequired(required string) error {
 	var err error = nil
 
 	var newLines []string
-	for _, line := range openConfigFile(pwqualityConf) {
+	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.Contains(line, "lcredit") {
 			if required == "true" {
@@ -307,13 +304,13 @@ func setLowercaseRequired(required string) error {
 	}
 
 	newContent := strings.Join(newLines, "\n")
-	err = os.WriteFile(pwqualityConf, []byte(newContent), 0644)
+	err = os.WriteFile(AppConfig.Pam.Path, []byte(newContent), 0644)
 	return err
 
 }
 
 func getNumberRequired() (string, error) {
-	for _, line := range openConfigFile(pwqualityConf) {
+	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.HasPrefix(line, "# dcredit = ") {
 			return "false", nil
@@ -329,7 +326,7 @@ func setNumberRequired(required string) error {
 	var err error = nil
 
 	var newLines []string
-	for _, line := range openConfigFile(pwqualityConf) {
+	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.Contains(line, "dcredit") {
 			if required == "true" {
@@ -345,13 +342,13 @@ func setNumberRequired(required string) error {
 	}
 
 	newContent := strings.Join(newLines, "\n")
-	err = os.WriteFile(pwqualityConf, []byte(newContent), 0644)
+	err = os.WriteFile(AppConfig.Pam.Path, []byte(newContent), 0644)
 	return err
 
 }
 
 func getSpecialRequired() (string, error) {
-	for _, line := range openConfigFile(pwqualityConf) {
+	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.HasPrefix(line, "# ocredit = ") {
 			return "false", nil
@@ -367,7 +364,7 @@ func setSpecialRequired(required string) error {
 	var err error = nil
 
 	var newLines []string
-	for _, line := range openConfigFile(pwqualityConf) {
+	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.Contains(line, "ocredit") {
 			if required == "true" {
@@ -383,13 +380,13 @@ func setSpecialRequired(required string) error {
 	}
 
 	newContent := strings.Join(newLines, "\n")
-	err = os.WriteFile(pwqualityConf, []byte(newContent), 0644)
+	err = os.WriteFile(AppConfig.Pam.Path, []byte(newContent), 0644)
 	return err
 
 }
 
 func getNoUserRequired() (string, error) {
-	for _, line := range openConfigFile(pwqualityConf) {
+	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.HasPrefix(line, "# usercheck = ") {
 			return "false", nil
@@ -405,7 +402,7 @@ func setNoUserRequired(required string) error {
 	var err error = nil
 
 	var newLines []string
-	for _, line := range openConfigFile(pwqualityConf) {
+	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.Contains(line, "usercheck") {
 			if required == "true" {
@@ -421,14 +418,14 @@ func setNoUserRequired(required string) error {
 	}
 
 	newContent := strings.Join(newLines, "\n")
-	err = os.WriteFile(pwqualityConf, []byte(newContent), 0644)
+	err = os.WriteFile(AppConfig.Pam.Path, []byte(newContent), 0644)
 	return err
 
 }
 
 func getMinimumPasswordAge() (string, error) {
 
-	for _, line := range openConfigFile(loginConf) {
+	for _, line := range openConfigFile(AppConfig.Lin.Path) {
 
 		trimmed := strings.TrimSpace(line)
 		if trimmed == "" || strings.HasPrefix(trimmed, "#") {
@@ -449,7 +446,7 @@ func setMinimumPasswordAge(days string) error {
 	var err error = nil
 
 	var newLines []string
-	for _, line := range openConfigFile(loginConf) {
+	for _, line := range openConfigFile(AppConfig.Lin.Path) {
 
 		trimmed := strings.TrimSpace(line)
 		if trimmed == "" || strings.HasPrefix(trimmed, "#") {
@@ -464,14 +461,14 @@ func setMinimumPasswordAge(days string) error {
 	}
 
 	newContent := strings.Join(newLines, "\n")
-	err = os.WriteFile(loginConf, []byte(newContent), 0644)
+	err = os.WriteFile(AppConfig.Lin.Path, []byte(newContent), 0644)
 	return err
 
 }
 
 func getMaximumPasswordAge() (string, error) {
 
-	for _, line := range openConfigFile(loginConf) {
+	for _, line := range openConfigFile(AppConfig.Lin.Path) {
 
 		trimmed := strings.TrimSpace(line)
 		if trimmed == "" || strings.HasPrefix(trimmed, "#") {
@@ -492,7 +489,7 @@ func setMaximumPasswordAge(days string) error {
 	var err error = nil
 
 	var newLines []string
-	for _, line := range openConfigFile(loginConf) {
+	for _, line := range openConfigFile(AppConfig.Lin.Path) {
 
 		trimmed := strings.TrimSpace(line)
 		if trimmed == "" || strings.HasPrefix(trimmed, "#") {
@@ -507,14 +504,14 @@ func setMaximumPasswordAge(days string) error {
 	}
 
 	newContent := strings.Join(newLines, "\n")
-	err = os.WriteFile(loginConf, []byte(newContent), 0644)
+	err = os.WriteFile(AppConfig.Lin.Path, []byte(newContent), 0644)
 	return err
 
 }
 
 func getPasswordAgeWarning() (string, error) {
 
-	for _, line := range openConfigFile(loginConf) {
+	for _, line := range openConfigFile(AppConfig.Lin.Path) {
 		trimmed := strings.TrimSpace(line)
 		if trimmed == "" || strings.HasPrefix(trimmed, "#") {
 			continue
@@ -533,7 +530,7 @@ func setPasswordAgeWarning(days string) error {
 	var err error = nil
 
 	var newLines []string
-	for _, line := range openConfigFile(loginConf) {
+	for _, line := range openConfigFile(AppConfig.Lin.Path) {
 
 		trimmed := strings.TrimSpace(line)
 		if trimmed == "" || strings.HasPrefix(trimmed, "#") {
@@ -548,7 +545,7 @@ func setPasswordAgeWarning(days string) error {
 	}
 
 	newContent := strings.Join(newLines, "\n")
-	err = os.WriteFile(loginConf, []byte(newContent), 0644)
+	err = os.WriteFile(AppConfig.Lin.Path, []byte(newContent), 0644)
 	return err
 
 }

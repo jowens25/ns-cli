@@ -14,7 +14,7 @@ import (
 
 func InitTelnetConfig() {
 
-	cmd := exec.Command("cp", "telnet", "/etc/xinetd.d/telnet")
+	cmd := exec.Command("cp", "telnet", AppConfig.Xinetd.TelnetPath)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Println(string(out), err)
@@ -25,8 +25,7 @@ func InitTelnetConfig() {
 }
 
 func DisableTelnet() {
-	telnetFile := "/etc/xinetd.d/telnet"
-	file, err := os.Open(telnetFile)
+	file, err := os.Open(AppConfig.Xinetd.TelnetPath)
 	if err != nil {
 		log.Fatal("failed to open telnet file", file.Name())
 	}
@@ -43,7 +42,7 @@ func DisableTelnet() {
 		}
 		lines = append(lines, line)
 	}
-	err = os.WriteFile(telnetFile, []byte(strings.Join(lines, "\n")+"\n"), 0644)
+	err = os.WriteFile(AppConfig.Xinetd.TelnetPath, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
 		log.Fatal("failed to hosts file:", err)
 	}
@@ -55,8 +54,7 @@ func DisableTelnet() {
 }
 
 func EnableTelnet() {
-	telnetFile := "/etc/xinetd.d/telnet"
-	file, err := os.Open(telnetFile)
+	file, err := os.Open(AppConfig.Xinetd.TelnetPath)
 	if err != nil {
 		log.Fatal("failed to open telnet file", file.Name())
 	}
@@ -73,7 +71,7 @@ func EnableTelnet() {
 		lines = append(lines, line)
 	}
 
-	err = os.WriteFile(telnetFile, []byte(strings.Join(lines, "\n")+"\n"), 0644)
+	err = os.WriteFile(AppConfig.Xinetd.TelnetPath, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
 		log.Fatal("failed to telnet file:", err)
 	}
@@ -84,8 +82,8 @@ func EnableTelnet() {
 }
 
 func GetTelnetStatus() string {
-	telnetFile := "/etc/xinetd.d/telnet"
-	file, err := os.Open(telnetFile)
+
+	file, err := os.Open(AppConfig.Xinetd.TelnetPath)
 	if err != nil {
 		log.Fatal("failed to open telnet file", file.Name())
 	}

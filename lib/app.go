@@ -17,19 +17,9 @@ import (
 
 const (
 	JWT_SECRET = "your-secret-key"
-	API_HOST   = "API_HOST"
-	API_PORT   = ":5000"
-	WEB_HOST   = "WEB_HOST"
-	WEB_PORT   = ":8000"
-	DB_PATH    = "./app.db"
 )
 
 var serialMutex sync.Mutex
-
-func init() {
-	os.Setenv(SNMP_CONFIG_PATH, "/etc/snmp/snmpd.conf")
-
-}
 
 func StartApp() {
 

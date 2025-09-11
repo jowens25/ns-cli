@@ -16,7 +16,7 @@ import (
 func readSnmpInfo(c *gin.Context) {
 
 	var snmp Snmp
-	file, err := os.Open(os.Getenv(SNMP_CONFIG_PATH))
+	file, err := os.Open(AppConfig.Snmp.Path)
 	if err != nil {
 		log.Fatal("failed to open config file", file.Name())
 	}
@@ -73,7 +73,7 @@ func writeSnmpInfo(c *gin.Context) {
 
 	snmp.Status = GetSnmpdStatus()
 
-	file, err := os.Open(os.Getenv(SNMP_CONFIG_PATH))
+	file, err := os.Open(AppConfig.Snmp.Path)
 	if err != nil {
 		log.Fatal("failed to open config file:", file.Name())
 	}
@@ -109,7 +109,7 @@ func writeSnmpInfo(c *gin.Context) {
 	}
 
 	// Write back to the file
-	err = os.WriteFile(os.Getenv(SNMP_CONFIG_PATH), []byte(strings.Join(lines, "\n")+"\n"), 0644)
+	err = os.WriteFile(AppConfig.Snmp.Path, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
 		log.Fatal("failed to write file:", err)
 	}

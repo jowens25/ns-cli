@@ -12,10 +12,6 @@ import (
 	"gorm.io/gorm"
 )
 
-const (
-	SNMP_CONFIG_PATH = "SNMP_CONFIG_PATH"
-)
-
 // readSnmpUsers reads the users in the snmpd.conf file
 // Returns lists "v1v2c_users" "v3_users" and count "total_users" json
 func readSnmpUsersFromFile() {
@@ -25,7 +21,8 @@ func readSnmpUsersFromFile() {
 	var groups []map[string]string
 	var communities []map[string]string
 	var createUsers []map[string]string
-	file, err := os.Open(os.Getenv(SNMP_CONFIG_PATH))
+
+	file, err := os.Open(AppConfig.Snmp.Path)
 	if err != nil {
 		log.Fatal("failed to open config file", file.Name())
 	}
@@ -232,21 +229,10 @@ func RestartSnmpd() {
 }
 
 func CopySnmpdConfig() {
-	dest := os.Getenv("SNMP_CONFIG_PATH")
 	log.Println("should be here")
-	log.Println(dest)
+	log.Println(AppConfig.Snmp.Path)
 
-	cmd := exec.Command("cp", "snmpd.conf", dest)
+	cmd := exec.Command("cp", "snmpd.conf", AppConfig.Snmp.Path)
 	out, _ := cmd.CombinedOutput()
 	log.Println(strings.TrimSpace(string(out)))
 }
-
-//db.Model(&SnmpV1V2cUser{}).Count(&count)
-//
-//snmpV1V2cUser.ID = count + 1
-//
-//result := db.Create(&snmpV1V2cUser)
-//if result.Error != nil {
-//	c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-//	return
-//}

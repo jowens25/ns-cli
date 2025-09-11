@@ -61,7 +61,7 @@ func writeSnmpV3User(c *gin.Context) {
 }
 
 func addSnmpV3UserToFile(user SnmpV3User) {
-	file, err := os.Open(os.Getenv(SNMP_CONFIG_PATH))
+	file, err := os.Open(AppConfig.Snmp.Path)
 
 	if err != nil {
 		log.Println(err)
@@ -111,7 +111,7 @@ func addSnmpV3UserToFile(user SnmpV3User) {
 		lines = append(lines[:groupIndex], append([]string{newGroupLine}, lines[groupIndex:]...)...)
 	}
 
-	err = os.WriteFile(os.Getenv(SNMP_CONFIG_PATH), []byte(strings.Join(lines, "\n")+"\n"), 0644)
+	err = os.WriteFile(AppConfig.Snmp.Path, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
 		log.Fatal("failed to write file:", err)
 	}
@@ -123,7 +123,7 @@ func removeSnmpV3UserFromFile(user SnmpV3User) {
 	GroupLineToDelete := fmt.Sprintf("group %s %s %s", user.GroupName, user.Version, user.UserName)
 	log.Println(UserLineToDelete)
 	log.Println(GroupLineToDelete)
-	file, err := os.Open(os.Getenv(SNMP_CONFIG_PATH))
+	file, err := os.Open(AppConfig.Snmp.Path)
 
 	if err != nil {
 		log.Println(err)
@@ -147,7 +147,7 @@ func removeSnmpV3UserFromFile(user SnmpV3User) {
 
 	}
 
-	err = os.WriteFile(os.Getenv(SNMP_CONFIG_PATH), []byte(strings.Join(lines, "\n")+"\n"), 0644)
+	err = os.WriteFile(AppConfig.Snmp.Path, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
 		log.Fatal("failed to write file:", err)
 	}

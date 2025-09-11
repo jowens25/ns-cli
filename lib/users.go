@@ -14,12 +14,6 @@ import (
 	"gorm.io/gorm"
 )
 
-const (
-	DefaultUserHome = "/home/novus"
-	AdminGroup      = "novusadmin"
-	UserGroup       = "novususer"
-)
-
 func readSystemUsers(c *gin.Context) {
 
 	readUsersFromSystem()
@@ -295,21 +289,20 @@ func IsUserAdmin(username string) (bool, error) {
 
 	groupStr := " " + strings.Join(groups, " ") + " "
 
-	isInAdminGroup := strings.Contains(groupStr, " "+AdminGroup+" ")
-	isInFactoryGroup := strings.Contains(groupStr, " factory ")
+	isInAdminGroup := strings.Contains(groupStr, " "+AppConfig.User.AdminGroup+" ")
 
 	// User is admin if they are in admin group but NOT in factory group
-	return isInAdminGroup && !isInFactoryGroup, nil
+	return isInAdminGroup, nil
 }
 
 func AdminNumber() (int, error) {
-	file, err := os.Open("/etc/group")
+	file, err := os.Open(AppConfig.User.GroupPath)
 	if err != nil {
 		return 0, err
 	}
 	defer file.Close()
 
-	var adminUsers, factoryUsers []string
+	var adminUsers []string
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
@@ -323,13 +316,9 @@ func AdminNumber() (int, error) {
 		users := parts[3]
 
 		switch groupName {
-		case AdminGroup:
+		case AppConfig.User.AdminGroup:
 			if users != "" {
 				adminUsers = strings.Split(users, ",")
-			}
-		case "factory":
-			if users != "" {
-				factoryUsers = strings.Split(users, ",")
 			}
 		}
 	}
@@ -339,9 +328,6 @@ func AdminNumber() (int, error) {
 	}
 
 	factoryMap := make(map[string]bool)
-	for _, user := range factoryUsers {
-		factoryMap[user] = true
-	}
 
 	adminOnlyCount := 0
 	for _, user := range adminUsers {
@@ -402,12 +388,10 @@ func addUserToSystem(user User) (string, error) {
 func AddUser(username string, password string) error {
 	// Create user account
 	cmd := exec.Command("useradd",
-		"-M",            // Don't create home directory
-		"-N",            // Don't create a group with the same name as the user
-		"-g", UserGroup, // Primary group
-		"-G", UserGroup, // Secondary groups
-		"-d", DefaultUserHome, // Home directory
-		"-s", "/bin/bash", // Shell
+		"-M",                           // Don't create home directory
+		"-N",                           // Don't create a group with the same name as the user
+		"-g", AppConfig.User.UserGroup, // Primary group
+		"-G", AppConfig.User.UserGroup, // Secondary groups
 		username)
 
 	output, err := cmd.CombinedOutput()
@@ -423,12 +407,10 @@ func AddUser(username string, password string) error {
 func AddAdmin(username string, password string) error {
 	// Create admin account
 	cmd := exec.Command("useradd",
-		"-M",             // Don't create home directory
-		"-N",             // Don't create a group with the same name
-		"-g", AdminGroup, // Primary group
-		"-G", UserGroup+","+AdminGroup, // Secondary groups
-		"-d", DefaultUserHome, // Home directory
-		"-s", "/bin/bash", // Shell
+		"-M",                            // Don't create home directory
+		"-N",                            // Don't create a group with the same name
+		"-g", AppConfig.User.AdminGroup, // Primary group
+		"-G", AppConfig.User.UserGroup+","+AppConfig.User.AdminGroup, // Secondary groups
 		username)
 
 	output, err := cmd.CombinedOutput()
@@ -449,12 +431,12 @@ func SetUsername(oldUsername, newUsername string) error {
 }
 
 func SetUserPermissions(username string) error {
-	cmd := exec.Command("usermod", "-g", UserGroup, "-G", UserGroup, username)
+	cmd := exec.Command("usermod", "-g", AppConfig.User.UserGroup, "-G", AppConfig.User.UserGroup, username)
 	return cmd.Run()
 }
 
 func SetAdministratorPermissions(username string) error {
-	cmd := exec.Command("usermod", "-g", AdminGroup, "-G", UserGroup+","+AdminGroup, username)
+	cmd := exec.Command("usermod", "-g", AppConfig.User.AdminGroup, "-G", AppConfig.User.UserGroup+","+AppConfig.User.AdminGroup, username)
 	return cmd.Run()
 }
 

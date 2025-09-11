@@ -14,7 +14,7 @@ import (
 
 func InitSshConfig() {
 
-	cmd := exec.Command("cp", "ssh", "/etc/xinetd.d/ssh")
+	cmd := exec.Command("cp", "ssh", AppConfig.Xinetd.SshPath)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Println(string(out), err)
@@ -25,8 +25,7 @@ func InitSshConfig() {
 }
 
 func DisableSsh() {
-	sshFile := "/etc/xinetd.d/ssh"
-	file, err := os.Open(sshFile)
+	file, err := os.Open(AppConfig.Xinetd.SshPath)
 	if err != nil {
 		log.Fatal("failed to open ssh file", file.Name())
 	}
@@ -43,7 +42,7 @@ func DisableSsh() {
 		}
 		lines = append(lines, line)
 	}
-	err = os.WriteFile(sshFile, []byte(strings.Join(lines, "\n")+"\n"), 0644)
+	err = os.WriteFile(AppConfig.Xinetd.SshPath, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
 		log.Fatal("failed to hosts file:", err)
 	}
@@ -55,8 +54,7 @@ func DisableSsh() {
 }
 
 func EnableSsh() {
-	sshFile := "/etc/xinetd.d/ssh"
-	file, err := os.Open(sshFile)
+	file, err := os.Open(AppConfig.Xinetd.SshPath)
 	if err != nil {
 		log.Fatal("failed to open ssh file", file.Name())
 	}
@@ -73,7 +71,7 @@ func EnableSsh() {
 		lines = append(lines, line)
 	}
 
-	err = os.WriteFile(sshFile, []byte(strings.Join(lines, "\n")+"\n"), 0644)
+	err = os.WriteFile(AppConfig.Xinetd.SshPath, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
 		log.Fatal("failed to ssh file:", err)
 	}
@@ -84,8 +82,7 @@ func EnableSsh() {
 }
 
 func GetSshStatus() string {
-	sshFile := "/etc/xinetd.d/ssh"
-	file, err := os.Open(sshFile)
+	file, err := os.Open(AppConfig.Xinetd.SshPath)
 	if err != nil {
 		log.Fatal("failed to open ssh file", file.Name())
 	}

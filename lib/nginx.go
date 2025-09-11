@@ -24,20 +24,14 @@ func InitNginxConfig() {
 	fmt.Println(string(out), err)
 
 	cmd = exec.Command("cp", "selfsigned.key", "/etc/nginx/ssl/selfsigned.key")
+
 	out, err = cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(string(out), err)
 	}
 	fmt.Println(string(out), err)
 
-	cmd = exec.Command("cp", "selfsigned.crt", "/etc/nginx/ssl/selfsigned.crt")
-	out, err = cmd.CombinedOutput()
-	if err != nil {
-		fmt.Println(string(out), err)
-	}
-	fmt.Println(string(out), err)
-
-	cmd = exec.Command("cp", "nginx.conf", "/etc/nginx/nginx.conf")
+	cmd = exec.Command("cp", "nginx.conf", AppConfig.Nginx.Config)
 	out, err = cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(string(out), err)

@@ -5,9 +5,12 @@ package main
 
 import (
 	"NovusTimeServer/cli/cmd"
+	"NovusTimeServer/lib"
 )
 
 func main() {
+
+	lib.GetConfig()
 
 	cmd.Execute()
 

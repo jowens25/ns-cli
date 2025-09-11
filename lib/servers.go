@@ -9,7 +9,7 @@ import (
 
 func startApiServer() {
 	apiRouter := gin.Default()
-	//apiRouter.SetTrustedProxies([]string{"localhost"})
+	apiRouter.SetTrustedProxies([]string{AppConfig.Api.Host}) // localhost
 
 	corsConfig := cors.DefaultConfig()
 
@@ -19,8 +19,11 @@ func startApiServer() {
 	// offical
 	corsConfig.AllowOrigins = []string{
 
-		"https://localhost",
-		"http://localhost",
+		AppConfig.Cors.Host1,
+		AppConfig.Cors.Host2,
+
+		//"https://localhost",
+		//"http://localhost",
 	}
 	//corsConfig.AllowAllOrigins = true // development
 
@@ -36,7 +39,6 @@ func startApiServer() {
 	v1.GET("/health", healthHandler)
 
 	protected := v1.Group("/")
-	//protected.Use(authorizationMiddleware())
 	{
 		protected.POST("/logout", logoutHandler)
 
@@ -97,6 +99,6 @@ func startApiServer() {
 		})
 	})
 
-	//apiRouter.Run("0.0.0.0" + API_PORT) // development
-	apiRouter.Run("localhost" + API_PORT) // offical
+	//apiRouter.Run("0.0.0.0" + API_PORT) // development use localhost for nginx prod
+	apiRouter.Run(AppConfig.Api.Host + ":" + AppConfig.Api.Port) // offical
 }
