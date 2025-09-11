@@ -359,7 +359,10 @@ func changePassword(user User) (string, error) {
 func addUserToSystem(user User) (string, error) {
 	switch user.Role {
 	case "admin":
-		AddAdmin(user.Username, user.Password)
+		err := AddAdmin(user.Username, user.Password)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
 
 	case "viewer":
 		AddUser(user.Username, user.Password)
