@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"NovusTimeServer/lib"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -28,12 +27,12 @@ var selectCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 
-			response := lib.ReadWriteMicro("INP", "INP")
-			fmt.Println(response)
+			//response := lib.ReadWriteMicro("INP", "INP")
+			//fmt.Println(response)
 
 		} else if len(args) == 1 {
-			response := lib.ReadWriteMicro("INP", "INP", args[0])
-			fmt.Println(response)
+			//response := lib.ReadWriteMicro("INP", "INP", args[0])
+			//fmt.Println(response)
 		} else {
 			cmd.Help()
 		}
@@ -58,30 +57,30 @@ than 0.3V. (from 0.05V to 1.00V)
 
 			switch f.Name {
 			case "threshold 0":
-				cmdRoot := "INPTHR0"
+				//cmdRoot := "INPTHR0"
 
 				if len(args) == 0 {
 
-					response := lib.ReadWriteMicro(cmdRoot, cmdRoot)
-					fmt.Println(response)
+					//response := lib.ReadWriteMicro(cmdRoot, cmdRoot)
+					//fmt.Println(response)
 
 				} else if len(args) == 1 {
-					response := lib.ReadWriteMicro(cmdRoot, cmdRoot, args[0])
-					fmt.Println(response)
+					//response := lib.ReadWriteMicro(cmdRoot, cmdRoot, args[0])
+					//fmt.Println(response)
 				} else {
 					cmd.Help()
 				}
 
 			case "threshold 1":
-				cmdRoot := "INPTHR1"
+				//cmdRoot := "INPTHR1"
 				if len(args) == 0 {
 
-					response := lib.ReadWriteMicro(cmdRoot, cmdRoot)
-					fmt.Println(response)
+					//response := lib.ReadWriteMicro(cmdRoot, cmdRoot)
+					//fmt.Println(response)
 
 				} else if len(args) == 1 {
-					response := lib.ReadWriteMicro(cmdRoot, cmdRoot, args[0])
-					fmt.Println(response)
+					////response := lib.ReadWriteMicro(cmdRoot, cmdRoot, args[0])
+					//fmt.Println(response)
 				} else {
 					cmd.Help()
 				}
@@ -109,12 +108,12 @@ lock. If $PRLK is enabled, $PRHR is disabled. Requires CAN bus connector.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 
-			response := lib.ReadWriteMicro("PRLK", "PRLK")
-			fmt.Println(response)
+			//response := lib.ReadWriteMicro("PRLK", "PRLK")
+			//fmt.Println(response)
 
 		} else if len(args) == 1 {
-			response := lib.ReadWriteMicro("PRLK", "PRLK", args[0])
-			fmt.Println(response)
+			//response := lib.ReadWriteMicro("PRLK", "PRLK", args[0])
+			//fmt.Println(response)
 		} else {
 			cmd.Help()
 		}
@@ -135,12 +134,12 @@ $PRLK is disabled. Requires CAN`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 
-			response := lib.ReadWriteMicro("PRLK", "PRLK")
-			fmt.Println(response)
+			//response := lib.ReadWriteMicro("PRLK", "PRLK")
+			//fmt.Println(response)
 
 		} else if len(args) == 1 {
-			response := lib.ReadWriteMicro("PRLK", "PRLK", args[0])
-			fmt.Println(response)
+			//response := lib.ReadWriteMicro("PRLK", "PRLK", args[0])
+			//fmt.Println(response)
 		} else {
 			cmd.Help()
 		}
@@ -164,30 +163,30 @@ from Input A. Number format must be in the form <n.nn> (from 0.05 to 0.95)`,
 
 			switch f.Name {
 			case "threshold a":
-				cmdRoot := "FLTTHRA"
+				//cmdRoot := "FLTTHRA"
 
 				if len(args) == 0 {
 
-					response := lib.ReadWriteMicro(cmdRoot, cmdRoot)
-					fmt.Println(response)
+					//response := lib.ReadWriteMicro(cmdRoot, cmdRoot)
+					//fmt.Println(response)
 
 				} else if len(args) == 1 {
-					response := lib.ReadWriteMicro(cmdRoot, cmdRoot, args[0])
-					fmt.Println(response)
+					//response := lib.ReadWriteMicro(cmdRoot, cmdRoot, args[0])
+					//fmt.Println(response)
 				} else {
 					cmd.Help()
 				}
 
 			case "threshold b":
-				cmdRoot := "FLTTHRB"
+				//cmdRoot := "FLTTHRB"
 				if len(args) == 0 {
 
-					response := lib.ReadWriteMicro(cmdRoot, cmdRoot)
-					fmt.Println(response)
+					//response := lib.ReadWriteMicro(cmdRoot, cmdRoot)
+					//fmt.Println(response)
 
 				} else if len(args) == 1 {
-					response := lib.ReadWriteMicro(cmdRoot, cmdRoot, args[0])
-					fmt.Println(response)
+					//response := lib.ReadWriteMicro(cmdRoot, cmdRoot, args[0])
+					//fmt.Println(response)
 				} else {
 					cmd.Help()
 				}
