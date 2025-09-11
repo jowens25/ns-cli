@@ -2,50 +2,63 @@ package lib
 
 import "C"
 import (
-	"bytes"
 	"fmt"
+	"log"
+	"strings"
 
 	"go.bug.st/serial"
 )
 
-func ReadWriteMicro(command string) (string, error) {
+func ReadWriteMicro(command string) string {
+
+	command = command + "\r\n"
+
 	mode := &serial.Mode{
-		BaudRate: 38400,
+		BaudRate: 38400, // Adjust to match your device
 		DataBits: 8,
 		Parity:   serial.NoParity,
 		StopBits: serial.OneStopBit,
 	}
+
 	mcu_port := "/dev/ttymxc2"
+
+	read_data := make([]byte, 1024)
 
 	port, err := serial.Open(mcu_port, mode)
 	if err != nil {
-		return "", fmt.Errorf("open: %w", err)
+		log.Fatal(err)
 	}
 	defer port.Close()
 
-	// Clear buffers before sending
 	port.ResetInputBuffer()
 	port.ResetOutputBuffer()
 
-	_, err = port.Write([]byte(command))
+	n, err := port.Write([]byte(command))
+
+	fmt.Println(command)
+
 	if err != nil {
-		return "", fmt.Errorf("write: %w", err)
+		log.Fatal(err)
 	}
 
-	var lineBuf bytes.Buffer
-	buf := make([]byte, 64)
-	for {
-		n, err := port.Read(buf)
-		if err != nil {
-			return "", fmt.Errorf("read: %w", err)
-		}
-		if n == 0 {
-			continue // or optionally break or timeout
-		}
-		lineBuf.Write(buf[:n])
-		if bytes.Contains(buf[:n], []byte{'\n'}) {
-			break
-		}
+	if n > 0 {
+		//fmt.Println("wrote: ", n, " bytes")
 	}
-	return lineBuf.String(), nil
+
+	n, err = port.Read(read_data)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if n > 0 {
+		//fmt.Println("read: ", n, " bytes")
+	}
+
+	//fmt.Println(string(read_data))
+
+	lines := strings.Split(string(read_data), "\n")
+
+	return lines[0]
+
 }
