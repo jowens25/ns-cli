@@ -134,9 +134,10 @@ func InitConfig() *Config {
 		} else {
 			log.Fatalf("Error reading config file: %v", err)
 		}
-	} else {
-		fmt.Printf("Using config file: %s\n", viper.ConfigFileUsed())
 	}
+	//else {
+	//	fmt.Printf("Using config file: %s\n", viper.ConfigFileUsed())
+	//}
 
 	var config Config
 	if err := viper.Unmarshal(&config); err != nil {

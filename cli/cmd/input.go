@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"NovusTimeServer/lib"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -134,12 +135,12 @@ $PRLK is disabled. Requires CAN`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 
-			//response := lib.ReadWriteMicro("PRLK", "PRLK")
-			//fmt.Println(response)
+			response := lib.ReadWriteMicro("$PRLK")
+			fmt.Println(response)
 
 		} else if len(args) == 1 {
-			//response := lib.ReadWriteMicro("PRLK", "PRLK", args[0])
-			//fmt.Println(response)
+			response := lib.ReadWriteMicro("$PRLK" + args[0])
+			fmt.Println(response)
 		} else {
 			cmd.Help()
 		}
