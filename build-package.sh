@@ -27,19 +27,8 @@ dpkg-deb --build $PKG_DIR
 
 echo "Debian package created: ${PKG_DIR}.deb"
 
-# Optionally install
-#sudo dpkg -i ${PKG_DIR}.deb
 
 
-
-
-
-
-rm -f /usr/bin/ns
-echo "Removed old bin"
-
-cp ns /usr/bin/ns
-echo "Installed new bin"
 
 chmod +x /usr/bin/ns
 echo "Added permissions"
