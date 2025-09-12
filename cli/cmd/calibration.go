@@ -36,11 +36,6 @@ authorized technician.`,
 				fmt.Println(response)
 				time.Sleep(100 * time.Millisecond)
 			}
-			return
-		}
-
-		if len(args) == 0 {
-			cmd.Help()
 
 		} else if len(args) == 1 {
 			response := lib.ReadWriteMicro("$CAL" + args[0])
