@@ -26,7 +26,7 @@ func ReadWriteMicro(command string) string {
 	port, err := serial.Open(AppConfig.Serial.Port, mode)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(AppConfig.Serial.Port, err)
 	}
 	defer port.Close()
 
@@ -35,7 +35,9 @@ func ReadWriteMicro(command string) string {
 
 	_, err = port.Write([]byte(command))
 
-	fmt.Println(command)
+	fmt.Print(command)
+
+	fmt.Print("--->")
 
 	if err != nil {
 		log.Fatal(err)
