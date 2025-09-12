@@ -37,8 +37,6 @@ func ReadWriteMicro(command string) string {
 
 	fmt.Print(command)
 
-	fmt.Print("--->")
-
 	if err != nil {
 		log.Fatal(err)
 	}
