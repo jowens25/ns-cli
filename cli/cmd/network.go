@@ -23,6 +23,7 @@ var networkStatusCmd = &cobra.Command{
 			return
 		}
 
+		fmt.Println("Ethernet:     ", lib.GetPortPhysicalStatus(lib.AppConfig.Network.Interface))
 		fmt.Print("Hostname:      ", lib.GetHostname())
 		fmt.Println("Gateway:      ", lib.GetIpv4Gateway(lib.AppConfig.Network.Interface))
 		fmt.Println("Interface:    ", lib.AppConfig.Network.Interface, lib.GetPortSpeed(lib.AppConfig.Network.Interface))
@@ -31,6 +32,7 @@ var networkStatusCmd = &cobra.Command{
 		fmt.Println("DHCPv4:       ", lib.GetIpv4DhcpState(lib.AppConfig.Network.Interface))
 		fmt.Println("DNS 1:        ", lib.GetIpv4Dns1(lib.AppConfig.Network.Interface))
 		fmt.Println("DNS 2:        ", lib.GetIpv4Dns2(lib.AppConfig.Network.Interface))
+		fmt.Println("Connection:   ", lib.GetPortConnectionStatus(lib.AppConfig.Network.Interface))
 	},
 }
 
@@ -142,6 +144,24 @@ var routeRemoveCmd = &cobra.Command{
 	},
 }
 
+var portEnableCmd = &cobra.Command{
+	Use:   "enable",
+	Short: "enable lan port",
+
+	Run: func(cmd *cobra.Command, args []string) {
+		lib.PortConnect(lib.AppConfig.Network.Interface)
+	},
+}
+
+var portDisableCmd = &cobra.Command{
+	Use:   "disable",
+	Short: "disable lan port",
+
+	Run: func(cmd *cobra.Command, args []string) {
+		lib.PortDisconnect(lib.AppConfig.Network.Interface)
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(networkCmd)
 
@@ -150,6 +170,9 @@ func init() {
 	networkCmd.AddCommand(dnsCmd)
 	networkCmd.AddCommand(ipCmd)
 	networkCmd.AddCommand(gwCmd)
+
+	networkCmd.AddCommand(portEnableCmd)
+	networkCmd.AddCommand(portDisableCmd)
 
 	// Routes
 	networkCmd.AddCommand(routesCmd)
