@@ -30,11 +30,11 @@ authorized technician.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if all {
-			for i := range 12 {
-				fmt.Println(i)
-				response := lib.ReadWriteMicro("$CAL" + fmt.Sprint(i))
+			for i := range 10 {
+				response := lib.ReadWriteMicro("$CAL" + fmt.Sprint(i+1))
 				fmt.Println(response)
 			}
+			return
 		}
 
 		if len(args) == 0 {
