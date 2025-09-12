@@ -1,33 +1,44 @@
 package lib
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/exec"
-	"os/user"
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 func readSystemUsers(c *gin.Context) {
 
-	readUsersFromSystem()
+	admins := readSystemAdmins()
 
-	var users []User
-	result := db.Find(&users)
+	users := readSystemViewers()
 
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+	var collatedUsers []User
+
+	for _, user := range users {
+
+		for _, admin := range admins {
+
+			if user.Username == admin.Username {
+
+				user.Role = "admin"
+			}
+		}
+
+		collatedUsers = append(collatedUsers, user)
+	}
+
+	if len(users) < 1 {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "no users defined"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"system_users": users,
+		"system_users": collatedUsers,
 	})
 
 }
@@ -41,22 +52,7 @@ func writeSystemUser(c *gin.Context) {
 		return
 	}
 
-	result := db.Where("username = ?", user.Username).FirstOrCreate(&user)
-
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-		return
-	}
-
-	passwordhint, err := addUserToSystem(user)
-	fmt.Println(passwordhint)
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"error":    err.Error(),
-			"password": passwordhint,
-		})
-		return
-	}
+	addUserToSystem(user)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "System user created",
@@ -66,9 +62,11 @@ func writeSystemUser(c *gin.Context) {
 }
 
 func removeUserFromSystem(user User) error {
-	isAdmin, err := IsUserAdmin(user.Username)
-	if err != nil {
-		return fmt.Errorf("failed to check if user is admin: %w", err)
+
+	isAdmin := false
+
+	if user.Role == "admin" {
+		isAdmin = true
 	}
 
 	if isAdmin {
@@ -84,23 +82,29 @@ func removeUserFromSystem(user User) error {
 
 	cmd := exec.Command("pkill", "-u", user.Username)
 	out, err := cmd.CombinedOutput() // Ignore error as user might not have running processes
-	log.Println(out)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	log.Println(string(out))
 	// Delete the user
 	cmd = exec.Command("userdel", user.Username)
 	out, err = cmd.CombinedOutput() // Ignore error as user might not have running processes
-	log.Println(out)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	log.Println(string(out))
 
 	return nil
 
 }
 
 func deleteSystemUser(c *gin.Context) {
-	userID := c.Param("id")
+	//userID := c.Param("id")
 
 	var userToDelete User
 
-	if err := db.First(&userToDelete, userID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+	if err := c.ShouldBindJSON(&userToDelete); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -110,233 +114,112 @@ func deleteSystemUser(c *gin.Context) {
 		return
 	}
 
-	// Then remove from database
-	if err := db.Delete(&userToDelete).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User removed successfully",
 	})
 }
 
-//func editSystemUser(c *gin.Context) {//
-//
-//	id := c.Param("id")
-//
-//	var existingUser User
-//
-//	if err := db.First(&existingUser, id).Error; err != nil {
-//		if errors.Is(err, gorm.ErrRecordNotFound) {
-//			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-//		} else {
-//			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-//		}
-//		return
-//	}
-//
-//	var updateData User
-//	if err := c.ShouldBindJSON(&updateData); err != nil {
-//		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-//		return
-//	}
-//
-//	updates := make(map[string]any)
-//
-//	if updateData.Username != "" {
-//		updates["username"] = updateData.Username
-//	}
-//
-//	if updateData.Email != "" {
-//		updates["email"] = updateData.Email
-//	}
-//
-//	if updateData.Role != "" {
-//		if !(updateData.Role == "admin" || updateData.Role == "viewer") {
-//			c.JSON(http.StatusBadRequest, gin.H{"error": "role must be 'admin' or 'viewer'"})
-//			return
-//		}
-//		updates["role"] = updateData.Role
-//	}
-//
-//	if updateData.Password != "" {
-//
-//		changePassword()
-//
-//		passwordhint, err := changePassword(user)
-//		fmt.Println(passwordhint)
-//		if err != nil {
-//			c.JSON(http.StatusOK, gin.H{
-//				"error":    err.Error(),
-//				"password": passwordhint,
-//			})
-//			return
-//		}
-//
-//	}
-//
-//	// Check if there's anything to update
-//	if len(updates) == 0 {
-//		c.JSON(http.StatusOK, gin.H{"message": "No update"})
-//		return
-//	}
-//
-//	// Perform the update using the user ID
-//	result := db.Model(&existingUser).Updates(updates)
-//	if result.Error != nil {
-//		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-//		return
-//	}
-//
-//	var updatedUser User
-//	if err := db.First(&updatedUser, id).Error; err != nil {
-//		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch updated user"})
-//		return
-//	}
-//
-//	c.JSON(http.StatusOK, gin.H{
-//		"message": "User updated successfully",
-//		"user": gin.H{
-//			"id":       updatedUser.ID,
-//			"role":     updatedUser.Role,
-//			"username": updatedUser.Username,
-//			"email":    updatedUser.Email,
-//		},
-//	})
-//}
+func readSystemAdmins() []User {
 
-func readUsersFromSystem() {
-	cmd := exec.Command("getent", "group")
+	var currentUsers []User
+	cmd := exec.Command("getent", "group", AppConfig.User.AdminGroup)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
 	lines := strings.Split(string(out), "\n")
-	var newUsernames []string
-	userRoleMap := make(map[string]string) // Track users and their roles
+
+	if len(lines) < 1 {
+		return nil
+	}
 
 	for _, line := range lines {
-		if strings.HasPrefix(line, "novusadmin:") || strings.HasPrefix(line, "novususer:") {
-			parts := strings.Split(line, ":")
-			role := strings.TrimPrefix(parts[0], "novus")
 
-			if len(parts) >= 4 && parts[3] != "" {
-				usernames := strings.Split(parts[3], ",")
-				for _, username := range usernames {
-					username = strings.TrimSpace(username)
-					if username == "" {
-						continue
-					}
+		parts := strings.Split(line, ":")
 
-					// If user is in novusadmin, they are admin regardless of novususer membership
-					if role == "admin" || userRoleMap[username] != "admin" {
-						userRoleMap[username] = role
-					}
-				}
+		if len(parts) >= 4 && parts[3] != "" {
+
+			usernames := strings.Split(parts[3], ",")
+
+			for _, username := range usernames {
+				username = strings.TrimSpace(username)
+
+				var user User
+				user.Username = username
+				user.Role = "admin"
+
+				currentUsers = append(currentUsers, user)
 			}
+
 		}
 	}
 
-	// Process all unique users
-	for username, role := range userRoleMap {
-		var user User
-		user.Role = role
-		user.Username = username
-
-		// Look up the user by username
-		result := db.Where("username = ?", user.Username).First(&User{})
-		if result.Error == gorm.ErrRecordNotFound {
-			// Create new user
-			db.Create(&user)
-		} else {
-			// Update existing user's role
-			db.Where("username = ?", user.Username).Updates(&user)
-		}
-
-		newUsernames = append(newUsernames, user.Username)
-	}
-
-	// Clean up users that no longer exist in the system (only execute once)
-	if len(newUsernames) > 0 {
-		db.Where("username NOT IN ?", newUsernames).Delete(&User{})
-	} else {
-		// If no users found, delete all
-		db.Delete(&User{}, "1=1")
-	}
+	return currentUsers
 }
 
-func IsUserAdmin(username string) (bool, error) {
-	usr, err := user.Lookup(username)
+func readSystemViewers() []User {
+
+	var currentUsers []User
+	cmd := exec.Command("getent", "group", AppConfig.User.UserGroup)
+	out, err := cmd.CombinedOutput()
 	if err != nil {
-		return false, err
+		log.Fatal(err.Error())
 	}
 
-	gids, err := usr.GroupIds()
-	if err != nil {
-		return false, err
+	lines := strings.Split(string(out), "\n")
+
+	if len(lines) < 1 {
+		return nil
 	}
 
-	var groups []string
-	for _, gid := range gids {
-		grp, err := user.LookupGroupId(gid)
-		if err != nil {
-			continue
+	for _, line := range lines {
+
+		parts := strings.Split(line, ":")
+
+		if len(parts) >= 4 && parts[3] != "" {
+
+			usernames := strings.Split(parts[3], ",")
+
+			for _, username := range usernames {
+				username = strings.TrimSpace(username)
+
+				var user User
+				user.Username = username
+				user.Role = "user"
+
+				currentUsers = append(currentUsers, user)
+			}
+
 		}
-		groups = append(groups, grp.Name)
 	}
 
-	groupStr := " " + strings.Join(groups, " ") + " "
-
-	isInAdminGroup := strings.Contains(groupStr, " "+AppConfig.User.AdminGroup+" ")
-
-	// User is admin if they are in admin group but NOT in factory group
-	return isInAdminGroup, nil
+	return currentUsers
 }
 
 func AdminNumber() (int, error) {
-	file, err := os.Open(AppConfig.User.GroupPath)
+	content, err := os.ReadFile(AppConfig.User.GroupPath)
 	if err != nil {
 		return 0, err
 	}
-	defer file.Close()
+	lines := strings.SplitSeq(string(content), "\n")
 
-	var adminUsers []string
-	scanner := bufio.NewScanner(file)
+	for line := range lines {
 
-	for scanner.Scan() {
-		line := scanner.Text()
-		parts := strings.Split(line, ":")
-		if len(parts) < 4 {
-			continue
-		}
+		if strings.HasPrefix(line, AppConfig.User.AdminGroup) {
 
-		groupName := parts[0]
-		users := parts[3]
+			parts := strings.Split(line, ":")
 
-		switch groupName {
-		case AppConfig.User.AdminGroup:
-			if users != "" {
-				adminUsers = strings.Split(users, ",")
+			if parts[3] != "" {
+				return len(strings.Split(parts[3], ",")), nil
+
+			} else {
+				return 0, fmt.Errorf("no admins defined")
 			}
 		}
 	}
 
-	if err := scanner.Err(); err != nil {
-		return 0, err
-	}
-
-	factoryMap := make(map[string]bool)
-
-	adminOnlyCount := 0
-	for _, user := range adminUsers {
-		if !factoryMap[user] {
-			adminOnlyCount++
-		}
-	}
-
-	return adminOnlyCount, nil
+	return 0, fmt.Errorf("no admins found")
 }
 
 func changePassword(user User) (string, error) {
@@ -375,17 +258,7 @@ func addUserToSystem(user User) (string, error) {
 	thiscmd.Stdin = strings.NewReader(fmt.Sprintf("%s:%s", user.Username, user.Password))
 	output, err := thiscmd.CombinedOutput()
 
-	out := string(output)
-	if after, ok := strings.CutPrefix(out, "BAD PASSWORD:"); ok {
-		removeUserFromSystem(user)
-		return after, fmt.Errorf("BAD PASSWORD")
-	}
-
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-
-	return out, nil
+	return string(output), err
 }
 
 func AddUser(username string, password string) error {

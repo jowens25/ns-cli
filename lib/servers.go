@@ -17,15 +17,15 @@ func startApiServer() {
 	corsConfig.AllowHeaders = []string{"Authorization", "Content-Type", "X-Request-ID"}
 	corsConfig.AllowCredentials = true
 	// offical
-	corsConfig.AllowOrigins = []string{
-
-		AppConfig.Cors.Host1,
-		AppConfig.Cors.Host2,
-
-		//"https://localhost",
-		//"http://localhost",
-	}
-	//corsConfig.AllowAllOrigins = true // development
+	//corsConfig.AllowOrigins = []string{
+	//
+	//	AppConfig.Cors.Host1,
+	//	AppConfig.Cors.Host2, // production
+	//
+	//	//"https://localhost",
+	//	//"http://localhost", // production
+	//}
+	corsConfig.AllowAllOrigins = true // development
 
 	apiRouter.Use(cors.New(corsConfig))
 
@@ -36,7 +36,7 @@ func startApiServer() {
 
 	// public routes
 	v1.POST("/auth/login", loginHandler)
-	v1.GET("/health", healthHandler)
+	v1.GET("/auth/health", healthHandler)
 
 	protected := v1.Group("/")
 	{

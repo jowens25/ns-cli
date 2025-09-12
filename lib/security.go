@@ -2,8 +2,10 @@ package lib
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -198,29 +200,34 @@ func openConfigFile(f string) []string {
 	return strings.Split(string(content), "\n")
 }
 
-func getMinimumPasswordLength() (string, error) {
+func getMinimumPasswordLength() (int, error) {
 
 	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.Contains(line, "minlen") {
 			parts := strings.Split(line, " = ")
 			if len(parts) == 2 {
-
-				return parts[1], nil
+				minlen, err := strconv.Atoi(parts[1])
+				if err != nil {
+					log.Println(err.Error())
+				}
+				return minlen, nil
 			}
 		}
 	}
-	return "0", fmt.Errorf("no minlen set")
+	return 0, fmt.Errorf("no minlen set")
 }
 
-func setMinimumPasswordLength(minLen string) error {
+func setMinimumPasswordLength(minLen int) error {
 	var err error = nil
+
+	strMinLen := fmt.Sprintf("%d", minLen) // "%d" for decimal integer
 
 	var newLines []string
 	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.Contains(line, "minlen = ") {
-			line = "minlen = " + minLen
+			line = "minlen = " + strMinLen
 		}
 
 		newLines = append(newLines, line)
@@ -232,28 +239,28 @@ func setMinimumPasswordLength(minLen string) error {
 
 }
 
-func getUppercaseRequired() (string, error) {
+func getUppercaseRequired() (bool, error) {
 	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.HasPrefix(line, "# ucredit = ") {
-			return "false", nil
+			return false, nil
 		}
 		if strings.HasPrefix(line, "ucredit = -1") {
-			return "true", nil
+			return true, nil
 		}
 
 	}
-	return "false", fmt.Errorf("no ucredit set")
+	return false, fmt.Errorf("no ucredit set")
 }
 
-func setUppercaseRequired(required string) error {
+func setUppercaseRequired(required bool) error {
 	var err error = nil
 
 	var newLines []string
 	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.Contains(line, "ucredit") {
-			if required == "true" {
+			if required {
 				line = "ucredit = -1"
 
 			} else {
@@ -271,27 +278,27 @@ func setUppercaseRequired(required string) error {
 
 }
 
-func getLowercaseRequired() (string, error) {
+func getLowercaseRequired() (bool, error) {
 	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.HasPrefix(line, "# lcredit = ") {
-			return "false", nil
+			return false, nil
 		}
 		if strings.HasPrefix(line, "lcredit = -1") {
-			return "true", nil
+			return true, nil
 		}
 	}
-	return "false", fmt.Errorf("no lcredit set")
+	return false, fmt.Errorf("no lcredit set")
 }
 
-func setLowercaseRequired(required string) error {
+func setLowercaseRequired(required bool) error {
 	var err error = nil
 
 	var newLines []string
 	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.Contains(line, "lcredit") {
-			if required == "true" {
+			if required {
 				line = "lcredit = -1"
 
 			} else {
@@ -309,27 +316,27 @@ func setLowercaseRequired(required string) error {
 
 }
 
-func getNumberRequired() (string, error) {
+func getNumberRequired() (bool, error) {
 	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.HasPrefix(line, "# dcredit = ") {
-			return "false", nil
+			return false, nil
 		}
 		if strings.HasPrefix(line, "dcredit = -1") {
-			return "true", nil
+			return true, nil
 		}
 	}
-	return "false", fmt.Errorf("no dcredit set")
+	return false, fmt.Errorf("no dcredit set")
 }
 
-func setNumberRequired(required string) error {
+func setNumberRequired(required bool) error {
 	var err error = nil
 
 	var newLines []string
 	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.Contains(line, "dcredit") {
-			if required == "true" {
+			if required {
 				line = "dcredit = -1"
 
 			} else {
@@ -347,27 +354,27 @@ func setNumberRequired(required string) error {
 
 }
 
-func getSpecialRequired() (string, error) {
+func getSpecialRequired() (bool, error) {
 	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.HasPrefix(line, "# ocredit = ") {
-			return "false", nil
+			return false, nil
 		}
 		if strings.HasPrefix(line, "ocredit = -1") {
-			return "true", nil
+			return true, nil
 		}
 	}
-	return "false", fmt.Errorf("no ocredit set")
+	return false, fmt.Errorf("no ocredit set")
 }
 
-func setSpecialRequired(required string) error {
+func setSpecialRequired(required bool) error {
 	var err error = nil
 
 	var newLines []string
 	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.Contains(line, "ocredit") {
-			if required == "true" {
+			if required {
 				line = "ocredit = -1"
 
 			} else {
@@ -385,27 +392,27 @@ func setSpecialRequired(required string) error {
 
 }
 
-func getNoUserRequired() (string, error) {
+func getNoUserRequired() (bool, error) {
 	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.HasPrefix(line, "# usercheck = ") {
-			return "false", nil
+			return false, nil
 		}
 		if strings.HasPrefix(line, "usercheck = 1") {
-			return "true", nil
+			return true, nil
 		}
 	}
-	return "false", fmt.Errorf("no usercheck failure")
+	return false, fmt.Errorf("no usercheck failure")
 }
 
-func setNoUserRequired(required string) error {
+func setNoUserRequired(required bool) error {
 	var err error = nil
 
 	var newLines []string
 	for _, line := range openConfigFile(AppConfig.Pam.Path) {
 
 		if strings.Contains(line, "usercheck") {
-			if required == "true" {
+			if required {
 				line = "usercheck = 1"
 
 			} else {
@@ -423,7 +430,7 @@ func setNoUserRequired(required string) error {
 
 }
 
-func getMinimumPasswordAge() (string, error) {
+func getMinimumPasswordAge() (int, error) {
 
 	for _, line := range openConfigFile(AppConfig.Lin.Path) {
 
@@ -435,15 +442,20 @@ func getMinimumPasswordAge() (string, error) {
 
 			parts := strings.Fields(trimmed)
 			if len(parts) >= 2 {
-				return parts[1], nil
+				minDays, err := strconv.Atoi(parts[1])
+				if err != nil {
+					log.Println(err.Error())
+				}
+				return minDays, nil
 			}
 		}
 	}
-	return "0", fmt.Errorf("no PASS_MIN_DAYS set")
+	return 0, fmt.Errorf("no PASS_MIN_DAYS set")
 }
 
-func setMinimumPasswordAge(days string) error {
+func setMinimumPasswordAge(days int) error {
 	var err error = nil
+	strDays := fmt.Sprintf("%d", days) // "%d" for decimal integer
 
 	var newLines []string
 	for _, line := range openConfigFile(AppConfig.Lin.Path) {
@@ -454,7 +466,7 @@ func setMinimumPasswordAge(days string) error {
 		}
 
 		if strings.HasPrefix(trimmed, "PASS_MIN_DAYS") {
-			line = "PASS_MIN_DAYS   " + days
+			line = "PASS_MIN_DAYS   " + strDays
 		}
 
 		newLines = append(newLines, line)
@@ -466,7 +478,7 @@ func setMinimumPasswordAge(days string) error {
 
 }
 
-func getMaximumPasswordAge() (string, error) {
+func getMaximumPasswordAge() (int, error) {
 
 	for _, line := range openConfigFile(AppConfig.Lin.Path) {
 
@@ -477,16 +489,21 @@ func getMaximumPasswordAge() (string, error) {
 		if strings.HasPrefix(trimmed, "PASS_MAX_DAYS") {
 
 			parts := strings.Fields(trimmed)
-			if len(parts) >= 2 {
-				return parts[1], nil
+			if len(parts) == 2 {
+				maxage, err := strconv.Atoi(parts[1])
+				if err != nil {
+					log.Println(err.Error())
+				}
+				return maxage, nil
 			}
 		}
 	}
-	return "0", fmt.Errorf("no PASS_MAX_DAYS set")
+	return 0, fmt.Errorf("no PASS_MAX_DAYS set")
 }
 
-func setMaximumPasswordAge(days string) error {
+func setMaximumPasswordAge(days int) error {
 	var err error = nil
+	strDays := fmt.Sprintf("%d", days) // "%d" for decimal integer
 
 	var newLines []string
 	for _, line := range openConfigFile(AppConfig.Lin.Path) {
@@ -497,7 +514,7 @@ func setMaximumPasswordAge(days string) error {
 		}
 
 		if strings.HasPrefix(trimmed, "PASS_MAX_DAYS") {
-			line = "PASS_MAX_DAYS   " + days
+			line = "PASS_MAX_DAYS   " + strDays
 		}
 
 		newLines = append(newLines, line)
@@ -509,7 +526,7 @@ func setMaximumPasswordAge(days string) error {
 
 }
 
-func getPasswordAgeWarning() (string, error) {
+func getPasswordAgeWarning() (int, error) {
 
 	for _, line := range openConfigFile(AppConfig.Lin.Path) {
 		trimmed := strings.TrimSpace(line)
@@ -518,16 +535,21 @@ func getPasswordAgeWarning() (string, error) {
 		}
 		if strings.HasPrefix(trimmed, "PASS_WARN_AGE") {
 			parts := strings.Fields(trimmed)
-			if len(parts) >= 2 {
-				return parts[1], nil
+			if len(parts) == 2 {
+				age, err := strconv.Atoi(parts[1])
+				if err != nil {
+					log.Println(err.Error())
+				}
+				return age, nil
 			}
 		}
 	}
-	return "0", fmt.Errorf("no PASS_WARN_AGE set")
+	return 0, fmt.Errorf("no PASS_WARN_AGE set")
 }
 
-func setPasswordAgeWarning(days string) error {
+func setPasswordAgeWarning(days int) error {
 	var err error = nil
+	strDays := fmt.Sprintf("%d", days) // "%d" for decimal integer
 
 	var newLines []string
 	for _, line := range openConfigFile(AppConfig.Lin.Path) {
@@ -538,7 +560,7 @@ func setPasswordAgeWarning(days string) error {
 		}
 
 		if strings.HasPrefix(trimmed, "PASS_WARN_AGE") {
-			line = "PASS_WARN_AGE   " + days
+			line = "PASS_WARN_AGE   " + strDays
 		}
 
 		newLines = append(newLines, line)
