@@ -140,11 +140,22 @@ var portDisableCmd = &cobra.Command{
 	},
 }
 
+var networkResetCmd = &cobra.Command{
+	Use:   "reset [address]",
+	Short: "reset network to use dhcp and auto dns on specified gateway",
+	Args:  cobra.MinimumNArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		lib.ResetNetworkConfig(lib.AppConfig.Network.Interface, args[0])
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(networkCmd)
 
 	// Base network configuration
 	networkCmd.AddCommand(networkStatusCmd)
+	networkCmd.AddCommand(networkResetCmd)
+
 	networkCmd.AddCommand(dnsCmd)
 	networkCmd.AddCommand(ipCmd)
 	networkCmd.AddCommand(gwCmd)
