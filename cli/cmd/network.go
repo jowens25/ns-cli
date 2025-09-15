@@ -40,12 +40,7 @@ var networkStatusCmd = &cobra.Command{
 var dnsCmd = &cobra.Command{
 	Use:   "dns [dns1] [dns2]",
 	Short: "get and set dns",
-	Args:  cobra.MinimumNArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		//itf := args[0]
-		if !lib.HasInterface(lib.AppConfig.Network.Interface) {
-			return
-		}
 
 		if len(args) == 1 {
 			lib.SetIpv4Dns(lib.AppConfig.Network.Interface, args[0])
@@ -63,19 +58,13 @@ var dnsCmd = &cobra.Command{
 var ipCmd = &cobra.Command{
 	Use:   "ip [address]",
 	Short: "get and set ip address",
-	Args:  cobra.MinimumNArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		//itf := args[0]
-		if !lib.HasInterface(lib.AppConfig.Network.Interface) {
-			return
-		}
 
 		if len(args) == 1 {
 			lib.SetIpv4Address(lib.AppConfig.Network.Interface, args[0])
 		}
 
 		fmt.Println(lib.GetIpv4Address(lib.AppConfig.Network.Interface))
-		//fmt.Println(lib.GetIpv4Netmask(lib.AppConfig.Network.Interface))
 	},
 }
 
@@ -83,14 +72,11 @@ var ipCmd = &cobra.Command{
 var gwCmd = &cobra.Command{
 	Use:   "gw [address]",
 	Short: "get and set gateway address",
-	Args:  cobra.MinimumNArgs(0),
-	Run: func(cmd *cobra.Command, args []string) {
-		if !lib.HasInterface(lib.AppConfig.Network.Interface) {
-			return
-		}
 
-		if len(args) == 2 {
-			lib.SetIpv4Gateway(lib.AppConfig.Network.Interface, args[1])
+	Run: func(cmd *cobra.Command, args []string) {
+
+		if len(args) == 1 {
+			lib.SetIpv4Gateway(lib.AppConfig.Network.Interface, args[0])
 		}
 
 		fmt.Println(lib.GetIpv4Gateway(lib.AppConfig.Network.Interface))
@@ -102,10 +88,6 @@ var routesCmd = &cobra.Command{
 	Short: "manage static routes",
 	Args:  cobra.MinimumNArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-
-		if !lib.HasInterface(lib.AppConfig.Network.Interface) {
-			return
-		}
 
 		fmt.Println(lib.ShowIpv4Routes(lib.AppConfig.Network.Interface))
 
