@@ -47,11 +47,11 @@ var dnsCmd = &cobra.Command{
 			return
 		}
 
-		if len(args) == 2 {
-			lib.SetIpv4Dns(lib.AppConfig.Network.Interface, args[1])
+		if len(args) == 1 {
+			lib.SetIpv4Dns(lib.AppConfig.Network.Interface, args[0])
 		}
-		if len(args) == 3 {
-			lib.SetIpv4Dns(lib.AppConfig.Network.Interface, args[1], args[2])
+		if len(args) == 2 {
+			lib.SetIpv4Dns(lib.AppConfig.Network.Interface, args[0], args[1])
 		}
 
 		fmt.Println("DNS1:", lib.GetIpv4Dns1(lib.AppConfig.Network.Interface))
@@ -70,8 +70,8 @@ var ipCmd = &cobra.Command{
 			return
 		}
 
-		if len(args) == 2 {
-			lib.SetIpv4Address(lib.AppConfig.Network.Interface, args[1])
+		if len(args) == 1 {
+			lib.SetIpv4Address(lib.AppConfig.Network.Interface, args[0])
 		}
 
 		fmt.Println(lib.GetIpv4Address(lib.AppConfig.Network.Interface))

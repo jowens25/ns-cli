@@ -70,6 +70,7 @@ func GetIpv4Dns2(i string) string {
 
 func SetIp4Method(i string, method string) {
 	SetNmcliField(i, "ipv4.method", method)
+	ReapplyNmcli(i)
 }
 
 func SetIpv4Dns(i string, dns ...string) {
