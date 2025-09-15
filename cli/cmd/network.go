@@ -75,7 +75,7 @@ var ipCmd = &cobra.Command{
 		}
 
 		fmt.Println(lib.GetIpv4Address(lib.AppConfig.Network.Interface))
-		fmt.Println(lib.GetIpv4Netmask(lib.AppConfig.Network.Interface))
+		//fmt.Println(lib.GetIpv4Netmask(lib.AppConfig.Network.Interface))
 	},
 }
 
