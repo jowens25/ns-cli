@@ -9,17 +9,16 @@ import (
 )
 
 type Config struct {
-	App     ApplicationConfig `mapstructure:"app"`
-	Nginx   NginxConfig       `mapstructure:"nginx"`  // nginx
-	Xinetd  XinetdConfig      `mapstructure:"xinetd"` // xinetd
-	Pam     PamConfig         `mapstructure:"pam"`    // pam
-	Lin     LinConfig         `mapstructure:"lin"`    // lin
-	Serial  SerialConfig      `mapstructure:"serial"` // serial
-	User    UserConfig        `mapstructure:"user"`   // users
-	Snmp    SnmpConfig        `mapstructure:"snmp"`   // snmp
-	Cors    CorsConfig        `mapstructure:"cors"`
-	Api     ApiConfig         `mapstructure:"api"`
-	Network NetworkConfig     `mapstructure:"network"`
+	App      ApplicationConfig `mapstructure:"app"`
+	Nginx    NginxConfig       `mapstructure:"nginx"`    // nginx
+	Xinetd   XinetdConfig      `mapstructure:"xinetd"`   // xinetd
+	Security SecurityConfig    `mapstructure:"security"` // pam
+	Serial   SerialConfig      `mapstructure:"serial"`   // serial
+	User     UserConfig        `mapstructure:"user"`     // users
+	Snmp     SnmpConfig        `mapstructure:"snmp"`     // snmp
+	Cors     CorsConfig        `mapstructure:"cors"`
+	Api      ApiConfig         `mapstructure:"api"`
+	Network  NetworkConfig     `mapstructure:"network"`
 }
 
 type ApplicationConfig struct {
@@ -53,12 +52,9 @@ type XinetdConfig struct {
 
 }
 
-type PamConfig struct {
-	Path string `mapstructure:"path"` // /etc/security/pwquality.conf
-}
-
-type LinConfig struct {
-	Path string `mapstructure:"path"` // /etc/login.defs
+type SecurityConfig struct {
+	Pwquality string `mapstructure:"pwquality"` // /etc/security/pwquality.conf
+	Login     string `mapstructure:"login"`     // /etc/login.defs
 }
 
 type SerialConfig struct {
@@ -109,8 +105,8 @@ func InitConfig() *Config {
 	viper.SetDefault("xinetd.telnet-path", "/etc/xinetd.d/telnet")
 	viper.SetDefault("xinetd.ssh-path", "/etc/xinetd.d/ssh")
 
-	viper.SetDefault("pam.path", "/etc/security/pwquality.conf")
-	viper.SetDefault("lin.path", "/etc/login.defs")
+	viper.SetDefault("security.pwquality", "/etc/security/pwquality.conf")
+	viper.SetDefault("security.login", "/etc/login.defs")
 
 	viper.SetDefault("serial.port", "/dev/ttymxc2")
 	viper.SetDefault("serial.baudrate", 38400)

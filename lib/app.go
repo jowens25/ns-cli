@@ -23,14 +23,6 @@ var serialMutex sync.Mutex
 
 func StartApp() {
 
-	logFile, err := os.OpenFile(AppConfig.App.Log, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
-	if err != nil {
-		log.Fatalf("error opening log file: %v", err)
-	}
-	defer logFile.Close()
-
-	log.SetOutput(logFile)
-
 	pid := os.Getpid()
 	os.WriteFile("server.pid", []byte(fmt.Sprintf("%d", pid)), 0644)
 
