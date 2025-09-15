@@ -86,12 +86,12 @@ func SetIpv4Dns(i string, dns ...string) {
 
 func SetIpv4Address(i string, address string) {
 
-	currentGw := GetIpv4Gateway(i)
+	//currentGw := GetIpv4Gateway(i)
 
 	ip := net.ParseIP(address)
 	if ip != nil {
 		SetIp4Method(i, "manual")
-		SetIpv4Gateway(i, currentGw)
+		//SetIpv4Gateway(i, currentGw)
 		SetNmcliField(i, "ipv4.address", address)
 
 	}
@@ -99,15 +99,15 @@ func SetIpv4Address(i string, address string) {
 }
 
 func SetIpv4Gateway(i string, address string) {
-
-	currentIp := GetIpv4Address(i)
-
-	gw := net.ParseIP(address)
-	if gw != nil {
-		SetIp4Method(i, "manual")
-		SetIpv4Address(i, currentIp)
-		SetNmcliField(i, "ipv4.gateway", gw.String())
-
-	}
+	//
+	//	currentIp := GetIpv4Address(i)
+	//
+	//	gw := net.ParseIP(address)
+	//	if gw != nil {
+	//		SetIp4Method(i, "manual")
+	//		SetIpv4Address(i, currentIp)
+	//		SetNmcliField(i, "ipv4.gateway", gw.String())
+	//
+	//	}
 
 }
