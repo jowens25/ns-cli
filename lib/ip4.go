@@ -68,12 +68,18 @@ func GetIpv4Dns2(i string) string {
 	return "dns 2 parsing error"
 }
 
+// ignore yes / no
+func SetIgnoreAutoDns(i string, ignore string) {
+	SetNmcliField(i, "ipv4.ignore-auto-dns", ignore)
+}
+
 func SetIp4Method(i string, method string) {
 	SetNmcliField(i, "ipv4.method", method)
-	ReapplyNmcli(i)
 }
 
 func SetIpv4Dns(i string, dns ...string) {
+
+	SetIgnoreAutoDns(i, "yes")
 
 	// Join multiple DNS addresses into a comma-separated string
 	dnsArg := dns[0]
