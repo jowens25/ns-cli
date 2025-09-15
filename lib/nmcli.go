@@ -5,6 +5,7 @@ import (
 	"log"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 func GetNmcliField(f string, i string) string {
@@ -47,17 +48,20 @@ func SetNmcliConnectionStatus(c string, s string) {
 // interface, setting, property
 func SetNmcliField(i string, s string, p string) {
 	connection := GetConnectionNameFromDevice(i)
-	//SetNmcliConnectionStatus(connection, "down")
+	SetNmcliConnectionStatus(connection, "down")
 
-	// 1. get connection from device
-	// 2. use con modify
-	// 3. bring up
+	// 1. set connection down
+	// 2. get connection from device
+	// 3. use con modify
+	// 4. bring up
+	time.Sleep(500 * time.Millisecond)
+
 	EditNmcliConnection(connection, s, p)
-	//time.Sleep(1 * time.Second)
+	time.Sleep(500 * time.Millisecond)
 
-	//SetNmcliConnectionStatus(connection, "up")
+	SetNmcliConnectionStatus(connection, "up")
 
-	ReapplyNmcli(i)
+	//ReapplyNmcli(i)
 
 }
 
