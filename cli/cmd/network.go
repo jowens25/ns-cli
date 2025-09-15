@@ -100,9 +100,7 @@ var routeAddCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		subnet, nextHop := args[0], args[1]
-		if !lib.HasInterface(lib.AppConfig.Network.Interface) {
-			return
-		}
+
 		lib.AddIpv4Route(lib.AppConfig.Network.Interface, subnet, nextHop)
 
 		fmt.Println(lib.ShowIpv4Routes(lib.AppConfig.Network.Interface))
@@ -116,9 +114,7 @@ var routeRemoveCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		subnet, nextHop := args[0], args[1]
-		if !lib.HasInterface(lib.AppConfig.Network.Interface) {
-			return
-		}
+
 		lib.RemoveIpv4Route(lib.AppConfig.Network.Interface, subnet, nextHop)
 
 		fmt.Println(lib.ShowIpv4Routes(lib.AppConfig.Network.Interface))
