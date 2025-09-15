@@ -23,6 +23,21 @@ func GetNmcliField(f string, i string) string {
 	return "--"
 }
 
+func GetNmcliConnectionField(f string, c string) string {
+	cmd := exec.Command("nmcli", "-f", f, "connection", "show", c)
+
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	if strings.Contains(string(out), f) {
+		return string(out)
+	}
+
+	return "--"
+}
+
 // connection, setting, property
 func EditNmcliConnection(c string, s string, p string) {
 	cmd := exec.Command("nmcli", "connection", "modify", c, s, p)

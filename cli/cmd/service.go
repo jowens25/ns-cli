@@ -135,13 +135,13 @@ var serviceRestartCmd = &cobra.Command{
 		//	fmt.Println("http:   ", lib.GetHttpStatus())
 		//case "snmp":
 		//	fmt.Println("snmp:   ", lib.GetSnmpdStatus())
-		case "dhcp":
-			lib.RestartDhcp4()
-			if len(args) > 1 {
-				fmt.Println("dhcp:   ", lib.GetIpv4DhcpState(args[1]))
-			} else {
-				fmt.Println("Please enter an interface (eth0)")
-			}
+		//case "dhcp":
+		//	lib.RestartDhcp4()
+		//	if len(args) > 1 {
+		//		fmt.Println("dhcp:   ", lib.GetIpv4DhcpState(args[1]))
+		//	} else {
+		//		fmt.Println("Please enter an interface (eth0)")
+		//	}
 		default:
 			cmd.Help()
 		}
