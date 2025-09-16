@@ -2,7 +2,10 @@ package lib
 
 import (
 	"net"
+	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GetIpv4Address(i string) string {
@@ -183,5 +186,28 @@ func SetDhcp4(i string, m string) {
 	SetNmcliConnectionStatus(connection, "down")
 	SetNmcliField(i, "ipv4.method", m)
 	SetNmcliConnectionStatus(connection, "up")
+
+}
+
+func readNetworkInfo(c *gin.Context) {
+
+	var myNetwork NetworkInfo
+
+	myNetwork.Port = GetPortPhysicalStatus(AppConfig.Network.Interface)
+	myNetwork.Hostname = GetHostname()
+	myNetwork.Gateway = GetIpv4Gateway(AppConfig.Network.Interface)
+	myNetwork.Interface = AppConfig.Network.Interface
+	myNetwork.Speed = GetPortSpeed(AppConfig.Network.Interface)
+	myNetwork.Mac = GetIpv4MacAddress(AppConfig.Network.Interface)
+	myNetwork.IpAddr = GetIpv4Address(AppConfig.Network.Interface)
+	myNetwork.Dhcp = GetIpv4DhcpState(AppConfig.Network.Interface)
+	myNetwork.Dns1 = GetIpv4Dns1(AppConfig.Network.Interface)
+	myNetwork.Dns2 = GetIpv4Dns2(AppConfig.Network.Interface)
+	myNetwork.IgnoreAutoDns = GetIgnoreAutoDns(AppConfig.Network.Interface)
+	myNetwork.Connection = GetPortConnectionStatus(AppConfig.Network.Interface)
+
+	c.JSON(http.StatusOK, gin.H{
+		"info": myNetwork,
+	})
 
 }

@@ -51,6 +51,25 @@ type Http struct {
 	Status string `json:"status"`
 	Action string `json:"action"`
 }
+type Dhcp struct {
+	Status string `json:"status"`
+	Action string `json:"action"`
+}
+
+type NetworkInfo struct {
+	Port          string `json:"port_status"`
+	Hostname      string `json:"hostname"`
+	Gateway       string `json:"gateway"`
+	Interface     string `json:"interface"`
+	Speed         string `json:"speed"`
+	Mac           string `json:"mac"`
+	IpAddr        string `json:"ip_address"`
+	Dhcp          string `json:"dhcp"`
+	Dns1          string `json:"dns1"`
+	Dns2          string `json:"dns2"`
+	IgnoreAutoDns string `json:"ignore_auto_dns"`
+	Connection    string `json:"connection_status"`
+}
 
 type Ntp struct {
 	gorm.Model

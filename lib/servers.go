@@ -66,6 +66,9 @@ func startApiServer() {
 		protected.GET("/ntp/:prop", readNtpProperty)
 		protected.POST("/ntp/:prop", writeNtpProperty)
 
+		protected.GET("/device/:prop", readDeviceProperty)
+		protected.POST("/device/:prop", writeDeviceProperty)
+
 		networkGroup := protected.Group("/network")
 		networkGroup.GET("/ssh", readSshStatus)
 		networkGroup.PATCH("/ssh", writeSshStatus)
@@ -73,6 +76,8 @@ func startApiServer() {
 		networkGroup.PATCH("/http", writeHttpStatus)
 		networkGroup.GET("/telnet", readTelnetStatus)
 		networkGroup.PATCH("/telnet", writeTelnetStatus)
+
+		networkGroup.GET("/info", readNetworkInfo)
 
 		networkGroup.GET("/access", readAllowedNodes)
 		networkGroup.POST("/access", writeAllowedNodes)

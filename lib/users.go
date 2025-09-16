@@ -13,6 +13,21 @@ import (
 
 func readSystemUsers(c *gin.Context) {
 
+	allUsers := readCombinedSystemUsers()
+
+	if len(allUsers) < 1 {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "no users defined"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"system_users": allUsers,
+	})
+
+}
+
+func readCombinedSystemUsers() []User {
+
 	admins := readSystemAdmins()
 
 	users := readSystemViewers()
@@ -32,15 +47,21 @@ func readSystemUsers(c *gin.Context) {
 		collatedUsers = append(collatedUsers, user)
 	}
 
-	if len(users) < 1 {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "no users defined"})
-		return
+	return collatedUsers
+}
+
+func lookUpSystemUser(user User) User {
+
+	allUsers := readCombinedSystemUsers()
+
+	for _, u := range allUsers {
+
+		if u.Username == user.Username {
+			return u
+		}
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"system_users": collatedUsers,
-	})
-
+	return User{}
 }
 
 func writeSystemUser(c *gin.Context) {
