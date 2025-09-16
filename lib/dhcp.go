@@ -19,14 +19,11 @@ func GetIpv4DhcpState(i string) string {
 
 }
 
-func EnableDhcp4(i string) {
-
-	SetNmcliField(i, "ipv4.method", "auto")
-
-}
-
-func DisableDhcp4(i string) {
-
-	SetNmcliField(i, "ipv4.method", "manual")
+// auto, manual
+func SetDhcp4(i string, m string) {
+	connection := GetConnectionNameFromDevice(i)
+	SetNmcliConnectionStatus(connection, "down")
+	SetNmcliField(i, "ipv4.method", m)
+	SetNmcliConnectionStatus(connection, "up")
 
 }

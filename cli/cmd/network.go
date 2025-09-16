@@ -43,10 +43,14 @@ var dnsCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if len(args) == 1 {
-			lib.SetIpv4Dns(lib.AppConfig.Network.Interface, args[0])
+			//lib.SetIpv4Dns(lib.AppConfig.Network.Interface, args[0])
+
+			lib.SetDns(lib.AppConfig.Network.Interface, args[0])
 		}
 		if len(args) == 2 {
-			lib.SetIpv4Dns(lib.AppConfig.Network.Interface, args[0], args[1])
+			//lib.SetIpv4Dns(lib.AppConfig.Network.Interface, args[0], args[1])
+			lib.SetDns(lib.AppConfig.Network.Interface, args[0], args[1])
+
 		}
 
 		fmt.Println("DNS1:", lib.GetIpv4Dns1(lib.AppConfig.Network.Interface))

@@ -5,7 +5,6 @@ import (
 	"log"
 	"os/exec"
 	"strings"
-	"time"
 )
 
 func GetNmcliField(f string, i string) string {
@@ -38,17 +37,6 @@ func GetNmcliConnectionField(f string, c string) string {
 	return "--"
 }
 
-// connection, setting, property
-func EditNmcliConnection(c string, s string, p string) {
-	cmd := exec.Command("nmcli", "connection", "modify", c, s, p)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-	fmt.Println(string(out))
-
-}
-
 // status: up / down
 func SetNmcliConnectionStatus(c string, s string) {
 	cmd := exec.Command("nmcli", "connection", s, c)
@@ -60,24 +48,14 @@ func SetNmcliConnectionStatus(c string, s string) {
 
 }
 
-// interface, setting, property
-func SetNmcliField(i string, s string, p string) {
-	connection := GetConnectionNameFromDevice(i)
-	SetNmcliConnectionStatus(connection, "down")
-
-	// 1. set connection down
-	// 2. get connection from device
-	// 3. use con modify
-	// 4. bring up
-	time.Sleep(500 * time.Millisecond)
-
-	EditNmcliConnection(connection, s, p)
-	time.Sleep(500 * time.Millisecond)
-
-	SetNmcliConnectionStatus(connection, "up")
-
-	//ReapplyNmcli(i)
-
+// connection, setting, property
+func SetNmcliField(c string, s string, p string) {
+	cmd := exec.Command("nmcli", "connection", "modify", c, s, p)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	fmt.Println(string(out))
 }
 
 func GetConnectionNameFromDevice(i string) string {
@@ -96,15 +74,4 @@ func GetConnectionNameFromDevice(i string) string {
 	}
 
 	return "--"
-}
-
-func ReapplyNmcli(i string) {
-	// Try reapply first (faster than restart)
-	cmd := exec.Command("nmcli", "device", "reapply", i)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Printf("Device reapply failed, trying connection restart: %v", err)
-		log.Printf("Reapply output: %s", string(out))
-
-	}
 }

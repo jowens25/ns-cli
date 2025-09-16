@@ -28,12 +28,8 @@ var serviceEnableCmd = &cobra.Command{
 			lib.EnableTelnet()
 		case "http":
 		case "dhcp":
-			if len(args) > 1 {
+			lib.SetDhcp4(lib.AppConfig.Network.Interface, "auto")
 
-				lib.EnableDhcp4(args[1])
-			} else {
-				fmt.Println("Please enter an interface (eth0)")
-			}
 		case "app":
 			lib.StartApp()
 		default:
@@ -59,11 +55,13 @@ var serviceDisableCmd = &cobra.Command{
 			lib.DisableTelnet()
 		case "http":
 		case "dhcp":
-			if len(args) > 1 {
-				lib.DisableDhcp4(args[1])
-			} else {
-				fmt.Println("Please enter an interface (eth0)")
-			}
+
+			lib.SetDhcp4(lib.AppConfig.Network.Interface, "manual")
+			//if len(args) > 1 {
+			//	lib.DisableDhcp4(args[1])
+			//} else {
+			//	fmt.Println("Please enter an interface (eth0)")
+			//}
 		case "app":
 			lib.StopApp()
 		default:
