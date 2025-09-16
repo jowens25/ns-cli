@@ -14,6 +14,18 @@ func getDeviceProperty(property string) string {
 	case "input_priority":
 		return ReadWriteMicro("$INP")
 
+	case "fault_threshold_a":
+		return ReadWriteMicro("$FLTTHRA")
+
+	case "fault_threshold_b":
+		return ReadWriteMicro("$FLTTHRA")
+
+	case "input_low_threshold_0":
+		return ReadWriteMicro("$INPTHR0")
+
+	case "input_low_threshold_1":
+		return ReadWriteMicro("$INPTHR1")
+
 	default:
 		return ""
 	}

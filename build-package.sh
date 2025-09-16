@@ -1,3 +1,4 @@
+cd cli
 go build -o ns
 echo "Build complete"
 
