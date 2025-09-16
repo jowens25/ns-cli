@@ -18,7 +18,7 @@ func readSnmpInfo(c *gin.Context) {
 	var snmp Snmp
 	file, err := os.Open(AppConfig.Snmp.Path)
 	if err != nil {
-		log.Fatal("failed to open config file", file.Name())
+		log.Fatal("failed to open config file", AppConfig.Snmp.Path)
 	}
 
 	scanner := bufio.NewScanner(file)
@@ -75,7 +75,7 @@ func writeSnmpInfo(c *gin.Context) {
 
 	file, err := os.Open(AppConfig.Snmp.Path)
 	if err != nil {
-		log.Fatal("failed to open config file:", file.Name())
+		log.Fatal("failed to open config file:", AppConfig.Snmp.Path)
 	}
 	defer file.Close()
 

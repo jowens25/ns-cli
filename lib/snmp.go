@@ -25,7 +25,7 @@ func readSnmpUsersFromFile() {
 	fmt.Println(AppConfig.Snmp.Path)
 	file, err := os.Open(AppConfig.Snmp.Path)
 	if err != nil {
-		log.Fatal("failed to open config file", file.Name())
+		log.Fatal("failed to open config file", AppConfig.Snmp.Path)
 	}
 	defer file.Close()
 

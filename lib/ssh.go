@@ -27,7 +27,7 @@ func InitSshConfig() {
 func DisableSsh() {
 	file, err := os.Open(AppConfig.Xinetd.SshPath)
 	if err != nil {
-		log.Fatal("failed to open ssh file", file.Name())
+		log.Fatal("failed to open ssh file", AppConfig.Xinetd.SshPath)
 	}
 	defer file.Close()
 
@@ -56,7 +56,7 @@ func DisableSsh() {
 func EnableSsh() {
 	file, err := os.Open(AppConfig.Xinetd.SshPath)
 	if err != nil {
-		log.Fatal("failed to open ssh file", file.Name())
+		log.Fatal("failed to open ssh file", AppConfig.Xinetd.SshPath)
 	}
 	defer file.Close()
 
@@ -84,7 +84,7 @@ func EnableSsh() {
 func GetSshStatus() string {
 	file, err := os.Open(AppConfig.Xinetd.SshPath)
 	if err != nil {
-		log.Fatal("failed to open ssh file", file.Name())
+		log.Fatal("failed to open ssh file", AppConfig.Xinetd.SshPath)
 	}
 	defer file.Close()
 

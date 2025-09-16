@@ -28,7 +28,7 @@ func replaceHostname(newHostname string) {
 	hostFile := "/etc/hosts"
 	file, err := os.Open(hostFile)
 	if err != nil {
-		log.Fatal("failed to open hosts file", file.Name())
+		log.Fatal("failed to open hosts file", hostFile)
 	}
 	defer file.Close()
 

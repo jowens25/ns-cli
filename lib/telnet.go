@@ -27,7 +27,7 @@ func InitTelnetConfig() {
 func DisableTelnet() {
 	file, err := os.Open(AppConfig.Xinetd.TelnetPath)
 	if err != nil {
-		log.Fatal("failed to open telnet file", file.Name())
+		log.Fatal("failed to open telnet file", AppConfig.Xinetd.TelnetPath)
 	}
 	defer file.Close()
 
@@ -56,7 +56,7 @@ func DisableTelnet() {
 func EnableTelnet() {
 	file, err := os.Open(AppConfig.Xinetd.TelnetPath)
 	if err != nil {
-		log.Fatal("failed to open telnet file", file.Name())
+		log.Fatal("failed to open telnet file", AppConfig.Xinetd.TelnetPath)
 	}
 	defer file.Close()
 
@@ -85,7 +85,7 @@ func GetTelnetStatus() string {
 
 	file, err := os.Open(AppConfig.Xinetd.TelnetPath)
 	if err != nil {
-		log.Fatal("failed to open telnet file", file.Name())
+		log.Fatal("failed to open telnet file", AppConfig.Xinetd.TelnetPath)
 	}
 	defer file.Close()
 

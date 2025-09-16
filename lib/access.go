@@ -194,7 +194,7 @@ func addAccessToXinetdFile(ipAddress string) {
 
 		file, err := os.Open(config)
 		if err != nil {
-			log.Fatal("failed to open config file", file.Name())
+			log.Fatal("failed to open config file", configs)
 		}
 		defer file.Close()
 
