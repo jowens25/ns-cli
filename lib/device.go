@@ -9,8 +9,10 @@ import (
 func getDeviceProperty(property string) string {
 	switch property {
 	case "baudrate":
-
 		return ReadWriteMicro("$BAUDNV")
+
+	case "input_priority":
+		return ReadWriteMicro("$INP")
 
 	default:
 		return ""
