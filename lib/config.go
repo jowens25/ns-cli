@@ -57,6 +57,9 @@ type SecurityConfig struct {
 	Login     string `mapstructure:"login"`     // /etc/login.defs
 }
 
+type PasswordConfig struct {
+}
+
 type SerialConfig struct {
 	Port     string `mapstructure:"port"`     // /dev/ttymxc2
 	Baudrate int    `mapstructure:"baudrate"` // 38400
