@@ -68,25 +68,25 @@ func GetIpv4Dns2(i string) string {
 	return "--"
 }
 
-func SetIpv4Address(c string, address string) {
+func setIpv4Address(c string, address string) {
 	ip := net.ParseIP(address)
 	if ip != nil {
 		SetNmcliField(c, "ipv4.addresses", address)
 	}
 }
 
-func SetIpv4Gateway(c string, address string) {
+func setIpv4Gateway(c string, address string) {
 	gw := net.ParseIP(address)
 	if gw != nil {
 		SetNmcliField(c, "ipv4.gateway", gw.String())
 	}
 }
 
-func SetIpv4Method(c string, method string) {
+func setIpv4Method(c string, method string) {
 	SetNmcliField(c, "ipv4.method", method)
 }
 
-func SetIpv4IgnoreAutoDns(c string, yesno string) {
+func setIpv4IgnoreAutoDns(c string, yesno string) {
 	SetNmcliField(c, "ipv4.ignore-auto-dns", yesno)
 }
 
@@ -94,9 +94,8 @@ func SetGateway(i string, gw string, addr string) {
 	c := GetConnectionNameFromDevice(i)
 	SetNmcliConnectionStatus(c, "down")
 
-	SetIpv4Gateway(c, gw)
-
-	SetIpv4Address(c, addr)
+	setIpv4Gateway(c, gw)
+	setIpv4Address(c, addr)
 
 	SetNmcliConnectionStatus(c, "up")
 
@@ -107,10 +106,10 @@ func SetIpAddr(i string, addr string, gw ...string) {
 	SetNmcliConnectionStatus(c, "down")
 
 	if len(gw) == 1 {
-		SetIpv4Gateway(c, gw[0])
+		setIpv4Gateway(c, gw[0])
 	}
 
-	SetIpv4Address(c, addr)
+	setIpv4Address(c, addr)
 
 	SetNmcliConnectionStatus(c, "up")
 
@@ -122,7 +121,7 @@ func SetDns(i string, dns ...string) {
 
 	SetNmcliConnectionStatus(c, "down")
 
-	SetIpv4IgnoreAutoDns(c, "yes")
+	setIpv4IgnoreAutoDns(c, "yes")
 
 	dnsArg := dns[0]
 	if len(dns) > 1 {
@@ -140,10 +139,10 @@ func ResetNetworkConfig(i string, address string) {
 
 	gw := net.ParseIP(address)
 	if gw != nil {
-		SetIpv4Method(c, "auto")
-		SetIpv4IgnoreAutoDns(c, "no")
-		SetIpv4Gateway(i, gw.String())
-		SetIpv4Gateway(i, gw.String())
+		setIpv4Method(c, "auto")
+		setIpv4IgnoreAutoDns(c, "no")
+		setIpv4Gateway(i, gw.String())
+		setIpv4Gateway(i, gw.String())
 
 	}
 	SetNmcliConnectionStatus(c, "up")
