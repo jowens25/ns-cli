@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"fmt"
 	"log"
 	"os/exec"
 	"strings"
@@ -42,9 +41,9 @@ func SetNmcliConnectionStatus(c string, s string) {
 	cmd := exec.Command("nmcli", "connection", s, c)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 	}
-	fmt.Println(string(out))
+	log.Println(string(out))
 
 }
 
@@ -53,9 +52,9 @@ func SetNmcliField(c string, s string, p string) {
 	cmd := exec.Command("nmcli", "connection", "modify", c, s, p)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 	}
-	fmt.Println(string(out))
+	log.Println(string(out))
 }
 
 func GetConnectionNameFromDevice(i string) string {
