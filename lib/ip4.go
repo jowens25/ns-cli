@@ -71,7 +71,7 @@ func GetIpv4Dns2(i string) string {
 func SetIpv4Address(c string, address string) {
 	ip := net.ParseIP(address)
 	if ip != nil {
-		SetNmcliField(c, "ipv4.address", address)
+		SetNmcliField(c, "ipv4.addresses", address)
 	}
 }
 
