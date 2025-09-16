@@ -66,7 +66,7 @@ func createDefaultUser() {
 		fmt.Println(err.Error())
 	}
 	fmt.Println(warning)
-	setPasswordEnforcement(true)
+	//setPasswordEnforcement(true)
 
 	// /readUsersFromSystem()
 

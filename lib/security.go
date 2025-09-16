@@ -583,7 +583,7 @@ func setPasswordEnforcement(required bool) error {
 				line = "enforcing = 1"
 
 			} else {
-				line = "enforcing = 0"
+				line = "# enforcing = 1"
 
 			}
 		}
