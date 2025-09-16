@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// field interface
 func GetNmcliField(f string, i string) string {
 
 	cmd := exec.Command("nmcli", "-f", f, "device", "show", i)
@@ -21,6 +22,7 @@ func GetNmcliField(f string, i string) string {
 	return "--"
 }
 
+// field connection
 func GetNmcliConnectionField(f string, c string) string {
 	cmd := exec.Command("nmcli", "-f", f, "connection", "show", c)
 
