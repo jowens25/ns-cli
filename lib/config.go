@@ -118,7 +118,7 @@ func InitConfig() *Config {
 	viper.SetDefault("user.group-user", "novususer")
 	viper.SetDefault("user.group-path", "/etc/group")
 	viper.SetDefault("user.default-username", "novus")
-	viper.SetDefault("user.default-password", "novus")
+	viper.SetDefault("user.default-password", "novus123")
 
 	viper.SetDefault("snmpd.path", "/etc/snmp/snmpd.conf")
 
