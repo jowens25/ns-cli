@@ -14,7 +14,7 @@ func GetIpv4Address(i string) string {
 		return strings.TrimSpace(fields[1])
 	}
 
-	return "ip4 address parsing error"
+	return "--"
 }
 
 func GetIpv4Gateway(i string) string {
@@ -25,7 +25,7 @@ func GetIpv4Gateway(i string) string {
 		return strings.TrimSpace(fields[1])
 	}
 
-	return "ip4 gateway parsing error"
+	return "--"
 }
 
 func GetIpv4MacAddress(i string) string {
@@ -35,7 +35,7 @@ func GetIpv4MacAddress(i string) string {
 		return strings.TrimSpace(fields[1])
 	}
 
-	return "mac address parsing error"
+	return "--"
 }
 
 func GetIpv4Dns1(i string) string {
@@ -50,7 +50,7 @@ func GetIpv4Dns1(i string) string {
 		}
 	}
 
-	return "dns 1 parsing error"
+	return "--"
 }
 
 func GetIpv4Dns2(i string) string {
@@ -65,7 +65,7 @@ func GetIpv4Dns2(i string) string {
 		}
 	}
 
-	return "dns 2 parsing error"
+	return "--"
 }
 
 func SetIpv4Address(c string, address string) {
