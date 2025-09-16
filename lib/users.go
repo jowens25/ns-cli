@@ -15,6 +15,8 @@ func readSystemUsers(c *gin.Context) {
 
 	allUsers := readCombinedSystemUsers()
 
+	fmt.Println(len(allUsers))
+
 	if len(allUsers) < 1 {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "no users defined"})
 		return
