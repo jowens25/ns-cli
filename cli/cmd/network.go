@@ -74,13 +74,13 @@ var ipCmd = &cobra.Command{
 
 // ---- GW ----
 var gwCmd = &cobra.Command{
-	Use:   "gw [address]",
+	Use:   "gw [gateway] [address]",
 	Short: "get and set gateway address",
 
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if len(args) == 1 {
-			lib.SetGateway(lib.AppConfig.Network.Interface, args[0])
+			lib.SetGateway(lib.AppConfig.Network.Interface, args[0], args[1])
 		}
 
 		fmt.Println(lib.GetIpv4Gateway(lib.AppConfig.Network.Interface))
