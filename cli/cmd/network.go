@@ -23,16 +23,17 @@ var networkStatusCmd = &cobra.Command{
 			return
 		}
 
-		fmt.Println("Ethernet:     ", lib.GetPortPhysicalStatus(lib.AppConfig.Network.Interface))
-		fmt.Print("Hostname:      ", lib.GetHostname())
-		fmt.Println("Gateway:      ", lib.GetIpv4Gateway(lib.AppConfig.Network.Interface))
-		fmt.Println("Interface:    ", lib.AppConfig.Network.Interface, lib.GetPortSpeed(lib.AppConfig.Network.Interface))
-		fmt.Println("MAC:          ", lib.GetIpv4MacAddress(lib.AppConfig.Network.Interface))
-		fmt.Println("IPv4:         ", lib.GetIpv4Address(lib.AppConfig.Network.Interface))
-		fmt.Println("DHCPv4:       ", lib.GetIpv4DhcpState(lib.AppConfig.Network.Interface))
-		fmt.Println("DNS 1:        ", lib.GetIpv4Dns1(lib.AppConfig.Network.Interface))
-		fmt.Println("DNS 2:        ", lib.GetIpv4Dns2(lib.AppConfig.Network.Interface))
-		fmt.Println("Connection:   ", lib.GetPortConnectionStatus(lib.AppConfig.Network.Interface))
+		fmt.Println("Ethernet:         ", lib.GetPortPhysicalStatus(lib.AppConfig.Network.Interface))
+		fmt.Print("Hostname:          ", lib.GetHostname())
+		fmt.Println("Gateway:          ", lib.GetIpv4Gateway(lib.AppConfig.Network.Interface))
+		fmt.Println("Interface:        ", lib.AppConfig.Network.Interface, lib.GetPortSpeed(lib.AppConfig.Network.Interface))
+		fmt.Println("MAC:              ", lib.GetIpv4MacAddress(lib.AppConfig.Network.Interface))
+		fmt.Println("IPv4:             ", lib.GetIpv4Address(lib.AppConfig.Network.Interface))
+		fmt.Println("DHCPv4:           ", lib.GetIpv4DhcpState(lib.AppConfig.Network.Interface))
+		fmt.Println("IGNORE AUTO DNS:  ", lib.GetIgnoreAutoDns(lib.AppConfig.Network.Interface))
+		fmt.Println("DNS 1:            ", lib.GetIpv4Dns1(lib.AppConfig.Network.Interface))
+		fmt.Println("DNS 2:            ", lib.GetIpv4Dns2(lib.AppConfig.Network.Interface))
+		fmt.Println("Connection:       ", lib.GetPortConnectionStatus(lib.AppConfig.Network.Interface))
 	},
 }
 
