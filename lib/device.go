@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"NovusTimeServer/axi"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +15,22 @@ func getDeviceProperty(property string) string {
 	default:
 		return ""
 	}
+}
+
+func setDeviceProperty(property string, value string) {
+	switch property {
+
+	case "save_flash":
+		ReadWriteMicro("$SAVEFL")
+
+	case "reset_flash":
+		ReadWriteMicro("$RESETALL")
+
+	case "input_priority":
+		ReadWriteMicro("$INP=" + value)
+
+	}
+
 }
 
 func readDeviceProperty(c *gin.Context) {
@@ -38,17 +53,12 @@ func writeDeviceProperty(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	operation := "write"
-	module := "ntp"
+
 	property := c.Param("prop")
-	//value := ""
 	value := data[property]
 
-	err := axi.Operation(&operation, &module, &property, &value)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+	setDeviceProperty(property, value)
+
 	c.JSON(http.StatusOK, gin.H{property: value})
 
 }
