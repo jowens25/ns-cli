@@ -102,7 +102,7 @@ func InitConfig() *Config {
 	viper.SetDefault("network.ip", "10.1.10.220")
 	viper.SetDefault("network.interface", "eth0")
 	viper.SetDefault("network.dns1", "8.8.8.8")
-	viper.SetDefault("network.dns1", "8.8.4.4")
+	viper.SetDefault("network.dns2", "8.8.4.4")
 
 	viper.SetDefault("xinetd.ftp-path", "/etc/xinetd.d/ftp")
 	viper.SetDefault("xinetd.telnet-path", "/etc/xinetd.d/telnet")
@@ -120,7 +120,7 @@ func InitConfig() *Config {
 	viper.SetDefault("user.default-username", "novus")
 	viper.SetDefault("user.default-password", "novus")
 
-	viper.SetDefault("snmpd.path", "/etc/snmp/snmpd.conf")
+	viper.SetDefault("snmp.path", "/etc/snmp/snmpd.conf")
 
 	viper.SetDefault("cors.host1", "http://localhost")
 	viper.SetDefault("cors.host2", "https://localhost")
