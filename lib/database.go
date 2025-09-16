@@ -59,11 +59,14 @@ func createDefaultUser() {
 	addAdminGroup()
 	addUserGroup()
 
+	setPasswordEnforcement(false)
+
 	warning, err := addUserToSystem(user)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 	fmt.Println(warning)
+	setPasswordEnforcement(true)
 
 	// /readUsersFromSystem()
 

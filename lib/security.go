@@ -571,3 +571,28 @@ func setPasswordAgeWarning(days int) error {
 	return err
 
 }
+
+func setPasswordEnforcement(required bool) error {
+	var err error = nil
+
+	var newLines []string
+	for _, line := range openConfigFile(AppConfig.Security.Pwquality) {
+
+		if strings.Contains(line, "enforcing") {
+			if required {
+				line = "enforcing = 1"
+
+			} else {
+				line = "enforcing = 0"
+
+			}
+		}
+
+		newLines = append(newLines, line)
+	}
+
+	newContent := strings.Join(newLines, "\n")
+	err = os.WriteFile(AppConfig.Security.Pwquality, []byte(newContent), 0644)
+	return err
+
+}
