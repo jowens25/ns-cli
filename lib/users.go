@@ -287,10 +287,12 @@ func addUserToSystem(user User) (string, error) {
 func AddUser(username string, password string) error {
 	// Create user account
 	cmd := exec.Command("useradd",
-		"-M",                           // Don't create home directory
+		//"-M",                           // Don't create home directory
 		"-N",                           // Don't create a group with the same name as the user
 		"-g", AppConfig.User.UserGroup, // Primary group
 		"-G", AppConfig.User.UserGroup, // Secondary groups
+		"-s", "/bin/bash",
+
 		username)
 
 	output, err := cmd.CombinedOutput()
@@ -307,10 +309,12 @@ func AddUser(username string, password string) error {
 func AddAdmin(username string, password string) error {
 	// Create admin account
 	cmd := exec.Command("useradd",
-		"-M",                            // Don't create home directory
+		//"-M",                            // Don't create home directory
 		"-N",                            // Don't create a group with the same name
 		"-g", AppConfig.User.AdminGroup, // Primary group
 		"-G", AppConfig.User.UserGroup+","+AppConfig.User.AdminGroup, // Secondary groups
+		"-s", "/bin/bash",
+
 		username)
 
 	output, err := cmd.CombinedOutput()
