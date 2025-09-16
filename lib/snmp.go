@@ -232,7 +232,7 @@ func CopySnmpdConfig() {
 	log.Println("should be here")
 	log.Println(AppConfig.Snmp.Path)
 
-	cmd := exec.Command("cp", "snmpd.conf", AppConfig.Snmp.Path)
+	cmd := exec.Command("cp", "config/snmpd.conf", AppConfig.Snmp.Path)
 	out, _ := cmd.CombinedOutput()
 	log.Println(strings.TrimSpace(string(out)))
 }
