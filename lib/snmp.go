@@ -22,6 +22,7 @@ func readSnmpUsersFromFile() {
 	var communities []map[string]string
 	var createUsers []map[string]string
 
+	fmt.Println(AppConfig.Snmp.Path)
 	file, err := os.Open(AppConfig.Snmp.Path)
 	if err != nil {
 		log.Fatal("failed to open config file", file.Name())
