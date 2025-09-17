@@ -1,0 +1,59 @@
+/*
+Copyright © 2025 NAME HERE <EMAIL ADDRESS>
+*/
+package cmd
+
+import (
+	"NovusTimeServer/lib"
+	"fmt"
+	"time"
+
+	"github.com/spf13/cobra"
+)
+
+var all bool
+
+// calibrationCmd represents the calibration command
+var calibrationCmd = &cobra.Command{
+	Use:   "cal",
+	Short: "calibration factors",
+	Long: `Query or set Cal Factors for specific ADC conversions. 
+See list of Cal Factors numbered for appropriate measurement 
+parameters. These settings should only be changed by an 
+authorized technician.`,
+	DisableFlagsInUseLine: true, // This hides [flags] from the usage line
+
+	Example: `
+  # Common usage patterns
+  cal <channel>			# return channel factor
+  cal <channel> <factor>	# sets new rate`,
+
+	Run: func(cmd *cobra.Command, args []string) {
+
+		if all {
+			for i := range 10 {
+				response := lib.ReadWriteMicro("$CAL" + fmt.Sprint(i+1))
+				fmt.Println(response)
+				time.Sleep(100 * time.Millisecond)
+			}
+
+		} else if len(args) == 1 {
+			response := lib.ReadWriteMicro("$CAL" + args[0])
+			fmt.Println(response)
+
+		} else if len(args) == 2 {
+			response := lib.ReadWriteMicro("$CAL" + args[0] + "=" + args[1])
+			fmt.Println(response)
+		} else {
+			cmd.Help()
+		}
+
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(calibrationCmd)
+	calibrationCmd.Flags().BoolVarP(&all, "all", "a", false, "read all calibration factors")
+	calibrationCmd.GroupID = "hw"
+
+}

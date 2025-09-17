@@ -4,6 +4,7 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -11,31 +12,32 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:     "nts",
-	Short:   "Novus Time Server configuration tool",
-	Long:    "Novus Time Server configuration tool is used for updating the parameters in Novus Power Products Time Servers",
-	Version: "0.0.1",
+	Use:     "ns",
+	Short:   "NovuS Configuraton Tool",
+	Long:    "Novus Power Products Configuration Tool",
+	Version: "0.8.1",
 	Run: func(cmd *cobra.Command, args []string) {
 	},
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	err := rootCmd.Execute()
-	if err != nil {
+	rootCmd.CompletionOptions.DisableDefaultCmd = true
+
+	if _, err := os.Stat("/etc/bash_completion.d/ns.bash"); err != nil {
+		bashFile, err := os.Create("/etc/bash_completion.d/ns.bash")
+		if err != nil {
+			log.Fatal("unable to create bash completion script: ", err.Error())
+		}
+		defer bashFile.Close()
+		rootCmd.GenBashCompletion(bashFile)
+	}
+
+	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
+	rootCmd.AddGroup(&cobra.Group{ID: "hw", Title: "Hardware Commands"})
 
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.nts.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

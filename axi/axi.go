@@ -27,6 +27,7 @@ var mutex sync.Mutex
 const size = C.size_t(64)
 
 func Connect() error {
+	fmt.Println("AXI CONNECT CALLED")
 	err := C.connect()
 	if err != 0 {
 		return errors.New("failed to connect to serial port")
@@ -89,7 +90,7 @@ func LoadConfig(fileName string) {
 
 }
 
-func Operate(operation *string, module *string, property *string, value *string) error {
+func Operation(operation *string, module *string, property *string, value *string) error {
 
 	fmt.Println("OPERATE CALLED")
 

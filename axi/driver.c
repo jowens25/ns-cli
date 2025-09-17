@@ -4,7 +4,7 @@
 int driver() // switch to main to use
 {
 
-    connect();
+    // connect();
 
     // readConfig();
     //  char mac[32] = {0};
