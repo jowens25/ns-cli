@@ -36,12 +36,12 @@ func StopApp() {
 
 	data, err := os.ReadFile("server.pid")
 	if err != nil {
-		log.Println("Could not read PID file: %v", err)
+		log.Printf("Could not read PID file: %v", err)
 	}
 	pid, _ := strconv.Atoi(string(data))
 	process, err := os.FindProcess(pid)
 	if err != nil {
-		log.Println("Could not find process: %v", err)
+		log.Printf("Could not find process: %v", err)
 	}
 	process.Signal(syscall.SIGTERM)
 }
