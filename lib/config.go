@@ -90,7 +90,7 @@ func InitConfig() *Config {
 
 	viper.SetDefault("app.database", "/etc/ns/app.db")
 	viper.SetDefault("app.config", "/etc/ns/config.toml")
-	viper.SetDefault("app.log", "/etc/ns/app.log")
+	viper.SetDefault("app.log", "/tmp/app.log")
 	viper.SetDefault("api.port", "5000")
 	viper.SetDefault("api.host", "localhost") // production
 	//viper.SetDefault("api.host", "0.0.0.0")   // development
