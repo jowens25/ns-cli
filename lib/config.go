@@ -93,7 +93,7 @@ func InitConfig() *Config {
 	viper.SetDefault("app.log", "/etc/ns/app.log")
 	viper.SetDefault("api.port", "5000")
 	viper.SetDefault("api.host", "localhost") // production
-	viper.SetDefault("api.host", "0.0.0.0")   // development
+	//viper.SetDefault("api.host", "0.0.0.0")   // development
 
 	viper.SetDefault("nginx.config", "/etc/nginx/nginx.conf")
 	viper.SetDefault("nginx.key", "/etc/nginx/ssl/nginx.key")
