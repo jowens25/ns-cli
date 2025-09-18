@@ -1,7 +1,0 @@
-Package: ns
-Version: 1.0.0
-Section: utils
-Priority: optional
-Architecture: arm64
-Maintainer: Your Name <youremail@example.com>
-Description: ns command line tool
