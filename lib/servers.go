@@ -25,7 +25,7 @@ func startApiServer() {
 		//"https://localhost",
 		//"http://localhost", // production
 	}
-	//corsConfig.AllowAllOrigins = true // development
+//	corsConfig.AllowAllOrigins = true // development
 
 	apiRouter.Use(cors.New(corsConfig))
 
