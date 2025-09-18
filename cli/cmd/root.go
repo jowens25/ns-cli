@@ -15,7 +15,7 @@ var rootCmd = &cobra.Command{
 	Use:     "ns",
 	Short:   "NovuS Configuraton Tool",
 	Long:    "Novus Power Products Configuration Tool",
-	Version: "0.8.1",
+	Version: "1.5.407",
 	Run: func(cmd *cobra.Command, args []string) {
 	},
 }
