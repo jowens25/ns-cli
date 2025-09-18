@@ -194,7 +194,7 @@ func addAccessToXinetdFile(ipAddress string) {
 
 		file, err := os.Open(config)
 		if err != nil {
-			log.Fatal("failed to open config file", configs)
+			log.Println("failed to open config file", configs)
 		}
 		defer file.Close()
 
@@ -222,7 +222,7 @@ func addAccessToXinetdFile(ipAddress string) {
 
 		err = os.WriteFile(config, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 		if err != nil {
-			log.Fatal("failed to telnet file:", err)
+			log.Println("failed to telnet file:", err)
 		}
 
 		RestartXinetd()

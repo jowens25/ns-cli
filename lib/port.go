@@ -80,7 +80,7 @@ func GetConnections() string {
 	cmd := exec.Command("nmcli", "connection", "show")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println(err.Error())
 	}
 
 	return string(out)
@@ -134,7 +134,7 @@ func GetPortSpeed(i string) string {
 	cmd := exec.Command("nmcli", "-f", "CAPABILITIES.SPEED", "dev", "show", i)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println(err.Error())
 	}
 
 	fields := strings.Split(string(out), ":")

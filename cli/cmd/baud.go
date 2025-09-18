@@ -29,12 +29,12 @@ baudrates are 19200, 38400, 57600, 115200, 230400.`,
 
 		if len(args) == 0 {
 
-			response := lib.ReadWriteMicro("$BAUDNV")
+			response, _ := lib.ReadWriteMicro("$BAUDNV")
 
 			fmt.Println(response)
 
 		} else if len(args) == 1 {
-			response := lib.ReadWriteMicro("$BAUDNV=" + args[0])
+			response, _ := lib.ReadWriteMicro("$BAUDNV=" + args[0])
 
 			fmt.Println(response)
 		} else {

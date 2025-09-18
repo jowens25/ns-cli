@@ -19,13 +19,13 @@ func initDataBase() {
 		Logger: logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {
-		log.Fatal("Failed to connect to database: ", err)
+		log.Println("Failed to connect to database: ", err)
 	}
 
 	err = db.AutoMigrate(&SnmpV1V2cUser{}, &SnmpV3User{}, &Ntp{}, &AllowedNode{})
 
 	if err != nil {
-		log.Fatal("Failed to migrate database: ", err)
+		log.Println("Failed to migrate database: ", err)
 	}
 
 	createDefaultUser()

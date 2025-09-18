@@ -12,7 +12,7 @@ func GetNmcliField(f string, i string) string {
 	cmd := exec.Command("nmcli", "-f", f, "device", "show", i)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println(err.Error())
 	}
 
 	if strings.Contains(string(out), f) {
@@ -28,7 +28,7 @@ func GetNmcliConnectionField(f string, c string) string {
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println(err.Error())
 	}
 
 	if strings.Contains(string(out), f) {
@@ -64,7 +64,7 @@ func GetConnectionNameFromDevice(i string) string {
 	cmd := exec.Command("nmcli", "-f", "GENERAL.CONNECTION", "dev", "show", i)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println(err.Error())
 	}
 
 	fields := strings.Split(string(out), ":")

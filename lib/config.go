@@ -131,7 +131,7 @@ func InitConfig() *Config {
 			fmt.Println("Config file not found, using defaults and environment variables")
 			viper.SafeWriteConfig()
 		} else {
-			log.Fatalf("Error reading config file: %v", err)
+			log.Printf("Error reading config file: %v", err)
 		}
 	}
 	//else {
@@ -140,7 +140,7 @@ func InitConfig() *Config {
 
 	var config Config
 	if err := viper.Unmarshal(&config); err != nil {
-		log.Fatalf("Unable to decode config: %v", err)
+		log.Printf("Unable to decode config: %v", err)
 	}
 
 	return &config

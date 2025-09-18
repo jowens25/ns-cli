@@ -10,7 +10,7 @@ import (
 )
 
 // command is the actual string so ex $BAUDNV
-func ReadWriteMicro(command string) string {
+func ReadWriteMicro(command string) (string, error) {
 
 	command = command + "\r\n"
 
@@ -26,7 +26,8 @@ func ReadWriteMicro(command string) string {
 	port, err := serial.Open(AppConfig.Serial.Port, mode)
 
 	if err != nil {
-		log.Fatal(AppConfig.Serial.Port, err)
+		log.Println(AppConfig.Serial.Port, err)
+		return "port open error", err
 	}
 	defer port.Close()
 
@@ -38,17 +39,21 @@ func ReadWriteMicro(command string) string {
 	fmt.Print(command)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return "port write error", err
+
 	}
 
 	_, err = port.Read(read_data)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return "port read error", err
+
 	}
 
 	lines := strings.Split(string(read_data), "\n")
 
-	return lines[0]
+	return lines[0], nil
 
 }

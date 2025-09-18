@@ -155,7 +155,7 @@ func readSystemAdmins() []User {
 	cmd := exec.Command("getent", "group", AppConfig.User.AdminGroup)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println(err.Error())
 	}
 
 	lines := strings.Split(string(out), "\n")
@@ -194,7 +194,7 @@ func readSystemViewers() []User {
 	cmd := exec.Command("getent", "group", AppConfig.User.UserGroup)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println(err.Error())
 	}
 
 	lines := strings.Split(string(out), "\n")

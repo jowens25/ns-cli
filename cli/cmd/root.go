@@ -26,7 +26,7 @@ func Execute() {
 	if _, err := os.Stat("/etc/bash_completion.d/ns.bash"); err != nil {
 		bashFile, err := os.Create("/etc/bash_completion.d/ns.bash")
 		if err != nil {
-			log.Fatal("unable to create bash completion script: ", err.Error())
+			log.Println("unable to create bash completion script: ", err.Error())
 		}
 		defer bashFile.Close()
 		rootCmd.GenBashCompletion(bashFile)

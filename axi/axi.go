@@ -65,7 +65,7 @@ func LoadConfig(fileName string) {
 
 	data, err := os.ReadFile(fileName)
 	if err != nil {
-		log.Fatal("file err: ", err)
+		log.Println("file err: ", err)
 	}
 
 	for _, line := range strings.Split(string(data), "\n") {

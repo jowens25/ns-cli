@@ -27,10 +27,9 @@ func InitSshConfig() {
 func DisableSsh() {
 	file, err := os.Open(AppConfig.Xinetd.SshPath)
 	if err != nil {
-		log.Fatal("failed to open ssh file", AppConfig.Xinetd.SshPath)
+		log.Println("failed to open ssh file", AppConfig.Xinetd.SshPath)
 	}
 	defer file.Close()
-
 	var lines []string
 
 	scanner := bufio.NewScanner(file)
@@ -44,7 +43,7 @@ func DisableSsh() {
 	}
 	err = os.WriteFile(AppConfig.Xinetd.SshPath, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
-		log.Fatal("failed to hosts file:", err)
+		log.Println("failed to hosts file:", err)
 	}
 
 	RestartXinetd()
@@ -56,7 +55,7 @@ func DisableSsh() {
 func EnableSsh() {
 	file, err := os.Open(AppConfig.Xinetd.SshPath)
 	if err != nil {
-		log.Fatal("failed to open ssh file", AppConfig.Xinetd.SshPath)
+		log.Println("failed to open ssh file", AppConfig.Xinetd.SshPath)
 	}
 	defer file.Close()
 
@@ -73,7 +72,7 @@ func EnableSsh() {
 
 	err = os.WriteFile(AppConfig.Xinetd.SshPath, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
-		log.Fatal("failed to ssh file:", err)
+		log.Println("failed to ssh file:", err)
 	}
 
 	RestartXinetd()
@@ -84,7 +83,7 @@ func EnableSsh() {
 func GetSshStatus() string {
 	file, err := os.Open(AppConfig.Xinetd.SshPath)
 	if err != nil {
-		log.Fatal("failed to open ssh file", AppConfig.Xinetd.SshPath)
+		log.Println("failed to open ssh file", AppConfig.Xinetd.SshPath)
 	}
 	defer file.Close()
 

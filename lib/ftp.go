@@ -28,7 +28,7 @@ func DisableFtp() {
 	ftpFile := "/etc/xinetd.d/ftp"
 	file, err := os.Open(ftpFile)
 	if err != nil {
-		log.Fatal("failed to open ftp file", ftpFile)
+		log.Println("failed to open ftp file", ftpFile)
 	}
 	defer file.Close()
 
@@ -45,7 +45,7 @@ func DisableFtp() {
 	}
 	err = os.WriteFile(ftpFile, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
-		log.Fatal("failed to hosts file:", err)
+		log.Println("failed to hosts file:", err)
 	}
 
 	RestartXinetd()
@@ -58,7 +58,7 @@ func EnableFtp() {
 	ftpFile := "/etc/xinetd.d/ftp"
 	file, err := os.Open(ftpFile)
 	if err != nil {
-		log.Fatal("failed to open ftp file", ftpFile)
+		log.Println("failed to open ftp file", ftpFile)
 	}
 	defer file.Close()
 
@@ -75,7 +75,7 @@ func EnableFtp() {
 
 	err = os.WriteFile(ftpFile, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
-		log.Fatal("failed to ftp file:", err)
+		log.Println("failed to ftp file:", err)
 	}
 
 	RestartXinetd()
@@ -88,7 +88,7 @@ func GetFtpStatus() string {
 	ftpFile := "/etc/xinetd.d/ftp"
 	file, err := os.Open(ftpFile)
 	if err != nil {
-		log.Fatal("failed to open ftp file", ftpFile)
+		log.Println("failed to open ftp file", ftpFile)
 	}
 	defer file.Close()
 

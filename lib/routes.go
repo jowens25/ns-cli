@@ -49,7 +49,7 @@ func ShowIpv4Routes(i string) string {
 	cmd := exec.Command("nmcli", "-f", "ipv4.routes", "con", "show", connection)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println(err.Error())
 	}
 
 	for line := range strings.SplitSeq(string(out), "\n") {

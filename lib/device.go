@@ -6,8 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func getDeviceProperty(property string) string {
+func getDeviceProperty(property string) (string, error) {
 	switch property {
+
 	case "baudrate":
 		return ReadWriteMicro("$BAUDNV")
 
@@ -27,7 +28,7 @@ func getDeviceProperty(property string) string {
 		return ReadWriteMicro("$INPTHR1")
 
 	default:
-		return ""
+		return "", nil
 	}
 }
 
@@ -53,7 +54,12 @@ func readDeviceProperty(c *gin.Context) {
 
 	property := c.Param("prop")
 
-	value := getDeviceProperty(property)
+	value, err := getDeviceProperty(property)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{property: value})
+
+	}
 
 	c.JSON(http.StatusOK, gin.H{property: value})
 }

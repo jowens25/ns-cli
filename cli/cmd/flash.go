@@ -26,7 +26,7 @@ var saveFlashCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if len(args) == 0 {
-			response := lib.ReadWriteMicro("$SAVEFL")
+			response, _ := lib.ReadWriteMicro("$SAVEFL")
 			fmt.Println(response)
 
 		} else {
@@ -43,7 +43,7 @@ var resetFlashCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if len(args) == 0 {
-			response := lib.ReadWriteMicro("$RESETALL")
+			response, _ := lib.ReadWriteMicro("$RESETALL")
 			fmt.Println(response)
 
 		} else {

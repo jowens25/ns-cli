@@ -31,7 +31,7 @@ to quickly create a Cobra application.`,
 			Logger: logger.Default.LogMode(logger.Info),
 		})
 		if err != nil {
-			log.Fatal("Failed to connect to database: ", err)
+			log.Println("Failed to connect to database: ", err)
 		}
 
 		var users []lib.User

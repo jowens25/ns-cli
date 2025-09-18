@@ -32,17 +32,17 @@ authorized technician.`,
 
 		if all {
 			for i := range 10 {
-				response := lib.ReadWriteMicro("$CAL" + fmt.Sprint(i+1))
+				response, _ := lib.ReadWriteMicro("$CAL" + fmt.Sprint(i+1))
 				fmt.Println(response)
 				time.Sleep(100 * time.Millisecond)
 			}
 
 		} else if len(args) == 1 {
-			response := lib.ReadWriteMicro("$CAL" + args[0])
+			response, _ := lib.ReadWriteMicro("$CAL" + args[0])
 			fmt.Println(response)
 
 		} else if len(args) == 2 {
-			response := lib.ReadWriteMicro("$CAL" + args[0] + "=" + args[1])
+			response, _ := lib.ReadWriteMicro("$CAL" + args[0] + "=" + args[1])
 			fmt.Println(response)
 		} else {
 			cmd.Help()

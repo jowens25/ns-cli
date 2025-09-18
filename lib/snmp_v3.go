@@ -113,7 +113,7 @@ func addSnmpV3UserToFile(user SnmpV3User) {
 
 	err = os.WriteFile(AppConfig.Snmp.Path, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
-		log.Fatal("failed to write file:", err)
+		log.Println("failed to write file:", err)
 	}
 }
 
@@ -149,7 +149,7 @@ func removeSnmpV3UserFromFile(user SnmpV3User) {
 
 	err = os.WriteFile(AppConfig.Snmp.Path, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
-		log.Fatal("failed to write file:", err)
+		log.Println("failed to write file:", err)
 	}
 }
 
