@@ -205,10 +205,12 @@ func getMinimumPasswordLength() (int, error) {
 	for _, line := range openConfigFile(AppConfig.Security.Pwquality) {
 
 		if strings.Contains(line, "minlen") {
-			parts := strings.Split(line, " = ")
-			if len(parts) == 2 {
-				minlen, err := strconv.Atoi(parts[1])
+			//parts := strings.Split(line, "=")
+			parts := strings.Fields(line)
+			if len(parts) == 3 {
+				minlen, err := strconv.Atoi(parts[2])
 				if err != nil {
+					log.Println("atoi error")
 					log.Println(err.Error())
 				}
 				return minlen, nil
