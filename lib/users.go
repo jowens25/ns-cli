@@ -110,7 +110,14 @@ func removeUserFromSystem(user User) error {
 	}
 	log.Println(string(out))
 	// Delete the user
-	cmd = exec.Command("userdel", user.Username)
+	cmd = exec.Command("userdel", "-r", user.Username)
+	out, err = cmd.CombinedOutput() // Ignore error as user might not have running processes
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	log.Println(string(out))
+
+	cmd = exec.Command("rm", "-r", "/home/"+user.Username)
 	out, err = cmd.CombinedOutput() // Ignore error as user might not have running processes
 	if err != nil {
 		fmt.Println(err.Error())
@@ -287,7 +294,7 @@ func addUserToSystem(user User) (string, error) {
 func AddUser(username string, password string) error {
 	// Create user account
 	cmd := exec.Command("useradd",
-		//"-M",                           // Don't create home directory
+		"-m",                           // Create home directory
 		"-N",                           // Don't create a group with the same name as the user
 		"-g", AppConfig.User.UserGroup, // Primary group
 		"-G", AppConfig.User.UserGroup, // Secondary groups
@@ -309,7 +316,7 @@ func AddUser(username string, password string) error {
 func AddAdmin(username string, password string) error {
 	// Create admin account
 	cmd := exec.Command("useradd",
-		//"-M",                            // Don't create home directory
+		"-m",                            // Create home directory
 		"-N",                            // Don't create a group with the same name
 		"-g", AppConfig.User.AdminGroup, // Primary group
 		"-G", AppConfig.User.UserGroup+","+AppConfig.User.AdminGroup, // Secondary groups
