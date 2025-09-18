@@ -122,8 +122,8 @@ func InitConfig() *Config {
 
 	viper.SetDefault("snmp.path", "/etc/snmp/snmpd.conf")
 
-	viper.SetDefault("cors.host1", "http://localhost")
-	viper.SetDefault("cors.host2", "https://localhost")
+	viper.SetDefault("cors.host1", "https://localhost")
+	viper.SetDefault("cors.host2", "http://localhost")
 
 	// Read config file
 	if err := viper.ReadInConfig(); err != nil {
