@@ -4929,6 +4929,7 @@ int writePtpOcTimePropertiesDsDisplayNameValue(char *name, size_t size)
             // ui->PtpOcTimePropertiesDsDisplayNameValue->setText(temp_string);
         }
     }
+    return 0;
 }
 
 int writePtpOcStatus(char *status, size_t size)
