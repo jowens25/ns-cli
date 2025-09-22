@@ -55,13 +55,13 @@ int readTodSlaveVersion(char *version, size_t size)
         snprintf(version, size, "%s", "NA");
         return -1;
     }
-    snprintf(version, size, "0x%lx", temp_data);
+    snprintf(version, size, "0x%x", temp_data);
     return 0;
 }
 
 int readTodSlaveInstance(char *instanceNumber, size_t size)
 {
-    snprintf(instanceNumber, size, "%ld", cores[Ucm_CoreConfig_TodSlaveCoreType].core_instance_nr);
+    snprintf(instanceNumber, size, "%d", cores[Ucm_CoreConfig_TodSlaveCoreType].core_instance_nr);
     return 0;
 }
 
@@ -175,7 +175,7 @@ int readTodSlaveMsgDisable(char *msgdisable, size_t size)
     }
 
     // disabled msg
-    snprintf(msgdisable, size, "0x%02lx", ((temp_data >> 16) & 0xFF));
+    snprintf(msgdisable, size, "0x%02x", ((temp_data >> 16) & 0xFF));
 
     return 0;
 }
@@ -192,7 +192,7 @@ int readTodSlaveCorrection(char *correction, size_t size)
     }
 
     // disabled msg
-    snprintf(correction, size, "0x%08lx", temp_data);
+    snprintf(correction, size, "0x%08x", temp_data);
 
     return 0;
 }
@@ -453,7 +453,7 @@ int readTodSlaveTimeToLeap(char *timetoleap, size_t size)
         return -1;
     }
 
-    snprintf(timetoleap, size, "%ld", temp_data);
+    snprintf(timetoleap, size, "%d", temp_data);
 
     return 0;
 }
@@ -582,7 +582,7 @@ int readTodSlaveJammingLevel(char *jamminglevel, size_t size)
         return -1;
     }
 
-    snprintf(jamminglevel, size, "%ld", ((temp_data >> 5) & 0xFF));
+    snprintf(jamminglevel, size, "%d", ((temp_data >> 5) & 0xFF));
 
     return 0;
 }
@@ -691,7 +691,7 @@ int readTodSlaveNrOfSatellitesSeen(char *nrofsatellitesseen, size_t size)
         return -1;
     }
 
-    snprintf(nrofsatellitesseen, size, "%ld", ((temp_data >> 0) & 0xFF));
+    snprintf(nrofsatellitesseen, size, "%d", ((temp_data >> 0) & 0xFF));
 
     return 0;
 }
@@ -707,7 +707,7 @@ int readTodSlaveNrOfSatellitesLocked(char *nrofsatelliteslocked, size_t size)
         return -1;
     }
 
-    snprintf(nrofsatelliteslocked, size, "%ld", ((temp_data >> 8) & 0xFF));
+    snprintf(nrofsatelliteslocked, size, "%d", ((temp_data >> 8) & 0xFF));
 
     return 0;
 }
@@ -748,7 +748,7 @@ int writeTodSlaveProtocol(char *protocol, size_t size)
     temp_addr = cores[Ucm_CoreConfig_TodSlaveCoreType].address_range_low;
     temp_data = 0x00000000;
 
-    int64_t temp_ctrl = 0x00000000;
+    int32_t temp_ctrl = 0x00000000;
 
     if (0 != readRegister(temp_addr + Ucm_TodSlave_ControlReg, &temp_ctrl))
     {
@@ -787,7 +787,7 @@ int writeTodSlaveGnss(char *gnss, size_t size)
     temp_addr = cores[Ucm_CoreConfig_TodSlaveCoreType].address_range_low;
     temp_data = 0x00000000;
 
-    int64_t temp_ctrl = 0x00000000;
+    int32_t temp_ctrl = 0x00000000;
 
     if (0 != readRegister(temp_addr + Ucm_TodSlave_ControlReg, &temp_ctrl))
     {
@@ -838,7 +838,7 @@ int writeTodSlaveMsgDisable(char *msgdisable, size_t size)
     temp_addr = cores[Ucm_CoreConfig_TodSlaveCoreType].address_range_low;
     temp_data = 0x00000000;
 
-    int64_t temp_ctrl = 0x00000000;
+    int32_t temp_ctrl = 0x00000000;
 
     if (0 != readRegister(temp_addr + Ucm_TodSlave_ControlReg, &temp_ctrl))
     {
@@ -861,7 +861,7 @@ int writeTodSlaveCorrection(char *correction, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_TodSlaveCoreType].address_range_low;
     temp_data = 0x00000000;
-    long temp_correction = 0;
+    int64_t temp_correction = 0;
     correction = &correction[2];
     temp_correction = strtol(correction, NULL, 16);
     temp_data |= temp_correction;

@@ -3,6 +3,7 @@
 #define TOD_SLAVE_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 #define Ucm_TodSlave_ControlReg 0x00000000
 #define Ucm_TodSlave_StatusReg 0x00000004
