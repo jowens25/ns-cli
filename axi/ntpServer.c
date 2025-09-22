@@ -1135,6 +1135,7 @@ int ipv4_addr_to_register_value(char *ipAddress, size_t size)
 {
     int64_t temp_ip[4] = {0};
 
+    printf("current address: %s\n", ipAddress);
 
     if (strchr(ipAddress, '.'))
     { // ipv4
