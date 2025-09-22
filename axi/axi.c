@@ -469,14 +469,14 @@ int reset(void)
 int RawWrite(char *addr, char *data)
 {
     char *err;
-    long raw_addr = strtol(addr, &err, 16);
+    int64_t raw_addr = strtol(addr, &err, 16);
 
     if (err == addr || *err != '\0')
     {
         return -1;
     }
 
-    long raw_data = strtol(data, &err, 16);
+    int64_t raw_data = strtol(data, &err, 16);
 
     if (err == data || *err != '\0')
     {
@@ -858,8 +858,8 @@ int setupTermios(int fd)
         return -1;
     }
 
-    cfsetospeed(&tty, B115200); // Use a standard baud rate unless you know otherwise
-    cfsetispeed(&tty, B115200);
+    cfsetospeed(&tty, B1000000); // Use a standard baud rate unless you know otherwise
+    cfsetispeed(&tty, B1000000);
 
     // 8N1 configuration
     tty.c_cflag &= ~CSIZE;

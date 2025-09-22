@@ -861,7 +861,7 @@ int writeTodSlaveCorrection(char *correction, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_TodSlaveCoreType].address_range_low;
     temp_data = 0x00000000;
-    long temp_correction = 0;
+    int64_t temp_correction = 0;
     correction = &correction[2];
     temp_correction = strtol(correction, NULL, 16);
     temp_data |= temp_correction;
