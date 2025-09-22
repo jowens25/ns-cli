@@ -469,14 +469,14 @@ int reset(void)
 int RawWrite(char *addr, char *data)
 {
     char *err;
-    long raw_addr = strtol(addr, &err, 16);
+    int64_t raw_addr = strtol(addr, &err, 16);
 
     if (err == addr || *err != '\0')
     {
         return -1;
     }
 
-    long raw_data = strtol(data, &err, 16);
+    int64_t raw_data = strtol(data, &err, 16);
 
     if (err == data || *err != '\0')
     {

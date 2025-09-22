@@ -17,7 +17,7 @@ int getCores(void)
 
     // Ucm_CoreConfig temp_config;
     temp_data = 0;
-    long type = 0;
+    int64_t type = 0;
 
     for (int i = 0; i < 256; i++)
     {
