@@ -3,7 +3,7 @@
 
 #define CONF_SLAVE_H
 #include <stddef.h>
-
+#include <stdint.h>
 #define CoreTypeAndInstanceReg 0x00000000
 #define CoreAddrLowReg 0x00000004
 #define CoreAddrHighReg 0x00000008
