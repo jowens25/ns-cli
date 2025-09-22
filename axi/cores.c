@@ -7,6 +7,7 @@
 #include "ppsSlave.h"
 #include "todSlave.h"
 #include "axi.h"
+#include <stdint.h>
 
 //   read the core configuration
 
@@ -17,7 +18,7 @@ int getCores(void)
 
     // Ucm_CoreConfig temp_config;
     temp_data = 0;
-    long type = 0;
+    int64_t type = 0;
 
     for (int i = 0; i < 256; i++)
     {

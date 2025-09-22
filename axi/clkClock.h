@@ -2,6 +2,7 @@
 
 #define CLK_CLOCK
 #include <stddef.h>
+#include <stdint.h>
 
 #define Ucm_ClkClock_ControlReg 0x00000000
 #define Ucm_ClkClock_StatusReg 0x00000004

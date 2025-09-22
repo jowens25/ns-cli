@@ -3,6 +3,7 @@
 #define NTP_SERVER_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 #define Ucm_NtpServer_ControlReg 0x00000000
 #define Ucm_NtpServer_StatusReg 0x00000004
@@ -123,7 +124,7 @@ int ipv6_addr_to_register_value(char *ipAddress, size_t size);
 
 int ipv6toipv4(char *address, size_t size);
 int writeNtpServerStatus(char *status, size_t size);
-int ipAddressToByteArray(char *ipAddress, long *addressByteArray, size_t size);
+int ipAddressToByteArray(char *ipAddress, int64_t *addressByteArray, size_t size);
 int to4(char *ipv6, size_t size);
 int to16(char *ipv4, size_t size);
 #endif // NTP_SERVER_H

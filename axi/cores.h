@@ -1,6 +1,7 @@
 
 #ifndef CORES_H
 #define CORES_H
+#include <stdint.h>
 
 // CORES STUFF
 #define Ucm_Config_BlockSize 16
@@ -89,11 +90,11 @@ typedef struct
 {
     char *name;
     char **properties;
-    long core_type;
-    long core_instance_nr;
-    long address_range_low;
-    long address_range_high;
-    long interrupt_mask;
+    int64_t core_type;
+    int64_t core_instance_nr;
+    int64_t address_range_low;
+    int64_t address_range_high;
+    int64_t interrupt_mask;
 } Ucm_CoreConfig;
 
 extern Ucm_CoreConfig cores[];

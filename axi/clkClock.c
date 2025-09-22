@@ -590,7 +590,7 @@ int writeClkClockInSyncThreshold(char *insyncthreshold, size_t size)
     temp_addr = cores[Ucm_CoreConfig_ClkClockCoreType].address_range_low;
     temp_data = 0x00000000;
 
-    long temp_threshold = strtol(insyncthreshold, NULL, 10);
+    int64_t temp_threshold = strtol(insyncthreshold, NULL, 10);
 
     temp_data = temp_threshold;
 
@@ -650,7 +650,7 @@ int writeClkClockOffset(char *offset, size_t size)
     temp_addr = cores[Ucm_CoreConfig_ClkClockCoreType].address_range_low;
     temp_data = 0x00000000;
 
-    long temp_offset = strtol(offset, NULL, 10);
+    int64_t temp_offset = strtol(offset, NULL, 10);
 
     if (temp_offset < 0)
     {
@@ -675,7 +675,7 @@ int writeClkClockOffsetInterval(char *interval, size_t size)
     temp_addr = cores[Ucm_CoreConfig_ClkClockCoreType].address_range_low;
     temp_data = 0x00000000;
 
-    long temp_interval = strtol(interval, NULL, 10);
+    int64_t temp_interval = strtol(interval, NULL, 10);
 
     if (0 != writeRegister(temp_addr + Ucm_ClkClock_OffsetAdjIntervalReg, &temp_interval))
     {
@@ -691,7 +691,7 @@ int writeClkClockDrift(char *drift, size_t size)
     temp_addr = cores[Ucm_CoreConfig_ClkClockCoreType].address_range_low;
     temp_data = 0x00000000;
 
-    long temp_drift = strtol(drift, NULL, 10);
+    int64_t temp_drift = strtol(drift, NULL, 10);
 
     if (temp_drift < 0)
     {
@@ -715,7 +715,7 @@ int writeClkClockDriftInterval(char *driftinterval, size_t size)
     temp_addr = cores[Ucm_CoreConfig_ClkClockCoreType].address_range_low;
     temp_data = 0x00000000;
 
-    long temp_interval = strtol(driftinterval, NULL, 10);
+    int64_t temp_interval = strtol(driftinterval, NULL, 10);
 
     if (0 != writeRegister(temp_addr + Ucm_ClkClock_DriftAdjIntervalReg, &temp_interval))
     {

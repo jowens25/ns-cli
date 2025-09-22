@@ -982,7 +982,7 @@ int readPtpOcDefaultDsSlaveOnlyStatus(char *status, size_t size)
     }
     return 0;
 }
-// use listed unicast slaves only (y/n)   f me, this is a long function name
+// use listed unicast slaves only (y/n)   f me, this is a int64_t function name
 int readPtpOcDefaultDsListedUnicastSlavesOnlyStatus(char *status, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
@@ -1096,7 +1096,7 @@ int readPtpOcPortDsPeerDelayValue(char *delay, size_t size)
             }
 
             temp_delay |= temp_data;
-            temp_signed_delay = (long long)temp_delay;
+            temp_signed_delay = (int64_t)temp_delay;
             temp_signed_delay = temp_signed_delay >> 16;
             // ui->PtpOcPortDsPeerDelayValue->setText(QString::number(temp_signed_delay));
             snprintf(delay, size, "%d", temp_signed_delay);
@@ -1681,12 +1681,12 @@ int readPtpOcCurrentDsOffsetValue(char *offset, size_t size)
             if ((temp_offset & 0x8000000000000000) != 0)
             {
                 temp_offset = (0xFFFF000000000000 | (temp_offset >> 16));
-                temp_signed_offset = (long long)temp_offset;
+                temp_signed_offset = (int64_t)temp_offset;
             }
             else
             {
                 temp_offset = (0x0000FFFFFFFFFFFF & (temp_offset >> 16));
-                temp_signed_offset = (long long)temp_offset;
+                temp_signed_offset = (int64_t)temp_offset;
             }
 
             if (temp_signed_offset == -4294967296) // negativ 0
@@ -1765,7 +1765,7 @@ int readPtpOcCurrentDsDelayValue(char *delay, size_t size)
             }
 
             temp_delay |= temp_data;
-            temp_signed_delay = (long long)temp_delay;
+            temp_signed_delay = (int64_t)temp_delay;
             temp_signed_delay = temp_signed_delay >> 16;
             // ui->PtpOcPortDsPeerDelayValue->setText(QString::number(temp_signed_delay));
             snprintf(delay, size, "%d", temp_signed_delay);
@@ -3305,7 +3305,7 @@ int writePtpOcVlanAddress(char *address, size_t size)
     }
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x00000000;
-    long temp_vlan = 0;
+    int64_t temp_vlan = 0;
     address = &address[2];
 
     if (0 != readRegister(temp_addr + Ucm_PtpOc_ConfigVlanReg, &temp_data))
@@ -3404,7 +3404,7 @@ int writePtpOcIpAddress(char *ipAddress, size_t size)
 
 int ptp_ipv4_addr_to_register_value(char *ipAddress, size_t size)
 {
-    long temp_ip[4] = {0};
+    int64_t temp_ip[4] = {0};
 
     if (strchr(ipAddress, '.'))
     { // ipv4
@@ -3508,7 +3508,7 @@ int ptp_ipv4_addr_to_register_value(char *ipAddress, size_t size)
 }
 int ptp_ipv6_addr_to_register_value(char *ipAddress, size_t size)
 {
-    long temp_ip[16] = {0};
+    int64_t temp_ip[16] = {0};
 
     if (strchr(ipAddress, ':'))
     { // ipv4
@@ -3640,7 +3640,7 @@ int writePtpOcDefaultDsClockIdValue(char *clockid, size_t size)
     }
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     // int j = 0;
-    long temp_clockid = 0;
+    int64_t temp_clockid = 0;
 
     // removes :
     for (int i = 0, j = 0; i < size; i++)
@@ -3747,7 +3747,7 @@ int writePtpOcDefaultDsPriority1Value(char *priority1, size_t size)
     priority1[1] = priority1[3];
     priority1[2] = '\0';
 
-    long temp_priority1 = (strtol(priority1, NULL, 16)); // takes 0x44 and puts in the top of the ds3 reg -> 0x44000000
+    int64_t temp_priority1 = (strtol(priority1, NULL, 16)); // takes 0x44 and puts in the top of the ds3 reg -> 0x44000000
 
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x00000000;
@@ -3786,7 +3786,7 @@ int writePtpOcDefaultDsPriority2Value(char *priority2, size_t size)
     priority2[1] = priority2[3];
     priority2[2] = '\0';
 
-    long temp_priority2 = (strtol(priority2, NULL, 16)); // takes 0x44 and puts in the top of the ds3 reg -> 0x44000000
+    int64_t temp_priority2 = (strtol(priority2, NULL, 16)); // takes 0x44 and puts in the top of the ds3 reg -> 0x44000000
 
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x00000000;
@@ -3825,7 +3825,7 @@ int writePtpOcDefaultDsClassValue(char *class, size_t size)
     class[1] = class[3];
     class[2] = '\0';
 
-    long temp_class = (strtol(class, NULL, 16)); // takes 0x44 and puts in the top of the ds3 reg -> 0x44000000
+    int64_t temp_class = (strtol(class, NULL, 16)); // takes 0x44 and puts in the top of the ds3 reg -> 0x44000000
 
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x00000000;
@@ -3856,7 +3856,7 @@ int writePtpOcDefaultDsClassValue(char *class, size_t size)
 int writePtpOcDefaultDsAccuracyValue(char *accuracy, size_t size)
 {
 
-    long temp_accuracy = (strtol(accuracy, NULL, 10));
+    int64_t temp_accuracy = (strtol(accuracy, NULL, 10));
 
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x00000000;
@@ -3897,7 +3897,7 @@ int writePtpOcDefaultDsVarianceValue(char *variance, size_t size)
     variance[3] = variance[5];
     variance[5] = '\0';
 
-    long temp_class = (strtol(variance, NULL, 16)); // takes 0x44 and puts in the top of the ds3 reg -> 0x44000000
+    int64_t temp_class = (strtol(variance, NULL, 16)); // takes 0x44 and puts in the top of the ds3 reg -> 0x44000000
 
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x00000000;
@@ -3938,7 +3938,7 @@ int writePtpOcDefaultDsShortIdValue(char *shortid, size_t size)
     shortid[3] = shortid[5];
     shortid[5] = '\0';
 
-    long temp_shortid = (strtol(shortid, NULL, 16));
+    int64_t temp_shortid = (strtol(shortid, NULL, 16));
 
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x00000000;
@@ -3972,7 +3972,7 @@ int writePtpOcDefaultDsShortIdValue(char *shortid, size_t size)
 int writePtpOcDefaultDsInaccuracyValue(char *inaccuracy, size_t size)
 {
 
-    long temp_inaccuracy = (strtol(inaccuracy, NULL, 10));
+    int64_t temp_inaccuracy = (strtol(inaccuracy, NULL, 10));
 
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     // temp_data = 0x00000000;
@@ -4052,7 +4052,7 @@ int writePtpOcPortDsSetCustomIntervalsStatus(char *status, size_t size)
 int writePtpOcPortDsDelayReceiptTimeoutValue(char *timeout, size_t size)
 {
 
-    long temp_timeout = (strtol(timeout, NULL, 10));
+    int64_t temp_timeout = (strtol(timeout, NULL, 10));
 
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x00000000;
@@ -4086,7 +4086,7 @@ int writePtpOcPortDsDelayReceiptTimeoutValue(char *timeout, size_t size)
 int writePtpOcPortDsDelayReqLogMsgIntervalValue(char *interval, size_t size)
 {
 
-    long temp_interval = (strtol(interval, NULL, 10));
+    int64_t temp_interval = (strtol(interval, NULL, 10));
 
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x00000000;
@@ -4120,7 +4120,7 @@ int writePtpOcPortDsDelayReqLogMsgIntervalValue(char *interval, size_t size)
 int writePtpOcPortDsPDelayReqLogMsgIntervalValue(char *interval, size_t size)
 {
 
-    long temp_interval = (strtol(interval, NULL, 10));
+    int64_t temp_interval = (strtol(interval, NULL, 10));
 
     if (temp_interval < 0)
     {
@@ -4166,7 +4166,7 @@ int writePtpOcPortDsAnnounceReceiptTimeoutValue(char *timeout, size_t size)
     snprintf(timeout, size, "%s", "read-only");
     return 0;
     /*
-    long temp_timeout = (strtol(timeout, NULL, 10));
+    int64_t temp_timeout = (strtol(timeout, NULL, 10));
 
     if (temp_timeout < 0)
     {
@@ -4211,7 +4211,7 @@ int writePtpOcPortDsAnnounceReceiptTimeoutValue(char *timeout, size_t size)
 int writePtpOcPortDsAnnounceLogMsgIntervalValue(char *interval, size_t size)
 {
 
-    long temp_interval = (strtol(interval, NULL, 10));
+    int64_t temp_interval = (strtol(interval, NULL, 10));
 
     if (temp_interval < 0)
     {
@@ -4255,7 +4255,7 @@ int writePtpOcPortDsAnnounceLogMsgIntervalValue(char *interval, size_t size)
 int writePtpOcPortDsSyncReceiptTimeoutValue(char *timeout, size_t size)
 {
 
-    long temp_timeout = (strtol(timeout, NULL, 10));
+    int64_t temp_timeout = (strtol(timeout, NULL, 10));
 
     if (temp_timeout < 0)
     {
@@ -4299,7 +4299,7 @@ int writePtpOcPortDsSyncReceiptTimeoutValue(char *timeout, size_t size)
 int writePtpOcPortDsSyncLogMsgIntervalValue(char *interval, size_t size)
 {
 
-    long temp_interval = (strtol(interval, NULL, 10));
+    int64_t temp_interval = (strtol(interval, NULL, 10));
 
     if (temp_interval < 0)
     {
@@ -4343,7 +4343,7 @@ int writePtpOcPortDsSyncLogMsgIntervalValue(char *interval, size_t size)
 int writePtpOcPortDsAsymmetryValue(char *asymmetry, size_t size)
 {
 
-    long temp_asymmetry = (strtol(asymmetry, NULL, 10));
+    int64_t temp_asymmetry = (strtol(asymmetry, NULL, 10));
 
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x00000000;
@@ -4379,7 +4379,7 @@ int writePtpOcPortDsAsymmetryValue(char *asymmetry, size_t size)
 int writePtpOcPortDsMaxPeerDelayValue(char *delay, size_t size)
 {
 
-    long temp_delay = (strtol(delay, NULL, 10));
+    int64_t temp_delay = (strtol(delay, NULL, 10));
 
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x00000000;
@@ -4741,7 +4741,7 @@ int writePtpOcTimePropertiesDsUtcOffsetValStatus(char *status, size_t size)
 
 int writePtpOcTimePropertiesDsUtcOffsetValue(char *offset, size_t size)
 {
-    long temp_offset = (strtol(offset, NULL, 10));
+    int64_t temp_offset = (strtol(offset, NULL, 10));
 
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x00000000;
@@ -4773,7 +4773,7 @@ int writePtpOcTimePropertiesDsUtcOffsetValue(char *offset, size_t size)
 
 int writePtpOcTimePropertiesDsCurrentOffsetValue(char *offset, size_t size)
 {
-    long temp_offset = (strtol(offset, NULL, 10));
+    int64_t temp_offset = (strtol(offset, NULL, 10));
 
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x00000000;
@@ -4807,7 +4807,7 @@ int writePtpOcTimePropertiesDsCurrentOffsetValue(char *offset, size_t size)
 
 int writePtpOcTimePropertiesDsJumpSecondsValue(char *seconds, size_t size)
 {
-    long temp_seconds = (strtol(seconds, NULL, 10));
+    int64_t temp_seconds = (strtol(seconds, NULL, 10));
 
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x00000000;
@@ -4841,7 +4841,7 @@ int writePtpOcTimePropertiesDsJumpSecondsValue(char *seconds, size_t size)
 
 int writePtpOcTimePropertiesDsNextJumpValue(char *next, size_t size)
 {
-    long temp_next = (strtol(next, NULL, 10));
+    int64_t temp_next = (strtol(next, NULL, 10));
 
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x00000000;

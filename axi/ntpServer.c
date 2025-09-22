@@ -917,7 +917,7 @@ int writeNtpServerMacAddress(char *addr, size_t size)
     }
     temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
     // int j = 0;
-    long temp_mac = 0;
+    int64_t temp_mac = 0;
     for (int i = 0, j = 0; i < size; i++)
     {
         if (addr[i] != ':')
@@ -1015,7 +1015,7 @@ int writeNtpServerVlanAddress(char *value, size_t size)
     }
     temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
     temp_data = 0x00000000;
-    long temp_vlan = 0;
+    int64_t temp_vlan = 0;
     value = &value[2];
 
     if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigVlanReg, &temp_data))
@@ -1133,7 +1133,7 @@ int writeNtpServerIpAddress(char *ipAddress, size_t size)
 
 int ipv4_addr_to_register_value(char *ipAddress, size_t size)
 {
-    long temp_ip[4] = {0};
+    int64_t temp_ip[4] = {0};
 
     printf("current address: %s\n", ipAddress);
 
@@ -1238,7 +1238,7 @@ int ipv4_addr_to_register_value(char *ipAddress, size_t size)
 }
 int ipv6_addr_to_register_value(char *ipAddress, size_t size)
 {
-    long temp_ip[16] = {0};
+    int64_t temp_ip[16] = {0};
 
     if (strchr(ipAddress, ':'))
     { // ipv4
@@ -1456,7 +1456,7 @@ int writeNtpServerPrecisionValue(char *value, size_t size)
 
     temp_data = 0x00000000;
     char *err;
-    long temp_precision = 0;
+    int64_t temp_precision = 0;
 
     if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
     {
@@ -1493,7 +1493,7 @@ int writeNtpServerPollIntervalValue(char *value, size_t size)
 
     temp_data = 0x00000000;
     char *err;
-    long temp_precision = 0;
+    int64_t temp_precision = 0;
 
     if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
     {
@@ -1529,7 +1529,7 @@ int writeNtpServerStratumValue(char *value, size_t size)
     temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
     temp_data = 0x00000000;
     char *err;
-    long temp_stratum = 0;
+    int64_t temp_stratum = 0;
 
     if (0 != readRegister(temp_addr + Ucm_NtpServer_ConfigModeReg, &temp_data))
     {
@@ -1774,7 +1774,7 @@ int writeNtpServerUtcOffsetValue(char *value, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
     temp_data = 0x00000000;
-    long temp_value = 0;
+    int64_t temp_value = 0;
     char *err;
     if (0 != readRegister(temp_addr + Ucm_NtpServer_UtcInfoReg, &temp_data))
     {

@@ -179,7 +179,7 @@ int readPpsSlaveCableDelayValue(char *value, size_t size)
 int writePpsSlaveCableDelayValue(char *cable_delay, size_t size)
 {
 
-    long temp_cable_delay = (strtol(cable_delay, NULL, 10)); // takes 0x44 and puts in the top of the ds3 reg -> 0x44000000
+    int64_t temp_cable_delay = (strtol(cable_delay, NULL, 10)); // takes 0x44 and puts in the top of the ds3 reg -> 0x44000000
 
     temp_addr = cores[Ucm_CoreConfig_PpsSlaveCoreType].address_range_low;
     temp_data = 0x00000000;
