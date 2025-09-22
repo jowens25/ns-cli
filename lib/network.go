@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"log"
 	"net"
 	"net/http"
 	"strings"
@@ -15,6 +16,26 @@ func GetIpv4Address(i string) string {
 	fields := strings.Fields(addrLine)
 	if len(fields) > 1 {
 		return strings.TrimSpace(fields[1])
+	}
+
+	return "--"
+}
+
+func GetIpv4Netmask(i string) string {
+
+	addrLine := GetNmcliField("IP4.ADDRESS", i)
+
+	fields := strings.Fields(addrLine)
+	if len(fields) > 1 {
+
+		_, ipNet, err := net.ParseCIDR(fields[1])
+		if err != nil {
+			log.Printf("Error parsing CIDR: %v", err)
+			return "--"
+
+		}
+
+		return net.IP(ipNet.Mask).String()
 	}
 
 	return "--"
@@ -200,6 +221,7 @@ func readNetworkInfo(c *gin.Context) {
 	myNetwork.Speed = GetPortSpeed(AppConfig.Network.Interface)
 	myNetwork.Mac = GetIpv4MacAddress(AppConfig.Network.Interface)
 	myNetwork.IpAddr = GetIpv4Address(AppConfig.Network.Interface)
+	myNetwork.Netmask = GetIpv4Netmask(AppConfig.Network.Interface)
 	myNetwork.Dhcp = GetIpv4DhcpState(AppConfig.Network.Interface)
 	myNetwork.Dns1 = GetIpv4Dns1(AppConfig.Network.Interface)
 	myNetwork.Dns2 = GetIpv4Dns2(AppConfig.Network.Interface)

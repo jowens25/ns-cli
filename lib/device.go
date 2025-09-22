@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -48,6 +49,26 @@ func setDeviceProperty(property string, value string) {
 
 }
 
+func writeSerialCommand(c *gin.Context) {
+	serialMutex.Lock()
+	defer serialMutex.Unlock()
+
+	command := c.Param("cmd")
+
+	response := "default response"
+	response, err := ReadWriteMicro(command)
+
+	fmt.Println(response)
+
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{command: "serial error: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{command: response})
+
+}
+
 func readDeviceProperty(c *gin.Context) {
 	serialMutex.Lock()
 	defer serialMutex.Unlock()
@@ -58,7 +79,7 @@ func readDeviceProperty(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{property: value})
-
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{property: value})

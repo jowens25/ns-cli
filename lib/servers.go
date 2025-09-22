@@ -36,8 +36,8 @@ func startApiServer() {
 	v1 := apiRouter.Group("/api/v1")
 
 	// public routes
-	v1.POST("/auth/login", loginHandler)
-	v1.GET("/auth/health", healthHandler)
+	v1.POST("/login", loginHandler)
+	v1.GET("/health", healthHandler)
 
 	protected := v1.Group("/")
 	{
@@ -69,6 +69,9 @@ func startApiServer() {
 
 		protected.GET("/device/:prop", readDeviceProperty)
 		protected.POST("/device/:prop", writeDeviceProperty)
+		protected.POST("device/serial/:cmd", writeSerialCommand)
+
+		//protected.POST("/device/serial/:value", writeSerialCommand)
 
 		networkGroup := protected.Group("/network")
 		networkGroup.GET("/ssh", readSshStatus)

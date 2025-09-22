@@ -64,6 +64,7 @@ type NetworkInfo struct {
 	Speed         string `json:"speed"`
 	Mac           string `json:"mac"`
 	IpAddr        string `json:"ip_address"`
+	Netmask       string `json:"netmask"`
 	Dhcp          string `json:"dhcp"`
 	Dns1          string `json:"dns1"`
 	Dns2          string `json:"dns2"`
