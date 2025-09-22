@@ -43,8 +43,8 @@ int isChecksumCorrect(char *message);
 
 int setupTermios(int);
 
-int readRegister(int64_t addr, int64_t *data);
-int writeRegister(int64_t addr, int64_t *data);
+int readRegister(int32_t addr, int32_t *data);
+int writeRegister(int32_t addr, int32_t *data);
 int RawWrite(char *addr, char *data);
 
 // int AxiRead(char *core, char *property, char *value);
@@ -54,8 +54,8 @@ int readOnly(char *buf, size_t size);
 
 int writeOnly(char *buf, size_t size);
 
-extern int64_t temp_data;
-extern int64_t temp_addr;
+extern int32_t temp_data;
+extern int32_t temp_addr;
 
 typedef int (*read_write_func)(char *value, size_t size);
 

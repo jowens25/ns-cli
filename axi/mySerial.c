@@ -134,7 +134,7 @@ int ReadValue(char *command)
         hexData[i] = readData[i + 17];
     }
 
-    //*data = (int64_t)strtol(hexData, NULL, 16);
+    //*data = (int32_t)strtol(hexData, NULL, 16);
     // printf("Read Response: %s \n", readData);
 
     return 0;
@@ -204,7 +204,7 @@ int WriteValue(char *command, char *parameter)
         hexData[i] = readData[i + 17];
     }
 
-    //*data = (int64_t)strtol(hexData, NULL, 16);
+    //*data = (int32_t)strtol(hexData, NULL, 16);
     // printf("Read Response: %s \n", readData);
 
     return 0;
