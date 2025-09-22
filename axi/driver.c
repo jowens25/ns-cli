@@ -1,25 +1,38 @@
+// driver.c
 #include "axi.h"
 #include "ntpServer.h"
 #include "cores.h"
-int driver() // switch to main to use
+int main() // switch to main to use
 {
 
-    // connect();
+    connect();
 
-    // readConfig();
-    //  char mac[32] = {0};
+    getCores();
 
-    // readNtpServerMacAddress(mac, sizeof(mac));
+    char firstIp[32] = {0};
+    char secondIp[32] = {0};
+    char newIp[32] = "10.1.10.225";
+    // char ipMode[32] = {0};
 
-    // readNtpServerSmearingStatus(mac, sizeof(mac));
+    int res = readNtpServerIpAddress(firstIp, sizeof(firstIp));
+    printf("result: %d\n", res);
+    printf("read ip: %s\n", firstIp);
 
-    // char mac[32] = "AA:BB:CC:DD:EE:FF";
-    // size_t size = 32;
-    // writeNtpServerMacAddress(mac, size);
+    res = writeNtpServerIpAddress(newIp, sizeof(newIp));
+    printf("result: %d\n", res);
+    printf("wrote ip: %s\n", newIp);
 
-    // printf("this happens to be the mac address of serial port hardcoded in my stuff: %s\n", mac);
-    // char vlan[] = "0x3004";
-    // writeNtpServerVlanValue(vlan, strlen(vlan));
-    //
-    // return 0;
+    res = readNtpServerIpAddress(secondIp, sizeof(secondIp));
+    printf("result: %d\n", res);
+    printf("read ip: %s\n", secondIp);
+
+    res = writeNtpServerIpAddress(firstIp, sizeof(firstIp));
+    printf("result: %d\n", res);
+    printf("wrote ip: %s\n", firstIp);
+
+    res = readNtpServerIpAddress(secondIp, sizeof(secondIp));
+    printf("result: %d\n", res);
+    printf("read ip: %s\n", secondIp);
+
+    return 0;
 }
