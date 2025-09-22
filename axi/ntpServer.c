@@ -152,7 +152,7 @@ int readNtpServerVlanAddress(char *vlanAddr, size_t size)
     }
 
     temp_data &= 0x0000FFFF;
-    snprintf(vlanAddr, size, "0x%04lx", temp_data);
+    snprintf(vlanAddr, size, "0x%04x", temp_data);
 
     // ui->NtpServerVlanValue->setText(QString("0x%1").arg(temp_data, 4, 16, QLatin1Char('0')));
     return 0;
@@ -285,7 +285,7 @@ int readNtpServerPollIntervalValue(char *value, size_t size)
         return -1;
     }
     // ui->NtpServerPrecisionValue->setText(QString::number((char)((temp_data >> 8) & 0x000000FF)));
-    snprintf(value, size, "%ld", ((temp_data >> 16) & 0x000000FF));
+    snprintf(value, size, "%d", ((temp_data >> 16) & 0x000000FF));
 
     return 0;
 }
@@ -301,7 +301,7 @@ int readNtpServerStratumValue(char *value, size_t size)
         return -1;
     }
     // ui->NtpServerPrecisionValue->setText(QString::number((char)((temp_data >> 8) & 0x000000FF)));
-    snprintf(value, size, "%ld", ((temp_data >> 24) & 0x000000FF));
+    snprintf(value, size, "%d", ((temp_data >> 24) & 0x000000FF));
 
     return 0;
 }
@@ -348,7 +348,7 @@ int readNtpServerReferenceId(char *refId, size_t size)
 int readNtpServerIpAddress(char *ipAddr, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_NtpServerCoreType].address_range_low;
-    int64_t temp_ip = 0;
+    int32_t temp_ip = 0;
     char ipMode[size];
 
     int err = readNtpServerIpMode(ipMode, size);
@@ -763,7 +763,7 @@ int readNtpServerUtcOffsetValue(char *value, size_t size)
                 return -1;
             }
 
-            snprintf(value, size, "%ld", ((temp_data >> 16) & 0x0000FFFF));
+            snprintf(value, size, "%d", ((temp_data >> 16) & 0x0000FFFF));
             break;
         }
     }
@@ -782,7 +782,7 @@ int readNtpServerRequestsValue(char *value, size_t size)
         return -1;
     }
     // ui->NtpServerRequestsValue->setText(QString::number(temp_data));
-    snprintf(value, size, "%ld", temp_data);
+    snprintf(value, size, "%d", temp_data);
     return 0;
 }
 int readNtpServerResponsesValue(char *value, size_t size)
@@ -797,7 +797,7 @@ int readNtpServerResponsesValue(char *value, size_t size)
         return -1;
     }
     // ui->NtpServerRequestsValue->setText(QString::number(temp_data));
-    snprintf(value, size, "%ld", temp_data);
+    snprintf(value, size, "%d", temp_data);
 
     return 0;
 }
@@ -812,7 +812,7 @@ int readNtpServerRequestsDroppedValue(char *value, size_t size)
         return -1;
     }
     // ui->NtpServerRequestsValue->setText(QString::number(temp_data));
-    snprintf(value, size, "%ld", temp_data);
+    snprintf(value, size, "%d", temp_data);
 
     return 0;
 }
@@ -828,7 +828,7 @@ int readNtpServerBroadcastsValue(char *value, size_t size)
         return -1;
     }
     // ui->NtpServerRequestsValue->setText(QString::number(temp_data));
-    snprintf(value, size, "%ld", temp_data);
+    snprintf(value, size, "%d", temp_data);
 
     return 0;
 }
@@ -865,7 +865,7 @@ int readNtpServerVersion(char *version, size_t size)
         return -1;
     }
     // ui->NtpServerVersionValue->setText(QString("0x%1").arg(temp_data, 8, 16, QLatin1Char('0')));
-    snprintf(version, size, "0x%lx", temp_data);
+    snprintf(version, size, "0x%x", temp_data);
 
     return 0;
 }
@@ -873,7 +873,7 @@ int readNtpServerVersion(char *version, size_t size)
 // read Ntp Server Instance Number ======================================================
 int readNtpServerInstanceNumber(char *instanceNumber, size_t size)
 {
-    snprintf(instanceNumber, size, "%ld", cores[Ucm_CoreConfig_NtpServerCoreType].core_instance_nr);
+    snprintf(instanceNumber, size, "%d", cores[Ucm_CoreConfig_NtpServerCoreType].core_instance_nr);
     return 0;
 }
 
@@ -1134,6 +1134,7 @@ int writeNtpServerIpAddress(char *ipAddress, size_t size)
 int ipv4_addr_to_register_value(char *ipAddress, size_t size)
 {
     int64_t temp_ip[4] = {0};
+
 
     if (strchr(ipAddress, '.'))
     { // ipv4

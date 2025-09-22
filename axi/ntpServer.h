@@ -4,6 +4,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
 #define Ucm_NtpServer_ControlReg 0x00000000
 #define Ucm_NtpServer_StatusReg 0x00000004
 #define Ucm_NtpServer_VersionReg 0x0000000C
@@ -67,8 +68,8 @@
 extern char *NtpServerProperties[];
 
 void initNtpServer(void);
-// int64_t temp_data;
-// int64_t temp_addr;
+// int32_t temp_data;
+// int32_t temp_addr;
 int readNtpServerStatus(char *status, size_t size);              // Ntp Server Status
 int readNtpServerInstanceNumber(char *status, size_t size);      // Ntp Server InstanceNumber
 int readNtpServerIpMode(char *ipMode, size_t size);              // Ntp Server IpMode

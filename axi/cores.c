@@ -7,6 +7,7 @@
 #include "ppsSlave.h"
 #include "todSlave.h"
 #include "axi.h"
+#include <stdint.h>
 
 //   read the core configuration
 
@@ -23,7 +24,7 @@ int getCores(void)
     {
         if (0 == readRegister((0x00000000 + ((i * Ucm_Config_BlockSize) + Ucm_Config_TypeInstanceReg)), &temp_data))
         {
-            // printf("temp data: %ld \n", temp_data);
+            // printf("temp data: %d \n", temp_data);
             if ((i == 0) && ((((temp_data >> 16) & 0x0000FFFF) != Ucm_CoreConfig_ConfSlaveCoreType) || (((temp_data >> 0) & 0x0000FFFF) != 1)))
             {
 
@@ -77,7 +78,7 @@ int getCores(void)
                 // temp_config.core_instance_nr = ((temp_data >> 0) & 0x0000FFFF);
                 cores[type].core_instance_nr = ((temp_data >> 0) & 0x0000FFFF);
 
-                printf("core type: %ld ... core name: %s\n", cores[type].core_type, cores[type].name);
+                printf("core type: %d ... core name: %s\n", cores[type].core_type, cores[type].name);
             }
         }
         else
@@ -94,7 +95,7 @@ int getCores(void)
             // cores[i].address_range_low = temp_data;
 
             cores[type].address_range_low = temp_data;
-            // printf("low addr %ld \n", temp_data);
+            // printf("low addr %d \n", temp_data);
         }
         else
         {
