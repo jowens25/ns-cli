@@ -1,25 +1,29 @@
+// driver.c
 #include "axi.h"
 #include "ntpServer.h"
 #include "cores.h"
-int driver() // switch to main to use
+int main() // switch to main to use
 {
 
-    // connect();
+    connect();
 
-    // readConfig();
-    //  char mac[32] = {0};
+    getCores();
 
-    // readNtpServerMacAddress(mac, sizeof(mac));
+    char currentIpAddress[32] = {0};
+    char newIpAddress[32] = "10.1.10.225";
+    char ipMode[32] = {0};
 
-    // readNtpServerSmearingStatus(mac, sizeof(mac));
+    int res = readNtpServerIpAddress(currentIpAddress, sizeof(currentIpAddress));
+    printf("result: %d\n", res);
+    printf("read ip: %s\n", currentIpAddress);
 
-    // char mac[32] = "AA:BB:CC:DD:EE:FF";
-    // size_t size = 32;
-    // writeNtpServerMacAddress(mac, size);
+    res = writeNtpServerIpAddress(newIpAddress, sizeof(newIpAddress));
+    printf("result 1: %d\n", res);
+    printf("wrote ip: %s\n", newIpAddress);
 
-    // printf("this happens to be the mac address of serial port hardcoded in my stuff: %s\n", mac);
-    // char vlan[] = "0x3004";
-    // writeNtpServerVlanValue(vlan, strlen(vlan));
-    //
-    // return 0;
+    res = readNtpServerIpAddress(currentIpAddress, sizeof(currentIpAddress));
+    printf("result: %d\n", res);
+    printf("read ip: %s\n", currentIpAddress);
+
+    return 0;
 }

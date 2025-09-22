@@ -8,8 +8,8 @@
 #include "todSlave.h"
 #include "cores.h"
 
-int64_t temp_data = 0x00000000;
-int64_t temp_addr = 0x00000000;
+int32_t temp_data = 0x00000000;
+int32_t temp_addr = 0x00000000;
 // const char *FPGA_PORT = "FPGA_PORT";
 
 #define MAX_NUM_PROP 256
@@ -579,7 +579,7 @@ int isWriteResponse(char *message)
     return 0;
 }
 
-int readRegister(int64_t addr, int64_t *data)
+int readRegister(int32_t addr, int32_t *data)
 {
     char writeData[64] = {0};
     char readData[64] = {0};
@@ -601,7 +601,7 @@ int readRegister(int64_t addr, int64_t *data)
     // build message
     strcat(writeData, "$RC,");
 
-    sprintf(hexAddr, "0x%08lx", addr); // convert to hex string
+    sprintf(hexAddr, "0x%08x", addr); // convert to hex string
 
     strcat(writeData, hexAddr);
     // printf("write data array: %s\n", writeData);
@@ -659,13 +659,13 @@ int readRegister(int64_t addr, int64_t *data)
         hexData[i] = readData[i + 17];
     }
 
-    *data = (int64_t)strtol(hexData, NULL, 16);
+    *data = (int32_t)strtol(hexData, NULL, 16);
     // printf("Read Response: %s \n", readData);
 
     return 0;
 }
 
-int writeRegister(int64_t addr, int64_t *data)
+int writeRegister(int32_t addr, int32_t *data)
 {
 
     char writeData[64] = {0};
@@ -688,13 +688,13 @@ int writeRegister(int64_t addr, int64_t *data)
     // build message
     strcat(writeData, "$WC,");
 
-    sprintf(hexAddr, "0x%08lx", addr); // convert to hex string
+    sprintf(hexAddr, "0x%08x", addr); // convert to hex string
 
     strcat(writeData, hexAddr);
 
     strcat(writeData, ",");
 
-    sprintf(hexData, "0x%08lx", *data);
+    sprintf(hexData, "0x%08x", *data);
 
     strcat(writeData, hexData);
 
@@ -858,8 +858,8 @@ int setupTermios(int fd)
         return -1;
     }
 
-    cfsetospeed(&tty, B115200); // Use a standard baud rate unless you know otherwise
-    cfsetispeed(&tty, B115200);
+    cfsetospeed(&tty, B1000000); // Use a standard baud rate unless you know otherwise
+    cfsetispeed(&tty, B1000000);
 
     // 8N1 configuration
     tty.c_cflag &= ~CSIZE;

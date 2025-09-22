@@ -94,14 +94,14 @@ int readPtpOcVersion(char *value, size_t size)
 
         return -1;
     }
-    snprintf(value, size, "0x%lx", temp_data);
+    snprintf(value, size, "0x%x", temp_data);
 
     return 0;
 }
 // InstanceNumber
 int readPtpOcInstanceNumber(char *instanceNumber, size_t size)
 {
-    snprintf(instanceNumber, size, "%ld", cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].core_instance_nr);
+    snprintf(instanceNumber, size, "%d", cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].core_instance_nr);
     return 0;
 }
 // VlanAddress
@@ -115,7 +115,7 @@ int readPtpOcVlanAddress(char *vlanAddr, size_t size)
         return -1;
     }
     temp_data &= 0x0000FFFF;
-    snprintf(vlanAddr, size, "0x%04lx", temp_data);
+    snprintf(vlanAddr, size, "0x%04x", temp_data);
     return 0;
 }
 // VlanStatus
@@ -192,7 +192,7 @@ int readPtpOcLayer(char *layer, size_t size)
         snprintf(layer, size, "%s", "NA");
         return -1234;
     }
-    printf("The value for this switch is: %ld\r\n", (temp_data >> 16) & 0x00000003);
+    printf("The value for this switch is: %d\r\n", (temp_data >> 16) & 0x00000003);
     switch ((temp_data >> 16) & 0x00000003)
     {
     case 0:
@@ -255,7 +255,7 @@ int readPtpOcIpAddress(char *ipAddr, size_t size)
 {
 
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
-    int64_t temp_ip = 0;
+    int32_t temp_ip = 0;
     char layer[size];
 
     if (0 != readPtpOcLayer(layer, size))
@@ -497,7 +497,7 @@ int readPtpOcDefaultDsDomain(char *domain, size_t size)
                 return -3;
             }
 
-            snprintf(domain, size, "0x%02lx", ((temp_data >> 0) & 0x000000FF));
+            snprintf(domain, size, "0x%02x", ((temp_data >> 0) & 0x000000FF));
             break;
             // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
         }
@@ -539,7 +539,7 @@ int readPtpOcDefaultDsPriority1(char *priority1, size_t size)
                 return -3;
             }
 
-            snprintf(priority1, size, "0x%02lx", ((temp_data >> 24) & 0x000000FF));
+            snprintf(priority1, size, "0x%02x", ((temp_data >> 24) & 0x000000FF));
             break;
             // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
         }
@@ -581,7 +581,7 @@ int readPtpOcDefaultDsPriority2(char *priority2, size_t size)
                 return -3;
             }
 
-            snprintf(priority2, size, "0x%02lx", ((temp_data >> 16) & 0x000000FF));
+            snprintf(priority2, size, "0x%02x", ((temp_data >> 16) & 0x000000FF));
             break;
             // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
         }
@@ -623,7 +623,7 @@ int readPtpOcDefaultDsAccuracy(char *accuracy, size_t size)
                 return -3;
             }
 
-            snprintf(accuracy, size, "%ld", ((temp_data >> 16) & 0x000000FF));
+            snprintf(accuracy, size, "%d", ((temp_data >> 16) & 0x000000FF));
 
             break;
             // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
@@ -666,7 +666,7 @@ int readPtpOcDefaultDsClass(char *class, size_t size)
                 return -3;
             }
 
-            snprintf(class, size, "0x%02lx", ((temp_data >> 24) & 0x000000FF));
+            snprintf(class, size, "0x%02x", ((temp_data >> 24) & 0x000000FF));
             break;
             // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
         }
@@ -708,7 +708,7 @@ int readPtpOcDefaultDsVariance(char *variance, size_t size)
                 return -3;
             }
 
-            snprintf(variance, size, "0x%04lx", ((temp_data >> 0) & 0x0000FFFF));
+            snprintf(variance, size, "0x%04x", ((temp_data >> 0) & 0x0000FFFF));
             break;
             // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
         }
@@ -750,7 +750,7 @@ int readPtpOcDefaultDsShortId(char *id, size_t size)
                 return -3;
             }
 
-            snprintf(id, size, "0x%04lx", temp_data);
+            snprintf(id, size, "0x%04x", temp_data);
             break;
             // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
         }
@@ -792,7 +792,7 @@ int readPtpOcDefaultDsInaccuracy(char *inaccuracy, size_t size)
                 return -3;
             }
 
-            snprintf(inaccuracy, size, "%ld", temp_data);
+            snprintf(inaccuracy, size, "%d", temp_data);
             break;
             // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
         }
@@ -834,7 +834,7 @@ int readPtpOcDefaultDsNumberOfPorts(char *numPorts, size_t size)
                 return -3;
             }
 
-            snprintf(numPorts, size, "%ld", temp_data);
+            snprintf(numPorts, size, "%d", temp_data);
             break;
             // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
         }
@@ -1051,8 +1051,8 @@ int readPtpOcPortDsPeerDelayValue(char *delay, size_t size)
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
     char delayMechanism[size];
-    int64_t temp_delay = 0;
-    int64_t temp_signed_delay = 0;
+    int32_t temp_delay = 0;
+    int32_t temp_signed_delay = 0;
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
     {
         snprintf(delay, size, "%s", "err");
@@ -1099,10 +1099,10 @@ int readPtpOcPortDsPeerDelayValue(char *delay, size_t size)
             temp_signed_delay = (long long)temp_delay;
             temp_signed_delay = temp_signed_delay >> 16;
             // ui->PtpOcPortDsPeerDelayValue->setText(QString::number(temp_signed_delay));
-            snprintf(delay, size, "%ld", temp_signed_delay);
+            snprintf(delay, size, "%d", temp_signed_delay);
 
             break;
-            // snprintf(numPorts, size, "%ld", temp_data);
+            // snprintf(numPorts, size, "%d", temp_data);
             // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
         }
     }
@@ -1176,7 +1176,7 @@ int readPtpOcPortDsState(char *state, size_t size)
             }
             break; // success get out...
         }
-        // snprintf(numPorts, size, "%ld", temp_data);
+        // snprintf(numPorts, size, "%d", temp_data);
         // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
     }
 
@@ -1221,7 +1221,7 @@ int readPtpOcPortDsAsymmetryValue(char *asymmetry, size_t size)
 
             break; // success get out...
         }
-        // snprintf(numPorts, size, "%ld", temp_data);
+        // snprintf(numPorts, size, "%d", temp_data);
         // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
     }
 
@@ -1262,11 +1262,11 @@ int readPtpOcPortDsMaxPeerDelayValue(char *delay, size_t size)
 
             // ui->PtpOcPortDsPDelayReqLogMsgIntervalValue->setText(QString::number((signed char)(temp_data & 0x000000FF)));
 
-            snprintf(delay, size, "%ld", temp_data);
+            snprintf(delay, size, "%d", temp_data);
 
             break; // success get out...
         }
-        // snprintf(numPorts, size, "%ld", temp_data);
+        // snprintf(numPorts, size, "%d", temp_data);
         // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
     }
 
@@ -1311,7 +1311,7 @@ int readPtpOcPortDsPDelayReqLogMsgIntervalValue(char *interval, size_t size)
 
             break; // success get out...
         }
-        // snprintf(numPorts, size, "%ld", temp_data);
+        // snprintf(numPorts, size, "%d", temp_data);
         // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
     }
 
@@ -1356,7 +1356,7 @@ int readPtpOcPortDsDelayReqLogMsgIntervalValue(char *interval, size_t size)
 
             break; // success get out...
         }
-        // snprintf(numPorts, size, "%ld", temp_data);
+        // snprintf(numPorts, size, "%d", temp_data);
         // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
     }
 
@@ -1397,11 +1397,11 @@ int readPtpOcPortDsDelayReceiptTimeoutValue(char *timeout, size_t size)
 
             // ui->PtpOcPortDsPDelayReqLogMsgIntervalValue->setText(QString::number((signed char)(temp_data & 0x000000FF)));
 
-            snprintf(timeout, size, "%ld", ((temp_data >> 16) & 0x000000FF));
+            snprintf(timeout, size, "%d", ((temp_data >> 16) & 0x000000FF));
 
             break; // success get out...
         }
-        // snprintf(numPorts, size, "%ld", temp_data);
+        // snprintf(numPorts, size, "%d", temp_data);
         // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
     }
 
@@ -1446,7 +1446,7 @@ int readPtpOcPortDsAnnounceLogMsgIntervalValue(char *interval, size_t size)
 
             break; // success get out...
         }
-        // snprintf(numPorts, size, "%ld", temp_data);
+        // snprintf(numPorts, size, "%d", temp_data);
         // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
     }
 
@@ -1487,11 +1487,11 @@ int readPtpOcPortDsAnnounceReceiptTimeoutValue(char *timeout, size_t size)
 
             // ui->PtpOcPortDsPDelayReqLogMsgIntervalValue->setText(QString::number((signed char)(temp_data & 0x000000FF)));
 
-            snprintf(timeout, size, "%ld", (((temp_data >> 8) & 0x000000FF)));
+            snprintf(timeout, size, "%d", (((temp_data >> 8) & 0x000000FF)));
 
             break; // success get out...
         }
-        // snprintf(numPorts, size, "%ld", temp_data);
+        // snprintf(numPorts, size, "%d", temp_data);
         // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
     }
 
@@ -1536,7 +1536,7 @@ int readPtpOcPortDsSyncLogMsgIntervalValue(char *interval, size_t size)
 
             break; // success get out...
         }
-        // snprintf(numPorts, size, "%ld", temp_data);
+        // snprintf(numPorts, size, "%d", temp_data);
         // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
     }
 
@@ -1577,11 +1577,11 @@ int readPtpOcPortDsSyncReceiptTimeoutValue(char *timeout, size_t size)
 
             // ui->PtpOcPortDsPDelayReqLogMsgIntervalValue->setText(QString::number((signed char)(temp_data & 0x000000FF)));
 
-            snprintf(timeout, size, "%ld", (((temp_data >> 8) & 0x000000FF)));
+            snprintf(timeout, size, "%d", (((temp_data >> 8) & 0x000000FF)));
 
             break; // success get out...
         }
-        // snprintf(numPorts, size, "%ld", temp_data);
+        // snprintf(numPorts, size, "%d", temp_data);
         // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
     }
 
@@ -1626,11 +1626,11 @@ int readPtpOcCurrentDsStepsRemovedValue(char *steps, size_t size)
 
             // ui->PtpOcPortDsPDelayReqLogMsgIntervalValue->setText(QString::number((signed char)(temp_data & 0x000000FF)));
 
-            snprintf(steps, size, "%ld", temp_data & 0xFFFF);
+            snprintf(steps, size, "%d", temp_data & 0xFFFF);
 
             break; // success get out...
         }
-        // snprintf(numPorts, size, "%ld", temp_data);
+        // snprintf(numPorts, size, "%d", temp_data);
         // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
     }
 
@@ -1641,7 +1641,7 @@ int readPtpOcCurrentDsOffsetValue(char *offset, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    int64_t temp_offset, temp_signed_offset = 0;
+    int32_t temp_offset, temp_signed_offset = 0;
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
     {
         snprintf(offset, size, "%s", "err");
@@ -1704,11 +1704,11 @@ int readPtpOcCurrentDsOffsetValue(char *offset, size_t size)
                 temp_signed_offset = -100000;
             }
 
-            snprintf(offset, size, "%ld", temp_signed_offset);
+            snprintf(offset, size, "%d", temp_signed_offset);
 
             break; // success get out...
         }
-        // snprintf(numPorts, size, "%ld", temp_data);
+        // snprintf(numPorts, size, "%d", temp_data);
         // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
     }
 
@@ -1720,8 +1720,8 @@ int readPtpOcCurrentDsDelayValue(char *delay, size_t size)
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
     char delayMechanism[size];
-    int64_t temp_delay = 0;
-    int64_t temp_signed_delay = 0;
+    int32_t temp_delay = 0;
+    int32_t temp_signed_delay = 0;
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDsControlReg, &temp_data))
     {
         snprintf(delay, size, "%s", "err");
@@ -1768,10 +1768,10 @@ int readPtpOcCurrentDsDelayValue(char *delay, size_t size)
             temp_signed_delay = (long long)temp_delay;
             temp_signed_delay = temp_signed_delay >> 16;
             // ui->PtpOcPortDsPeerDelayValue->setText(QString::number(temp_signed_delay));
-            snprintf(delay, size, "%ld", temp_signed_delay);
+            snprintf(delay, size, "%d", temp_signed_delay);
 
             break;
-            // snprintf(numPorts, size, "%ld", temp_data);
+            // snprintf(numPorts, size, "%d", temp_data);
             // ui->PtpOcDefaultDsDomainValue->setText(QString("0x%1").arg(((temp_data >> 0) & 0x000000FF), 2, 16, QLatin1Char('0')));
         }
     }
@@ -1936,7 +1936,7 @@ int readPtpOcParentDsGmPriority1Value(char *priority, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    int64_t temp_priority;
+    int32_t temp_priority;
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
     {
@@ -1968,7 +1968,7 @@ int readPtpOcParentDsGmPriority1Value(char *priority, size_t size)
 
             temp_priority = ((temp_data >> 24) & 0x000000FF);
 
-            snprintf(priority, size, "0x%02lx", temp_priority);
+            snprintf(priority, size, "0x%02x", temp_priority);
 
             break;
 
@@ -1982,7 +1982,7 @@ int readPtpOcParentDsGmPriority2Value(char *priority, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    int64_t temp_priority;
+    int32_t temp_priority;
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
     {
@@ -2014,7 +2014,7 @@ int readPtpOcParentDsGmPriority2Value(char *priority, size_t size)
 
             temp_priority = ((temp_data >> 16) & 0x000000FF);
 
-            snprintf(priority, size, "0x%02lx", temp_priority);
+            snprintf(priority, size, "0x%02x", temp_priority);
 
             break;
 
@@ -2028,7 +2028,7 @@ int readPtpOcParentDsGmVarianceValue(char *variance, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    int64_t temp_variance;
+    int32_t temp_variance;
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
     {
@@ -2060,7 +2060,7 @@ int readPtpOcParentDsGmVarianceValue(char *variance, size_t size)
 
             temp_variance = ((temp_data >> 0) & 0x0000FFFF);
 
-            snprintf(variance, size, "0x%02lx", temp_variance);
+            snprintf(variance, size, "0x%02x", temp_variance);
 
             break;
         }
@@ -2072,7 +2072,7 @@ int readPtpOcParentDsGmAccuracyValue(char *accuracy, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    int64_t temp_accuracy;
+    int32_t temp_accuracy;
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
     {
@@ -2104,7 +2104,7 @@ int readPtpOcParentDsGmAccuracyValue(char *accuracy, size_t size)
 
             temp_accuracy = ((temp_data >> 16) & 0x000000FF);
 
-            snprintf(accuracy, size, "%02ld", temp_accuracy);
+            snprintf(accuracy, size, "%02d", temp_accuracy);
 
             break;
         }
@@ -2116,7 +2116,7 @@ int readPtpOcParentDsGmClassValue(char *class, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    int64_t temp_class;
+    int32_t temp_class;
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
     {
@@ -2148,7 +2148,7 @@ int readPtpOcParentDsGmClassValue(char *class, size_t size)
 
             temp_class = ((temp_data >> 24) & 0x000000FF);
 
-            snprintf(class, size, "0x%02lx", temp_class);
+            snprintf(class, size, "0x%02x", temp_class);
 
             break;
         }
@@ -2160,7 +2160,7 @@ int readPtpOcParentDsGmShortIdValue(char *id, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    int64_t temp_id;
+    int32_t temp_id;
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
     {
@@ -2192,7 +2192,7 @@ int readPtpOcParentDsGmShortIdValue(char *id, size_t size)
 
             temp_id = temp_data;
 
-            snprintf(id, size, "0x%04lx", temp_id);
+            snprintf(id, size, "0x%04x", temp_id);
 
             break;
         }
@@ -2204,7 +2204,7 @@ int readPtpOcParentDsGmInaccuracyValue(char *inaccuracy, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    int64_t temp_inaccuracy;
+    int32_t temp_inaccuracy;
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
     {
@@ -2236,7 +2236,7 @@ int readPtpOcParentDsGmInaccuracyValue(char *inaccuracy, size_t size)
 
             temp_inaccuracy = temp_data;
 
-            snprintf(inaccuracy, size, "%ld", temp_inaccuracy);
+            snprintf(inaccuracy, size, "%d", temp_inaccuracy);
 
             break;
         }
@@ -2248,7 +2248,7 @@ int readPtpOcParentDsNwInaccuracyValue(char *inaccuracy, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    int64_t temp_inaccuracy;
+    int32_t temp_inaccuracy;
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_ParentDsControlReg, &temp_data))
     {
@@ -2280,7 +2280,7 @@ int readPtpOcParentDsNwInaccuracyValue(char *inaccuracy, size_t size)
 
             temp_inaccuracy = temp_data;
 
-            snprintf(inaccuracy, size, "%ld", temp_inaccuracy);
+            snprintf(inaccuracy, size, "%d", temp_inaccuracy);
 
             break;
         }
@@ -2296,7 +2296,7 @@ int readPtpOcTimePropertiesDsTimeSourceValue(char *source, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    int64_t temp_source;
+    int32_t temp_source;
     snprintf(source, size, "%s", "NA");
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDsControlReg, &temp_data))
@@ -2329,7 +2329,7 @@ int readPtpOcTimePropertiesDsTimeSourceValue(char *source, size_t size)
 
             temp_source = (temp_data >> 0) & 0x000000FF;
 
-            snprintf(source, size, "0x%02lx", temp_source);
+            snprintf(source, size, "0x%02x", temp_source);
 
             break;
         }
@@ -2635,7 +2635,7 @@ int readPtpOcTimePropertiesDsUtcOffsetValue(char *offset, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    int64_t temp_offset;
+    int32_t temp_offset;
     snprintf(offset, size, "%s", "NA");
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDsControlReg, &temp_data))
@@ -2668,7 +2668,7 @@ int readPtpOcTimePropertiesDsUtcOffsetValue(char *offset, size_t size)
 
             temp_offset = (temp_data >> 16) & 0x0000FFFF;
 
-            snprintf(offset, size, "%ld", temp_offset);
+            snprintf(offset, size, "%d", temp_offset);
 
             break;
         }
@@ -2680,7 +2680,7 @@ int readPtpOcTimePropertiesDsCurrentOffsetValue(char *offset, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    int64_t temp_offset;
+    int32_t temp_offset;
     snprintf(offset, size, "%s", "NA");
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDsControlReg, &temp_data))
@@ -2713,7 +2713,7 @@ int readPtpOcTimePropertiesDsCurrentOffsetValue(char *offset, size_t size)
 
             temp_offset = temp_data;
 
-            snprintf(offset, size, "%ld", temp_offset);
+            snprintf(offset, size, "%d", temp_offset);
 
             break;
         }
@@ -2725,7 +2725,7 @@ int readPtpOcTimePropertiesDsJumpSecondsValue(char *seconds, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    int64_t temp_seconds;
+    int32_t temp_seconds;
     snprintf(seconds, size, "%s", "NA");
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDsControlReg, &temp_data))
@@ -2758,7 +2758,7 @@ int readPtpOcTimePropertiesDsJumpSecondsValue(char *seconds, size_t size)
 
             temp_seconds = temp_data;
 
-            snprintf(seconds, size, "%ld", temp_seconds);
+            snprintf(seconds, size, "%d", temp_seconds);
 
             break;
         }
@@ -2770,7 +2770,7 @@ int readPtpOcTimePropertiesDsNextJumpValue(char *seconds, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    int64_t temp_next_jump;
+    int32_t temp_next_jump;
     snprintf(seconds, size, "%s", "NA");
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDsControlReg, &temp_data))
@@ -2809,10 +2809,10 @@ int readPtpOcTimePropertiesDsNextJumpValue(char *seconds, size_t size)
                 return -4;
             }
             temp_next_jump |= temp_data;
-            snprintf(seconds, size, "%ld", temp_next_jump);
+            snprintf(seconds, size, "%d", temp_next_jump);
 
             // ui->PtpOcTimePropertiesDsNextJumpValue->setText(QString::number(temp_next_jump));
-            // snprintf(seconds, size, "%ld", temp_next_jump);
+            // snprintf(seconds, size, "%d", temp_next_jump);
         }
 
         break;
@@ -2824,7 +2824,7 @@ int readPtpOcTimePropertiesDsDisplayNameValue(char *seconds, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    int64_t temp_length = 0x00000000;
+    int32_t temp_length = 0x00000000;
     char temp_string[16];
     snprintf(seconds, size, "%s", "NA");
 
@@ -3031,9 +3031,9 @@ int writePtpOcDefaultDsSlaveOnlyStatus(char *status, size_t size)
         return -1;
     }
 
-    printf("temp data in write slave only: 0x%08lx\r\n", temp_data);
+    printf("temp data in write slave only: 0x%08x\r\n", temp_data);
 
-    printf("temp data in write slave only: 0x%08lx\r\n", temp_data >> 20);
+    printf("temp data in write slave only: 0x%08x\r\n", temp_data >> 20);
 
     // clear both bits
     temp_data &= ~(0x00100000 | 0x00200000);
@@ -4061,12 +4061,12 @@ int writePtpOcPortDsDelayReceiptTimeoutValue(char *timeout, size_t size)
         return -2; // read current settings fails
     }
 
-    printf("read temp_data: 0x%08lx\n", temp_data);
+    printf("read temp_data: 0x%08x\n", temp_data);
 
     temp_data &= ~(0x000000FF << 16);  // mask bytes
     temp_data |= (temp_timeout << 16); // set bytes
 
-    printf("write temp_data: 0x%08lx\n", temp_data);
+    printf("write temp_data: 0x%08x\n", temp_data);
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDs4Reg, &temp_data))
     {
@@ -4095,12 +4095,12 @@ int writePtpOcPortDsDelayReqLogMsgIntervalValue(char *interval, size_t size)
         return -2; // read current settings fails
     }
 
-    printf("read temp_data: 0x%08lx\n", temp_data);
+    printf("read temp_data: 0x%08x\n", temp_data);
 
     temp_data &= ~(0x000000FF << 8);   // mask bytes
     temp_data |= (temp_interval << 8); // set bytes
 
-    printf("write temp_data: 0x%08lx\n", temp_data);
+    printf("write temp_data: 0x%08x\n", temp_data);
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDs4Reg, &temp_data))
     {
@@ -4139,12 +4139,12 @@ int writePtpOcPortDsPDelayReqLogMsgIntervalValue(char *interval, size_t size)
         return -2; // read current settings fails
     }
 
-    printf("read temp_data: 0x%08lx\n", temp_data);
+    printf("read temp_data: 0x%08x\n", temp_data);
 
     temp_data &= ~(0x000000FF << 0);   // mask bytes
     temp_data |= (temp_interval << 0); // set bytes
 
-    printf("write temp_data: 0x%08lx\n", temp_data);
+    printf("write temp_data: 0x%08x\n", temp_data);
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDs4Reg, &temp_data))
     {
@@ -4185,12 +4185,12 @@ int writePtpOcPortDsAnnounceReceiptTimeoutValue(char *timeout, size_t size)
         return -2; // read current settings fails
     }
 
-    printf("read temp_data: 0x%08lx\n", temp_data);
+    printf("read temp_data: 0x%08x\n", temp_data);
 
     temp_data &= ~(0x000000FF << 8);  // mask bytes
     temp_data |= (temp_timeout << 8); // set bytes
 
-    printf("write temp_data: 0x%08lx\n", temp_data);
+    printf("write temp_data: 0x%08x\n", temp_data);
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDs5Reg, &temp_data))
     {
@@ -4230,12 +4230,12 @@ int writePtpOcPortDsAnnounceLogMsgIntervalValue(char *interval, size_t size)
         return -2; // read current settings fails
     }
 
-    printf("read temp_data: 0x%08lx\n", temp_data);
+    printf("read temp_data: 0x%08x\n", temp_data);
 
     temp_data &= ~(0x000000FF << 0);   // mask bytes
     temp_data |= (temp_interval << 0); // set bytes
 
-    printf("write temp_data: 0x%08lx\n", temp_data);
+    printf("write temp_data: 0x%08x\n", temp_data);
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDs5Reg, &temp_data))
     {
@@ -4274,12 +4274,12 @@ int writePtpOcPortDsSyncReceiptTimeoutValue(char *timeout, size_t size)
         return -2; // read current settings fails
     }
 
-    printf("read temp_data: 0x%08lx\n", temp_data);
+    printf("read temp_data: 0x%08x\n", temp_data);
 
     temp_data &= ~(0x000000FF << 8);  // mask bytes
     temp_data |= (temp_timeout << 8); // set bytes
 
-    printf("write temp_data: 0x%08lx\n", temp_data);
+    printf("write temp_data: 0x%08x\n", temp_data);
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDs6Reg, &temp_data))
     {
@@ -4318,12 +4318,12 @@ int writePtpOcPortDsSyncLogMsgIntervalValue(char *interval, size_t size)
         return -2; // read current settings fails
     }
 
-    printf("read temp_data: 0x%08lx\n", temp_data);
+    printf("read temp_data: 0x%08x\n", temp_data);
 
     temp_data &= ~(0x000000FF << 0);   // mask bytes
     temp_data |= (temp_interval << 0); // set bytes
 
-    printf("write temp_data: 0x%08lx\n", temp_data);
+    printf("write temp_data: 0x%08x\n", temp_data);
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDs6Reg, &temp_data))
     {
@@ -4352,14 +4352,14 @@ int writePtpOcPortDsAsymmetryValue(char *asymmetry, size_t size)
         return -2; // read current settings fails
     }
 
-    printf("read temp_data: 0x%08lx\n", temp_data);
+    printf("read temp_data: 0x%08x\n", temp_data);
 
     // temp_data &= ~(0x000000FF << 0);   // mask bytes
     // temp_data |= (temp_asymmetry << 0); // set bytes
 
     temp_data = temp_asymmetry;
 
-    printf("write temp_data: 0x%08lx\n", temp_data);
+    printf("write temp_data: 0x%08x\n", temp_data);
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDs7Reg, &temp_data))
     {
@@ -4388,14 +4388,14 @@ int writePtpOcPortDsMaxPeerDelayValue(char *delay, size_t size)
         return -2; // read current settings fails
     }
 
-    printf("read temp_data: 0x%08lx\n", temp_data);
+    printf("read temp_data: 0x%08x\n", temp_data);
 
     // temp_data &= ~(0x000000FF << 0);   // mask bytes
     // temp_data |= (temp_asymmetry << 0); // set bytes
 
     temp_data = temp_delay;
 
-    printf("write temp_data: 0x%08lx\n", temp_data);
+    printf("write temp_data: 0x%08x\n", temp_data);
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_PortDs8Reg, &temp_data))
     {
@@ -4751,12 +4751,12 @@ int writePtpOcTimePropertiesDsUtcOffsetValue(char *offset, size_t size)
         return -2; // read current settings fails
     }
 
-    printf("read temp_data: 0x%08lx\n", temp_data);
+    printf("read temp_data: 0x%08x\n", temp_data);
     // clear the top of temp_data we just read
     temp_data &= ~0xFFFF0000;
     temp_data |= (temp_offset << 16);
     // temp_data &= 0x000000FF;
-    printf("write temp_data: 0x%08lx\n", temp_data);
+    printf("write temp_data: 0x%08x\n", temp_data);
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs1Reg, &temp_data))
     {
         return -3;
@@ -4783,14 +4783,14 @@ int writePtpOcTimePropertiesDsCurrentOffsetValue(char *offset, size_t size)
         return -2; // read current settings fails
     }
 
-    // printf("read temp_data: 0x%08lx\n", temp_data);
+    // printf("read temp_data: 0x%08x\n", temp_data);
     // clear the top of temp_data we just read
     // temp_data &= ~0xFFFF0000;
     // temp_data |= (temp_offset << 16);
     // temp_data &= 0x000000FF;
 
     temp_data = temp_offset;
-    // printf("write temp_data: 0x%08lx\n", temp_data);
+    // printf("write temp_data: 0x%08x\n", temp_data);
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs2Reg, &temp_data))
     {
         return -3;
@@ -4817,14 +4817,14 @@ int writePtpOcTimePropertiesDsJumpSecondsValue(char *seconds, size_t size)
         return -2; // read current settings fails
     }
 
-    // printf("read temp_data: 0x%08lx\n", temp_data);
+    // printf("read temp_data: 0x%08x\n", temp_data);
     // clear the top of temp_data we just read
     // temp_data &= ~0xFFFF0000;
     // temp_data |= (temp_offset << 16);
     // temp_data &= 0x000000FF;
 
     temp_data = temp_seconds;
-    // printf("write temp_data: 0x%08lx\n", temp_data);
+    // printf("write temp_data: 0x%08x\n", temp_data);
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs3Reg, &temp_data))
     {
         return -3;
@@ -4852,14 +4852,14 @@ int writePtpOcTimePropertiesDsNextJumpValue(char *next, size_t size)
     //    return -2; // read current settings fails
     //}
 
-    // printf("read temp_data: 0x%08lx\n", temp_data);
+    // printf("read temp_data: 0x%08x\n", temp_data);
     // clear the top of temp_data we just read
     // temp_data &= ~0x00000000;
     temp_data = (temp_next >> 32);
     // temp_data &= 0x000000FF;
 
     // temp_data = temp_seconds;
-    //  printf("write temp_data: 0x%08lx\n", temp_data);
+    //  printf("write temp_data: 0x%08x\n", temp_data);
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_TimePropertiesDs4Reg, &temp_data))
     {
         return -3;
