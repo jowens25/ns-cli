@@ -29,6 +29,7 @@ var networkStatusCmd = &cobra.Command{
 		fmt.Println("Interface:        ", lib.AppConfig.Network.Interface, lib.GetPortSpeed(lib.AppConfig.Network.Interface))
 		fmt.Println("MAC:              ", lib.GetIpv4MacAddress(lib.AppConfig.Network.Interface))
 		fmt.Println("IPv4:             ", lib.GetIpv4Address(lib.AppConfig.Network.Interface))
+		fmt.Println("Netmask:          ", lib.GetIpv4Netmask(lib.AppConfig.Network.Interface))
 		fmt.Println("DHCPv4:           ", lib.GetIpv4DhcpState(lib.AppConfig.Network.Interface))
 		fmt.Println("IGNORE AUTO DNS:  ", lib.GetIgnoreAutoDns(lib.AppConfig.Network.Interface))
 		fmt.Println("DNS 1:            ", lib.GetIpv4Dns1(lib.AppConfig.Network.Interface))
