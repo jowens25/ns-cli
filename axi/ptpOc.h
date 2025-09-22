@@ -4,7 +4,7 @@
 #define PTP_OC_H
 
 #include <stddef.h>
-
+#include <stdint.h>
 // registers
 #define Ucm_PtpOc_ControlReg 0x00000000
 #define Ucm_PtpOc_StatusReg 0x00000004
