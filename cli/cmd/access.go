@@ -5,6 +5,8 @@ package cmd
 
 import (
 	"NovusTimeServer/lib"
+	"fmt"
+	"net"
 
 	"github.com/spf13/cobra"
 )
@@ -24,7 +26,14 @@ var addCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
+		ipAddr, ipNet, err := net.ParseCIDR(args[0])
+		if err != nil {
+			fmt.Println("please enter address in CIDR form. Ex. 10.1.10.1/24, 10.1.10.1/32")
+			return
+		}
+		fmt.Printf("adding access for %s with mask %s\n", ipAddr.String(), net.IP(ipNet.Mask).String())
 		lib.AddAccessToFiles(args[0])
+
 	},
 }
 
@@ -46,10 +55,19 @@ var unrestrictCmd = &cobra.Command{
 	},
 }
 
+var showCmd = &cobra.Command{
+	Use:   "show",
+	Short: "show network restrictions",
+	Run: func(cmd *cobra.Command, args []string) {
+		lib.readXinetdAllowedNodes()
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(accessCmd)
 	accessCmd.AddCommand(unrestrictCmd)
 	accessCmd.AddCommand(addCmd)
 	accessCmd.AddCommand(removeCmd)
+	accessCmd.AddCommand(showCmd)
 
 }

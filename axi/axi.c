@@ -659,6 +659,9 @@ int readRegister(int64_t addr, int64_t *data)
         hexData[i] = readData[i + 17];
     }
 
+    hexData[8] = '\0';
+
+    // printf("hex data: %s\n", hexData);
     *data = (int64_t)strtol(hexData, NULL, 16);
     // printf("Read Response: %s \n", readData);
 
