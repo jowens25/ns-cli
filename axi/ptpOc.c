@@ -467,7 +467,7 @@ int readPtpOcDefaultDsDomain(char *domain, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    unsigned char temp_clock_id[8];
+    // unsigned char temp_clock_id[8];
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
     {
@@ -509,7 +509,7 @@ int readPtpOcDefaultDsPriority1(char *priority1, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    unsigned char temp_clock_id[8];
+    // unsigned char temp_clock_id[8];
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
     {
@@ -551,7 +551,7 @@ int readPtpOcDefaultDsPriority2(char *priority2, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    unsigned char temp_clock_id[8];
+    // unsigned char temp_clock_id[8];
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
     {
@@ -593,7 +593,7 @@ int readPtpOcDefaultDsAccuracy(char *accuracy, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    unsigned char temp_clock_id[8];
+    // unsigned char temp_clock_id[8];
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
     {
@@ -636,7 +636,7 @@ int readPtpOcDefaultDsClass(char *class, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    unsigned char temp_clock_id[8];
+    // unsigned char temp_clock_id[8];
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
     {
@@ -678,7 +678,7 @@ int readPtpOcDefaultDsVariance(char *variance, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    unsigned char temp_clock_id[8];
+    // unsigned char temp_clock_id[8];
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
     {
@@ -720,7 +720,7 @@ int readPtpOcDefaultDsShortId(char *id, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    unsigned char temp_clock_id[8];
+    // unsigned char temp_clock_id[8];
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
     {
@@ -762,7 +762,7 @@ int readPtpOcDefaultDsInaccuracy(char *inaccuracy, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    unsigned char temp_clock_id[8];
+    // unsigned char temp_clock_id[8];
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
     {
@@ -804,7 +804,7 @@ int readPtpOcDefaultDsNumberOfPorts(char *numPorts, size_t size)
 {
     temp_addr = cores[Ucm_CoreConfig_PtpOrdinaryClockCoreType].address_range_low;
     temp_data = 0x40000000;
-    unsigned char temp_clock_id[8];
+    // unsigned char temp_clock_id[8];
 
     if (0 != writeRegister(temp_addr + Ucm_PtpOc_DefaultDsControlReg, &temp_data))
     {
@@ -4929,6 +4929,8 @@ int writePtpOcTimePropertiesDsDisplayNameValue(char *name, size_t size)
             // ui->PtpOcTimePropertiesDsDisplayNameValue->setText(temp_string);
         }
     }
+
+    return 0;
 }
 
 int writePtpOcStatus(char *status, size_t size)

@@ -858,8 +858,8 @@ int setupTermios(int fd)
         return -1;
     }
 
-    cfsetospeed(&tty, B115200); // Use a standard baud rate unless you know otherwise
-    cfsetispeed(&tty, B115200);
+    cfsetospeed(&tty, B1000000); // Use a standard baud rate unless you know otherwise
+    cfsetispeed(&tty, B1000000);
 
     // 8N1 configuration
     tty.c_cflag &= ~CSIZE;
