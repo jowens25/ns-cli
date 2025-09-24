@@ -45,12 +45,13 @@ func ReadWriteMicro(command string) (string, error) {
 
 	}
 
-	for {
+	err = port.SetReadTimeout(1 * time.Second)
+	if err != nil {
+		log.Println("Failed to set read timeout:", err)
+		return "", err
+	}
 
-		err = port.SetReadTimeout(time.Second * 1)
-		if err != nil {
-			break
-		}
+	for {
 
 		n, err := port.Read(read_data)
 		if err != nil {
