@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"go.bug.st/serial"
 )
@@ -30,6 +31,11 @@ func ReadWriteMicro(command string) (string, error) {
 		return "port open error", err
 	}
 	defer port.Close()
+
+	err = port.SetReadTimeout(time.Second * 1)
+	if err != nil {
+		panic(err)
+	}
 
 	port.ResetInputBuffer()
 	port.ResetOutputBuffer()
