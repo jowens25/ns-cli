@@ -15,13 +15,12 @@ import (
 var accessCmd = &cobra.Command{
 	Use:   "access",
 	Short: "define network access",
-	Long: `Use this command to set the network level access to the system. 
-	ex. 10.1.10.220/32 or 10.1.10.0/24.`,
-	Args: cobra.ExactArgs(1),
+	Long:  `get and set network level access to the system`,
+	Args:  cobra.ExactArgs(1),
 }
 
 var addCmd = &cobra.Command{
-	Use:   "add [ip address]",
+	Use:   "add [cidr address]",
 	Short: "add a node",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
@@ -34,11 +33,16 @@ var addCmd = &cobra.Command{
 		fmt.Printf("adding access for %s with mask %s\n", ipAddr.String(), net.IP(ipNet.Mask).String())
 		lib.AddAccessToFiles(args[0])
 
+		fmt.Println("allowed nodes")
+		for _, node := range lib.ReadAccessFromFiles() {
+			fmt.Println(node)
+		}
+
 	},
 }
 
 var removeCmd = &cobra.Command{
-	Use:   "remove [ip address]",
+	Use:   "remove [cidr address]",
 	Short: "remove a node",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
@@ -49,6 +53,11 @@ var removeCmd = &cobra.Command{
 		}
 		fmt.Printf("removing access for %s with mask %s\n", ipAddr.String(), net.IP(ipNet.Mask).String())
 		lib.RemoveAccessFromFiles(args[0])
+
+		fmt.Println("allowed nodes")
+		for _, node := range lib.ReadAccessFromFiles() {
+			fmt.Println(node)
+		}
 
 	},
 }
@@ -67,7 +76,7 @@ var showCmd = &cobra.Command{
 	Short: "show allowed nodes",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		fmt.Println("Allowed nodes")
+		fmt.Println("allowed nodes")
 		for _, node := range lib.ReadAccessFromFiles() {
 			fmt.Println(node)
 		}

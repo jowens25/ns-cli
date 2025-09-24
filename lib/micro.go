@@ -49,10 +49,18 @@ func ReadWriteMicro(command string) (string, error) {
 		if err != nil {
 			log.Println(err)
 		}
+
 		lines := string(read_data[:n])
+
 		if strings.Contains(lines, command[:3]) {
 			responses := strings.Split(lines, "\r\n")
-			return strings.TrimSpace(responses[0]), nil
+			for _, response := range responses {
+				if strings.Contains(response, command[:3]) {
+					return strings.TrimSpace(responses[0]), nil
+
+				}
+			}
+
 		}
 	}
 

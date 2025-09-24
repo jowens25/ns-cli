@@ -83,10 +83,15 @@ func Unrestrict() {
 	InitNginxConfig()
 	RestartXinetd()
 	RestartNginx()
-	fmt.Println("Network access reset")
+	fmt.Println("network access reset")
 }
 
 func AddAccessToFiles(addr string) {
+	nodes := ReadAccessFromFiles()
+	if slices.Contains(nodes, addr) {
+		fmt.Println("node is allowed already")
+		return
+	}
 
 	_, _, err := net.ParseCIDR(addr)
 	if err != nil {
@@ -99,11 +104,17 @@ func AddAccessToFiles(addr string) {
 }
 
 func RemoveAccessFromFiles(addr string) {
+	nodes := ReadAccessFromFiles()
+	if !slices.Contains(nodes, addr) {
+		fmt.Println("no such node found")
+		return
+	}
 	_, _, err := net.ParseCIDR(addr)
 	if err != nil {
 		fmt.Println("invalid ip")
 		return
 	}
+
 	removeAccessFromNginxFile(addr)
 	removeAccessFromXinetdFile(addr)
 

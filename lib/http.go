@@ -6,13 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func StopHttp() {
+func DisableHttp() {
 
 	DisablePort("80")
 
 }
 
-func StartHttp() {
+func EnableHttp() {
 
 	EnablePort("80")
 
@@ -43,11 +43,11 @@ func writeHttpStatus(c *gin.Context) {
 	}
 
 	if myhttp.Action == "start" {
-		StartHttp()
+		EnableHttp()
 	}
 
 	if myhttp.Action == "stop" {
-		StopHttp()
+		DisableHttp()
 	}
 
 	myhttp.Status = GetHttpStatus()

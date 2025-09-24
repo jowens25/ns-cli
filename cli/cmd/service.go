@@ -22,14 +22,14 @@ var serviceEnableCmd = &cobra.Command{
 		switch args[0] {
 		case "ssh":
 			lib.EnableSsh()
+		case "snmp":
+			lib.StartSnmpd()
 		case "ftp":
 			lib.EnableFtp()
 		case "telnet":
 			lib.EnableTelnet()
 		case "http":
-		case "dhcp":
-			lib.SetDhcp4(lib.AppConfig.Network.Interface, "auto")
-
+			lib.EnableHttp()
 		case "app":
 			lib.StartApp()
 		default:
@@ -49,19 +49,14 @@ var serviceDisableCmd = &cobra.Command{
 		switch args[0] {
 		case "ssh":
 			lib.DisableSsh()
+		case "snmp":
+			lib.StopSnmpd()
 		case "ftp":
 			lib.DisableFtp()
 		case "telnet":
 			lib.DisableTelnet()
 		case "http":
-		case "dhcp":
-
-			lib.SetDhcp4(lib.AppConfig.Network.Interface, "manual")
-			//if len(args) > 1 {
-			//	lib.DisableDhcp4(args[1])
-			//} else {
-			//	fmt.Println("Please enter an interface (eth0)")
-			//}
+			lib.DisableHttp()
 		case "app":
 			lib.StopApp()
 		default:
@@ -85,6 +80,7 @@ var serviceStatusCmd = &cobra.Command{
 			fmt.Println("ssh:    ", lib.GetSshStatus())
 			fmt.Println("http:   ", lib.GetHttpStatus())
 			fmt.Println("snmp:   ", lib.GetSnmpdStatus())
+
 		case "ssh":
 			fmt.Println("ssh:    ", lib.GetSshStatus())
 		case "ftp":
@@ -95,51 +91,7 @@ var serviceStatusCmd = &cobra.Command{
 			fmt.Println("http:   ", lib.GetHttpStatus())
 		case "snmp":
 			fmt.Println("snmp:   ", lib.GetSnmpdStatus())
-		case "dhcp":
 
-			if len(args) > 1 {
-				fmt.Println("dhcp:   ", lib.GetIpv4DhcpState(args[1]))
-			} else {
-				fmt.Println("Please enter an interface (eth0)")
-			}
-		default:
-			cmd.Help()
-		}
-	},
-}
-
-var serviceRestartCmd = &cobra.Command{
-	Use:       "restart [protocol | all]",
-	Short:     "restart service",
-	Args:      cobra.MinimumNArgs(1),
-	ValidArgs: []string{"all", "ssh", "ftp", "telnet", "http", "dhcp", "dhcp6", "app", "snmp"},
-
-	Run: func(cmd *cobra.Command, args []string) {
-
-		switch args[0] {
-		//case "all":
-		//	fmt.Println("ftp:    ", lib.GetFtpStatus())
-		//	fmt.Println("telnet: ", lib.GetTelnetStatus())
-		//	fmt.Println("ssh:    ", lib.GetSshStatus())
-		//	fmt.Println("http:   ", lib.GetHttpStatus())
-		//	fmt.Println("snmp:   ", lib.GetSnmpdStatus())
-		//case "ssh":
-		//	fmt.Println("ssh:    ", lib.GetSshStatus())
-		//case "ftp":
-		//	fmt.Println("ftp:    ", lib.GetFtpStatus())
-		//case "telnet":
-		//	fmt.Println("telnet: ", lib.GetTelnetStatus())
-		//case "http":
-		//	fmt.Println("http:   ", lib.GetHttpStatus())
-		//case "snmp":
-		//	fmt.Println("snmp:   ", lib.GetSnmpdStatus())
-		//case "dhcp":
-		//	lib.RestartDhcp4()
-		//	if len(args) > 1 {
-		//		fmt.Println("dhcp:   ", lib.GetIpv4DhcpState(args[1]))
-		//	} else {
-		//		fmt.Println("Please enter an interface (eth0)")
-		//	}
 		default:
 			cmd.Help()
 		}
@@ -151,5 +103,4 @@ func init() {
 	serviceCmd.AddCommand(serviceEnableCmd)
 	serviceCmd.AddCommand(serviceDisableCmd)
 	serviceCmd.AddCommand(serviceStatusCmd)
-	serviceCmd.AddCommand(serviceRestartCmd)
 }

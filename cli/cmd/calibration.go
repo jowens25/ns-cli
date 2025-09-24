@@ -6,7 +6,6 @@ package cmd
 import (
 	"NovusTimeServer/lib"
 	"fmt"
-	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -32,7 +31,6 @@ authorized technician.`,
 			for i := range 10 {
 				response, _ := lib.ReadWriteMicro("$CAL" + fmt.Sprint(i+1))
 				fmt.Println(response)
-				time.Sleep(100 * time.Millisecond)
 			}
 
 		} else if len(args) == 1 {
