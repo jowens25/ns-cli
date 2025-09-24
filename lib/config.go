@@ -3,6 +3,7 @@ package lib
 import (
 	"fmt"
 	"log"
+	"os/exec"
 	"sync"
 
 	"github.com/spf13/viper"
@@ -108,11 +109,8 @@ func InitConfig() *Config {
 	viper.SetDefault("network.dns2", "8.8.4.4")
 
 	viper.SetDefault("xinetd.ftp", "/etc/xinetd.d/ftp")
-	viper.SetDefault("xinetd.def_ftp", "/etc/xinetd.d/def_ftp")
 	viper.SetDefault("xinetd.telnet", "/etc/xinetd.d/telnet")
-	viper.SetDefault("xinetd.def_telnet", "/etc/xinetd.d/def_telnet")
 	viper.SetDefault("xinetd.ssh", "/etc/xinetd.d/ssh")
-	viper.SetDefault("xinetd.def_ssh", "/etc/xinetd.d/def_ssh")
 
 	viper.SetDefault("security.pwquality", "/etc/security/pwquality.conf")
 	viper.SetDefault("security.login", "/etc/login.defs")
@@ -163,4 +161,60 @@ func GetConfig() *Config {
 		AppConfig = InitConfig()
 	})
 	return AppConfig
+}
+
+func CopyConfigs() {
+
+	cmd := exec.Command("cp", AppConfig.App.DefaultConfigs+"ftp", AppConfig.Xinetd.FtpPath)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Println(string(out), err.Error())
+		return
+	}
+
+	cmd = exec.Command("cp", AppConfig.App.DefaultConfigs+"ssh", AppConfig.Xinetd.SshPath)
+	out, err = cmd.CombinedOutput()
+	if err != nil {
+		log.Println(string(out), err.Error())
+		return
+	}
+
+	cmd = exec.Command("cp", AppConfig.App.DefaultConfigs+"telnet", AppConfig.Xinetd.TelnetPath)
+	out, err = cmd.CombinedOutput()
+	if err != nil {
+		log.Println(string(out), err.Error())
+		return
+	}
+
+	cmd = exec.Command("cp", AppConfig.App.DefaultConfigs+"nginx.conf", AppConfig.Nginx.Config)
+	out, err = cmd.CombinedOutput()
+	if err != nil {
+		log.Println(string(out), err.Error())
+		return
+	}
+
+	cmd = exec.Command("cp", AppConfig.App.DefaultConfigs+"snmpd.conf", AppConfig.Snmp.Path)
+	out, err = cmd.CombinedOutput()
+	if err != nil {
+		log.Println(string(out), err.Error())
+		return
+	}
+
+	cmd = exec.Command("cp", AppConfig.App.DefaultConfigs+"login.defs", AppConfig.Security.Login)
+	out, err = cmd.CombinedOutput()
+	if err != nil {
+		log.Println(string(out), err.Error())
+		return
+	}
+
+	cmd = exec.Command("cp", AppConfig.App.DefaultConfigs+"pwquality.conf", AppConfig.Security.Pwquality)
+	out, err = cmd.CombinedOutput()
+	if err != nil {
+		log.Println(string(out), err.Error())
+		return
+	}
+
+	fmt.Println("configs copied")
+
+	GetConfig()
 }

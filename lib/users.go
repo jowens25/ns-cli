@@ -358,8 +358,9 @@ func addAdminGroup() {
 
 	if err != nil {
 		fmt.Println(err.Error())
+		fmt.Println(string(output))
+
 	}
-	fmt.Println(string(output))
 }
 
 func addUserGroup() {
@@ -369,6 +370,39 @@ func addUserGroup() {
 
 	if err != nil {
 		fmt.Println(err.Error())
+		fmt.Println(string(output))
+
 	}
-	fmt.Println(string(output))
+}
+
+func ResetUsers() {
+
+	users := readSystemViewers()
+
+	for _, u := range users {
+		removeUserFromSystem(u)
+	}
+
+	createDefaultUser()
+
+}
+
+func createDefaultUser() {
+
+	var user User
+	user.Username = AppConfig.User.DefaultUsername
+	user.Password = AppConfig.User.DefaultPassword
+	user.Role = "admin"
+
+	addAdminGroup()
+	addUserGroup()
+
+	setPasswordEnforcement(false)
+
+	warning, err := addUserToSystem(user)
+	if err != nil {
+		fmt.Println(warning)
+		fmt.Println(err.Error())
+	}
+
 }
