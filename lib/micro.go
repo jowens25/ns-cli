@@ -32,11 +32,6 @@ func ReadWriteMicro(command string) (string, error) {
 	}
 	defer port.Close()
 
-	err = port.SetReadTimeout(time.Second * 1)
-	if err != nil {
-		panic(err)
-	}
-
 	port.ResetInputBuffer()
 	port.ResetOutputBuffer()
 
@@ -51,6 +46,12 @@ func ReadWriteMicro(command string) (string, error) {
 	}
 
 	for {
+
+		err = port.SetReadTimeout(time.Second * 1)
+		if err != nil {
+			break
+		}
+
 		n, err := port.Read(read_data)
 		if err != nil {
 			log.Println(err)
@@ -69,5 +70,5 @@ func ReadWriteMicro(command string) (string, error) {
 
 		}
 	}
-
+	return "timeout", err
 }
