@@ -32,8 +32,11 @@ func ReadWriteMicro(command string) (string, error) {
 
 		buffer = append(buffer, scanner.Text()...)
 
-		fmt.Println(string(buffer))
+		if len(buffer) >= 200 {
+			break
+		}
 	}
+	fmt.Println(string(buffer))
 
 	return "nothing", nil
 }
