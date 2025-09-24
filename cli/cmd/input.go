@@ -10,7 +10,7 @@ import (
 
 var inputCmd = &cobra.Command{
 	Use:   "input",
-	Short: "input a, b channel settings",
+	Short: "get and setinput a, b channel settings",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},

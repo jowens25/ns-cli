@@ -12,18 +12,13 @@ import (
 
 // baudrateCmd represents the baudrate command
 var baudrateCmd = &cobra.Command{
-	Use:   "baud <baudrates>",
-	Short: "rs232 rear panel baud rate",
-	Long: `Use this command to assign and query the baud 
-rate on rear panel RS232. (Default = 115200). Available 
-baudrates are 19200, 38400, 57600, 115200, 230400.`,
+	Use:                   "baud <rate>",
+	Short:                 "get and set baudrate (rear panel serial port)",
 	ValidArgs:             []string{"19200", "38400", "57600", "115200", "230400"},
 	DisableFlagsInUseLine: true, // This hides [flags] from the usage line
 
-	Example: `
-  # Common usage patterns
-  baudrate			# return current rate
-  baudrate <rate>		# sets new rate`,
+	Example: `  baud 		# return channel factor
+  baud <rate> 	# sets new rate`,
 
 	Run: func(cmd *cobra.Command, args []string) {
 

@@ -22,9 +22,10 @@ type Config struct {
 }
 
 type ApplicationConfig struct {
-	Database string `mapstructure:"database"` // /etc/ns/app.db
-	Config   string `mapstructure:"config"`   // /etc/ns/config.toml
-	Log      string `mapstructure:"log"`      // /etc/ns/app.log
+	Database       string `mapstructure:"database"`        // /etc/ns/app.db
+	Config         string `mapstructure:"config"`          // /etc/ns/config.toml
+	Log            string `mapstructure:"log"`             // /etc/ns/app.log
+	DefaultConfigs string `mapstructure:"default_configs"` // /usr/share/ns/configs/
 }
 
 type ApiConfig struct {
@@ -40,15 +41,15 @@ type NetworkConfig struct {
 }
 
 type NginxConfig struct {
-	Config string `mapstructure:"config"` // /etc/nginx/
+	Config string `mapstructure:"config"` // /etc/nginx/nginx.conf
 	Key    string `mapstructure:"key"`    // /etc/nginx/ssl/selfsigned.key
 	Cert   string `mapstructure:"cert"`   // /etc/nginx/ssl/selfsigned.crt
 }
 
 type XinetdConfig struct {
-	FtpPath    string `mapstructure:"ftp-path"`    // /etc/xinetd.d/ftp
-	TelnetPath string `mapstructure:"telnet-path"` // /etc/xinetd.d/telnet
-	SshPath    string `mapstructure:"ssh-path"`    // /etc/xinetd.d/ssh
+	FtpPath    string `mapstructure:"ftp"`    // /etc/xinetd.d/ftp
+	TelnetPath string `mapstructure:"telnet"` // /etc/xinetd.d/telnet
+	SshPath    string `mapstructure:"ssh"`    // /etc/xinetd.d/ssh
 
 }
 
@@ -90,12 +91,14 @@ func InitConfig() *Config {
 
 	viper.SetDefault("app.database", "/etc/ns/app.db")
 	viper.SetDefault("app.config", "/etc/ns/config.toml")
-	viper.SetDefault("app.log", "/tmp/app.log")
+	viper.SetDefault("app.log", "/tmp/ns.log")
 	viper.SetDefault("api.port", "5000")
 	viper.SetDefault("api.host", "localhost") // production
+	viper.SetDefault("app.default_configs", "/usr/share/ns/configs/")
 	//viper.SetDefault("api.host", "0.0.0.0")   // development
 
 	viper.SetDefault("nginx.config", "/etc/nginx/nginx.conf")
+	//viper.SetDefault("nginx.defconfig", "/etc/nginx/def_nginx.conf")
 	viper.SetDefault("nginx.key", "/etc/nginx/ssl/nginx.key")
 	viper.SetDefault("nginx.cert", "/etc/nginx/ssl/nginx.crt")
 
@@ -104,9 +107,12 @@ func InitConfig() *Config {
 	viper.SetDefault("network.dns1", "8.8.8.8")
 	viper.SetDefault("network.dns2", "8.8.4.4")
 
-	viper.SetDefault("xinetd.ftp-path", "/etc/xinetd.d/ftp")
-	viper.SetDefault("xinetd.telnet-path", "/etc/xinetd.d/telnet")
-	viper.SetDefault("xinetd.ssh-path", "/etc/xinetd.d/ssh")
+	viper.SetDefault("xinetd.ftp", "/etc/xinetd.d/ftp")
+	viper.SetDefault("xinetd.def_ftp", "/etc/xinetd.d/def_ftp")
+	viper.SetDefault("xinetd.telnet", "/etc/xinetd.d/telnet")
+	viper.SetDefault("xinetd.def_telnet", "/etc/xinetd.d/def_telnet")
+	viper.SetDefault("xinetd.ssh", "/etc/xinetd.d/ssh")
+	viper.SetDefault("xinetd.def_ssh", "/etc/xinetd.d/def_ssh")
 
 	viper.SetDefault("security.pwquality", "/etc/security/pwquality.conf")
 	viper.SetDefault("security.login", "/etc/login.defs")

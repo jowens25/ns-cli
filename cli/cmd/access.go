@@ -28,7 +28,7 @@ var addCmd = &cobra.Command{
 
 		ipAddr, ipNet, err := net.ParseCIDR(args[0])
 		if err != nil {
-			fmt.Println("please enter address in CIDR form. Ex. 10.1.10.1/24, 10.1.10.1/32")
+			fmt.Println("please enter valid address in CIDR form. Ex. 10.1.10.1/24, 10.1.10.1/32")
 			return
 		}
 		fmt.Printf("adding access for %s with mask %s\n", ipAddr.String(), net.IP(ipNet.Mask).String())
@@ -42,6 +42,12 @@ var removeCmd = &cobra.Command{
 	Short: "remove a node",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		ipAddr, ipNet, err := net.ParseCIDR(args[0])
+		if err != nil {
+			fmt.Println("please enter address in CIDR form. Ex. 10.1.10.1/24, 10.1.10.1/32")
+			return
+		}
+		fmt.Printf("removing access for %s with mask %s\n", ipAddr.String(), net.IP(ipNet.Mask).String())
 		lib.RemoveAccessFromFiles(args[0])
 
 	},
@@ -52,14 +58,19 @@ var unrestrictCmd = &cobra.Command{
 	Short: "reset network restrictions",
 	Run: func(cmd *cobra.Command, args []string) {
 		lib.Unrestrict()
+
 	},
 }
 
 var showCmd = &cobra.Command{
 	Use:   "show",
-	Short: "show network restrictions",
+	Short: "show allowed nodes",
 	Run: func(cmd *cobra.Command, args []string) {
-		lib.readXinetdAllowedNodes()
+
+		fmt.Println("Allowed nodes")
+		for _, node := range lib.ReadAccessFromFiles() {
+			fmt.Println(node)
+		}
 	},
 }
 

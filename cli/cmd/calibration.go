@@ -16,16 +16,14 @@ var all bool
 // calibrationCmd represents the calibration command
 var calibrationCmd = &cobra.Command{
 	Use:   "cal",
-	Short: "calibration factors",
+	Short: "get and set calibration factors",
 	Long: `Query or set Cal Factors for specific ADC conversions. 
 See list of Cal Factors numbered for appropriate measurement 
 parameters. These settings should only be changed by an 
 authorized technician.`,
 	DisableFlagsInUseLine: true, // This hides [flags] from the usage line
 
-	Example: `
-  # Common usage patterns
-  cal <channel>			# return channel factor
+	Example: `  cal <channel>			# return channel factor
   cal <channel> <factor>	# sets new rate`,
 
 	Run: func(cmd *cobra.Command, args []string) {

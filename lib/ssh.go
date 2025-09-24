@@ -14,7 +14,7 @@ import (
 
 func InitSshConfig() {
 
-	cmd := exec.Command("cp", "ssh", AppConfig.Xinetd.SshPath)
+	cmd := exec.Command("cp", AppConfig.App.DefaultConfigs+"ssh", AppConfig.Xinetd.SshPath)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Println(string(out), err)

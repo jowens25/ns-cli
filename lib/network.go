@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -11,19 +12,48 @@ import (
 
 func GetIpv4Address(i string) string {
 
-	addrLine := GetNmcliField("IP4.ADDRESS", i)
+	addrLine := GetNmcliInterfaceField(i, "IP4.ADDRESS")
 
 	fields := strings.Fields(addrLine)
 	if len(fields) > 1 {
-		return strings.TrimSpace(fields[1])
+
+		ipAddr, _, err := net.ParseCIDR(fields[1])
+		if err != nil {
+			log.Printf("Error parsing CIDR: %v", err)
+			return "--"
+
+		}
+
+		return ipAddr.String()
 	}
 
 	return "--"
 }
 
-func GetIpv4Netmask(i string) string {
+func GetIpv4NetmaskBits(i string) string {
 
-	addrLine := GetNmcliField("IP4.ADDRESS", i)
+	addrLine := GetNmcliInterfaceField(i, "IP4.ADDRESS")
+
+	fields := strings.Fields(addrLine)
+	if len(fields) > 1 {
+		_, ipNet, err := net.ParseCIDR(fields[1])
+		_, bits := ipNet.Mask.Size()
+
+		if err != nil {
+			log.Printf("Error parsing CIDR: %v", err)
+			return "--"
+
+		}
+
+		return fmt.Sprintf("%d", bits)
+	}
+
+	return "--"
+}
+
+func GetIpv4NetmaskAddress(i string) string {
+
+	addrLine := GetNmcliInterfaceField(i, "IP4.ADDRESS")
 
 	fields := strings.Fields(addrLine)
 	if len(fields) > 1 {
@@ -42,7 +72,8 @@ func GetIpv4Netmask(i string) string {
 }
 
 func GetIpv4Gateway(i string) string {
-	gwLine := GetNmcliField("IP4.GATEWAY", i)
+
+	gwLine := GetNmcliInterfaceField(i, "IP4.GATEWAY")
 
 	fields := strings.Fields(gwLine)
 	if len(fields) > 1 {
@@ -53,7 +84,8 @@ func GetIpv4Gateway(i string) string {
 }
 
 func GetIpv4MacAddress(i string) string {
-	macLine := GetNmcliField("GENERAL.HWADDR", i)
+
+	macLine := GetNmcliInterfaceField(i, "GENERAL.HWADDR")
 	fields := strings.Fields(macLine)
 	if len(fields) > 1 {
 		return strings.TrimSpace(fields[1])
@@ -63,11 +95,13 @@ func GetIpv4MacAddress(i string) string {
 }
 
 func GetIpv4Dns1(i string) string {
-	dnsLines := GetNmcliField("IP4.DNS", i)
+
+	dnsLines := GetNmcliInterfaceField(i, "IP4.DNS")
 
 	for line := range strings.SplitSeq(dnsLines, "\n") {
 		if strings.Contains(line, "IP4.DNS[1]") {
 			fields := strings.Fields(line)
+
 			if len(fields) > 1 {
 				return strings.TrimSpace(fields[1])
 			}
@@ -78,11 +112,13 @@ func GetIpv4Dns1(i string) string {
 }
 
 func GetIpv4Dns2(i string) string {
-	dnsLines := GetNmcliField("IP4.DNS", i)
+
+	dnsLines := GetNmcliInterfaceField(i, "IP4.DNS")
 
 	for line := range strings.SplitSeq(dnsLines, "\n") {
 		if strings.Contains(line, "IP4.DNS[2]") {
 			fields := strings.Fields(line)
+
 			if len(fields) > 1 {
 				return strings.TrimSpace(fields[1])
 			}
@@ -94,8 +130,9 @@ func GetIpv4Dns2(i string) string {
 
 func GetIgnoreAutoDns(i string) string {
 
-	connection := GetConnectionNameFromDevice(i)
-	ignoreDnsLines := GetNmcliConnectionField("ipv4.ignore-auto-dns", connection)
+	c := GetConnectionNameFromDevice(i)
+
+	ignoreDnsLines := GetNmcliField(c, "ipv4.ignore-auto-dns")
 
 	fields := strings.Fields(ignoreDnsLines)
 	if len(fields) > 1 {
@@ -105,51 +142,131 @@ func GetIgnoreAutoDns(i string) string {
 	return "--"
 }
 
-func setIpv4Address(c string, address string) {
-	ip := net.ParseIP(address)
-	if ip != nil {
-		SetNmcliField(c, "ipv4.addresses", address)
-	}
-}
-
-func setIpv4Gateway(c string, address string) {
-	gw := net.ParseIP(address)
-	if gw != nil {
-		SetNmcliField(c, "ipv4.gateway", gw.String())
-	}
-}
-
-func setIpv4Method(c string, method string) {
-	SetNmcliField(c, "ipv4.method", method)
-}
-
-func setIpv4IgnoreAutoDns(c string, yesno string) {
-	SetNmcliField(c, "ipv4.ignore-auto-dns", yesno)
-}
-
-func SetGateway(i string, gw string, addr string) {
+func GetIpv4DhcpState(i string) string {
 	c := GetConnectionNameFromDevice(i)
+
+	methodLine := GetNmcliField(c, "ipv4.method")
+
+	fields := strings.Fields(methodLine)
+	if len(fields) > 1 {
+		return strings.TrimSpace(fields[1])
+	}
+
+	return "--"
+
+}
+
+// requires std addr format
+func _combineNetmaskAndAddress(netmaskBits string, address string) string {
+
+	return address + "/" + netmaskBits
+
+}
+
+func SetGateway(i string, gw string) {
+	c := GetConnectionNameFromDevice(i)
+	//currentNetmask := GetIpv4Netmask(i)
 	SetNmcliConnectionStatus(c, "down")
 
-	setIpv4Gateway(c, gw)
-	setIpv4Address(c, addr)
+	if !isValidAddress(gw) {
+		return
+	}
+
+	SetNmcliField(c, "ipv4.gateway", gw)
+
+	SetNmcliField(c, "ipv4.method", "manual")
 
 	SetNmcliConnectionStatus(c, "up")
 
 }
 
-func SetIpAddr(i string, addr string, gw ...string) {
+func SetNetmask(i string, mask string) {
+
+	parsedMask := net.IPMask(net.ParseIP(mask).To4())
+
+	// Get the CIDR prefix length (number of bits in the mask)
+	ones, _ := parsedMask.Size()
+
+	netmask := fmt.Sprintf("%d", ones)
+
+	addr := GetIpv4Address(AppConfig.Network.Interface)
+
 	c := GetConnectionNameFromDevice(i)
+
 	SetNmcliConnectionStatus(c, "down")
 
-	if len(gw) == 1 {
-		setIpv4Gateway(c, gw[0])
+	combinedAddress := _combineNetmaskAndAddress(netmask, addr)
+
+	if !isValidAddressCIDR(combinedAddress) {
+		return
 	}
 
-	setIpv4Address(c, addr)
+	// this is confusing because it looks like we are setting the ip... trust us
+	SetNmcliField(c, "ipv4.address", addr)
+
+	SetNmcliField(c, "ipv4.method", "manual")
 
 	SetNmcliConnectionStatus(c, "up")
 
+}
+
+func isValidAddress(a string) bool {
+
+	// returns nil if not a valid address
+	err := net.ParseIP(a)
+	if err == nil {
+		fmt.Println("invalid address")
+		return false
+	}
+	return true
+
+}
+
+func isValidAddressCIDR(a string) bool {
+	_, _, err := net.ParseCIDR(a)
+	if err != nil {
+		fmt.Println("invalid CIDR address")
+		return false
+	}
+	return true
+}
+
+func SetIpAddr(i string, ip string, gw ...string) {
+
+	gateway := GetIpv4Gateway(AppConfig.Network.Interface)
+
+	if len(gw) > 0 {
+		gateway = gw[0]
+	}
+
+	addr := _combineNetmaskAndAddress("24", ip)
+
+	c := GetConnectionNameFromDevice(i)
+
+	fmt.Println("setting static ip...")
+
+	SetNmcliConnectionStatus(c, "down")
+
+	if !isValidAddressCIDR(addr) {
+
+		SetNmcliConnectionStatus(c, "up")
+
+		return
+	}
+
+	SetNmcliField(c, "ipv4.address", addr)
+
+	fmt.Println("gateway: " + gateway)
+
+	if isValidAddress(gateway) {
+		SetNmcliField(c, "ipv4.gateway", gateway)
+	}
+
+	SetNmcliField(c, "ipv4.dns", "8.8.8.8,8.8.4.4")
+
+	SetNmcliField(c, "ipv4.method", "manual")
+
+	SetNmcliConnectionStatus(c, "up")
 }
 
 func SetDns(i string, dns ...string) {
@@ -158,7 +275,7 @@ func SetDns(i string, dns ...string) {
 
 	SetNmcliConnectionStatus(c, "down")
 
-	setIpv4IgnoreAutoDns(c, "yes")
+	SetNmcliField(c, "ipv4.ignore-auto-dns", "yes")
 
 	dnsArg := dns[0]
 	if len(dns) > 1 {
@@ -167,37 +284,22 @@ func SetDns(i string, dns ...string) {
 
 	SetNmcliField(c, "ipv4.dns", dnsArg)
 
-}
-
-func ResetNetworkConfig(i string, address string) {
-
-	c := GetConnectionNameFromDevice(i)
-	SetNmcliConnectionStatus(c, "down")
-
-	gw := net.ParseIP(address)
-	if gw != nil {
-		setIpv4Method(c, "auto")
-		setIpv4IgnoreAutoDns(c, "no")
-		setIpv4Gateway(i, gw.String())
-		setIpv4Gateway(i, gw.String())
-
-	}
 	SetNmcliConnectionStatus(c, "up")
 
 }
 
-func GetIpv4DhcpState(i string) string {
+func ResetNetworkConfig(i string) {
 
-	connection := GetConnectionNameFromDevice(i)
+	c := GetConnectionNameFromDevice(i)
+	SetNmcliConnectionStatus(c, "down")
 
-	methodLine := GetNmcliConnectionField("ipv4.method", connection)
+	SetNmcliField(c, "ipv4.method", "auto")
+	SetNmcliField(c, "ipv4.ignore-auto-dns", "no")
 
-	fields := strings.Fields(methodLine)
-	if len(fields) > 1 {
-		return strings.TrimSpace(fields[1])
-	}
+	ClearNmcliField(c, "ipv4.gateway")
+	ClearNmcliField(c, "ipv4.addresses")
 
-	return "--"
+	SetNmcliConnectionStatus(c, "up")
 
 }
 
@@ -221,7 +323,7 @@ func readNetworkInfo(c *gin.Context) {
 	myNetwork.Speed = GetPortSpeed(AppConfig.Network.Interface)
 	myNetwork.Mac = GetIpv4MacAddress(AppConfig.Network.Interface)
 	myNetwork.IpAddr = GetIpv4Address(AppConfig.Network.Interface)
-	myNetwork.Netmask = GetIpv4Netmask(AppConfig.Network.Interface)
+	myNetwork.Netmask = GetIpv4NetmaskAddress(AppConfig.Network.Interface)
 	myNetwork.Dhcp = GetIpv4DhcpState(AppConfig.Network.Interface)
 	myNetwork.Dns1 = GetIpv4Dns1(AppConfig.Network.Interface)
 	myNetwork.Dns2 = GetIpv4Dns2(AppConfig.Network.Interface)

@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"fmt"
 	"log"
 	"os/exec"
 )
@@ -19,30 +18,30 @@ func InitNginxConfig() {
 	cmd := exec.Command("systemctl", "stop", "nginx")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		fmt.Println(string(out), err)
+		log.Println(string(out), err)
 	}
-	fmt.Println(string(out), err)
+	//fmt.Println(string(out), err)
 
-	cmd = exec.Command("cp", "selfsigned.key", "/etc/nginx/ssl/selfsigned.key")
+	//cmd = exec.Command("cp", "selfsigned.key", "/etc/nginx/ssl/selfsigned.key")
+	//
+	//out, err = cmd.CombinedOutput()
+	//if err != nil {
+	//	fmt.Println(string(out), err)
+	//}
+	//fmt.Println(string(out), err)
 
+	cmd = exec.Command("cp", AppConfig.App.DefaultConfigs+"nginx.conf", AppConfig.Nginx.Config)
 	out, err = cmd.CombinedOutput()
 	if err != nil {
-		fmt.Println(string(out), err)
+		log.Println(string(out), err)
 	}
-	fmt.Println(string(out), err)
-
-	cmd = exec.Command("cp", "nginx.conf", AppConfig.Nginx.Config)
-	out, err = cmd.CombinedOutput()
-	if err != nil {
-		fmt.Println(string(out), err)
-	}
-	fmt.Println(string(out), err)
+	//fmt.Println(string(out), err)
 
 	cmd = exec.Command("systemctl", "start", "nginx")
 	out, err = cmd.CombinedOutput()
 	if err != nil {
-		fmt.Println(string(out), err)
+		log.Println(string(out), err)
 	}
-	fmt.Println(string(out), err)
+	//fmt.Println(string(out), err)
 
 }

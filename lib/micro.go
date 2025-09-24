@@ -50,7 +50,7 @@ func ReadWriteMicro(command string) (string, error) {
 			log.Println(err)
 		}
 		lines := string(read_data[:n])
-		if strings.Contains(lines, "$") {
+		if strings.Contains(lines, command[:3]) {
 			responses := strings.Split(lines, "\r\n")
 			return strings.TrimSpace(responses[0]), nil
 		}

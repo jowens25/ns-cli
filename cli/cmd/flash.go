@@ -13,8 +13,9 @@ import (
 // flashCmd represents the flash command
 var flashCmd = &cobra.Command{
 	Use:   "flash",
-	Short: "onboard flash",
+	Short: "save and reset flash",
 	Run: func(cmd *cobra.Command, args []string) {
+		cmd.Help()
 
 	},
 }
@@ -25,13 +26,8 @@ var saveFlashCmd = &cobra.Command{
 	Short: "save settings to flash",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		if len(args) == 0 {
-			response, _ := lib.ReadWriteMicro("$SAVEFL")
-			fmt.Println(response)
-
-		} else {
-			cmd.Help()
-		}
+		response, _ := lib.ReadWriteMicro("$SAVEFL")
+		fmt.Println(response)
 
 	},
 }
@@ -42,13 +38,14 @@ var resetFlashCmd = &cobra.Command{
 	Short: "reset settings to default and save to flash",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		if len(args) == 0 {
+		if AskForConfirmation("Are you sure you want to reset all flash variables?") {
 			response, _ := lib.ReadWriteMicro("$RESETALL")
 			fmt.Println(response)
-
-		} else {
-			cmd.Help()
+			fmt.Println("flash reset")
+			return
 		}
+
+		fmt.Println("canceled")
 
 	},
 }

@@ -12,8 +12,7 @@ import (
 
 var dateCmd = &cobra.Command{
 	Use:                   "date",
-	Short:                 "set system date",
-	Long:                  `Use this command to get and set system date.`,
+	Short:                 "get and set system date",
 	DisableFlagsInUseLine: true,
 	Example: `date			# return current date
 date <yyyy> <mm> <dd>	# sets new date`,

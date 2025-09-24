@@ -1,13 +1,29 @@
 package lib
 
 import (
+	"fmt"
 	"log"
 	"os/exec"
 	"strings"
 )
 
-// field interface
-func GetNmcliField(f string, i string) string {
+// connection, setting, return prop
+func GetNmcliField(c string, s string) string {
+	cmd := exec.Command("nmcli", "-f", s, "connection", "show", c)
+
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	if strings.Contains(string(out), s) {
+		return string(out)
+	}
+
+	return "--"
+}
+
+func GetNmcliInterfaceField(i string, f string) string {
 
 	cmd := exec.Command("nmcli", "-f", f, "device", "show", i)
 	out, err := cmd.CombinedOutput()
@@ -22,41 +38,20 @@ func GetNmcliField(f string, i string) string {
 	return "--"
 }
 
-// field connection
-func GetNmcliConnectionField(f string, c string) string {
-	cmd := exec.Command("nmcli", "-f", f, "connection", "show", c)
-
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Println(err.Error())
-	}
-
-	if strings.Contains(string(out), f) {
-		return string(out)
-	}
-
-	return "--"
-}
-
-// status: up / down
-func SetNmcliConnectionStatus(c string, s string) {
-	cmd := exec.Command("nmcli", "connection", s, c)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Println(err.Error())
-	}
-	log.Println(string(out))
-
-}
-
 // connection, setting, property
 func SetNmcliField(c string, s string, p string) {
-	cmd := exec.Command("nmcli", "connection", "modify", c, s, p)
+	cmd := exec.Command("nmcli", "con", "mod", c, s, p)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Println(err.Error())
+		fmt.Println(err.Error())
+		fmt.Println(string(out))
+
 	}
-	log.Println(string(out))
+
+}
+
+func ClearNmcliField(c string, s string) {
+	SetNmcliField(c, s, "")
 }
 
 func GetConnectionNameFromDevice(i string) string {
@@ -75,4 +70,34 @@ func GetConnectionNameFromDevice(i string) string {
 	}
 
 	return "--"
+}
+
+func GetInterfaceNameFromConnection(c string) string {
+
+	cmd := exec.Command("nmcli", "-f", "connection.interface-name", "con", "show", c)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	fields := strings.Split(string(out), ":")
+
+	if len(fields) == 2 {
+
+		return strings.TrimSpace(fields[1])
+	}
+
+	return "--"
+}
+
+// status: up / down
+func SetNmcliConnectionStatus(c string, s string) {
+	cmd := exec.Command("nmcli", "connection", s, c)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println(string(out))
+
+	}
+
 }

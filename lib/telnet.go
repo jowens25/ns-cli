@@ -14,7 +14,7 @@ import (
 
 func InitTelnetConfig() {
 
-	cmd := exec.Command("cp", "telnet", AppConfig.Xinetd.TelnetPath)
+	cmd := exec.Command("cp", AppConfig.App.DefaultConfigs+"telnet", AppConfig.Xinetd.TelnetPath)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Println(string(out), err)

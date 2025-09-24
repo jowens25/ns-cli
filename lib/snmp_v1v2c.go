@@ -14,20 +14,18 @@ import (
 	"gorm.io/gorm"
 )
 
-// writeSnmpV1V2cUser creates entries in the snmpd config file for v1 and v2c users using a templated config file
-// Returns message v1v2c_user json
+// =============================================================================================
+//  Handlers ===================================================================================
+// =============================================================================================
 
 var v1v2c_users []SnmpV1V2cUser
 
 func readSnmpV1V2cUsers(c *gin.Context) {
 
-	//StopSnmpd()
-
 	readSnmpUsersFromFile()
 
-	//StartSnmpd()
-
 	var users []SnmpV1V2cUser
+
 	result := db.Find(&users)
 
 	if result.Error != nil {
@@ -35,7 +33,6 @@ func readSnmpV1V2cUsers(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-
 		"v1v2c_users": users,
 	})
 
@@ -67,6 +64,111 @@ func writeSnmpV1V2cUser(c *gin.Context) {
 		"v1v2c_user": user,
 	})
 }
+
+func editSnmpV1V2cUser(c *gin.Context) {
+
+	id := c.Param("id")
+
+	var existingUser SnmpV1V2cUser
+
+	if err := db.First(&existingUser, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		}
+		return
+	}
+
+	StopSnmpd()
+	removeSnmpV1V2cUserFromFile(existingUser)
+	StartSnmpd()
+
+	var updateData SnmpV1V2cUser
+	if err := c.ShouldBindJSON(&updateData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	updates := make(map[string]interface{})
+
+	if updateData.Version != "" {
+		if !(updateData.Version == "v1" || updateData.Version == "v2c") {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "wrong version entry"})
+			return
+		}
+		updates["version"] = updateData.Version
+	}
+
+	if updateData.GroupName != "" {
+		if !(updateData.GroupName == "ronoauthgroup" || updateData.GroupName == "rwnoauthgroup") {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "wrong group name entry"})
+			return
+		}
+		updates["group_name"] = updateData.GroupName
+	}
+
+	if updateData.Community != "" {
+		updates["community"] = updateData.Community
+	}
+
+	if updateData.Source != "" {
+		updates["source"] = updateData.Source
+	}
+
+	// Check if there's anything to update
+	if len(updates) == 0 {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "No update"})
+		return
+	}
+
+	// Perform the update using the user ID
+	result := db.Model(&existingUser).Updates(updates)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	var updatedUser SnmpV1V2cUser
+	if err := db.First(&updatedUser, id).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch updated user"})
+		return
+	}
+	addSnmpV1V2cUserToFile(updatedUser)
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":    "User updated successfully",
+		"v1v2c_user": updatedUser,
+	})
+}
+
+func deleteSnmpV1V2cUser(c *gin.Context) {
+
+	id := c.Param("id")
+
+	var userToDelete SnmpV1V2cUser
+
+	if err := db.First(&userToDelete, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	StopSnmpd()
+	removeSnmpV1V2cUserFromFile(userToDelete)
+	StartSnmpd()
+	if err := db.Delete(&userToDelete).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User removed successfully",
+	})
+}
+
+// =============================================================================================
+//  File Operations ============================================================================
+// =============================================================================================
 
 func addSnmpV1V2cUserToFile(user SnmpV1V2cUser) {
 	file, err := os.Open(AppConfig.Snmp.Path)
@@ -162,117 +264,4 @@ func removeSnmpV1V2cUserFromFile(user SnmpV1V2cUser) {
 	if err != nil {
 		log.Println("failed to write file:", err)
 	}
-}
-
-func deleteSnmpV1V2cUser(c *gin.Context) {
-
-	id := c.Param("id")
-
-	var userToDelete SnmpV1V2cUser
-
-	if err := db.First(&userToDelete, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-		return
-	}
-
-	StopSnmpd()
-	removeSnmpV1V2cUserFromFile(userToDelete)
-	StartSnmpd()
-	if err := db.Delete(&userToDelete).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": "User removed successfully",
-	})
-}
-
-func editSnmpV1V2cUser(c *gin.Context) {
-
-	id := c.Param("id")
-
-	var existingUser SnmpV1V2cUser
-
-	if err := db.First(&existingUser, id).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-		}
-		return
-	}
-
-	StopSnmpd()
-	removeSnmpV1V2cUserFromFile(existingUser)
-	StartSnmpd()
-
-	var updateData SnmpV1V2cUser
-	if err := c.ShouldBindJSON(&updateData); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	updates := make(map[string]interface{})
-
-	if updateData.Version != "" {
-		if !(updateData.Version == "v1" || updateData.Version == "v2c") {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "wrong version entry"})
-			return
-		}
-		updates["version"] = updateData.Version
-	}
-
-	if updateData.GroupName != "" {
-		if !(updateData.GroupName == "ronoauthgroup" || updateData.GroupName == "rwnoauthgroup") {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "wrong group name entry"})
-			return
-		}
-		updates["group_name"] = updateData.GroupName
-	}
-
-	if updateData.Community != "" {
-		updates["community"] = updateData.Community
-	}
-
-	//if updateData.IpVersion != "" {
-	//	if !(updateData.IpVersion == "ipv4" || updateData.IpVersion == "ipv6") {
-	//		c.JSON(http.StatusBadRequest, gin.H{"error": "wrong ip version entry"})
-	//		return
-	//	}
-	//	updates["ip_version"] = updateData.IpVersion
-	//}
-
-	if updateData.Source != "" {
-		updates["source"] = updateData.Source
-	}
-
-	//if updateData.Ip6Address != "" {
-	//	updates["ip6_address"] = updateData.Ip6Address
-	//}
-
-	// Check if there's anything to update
-	if len(updates) == 0 {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "No update"})
-		return
-	}
-
-	// Perform the update using the user ID
-	result := db.Model(&existingUser).Updates(updates)
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-		return
-	}
-
-	var updatedUser SnmpV1V2cUser
-	if err := db.First(&updatedUser, id).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch updated user"})
-		return
-	}
-	addSnmpV1V2cUserToFile(updatedUser)
-
-	c.JSON(http.StatusOK, gin.H{
-		"message":    "User updated successfully",
-		"v1v2c_user": updatedUser,
-	})
 }

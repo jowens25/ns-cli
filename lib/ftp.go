@@ -14,7 +14,7 @@ import (
 
 func InitFtpConfig() {
 
-	cmd := exec.Command("cp", "ftp", "/etc/xinetd.d/ftp")
+	cmd := exec.Command("cp", AppConfig.App.DefaultConfigs+"ftp", AppConfig.Xinetd.FtpPath)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Println(string(out), err)
@@ -25,10 +25,10 @@ func InitFtpConfig() {
 }
 
 func DisableFtp() {
-	ftpFile := "/etc/xinetd.d/ftp"
-	file, err := os.Open(ftpFile)
+
+	file, err := os.Open(AppConfig.Xinetd.FtpPath)
 	if err != nil {
-		log.Println("failed to open ftp file", ftpFile)
+		log.Println("failed to open ftp file", AppConfig.Xinetd.FtpPath)
 	}
 	defer file.Close()
 
@@ -43,7 +43,7 @@ func DisableFtp() {
 		}
 		lines = append(lines, line)
 	}
-	err = os.WriteFile(ftpFile, []byte(strings.Join(lines, "\n")+"\n"), 0644)
+	err = os.WriteFile(AppConfig.Xinetd.FtpPath, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
 		log.Println("failed to hosts file:", err)
 	}
@@ -55,10 +55,9 @@ func DisableFtp() {
 }
 
 func EnableFtp() {
-	ftpFile := "/etc/xinetd.d/ftp"
-	file, err := os.Open(ftpFile)
+	file, err := os.Open(AppConfig.Xinetd.FtpPath)
 	if err != nil {
-		log.Println("failed to open ftp file", ftpFile)
+		log.Println("failed to open ftp file", AppConfig.Xinetd.FtpPath)
 	}
 	defer file.Close()
 
@@ -73,7 +72,7 @@ func EnableFtp() {
 		lines = append(lines, line)
 	}
 
-	err = os.WriteFile(ftpFile, []byte(strings.Join(lines, "\n")+"\n"), 0644)
+	err = os.WriteFile(AppConfig.Xinetd.FtpPath, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 	if err != nil {
 		log.Println("failed to ftp file:", err)
 	}
@@ -85,10 +84,9 @@ func EnableFtp() {
 }
 
 func GetFtpStatus() string {
-	ftpFile := "/etc/xinetd.d/ftp"
-	file, err := os.Open(ftpFile)
+	file, err := os.Open(AppConfig.Xinetd.FtpPath)
 	if err != nil {
-		log.Println("failed to open ftp file", ftpFile)
+		log.Println("failed to open ftp file", AppConfig.Xinetd.FtpPath)
 	}
 	defer file.Close()
 

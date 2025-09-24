@@ -11,25 +11,25 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 // ======================================= Handlers =======================================
-var allowed_nodes []AllowedNode
 
 func readAllowedNodes(c *gin.Context) {
 
-	readXinetdAllowedNodes()
+	var allowedNodes []AllowedNode
+	nodes := ReadAccessFromFiles()
 
-	var currentNodes []AllowedNode
-	result := db.Find(&currentNodes)
+	for _, node := range nodes {
 
-	if result.Error != nil {
-		log.Println(result.Error)
+		var newNode AllowedNode
+		newNode.Address = node
+
+		allowedNodes = append(allowedNodes, newNode)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"allowed_nodes": currentNodes,
+		"allowed_nodes": allowedNodes,
 	})
 }
 
@@ -38,13 +38,6 @@ func writeAllowedNodes(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&node); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	result := db.Where("address = ?", node.Address).FirstOrCreate(&node)
-
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
 	}
 
@@ -57,28 +50,22 @@ func writeAllowedNodes(c *gin.Context) {
 }
 
 func deleteAllowedNode(c *gin.Context) {
-	id := c.Param("id")
 
 	var nodeToDelete AllowedNode
 
-	if err := db.First(&nodeToDelete, id).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	if err := c.ShouldBindJSON(&nodeToDelete); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	RemoveAccessFromFiles(nodeToDelete.Address)
-
-	if err := db.Delete(&nodeToDelete).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Node removed successfully",
 	})
 }
 
-func unrestrictNetworkAccess(c *gin.Context) {
+func resetNetworkAccess(c *gin.Context) {
 
 	Unrestrict()
 
@@ -88,19 +75,15 @@ func unrestrictNetworkAccess(c *gin.Context) {
 }
 
 // ========================================================================================
-
-// ======================================= Functions =======================================
-
-// reset the network restriction, update webserver config, and xinetd.d configs
+// ======================================= Functions ======================================
 func Unrestrict() {
-	//db.Unscoped().Where("1 = 1").Delete(&AllowedNode{}) // hard delete
 	InitFtpConfig()
 	InitSshConfig()
 	InitTelnetConfig()
 	InitNginxConfig()
 	RestartXinetd()
 	RestartNginx()
-
+	fmt.Println("Network access reset")
 }
 
 func AddAccessToFiles(addr string) {
@@ -123,13 +106,15 @@ func RemoveAccessFromFiles(addr string) {
 	}
 	removeAccessFromNginxFile(addr)
 	removeAccessFromXinetdFile(addr)
+
 }
 
-func readXinetdAllowedNodes() {
+func ReadAccessFromFiles() []string {
 
-	allowed_nodes = nil
+	var allowed_nodes []string
 
-	sshFile := "/etc/xinetd.d/ssh"
+	//sshFile := "/etc/xinetd.d/ssh"
+	sshFile := AppConfig.Xinetd.SshPath
 
 	content, err := os.ReadFile(sshFile)
 	if err != nil {
@@ -143,17 +128,14 @@ func readXinetdAllowedNodes() {
 			fields := strings.Fields(line)
 
 			if net.ParseIP(fields[2]) != nil {
-				var node AllowedNode
-				node.Address = fields[2]
-				allowed_nodes = append(allowed_nodes, node)
+				allowed_nodes = append(allowed_nodes, fields[2])
 				continue
 			}
 
 			ip, _, err := net.ParseCIDR(fields[2])
 			if err == nil && ip != nil {
-				var node AllowedNode
-				node.Address = fields[2]
-				allowed_nodes = append(allowed_nodes, node)
+
+				allowed_nodes = append(allowed_nodes, fields[2])
 				continue
 			}
 
@@ -161,32 +143,14 @@ func readXinetdAllowedNodes() {
 
 	}
 
-	// update the datebase to reflect the files
-	var new_allowed_nodes []string
+	return allowed_nodes
 
-	for _, node := range allowed_nodes {
-
-		// look up the user by user name
-		result := db.Where("address = ?", node.Address).First(&AllowedNode{})
-		if result.Error == gorm.ErrRecordNotFound {
-			// Create new user
-			db.Create(&node)
-
-		} else {
-			// Update existing user
-			db.Where("address = ?", node.Address).Updates(&node)
-		}
-
-		new_allowed_nodes = append(new_allowed_nodes, node.Address)
-	}
-
-	db.Where("address NOT IN ?", new_allowed_nodes).Delete(&AllowedNode{})
 }
 
 func addAccessToXinetdFile(ipAddress string) {
-	ftpFile := "/etc/xinetd.d/ftp"
-	telnetFile := "/etc/xinetd.d/telnet"
-	sshFile := "/etc/xinetd.d/ssh"
+	ftpFile := AppConfig.Xinetd.FtpPath
+	telnetFile := AppConfig.Xinetd.TelnetPath
+	sshFile := AppConfig.Xinetd.SshPath
 
 	configs := []string{ftpFile, telnetFile, sshFile}
 
@@ -218,7 +182,7 @@ func addAccessToXinetdFile(ipAddress string) {
 
 			lines = append(lines, line)
 		}
-		fmt.Println(lines)
+		//fmt.Println(lines)
 
 		err = os.WriteFile(config, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 		if err != nil {
@@ -232,9 +196,10 @@ func addAccessToXinetdFile(ipAddress string) {
 }
 
 func removeAccessFromXinetdFile(ipAddress string) {
-	ftpFile := "/etc/xinetd.d/ftp"
-	telnetFile := "/etc/xinetd.d/telnet"
-	sshFile := "/etc/xinetd.d/ssh"
+
+	ftpFile := AppConfig.Xinetd.FtpPath
+	telnetFile := AppConfig.Xinetd.TelnetPath
+	sshFile := AppConfig.Xinetd.SshPath
 
 	configs := []string{ftpFile, telnetFile, sshFile}
 
@@ -252,7 +217,7 @@ func removeAccessFromXinetdFile(ipAddress string) {
 		for _, line := range lines {
 
 			if strings.Contains(strings.TrimSpace(line), ipAddress) {
-				fmt.Println(line)
+				//fmt.Println(line)
 				continue
 			}
 
@@ -273,11 +238,12 @@ func removeAccessFromXinetdFile(ipAddress string) {
 }
 
 func addAccessToNginxFile(ipAddress string) {
-	nginxFile := "/etc/nginx/nginx.conf"
+	//nginxFile := "/etc/nginx/nginx.conf"
+	nginxFile := AppConfig.Nginx.Config
 
 	content, err := os.ReadFile(nginxFile)
 	if err != nil {
-		log.Printf("failed to read nginxFile file %s: %v", nginxFile, err)
+		log.Printf("failed to read nginx config file %s: %v", nginxFile, err)
 
 	}
 
@@ -336,7 +302,8 @@ func Pop(lines []string, index int) []string {
 }
 
 func removeAccessFromNginxFile(ipAddress string) {
-	nginxFile := "/etc/nginx/nginx.conf"
+	//nginxFile := "/etc/nginx/nginx.conf"
+	nginxFile := AppConfig.Nginx.Config
 	content, err := os.ReadFile(nginxFile)
 	if err != nil {
 		log.Printf("failed to read nginxFile file %s: %v", nginxFile, err)

@@ -13,8 +13,7 @@ import (
 // hostCmd represents the host command
 var hostCmd = &cobra.Command{
 	Use:   "host",
-	Short: "get hostname",
-	Long:  `Use this command to get and set the hostname.`,
+	Short: "get and set hostname",
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if len(args) == 0 {
