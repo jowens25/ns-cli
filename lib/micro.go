@@ -23,11 +23,16 @@ func ReadWriteMicro(command string) (string, error) {
 		return "unable to write", fmt.Errorf("failed to write")
 	}
 
+	buffer := make([]byte, 1024)
+
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
 		fmt.Println(scanner.Text())
 
+		buffer = append(buffer, scanner.Text()...)
+
+		fmt.Println(string(buffer))
 	}
 
 	return "nothing", nil
