@@ -12,7 +12,7 @@ func AddIpv4Route(i string, address string, gateway string) {
 	if !HasInterface(i) {
 		return
 	}
-	connection := GetConnectionNameFromDevice(i)
+	connection, _ := GetConnectionNameFromDevice(i)
 
 	route := address + " " + gateway
 
@@ -28,7 +28,7 @@ func RemoveIpv4Route(i string, address string, gateway string) {
 	if !HasInterface(i) {
 		return
 	}
-	connection := GetConnectionNameFromDevice(i)
+	connection, _ := GetConnectionNameFromDevice(i)
 
 	route := address + " " + gateway
 
@@ -45,7 +45,7 @@ func ShowIpv4Routes(i string) string {
 	if !HasInterface(i) {
 		return "no such interface"
 	}
-	connection := GetConnectionNameFromDevice(i)
+	connection, _ := GetConnectionNameFromDevice(i)
 	cmd := exec.Command("nmcli", "-f", "ipv4.routes", "con", "show", connection)
 	out, err := cmd.CombinedOutput()
 	if err != nil {

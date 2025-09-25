@@ -130,7 +130,7 @@ func GetIpv4Dns2(i string) string {
 
 func GetIgnoreAutoDns(i string) string {
 
-	c := GetConnectionNameFromDevice(i)
+	c, _ := GetConnectionNameFromDevice(i)
 
 	ignoreDnsLines := GetNmcliField(c, "ipv4.ignore-auto-dns")
 
@@ -143,7 +143,7 @@ func GetIgnoreAutoDns(i string) string {
 }
 
 func GetIpv4DhcpState(i string) string {
-	c := GetConnectionNameFromDevice(i)
+	c, _ := GetConnectionNameFromDevice(i)
 
 	methodLine := GetNmcliField(c, "ipv4.method")
 
@@ -164,7 +164,7 @@ func _combineNetmaskAndAddress(netmaskBits string, address string) string {
 }
 
 func SetGateway(i string, gw string) {
-	c := GetConnectionNameFromDevice(i)
+	c, _ := GetConnectionNameFromDevice(i)
 	//currentNetmask := GetIpv4Netmask(i)
 	SetNmcliConnectionStatus(c, "down")
 
@@ -191,7 +191,7 @@ func SetNetmask(i string, mask string) {
 
 	addr := GetIpv4Address(AppConfig.Network.Interface)
 
-	c := GetConnectionNameFromDevice(i)
+	c, _ := GetConnectionNameFromDevice(i)
 
 	SetNmcliConnectionStatus(c, "down")
 
@@ -241,7 +241,7 @@ func SetIpAddr(i string, ip string, gw ...string) {
 
 	addr := _combineNetmaskAndAddress("24", ip)
 
-	c := GetConnectionNameFromDevice(i)
+	c, _ := GetConnectionNameFromDevice(i)
 
 	fmt.Println("setting static ip...")
 
@@ -271,7 +271,7 @@ func SetIpAddr(i string, ip string, gw ...string) {
 
 func SetDns(i string, dns ...string) {
 
-	c := GetConnectionNameFromDevice(i)
+	c, _ := GetConnectionNameFromDevice(i)
 
 	SetNmcliConnectionStatus(c, "down")
 
@@ -288,27 +288,61 @@ func SetDns(i string, dns ...string) {
 
 }
 
+func SetDns1(i string, dns1 string) {
+
+	dns2 := GetIpv4Dns2(AppConfig.Network.Interface)
+
+	SetDns(AppConfig.Network.Interface, dns1, dns2)
+
+}
+
+func SetDns2(i string, dns2 string) {
+
+	dns1 := GetIpv4Dns1(AppConfig.Network.Interface)
+
+	SetDns(AppConfig.Network.Interface, dns1, dns2)
+
+}
+
 func ResetNetworkConfig(i string) {
 
-	c := GetConnectionNameFromDevice(i)
-	SetNmcliConnectionStatus(c, "down")
+	MakeDefaultNmcliConnection()
 
-	SetNmcliField(c, "ipv4.method", "auto")
-	SetNmcliField(c, "ipv4.ignore-auto-dns", "no")
-
-	ClearNmcliField(c, "ipv4.gateway")
-	ClearNmcliField(c, "ipv4.addresses")
+	c, _ := GetConnectionNameFromDevice(i)
 
 	SetNmcliConnectionStatus(c, "up")
+
+	//SetNmcliConnectionStatus(c, "down")
+	//
+	//SetNmcliField(c, "ipv4.method", "auto")
+	//SetNmcliField(c, "ipv4.ignore-auto-dns", "no")
+	//
+	//ClearNmcliField(c, "ipv4.gateway")
+	//ClearNmcliField(c, "ipv4.addresses")
+	//
+	//SetNmcliConnectionStatus(c, "up")
 
 }
 
 // auto, manual
 func SetDhcp4(i string, m string) {
-	connection := GetConnectionNameFromDevice(i)
-	SetNmcliConnectionStatus(connection, "down")
-	SetNmcliField(i, "ipv4.method", m)
-	SetNmcliConnectionStatus(connection, "up")
+	c, _ := GetConnectionNameFromDevice(i)
+	SetNmcliConnectionStatus(c, "down")
+	SetNmcliField(c, "ipv4.method", m)
+	SetNmcliConnectionStatus(c, "up")
+
+}
+
+// yes / no
+func SetIgnoreAutoDns(i string, m string) {
+
+	c, _ := GetConnectionNameFromDevice(i)
+
+	SetNmcliConnectionStatus(c, "down")
+
+	SetNmcliField(c, "ipv4.ignore-auto-dns", m)
+
+	SetNmcliConnectionStatus(c, "up")
 
 }
 
@@ -332,6 +366,67 @@ func readNetworkInfo(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"info": myNetwork,
+	})
+
+}
+
+func writeNetworkInfo(c *gin.Context) {
+
+	serialMutex.Lock()
+	defer serialMutex.Unlock()
+
+	property := c.Param("prop")
+
+	var data map[string]string
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	v := data[property]
+
+	switch property {
+
+	case "port_status":
+	case "hostname":
+		SetHostname(v)
+	case "gateway":
+		SetGateway(AppConfig.Network.Interface, v)
+	case "interface":
+	case "speed":
+	case "mac":
+	case "ip_address":
+		SetIpAddr(AppConfig.Network.Interface, v)
+	case "netmask":
+		SetNetmask(AppConfig.Network.Interface, v)
+	case "dhcp":
+		SetDhcp4(AppConfig.Network.Interface, v)
+	case "dns1":
+		SetDns1(AppConfig.Network.Interface, v)
+
+	case "dns2":
+		SetDns2(AppConfig.Network.Interface, v)
+
+	case "ignore_auto_dns":
+		SetIgnoreAutoDns(AppConfig.Network.Interface, v)
+	case "connection_status":
+
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "updated",
+	})
+
+}
+
+func writeNetworkReset(c *gin.Context) {
+
+	serialMutex.Lock()
+	defer serialMutex.Unlock()
+
+	ResetNetworkConfig(AppConfig.Network.Interface)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "network config reset",
 	})
 
 }

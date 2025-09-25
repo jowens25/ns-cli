@@ -54,7 +54,7 @@ func ClearNmcliField(c string, s string) {
 	SetNmcliField(c, s, "")
 }
 
-func GetConnectionNameFromDevice(i string) string {
+func GetConnectionNameFromDevice(i string) (string, bool) {
 
 	cmd := exec.Command("nmcli", "-f", "GENERAL.CONNECTION", "dev", "show", i)
 	out, err := cmd.CombinedOutput()
@@ -66,10 +66,10 @@ func GetConnectionNameFromDevice(i string) string {
 
 	if len(fields) == 2 {
 
-		return strings.TrimSpace(fields[1])
+		return strings.TrimSpace(fields[1]), true
 	}
 
-	return "--"
+	return "--", false
 }
 
 func GetInterfaceNameFromConnection(c string) string {
@@ -93,6 +93,32 @@ func GetInterfaceNameFromConnection(c string) string {
 // status: up / down
 func SetNmcliConnectionStatus(c string, s string) {
 	cmd := exec.Command("nmcli", "connection", s, c)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println(string(out))
+
+	}
+
+}
+
+func MakeDefaultNmcliConnection() {
+
+	DeleteDefaultNmcliConnection(AppConfig.Network.DefaultConnectionName)
+
+	cmd := exec.Command("nmcli", "connection", "add", "type", "ethernet", "con-name", AppConfig.Network.DefaultConnectionName, "ifname", AppConfig.Network.Interface)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(err.Error())
+
+	}
+	fmt.Println(string(out))
+
+}
+
+func DeleteDefaultNmcliConnection(name string) {
+
+	cmd := exec.Command("nmcli", "connection", "delete", name)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(err.Error())

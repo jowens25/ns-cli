@@ -21,7 +21,7 @@ func initDataBase() {
 		log.Println("Failed to connect to database: ", err)
 	}
 
-	err = db.AutoMigrate(&SnmpV1V2cUser{}, &SnmpV3User{}, &Ntp{}, &AllowedNode{})
+	err = db.AutoMigrate(&SnmpV2User{}, &SnmpV3User{}, &Ntp{}, &AllowedNode{})
 
 	if err != nil {
 		log.Println("Failed to migrate database: ", err)

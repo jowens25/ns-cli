@@ -103,16 +103,6 @@ type Ntp struct {
 	ClearCounters    string `json:"clear_counters"`
 }
 
-type SnmpV1V2cUser struct {
-	gorm.Model
-	ComNumber string `json:"com_number"`
-	Version   string `json:"version"`
-	GroupName string `json:"group_name"`
-	Community string `json:"community"`
-	Source    string `json:"source"`
-	SecName   string `json:"sec_name"`
-}
-
 type SecurityPolicy struct {
 	gorm.Model
 	MinimumLength     int  `json:"minimum_length"`
@@ -126,6 +116,16 @@ type SecurityPolicy struct {
 	ExpirationWarning int  `json:"expiration_warning"`
 }
 
+type SnmpV2User struct {
+	gorm.Model
+	ComNumber string `json:"com_number"`
+	Version   string `json:"version"`
+	GroupName string `json:"group_name"`
+	Community string `json:"community"`
+	Source    string `json:"source"`
+	SecName   string `json:"sec_name"`
+}
+
 type SnmpV3User struct {
 	gorm.Model
 	Version        string `json:"version"`
@@ -135,6 +135,13 @@ type SnmpV3User struct {
 	PrivType       string `json:"priv_type"`
 	PrivPassphrase string `json:"priv_passphrase"`
 	GroupName      string `json:"group_name"`
+}
+
+type SnmpGroup struct {
+	gorm.Model
+	GroupName string `json:"group_name"`
+	Version   string `json:"version"`
+	SecName   string `json:"name"`
 }
 
 type SnmpTrap struct {

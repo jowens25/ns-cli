@@ -50,10 +50,10 @@ func startApiServer() {
 
 		snmpGroup := protected.Group("/snmp")
 
-		snmpGroup.GET("/v1v2c_user", readSnmpV1V2cUsers)
-		snmpGroup.POST("/v1v2c_user", writeSnmpV1V2cUser)
-		snmpGroup.PATCH("/v1v2c_user/:id", editSnmpV1V2cUser)
-		snmpGroup.DELETE("/v1v2c_user/:id", deleteSnmpV1V2cUser)
+		snmpGroup.GET("/v1v2c_user", readSnmpV2Users)
+		snmpGroup.POST("/v1v2c_user", writeSnmpV2User)
+		snmpGroup.PATCH("/v1v2c_user/:id", editSnmpV2User)
+		snmpGroup.DELETE("/v1v2c_user/:id", deleteSnmpV2User)
 
 		snmpGroup.GET("v3_user", readSnmpV3Users)
 		snmpGroup.POST("v3_user", writeSnmpV3User)
@@ -76,18 +76,22 @@ func startApiServer() {
 		networkGroup := protected.Group("/network")
 		networkGroup.GET("/ssh", readSshStatus)
 		networkGroup.PATCH("/ssh", writeSshStatus)
+		networkGroup.GET("/ftp", readFtpStatus)
+		networkGroup.PATCH("/ftp", writeFtpStatus)
 		networkGroup.GET("/http", readHttpStatus)
 		networkGroup.PATCH("/http", writeHttpStatus)
 		networkGroup.GET("/telnet", readTelnetStatus)
 		networkGroup.PATCH("/telnet", writeTelnetStatus)
 
 		networkGroup.GET("/info", readNetworkInfo)
+		networkGroup.POST("/info/:prop", writeNetworkInfo)
+		networkGroup.POST("/reset", writeNetworkReset)
 
 		networkGroup.GET("/access", readAllowedNodes)
 		networkGroup.POST("/access", writeAllowedNodes)
 		networkGroup.DELETE("/access/:id", deleteAllowedNode)
 		networkGroup.POST("/access/reset", resetNetworkAccess)
-
+		networkGroup.GET("/health", healthHandler)
 		securityGroup := protected.Group("/security")
 
 		//securityGroup.POST("/chpw", writeChangePassword)

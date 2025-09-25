@@ -4,175 +4,100 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
-// readSnmpUsers reads the users in the snmpd.conf file
-// Returns lists "v1v2c_users" "v3_users" and count "total_users" json
-func readSnmpUsersFromFile() {
-	v1v2c_users = nil
-	v3_users = nil
+func readSnmpUsersFromFile() ([]SnmpV2User, []SnmpV3User, error) {
 
-	var groups []map[string]string
-	var communities []map[string]string
-	var createUsers []map[string]string
-
-	fmt.Println(AppConfig.Snmp.Path)
-	file, err := os.Open(AppConfig.Snmp.Path)
+	content, err := os.ReadFile(AppConfig.Snmp.Path)
 	if err != nil {
-		log.Println("failed to open config file", AppConfig.Snmp.Path)
+		log.Println("failed to read config file", AppConfig.Snmp.Path)
+		return nil, nil, err
 	}
-	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-	// Iterate and print each line
-	for scanner.Scan() {
-		line := scanner.Text()
+	lines := strings.Split(string(content), "\n")
 
-		fields := strings.Fields(line)
-		group := make(map[string]string)
-		community := make(map[string]string)
-		createUser := make(map[string]string)
+	var groups []SnmpGroup
+	var v2Users []SnmpV2User
+	var v3Users []SnmpV3User
 
-		if len(fields) > 0 {
-			// group - group name - sec.model - sec.name
-			if strings.Contains(fields[0], "group") {
-				if len(fields) == 4 {
-					group["group_name"] = strings.TrimSpace(fields[1])
-					group["version"] = strings.TrimSpace(fields[2])
-					group["sec_name"] = strings.TrimSpace(fields[3])
-					groups = append(groups, group)
-				} else {
-					log.Println("incomplete snmp entry")
-					log.Println(fields)
-				}
+	for _, line := range lines {
+
+		if strings.HasPrefix(line, "group") {
+			var g SnmpGroup
+			fields := strings.Fields(line)
+			if len(fields) == 4 {
+				g.GroupName = fields[1]
+				g.Version = fields[2]
+				g.SecName = fields[3]
+				groups = append(groups, g)
+			} else {
+				log.Println("incomplete group entry")
+			}
+		}
+
+		if strings.HasPrefix(line, "com2sec") {
+			var v2 SnmpV2User
+			fields := strings.Fields(line)
+			if len(fields) == 4 {
+				v2.SecName = fields[1]
+				v2.Source = fields[2]
+				v2.Community = fields[3]
+
+				v2Users = append(v2Users, v2)
+			} else {
+				log.Println("incomplete v2 entry")
+			}
+		}
+
+		if strings.HasPrefix(line, "createUser") {
+			var v3 SnmpV3User
+			fields := strings.Fields(line)
+			if len(fields) == 6 {
+				v3.UserName = fields[1]
+				v3.AuthType = fields[2]
+				v3.AuthPassphrase = fields[3]
+				v3.PrivType = fields[4]
+				v3.PrivPassphrase = fields[5]
+				v3Users = append(v3Users, v3)
+			} else {
+				log.Println("incomplete v3 entry")
 			}
 
-			if strings.Contains(fields[0], "com2sec") {
-				if len(fields) == 4 {
-					community["sec_name"] = strings.TrimSpace(fields[1])
-					community["source"] = strings.TrimSpace(fields[2])
-					community["community"] = strings.TrimSpace(fields[3])
-					communities = append(communities, community)
-				} else {
-					log.Println("incomplete snmp entry")
-					log.Println(fields)
+		}
 
-				}
+	}
+
+	// collate
+
+	for _, g := range groups {
+		for i, v2 := range v2Users {
+			if g.SecName == v2.SecName {
+				v2Users[i].SecName = g.SecName
+				v2Users[i].GroupName = g.GroupName
+				v2Users[i].Version = g.Version
 			}
+		}
 
-			if strings.Contains(fields[0], "createUser") {
-				if len(fields) == 6 {
-					createUser["user_name"] = strings.TrimSpace(fields[1])
-					createUser["auth_type"] = strings.TrimSpace(fields[2])
-					createUser["auth_passphrase"] = strings.TrimSpace(fields[3])
-					createUser["priv_type"] = strings.TrimSpace(fields[4])
-					createUser["priv_passphase"] = strings.TrimSpace(fields[5])
-
-					createUsers = append(createUsers, createUser)
-				} else {
-					log.Println("incomplete snmp entry")
-					log.Println(fields)
-
-				}
-			}
+		for i := range v3Users {
+			//v3Users[i]. = g.SecName
+			v3Users[i].GroupName = g.GroupName
+			v3Users[i].Version = g.Version
 		}
 	}
 
-	//fmt.Println(groups)
-	//fmt.Println(communities)
-	//fmt.Println(createUsers)
-	//log.Println("FOR LOOP OVER GROUPS")
-	for _, group := range groups {
-		for _, community := range communities {
-			if community["sec_name"] == group["sec_name"] {
-				var user SnmpV1V2cUser
-				user.Version = group["version"]
-				user.GroupName = group["group_name"]
-				user.Community = community["community"]
-				user.Source = community["source"]
-				user.SecName = community["sec_name"]
-				//result := db.Where("community = ?", user.Community).Updates(&user)
-				//if result.Error != nil {
-				//					log.Println(result.Error)
-				//}
-				v1v2c_users = append(v1v2c_users, user)
-			}
-		}
-		for _, createUser := range createUsers {
-			if group["sec_name"] == createUser["user_name"] {
-				var user SnmpV3User
-
-				user.UserName = createUser["user_name"]
-				user.AuthType = createUser["auth_type"]
-				user.AuthPassphrase = createUser["auth_passphrase"]
-				user.PrivType = createUser["priv_type"]
-				user.PrivPassphrase = createUser["priv_passphase"]
-				user.GroupName = group["group_name"]
-				user.Version = group["version"]
-
-				//result := db.Where("user_name = ?", user.UserName).Updates(&user)
-				//if result.Error != nil {
-				//	log.Println(result.Error)
-				//}
-				v3_users = append(v3_users, user)
-			}
-		}
-	}
-
-	var new_v3_usernames []string
-
-	for _, user := range v3_users {
-
-		// look up the user by user name
-		result := db.Where("user_name = ?", user.UserName).First(&SnmpV3User{})
-		if result.Error == gorm.ErrRecordNotFound {
-			// Create new user
-			db.Create(&user)
-
-		} else {
-			// Update existing user
-			db.Where("user_name = ?", user.UserName).Updates(&user)
-		}
-
-		new_v3_usernames = append(new_v3_usernames, user.UserName)
-	}
-
-	db.Where("user_name NOT IN ?", new_v3_usernames).Delete(&SnmpV3User{})
-
-	var new_v1v2c_communities []string
-
-	for _, user := range v1v2c_users {
-
-		// look up the user by user name
-		result := db.Where("community = ?", user.Community).First(&SnmpV1V2cUser{})
-		if result.Error == gorm.ErrRecordNotFound {
-			// Create new user
-			db.Create(&user)
-
-		} else {
-			// Update existing user
-			db.Where("community = ?", user.Community).Updates(&user)
-		}
-
-		new_v1v2c_communities = append(new_v1v2c_communities, user.Community)
-	}
-
-	db.Where("community NOT IN ?", new_v1v2c_communities).Delete(&SnmpV1V2cUser{})
+	return v2Users, v3Users, nil
 
 }
 
 func resetSnmpConfig(c *gin.Context) {
 
 	StopSnmpd()
-	db.Unscoped().Where("1 = 1").Delete(&SnmpV1V2cUser{}) // hard delete
-	db.Unscoped().Where("1 = 1").Delete(&SnmpV3User{})    // hard delete
-	//db.Unscoped().Where("1 = 1").Delete(&SnmpTrap{})      // hard delete
 
 	CopySnmpdConfig()
 
@@ -230,10 +155,117 @@ func RestartSnmpd() {
 }
 
 func CopySnmpdConfig() {
-	log.Println("should be here")
+
 	log.Println(AppConfig.Snmp.Path)
 
-	cmd := exec.Command("cp", "config/snmpd.conf", AppConfig.Snmp.Path)
-	out, _ := cmd.CombinedOutput()
+	cmd := exec.Command("cp", AppConfig.App.DefaultConfigs+"snmpd.conf", AppConfig.Snmp.Path)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 	log.Println(strings.TrimSpace(string(out)))
+}
+
+func readSnmpInfo(c *gin.Context) {
+
+	var snmp Snmp
+	file, err := os.Open(AppConfig.Snmp.Path)
+	if err != nil {
+		log.Println("failed to open config file", AppConfig.Snmp.Path)
+	}
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		fields := strings.Fields(line)
+		if len(fields) > 1 {
+
+			if strings.Contains(fields[0], "sysObjectID") {
+				snmp.SysObjId = strings.Join(fields[1:], " ")
+			}
+
+			if strings.Contains(fields[0], "sysDescr") {
+				snmp.SysDescription = strings.Join(fields[1:], " ")
+			}
+
+			if strings.Contains(fields[0], "sysLocation") {
+				snmp.SysLocation = strings.Join(fields[1:], " ")
+			}
+
+			if strings.Contains(fields[0], "sysContact") {
+				snmp.SysContact = strings.Join(fields[1:], " ")
+			}
+		}
+	}
+
+	snmp.Status = GetSnmpdStatus()
+
+	c.JSON(http.StatusOK, gin.H{
+		"info": snmp,
+	})
+
+}
+
+func writeSnmpInfo(c *gin.Context) {
+	var snmp Snmp
+	if err := c.ShouldBindJSON(&snmp); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if snmp.Action == "start" {
+		StartSnmpd()
+	}
+
+	if snmp.Action == "stop" {
+		StopSnmpd()
+	}
+
+	snmp.Status = GetSnmpdStatus()
+
+	file, err := os.Open(AppConfig.Snmp.Path)
+	if err != nil {
+		log.Println("failed to open config file:", AppConfig.Snmp.Path)
+	}
+	defer file.Close()
+
+	var lines []string
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		fields := strings.Fields(line)
+		if len(fields) > 0 {
+
+			switch fields[0] {
+			case "sysObjectID":
+				line = "sysObjectID " + snmp.SysObjId
+			case "sysDescription":
+				line = "sysDescription " + snmp.SysDescription
+			case "sysLocation":
+				line = "sysLocation " + snmp.SysLocation
+			case "sysContact":
+				line = "sysContact " + snmp.SysContact
+			}
+		}
+
+		lines = append(lines, line)
+
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Println("error reading file:", err)
+	}
+
+	// Write back to the file
+	err = os.WriteFile(AppConfig.Snmp.Path, []byte(strings.Join(lines, "\n")+"\n"), 0644)
+	if err != nil {
+		log.Println("failed to write file:", err)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"info": snmp,
+	})
 }

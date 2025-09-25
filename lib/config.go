@@ -35,10 +35,11 @@ type ApiConfig struct {
 }
 
 type NetworkConfig struct {
-	Ip        string `mapstructure:"ip"`
-	Dns1      string `mapstructure:"dns1"`
-	Dns2      string `mapstructure:"dns2"`
-	Interface string `mapstructure:"interface"`
+	Ip                    string `mapstructure:"ip"`
+	Dns1                  string `mapstructure:"dns1"`
+	Dns2                  string `mapstructure:"dns2"`
+	Interface             string `mapstructure:"interface"`
+	DefaultConnectionName string `mapstructure:"default_connection_name"`
 }
 
 type NginxConfig struct {
@@ -105,6 +106,7 @@ func InitConfig() *Config {
 
 	viper.SetDefault("network.ip", "10.1.10.220")
 	viper.SetDefault("network.interface", "eth0")
+	viper.SetDefault("network.default_connection_name", "default")
 	viper.SetDefault("network.dns1", "8.8.8.8")
 	viper.SetDefault("network.dns2", "8.8.4.4")
 

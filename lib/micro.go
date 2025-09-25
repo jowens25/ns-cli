@@ -32,7 +32,7 @@ func ReadWriteMicro(command string) (string, error) {
 
 		buffer = append(buffer, scanner.Text()...)
 
-		if len(buffer) >= 200 {
+		if len(buffer) >= 1000 {
 			break
 		}
 	}
