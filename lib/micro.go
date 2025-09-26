@@ -4,7 +4,7 @@ import "C"
 import (
 	"bufio"
 	"fmt"
-	"log"
+//	"log"
 	"os/exec"
 )
 
@@ -44,52 +44,37 @@ import (
 
 func ReadWriteMicro(command string) (string, error) {
 
-	// 1. Write the command to the serial port
-	writeCmd := exec.Command("sh", "-c", fmt.Sprintf("echo '%s' > '%s''", command, AppConfig.Serial.Port))
+	writeCmd := exec.Command("sh", "-c", fmt.Sprintf("echo '%s' > '%s'", command, AppConfig.Serial.Port))
 
-	fmt.Println(writeCmd.Args)
+	//fmt.Println(writeCmd.Args)
 
 	if err := writeCmd.Run(); err != nil {
 		fmt.Printf("Failed to write to serial port: %v", err)
 	}
 
-	// 2. Read from the serial port using `cat`, but limit to 5 lines
 	readCmd := exec.Command("cat", AppConfig.Serial.Port)
 
-	// Get stdout pipe
+
 	stdout, err := readCmd.StdoutPipe()
 	if err != nil {
 		fmt.Printf("Failed to get stdout pipe: %v", err)
 	}
 
-	// Start the read command
+	
 	if err := readCmd.Start(); err != nil {
 		fmt.Printf("Failed to start read command: %v", err)
 	}
 
-	// Read lines
 	scanner := bufio.NewScanner(stdout)
-	lineCount := 0
-	for scanner.Scan() {
-		fmt.Printf("%s", scanner.Text())
-		lineCount++
-		if lineCount >= 5 {
-			break
-		}
-	}
 
-	// Stop the cat process
-	if err := readCmd.Process.Kill(); err != nil {
-		log.Printf("Failed to kill read process: %v", err)
+	hasResponse := scanner.Scan()
+	readCmd.Process.Kill()
+
+	if hasResponse {
+		return scanner.Text(), nil
 	} else {
-		log.Println("Read process killed after 5 lines.")
+		return "uart error", nil
 	}
-
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Scanner error: %v", err)
-	}
-
-	return "nothing", nil
 }
 
 // command is the actual string so ex $BAUDNV
