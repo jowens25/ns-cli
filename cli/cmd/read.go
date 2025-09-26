@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"unsafe"
 
 	"github.com/spf13/cobra"
@@ -31,13 +30,13 @@ to quickly create a Cobra application.`,
 		// Get shared memory segment ID
 		shmid, _, errno := unix.Syscall(unix.SYS_SHMGET, uintptr(key), uintptr(size), uintptr(0666))
 		if errno != 0 {
-			log.Fatalf("shmget failed: %v", errno)
+			fmt.Printf("shmget failed: %v", errno)
 		}
 
 		// Attach to the shared memory segment
 		shmaddr, _, errno := unix.Syscall(unix.SYS_SHMAT, shmid, 0, 0)
 		if errno != 0 {
-			log.Fatalf("shmat failed: %v", errno)
+			fmt.Printf("shmat failed: %v", errno)
 		}
 
 		// Convert the shared memory address to a Go byte slice
@@ -53,13 +52,13 @@ to quickly create a Cobra application.`,
 		// Detach from the shared memory segment
 		_, _, errno = unix.Syscall(unix.SYS_SHMDT, shmaddr, 0, 0)
 		if errno != 0 {
-			log.Fatalf("shmdt failed: %v", errno)
+			fmt.Printf("shmdt failed: %v", errno)
 		}
 
 		// Optionally, remove the shared memory segment (usually done by the creator)
 		// _, _, errno = unix.Syscall(unix.SYS_SHMCTL, shmid, uintptr(syscall.IPC_RMID), 0)
 		// if errno != 0 {
-		// 	log.Fatalf("shmctl IPC_RMID failed: %v", errno)
+		// 	fmt.Printf("shmctl IPC_RMID failed: %v", errno)
 		// }
 
 	},
