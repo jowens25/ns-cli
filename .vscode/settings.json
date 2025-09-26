@@ -25,7 +25,9 @@
         "typeinfo": "c",
         "todslave.h": "c",
         "cores.h": "c",
-        "clkclock.h": "c"
+        "clkclock.h": "c",
+        "stdbool.h": "c",
+        "novusagent.h": "c"
     },
     "workbench.colorCustomizations": {
         "activityBar.activeBackground": "#93e6fc",

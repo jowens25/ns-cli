@@ -1,37 +1,40 @@
 // driver.c
-#include "axi.h"
-#include "ntpServer.h"
-#include "cores.h"
-int driver() // switch to main to use
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <stdio.h>
+#include <string.h>
+#include "novusAgent.h"
+#include "nsStrParser.h"
+
+int main() // switch to main to use
 {
 
-    connect();
+    int serlen;
 
-    getCores();
+    char buf[MAX_BUFFER_SIZE];
 
-    char firstIp[32] = {0};
-    char secondIp[32] = {0};
-    char newIp[32] = "10.1.10.225";
+    //		// Set up shared memory
+    shm_id = shmget((key_t)SHARED_MEMORY_KEY, SHM_STORAGE_SIZE, 0666 | IPC_CREAT);
+    if (shm_id == -1)
+    {
+        perror("radioTask shmget fail.");
+        return 0;
+    }
 
-    int res = readNtpServerIpAddress(firstIp, sizeof(firstIp));
-    printf("result: %d\n", res);
-    printf("read ip: %s\n", firstIp);
+    void *shm_ptr;
+    shm_ptr = shmat(shm_id, (void *)0, 0);
+    if (shm_ptr == (void *)-1)
+    {
+        perror("Shared memory shmat() failed\n");
+        return 0;
+    }
+    shm_data = (char *)shm_ptr;
 
-    res = writeNtpServerIpAddress(newIp, sizeof(newIp));
-    printf("result: %d\n", res);
-    printf("wrote ip: %s\n", newIp);
+    strParser(buf);
 
-    res = readNtpServerIpAddress(secondIp, sizeof(secondIp));
-    printf("result: %d\n", res);
-    printf("read ip: %s\n", secondIp);
+    shmdt(shm_data);
+    shmctl(shm_id, IPC_RMID, 0);
 
-    res = writeNtpServerIpAddress(firstIp, sizeof(firstIp));
-    printf("result: %d\n", res);
-    printf("wrote ip: %s\n", firstIp);
-
-    res = readNtpServerIpAddress(secondIp, sizeof(secondIp));
-    printf("result: %d\n", res);
-    printf("read ip: %s\n", secondIp);
-
+    syslog(LOG_INFO, "Exiting radioTask\n");
     return 0;
 }
