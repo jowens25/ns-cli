@@ -114,3 +114,43 @@ func Operation(operation *string, module *string, property *string, value *strin
 
 	return nil
 }
+
+func WriteReadUart(command *string, response *string) error {
+
+	fmt.Println("Write Read Uart CALLED")
+
+	cmd := C.CString(*command)
+	resp := C.CString(*response)
+
+	defer C.free(unsafe.Pointer(cmd))
+	defer C.free(unsafe.Pointer(resp))
+
+	uartErr := C.writeReadUart(cmd, resp)
+
+	*response = C.GoString(resp)
+
+	if uartErr != 0 {
+		return errors.New("uart write read failed")
+	}
+
+	return nil
+
+}
+
+func WriteReadCommand(command string) {
+
+	response := ""
+
+	err := WriteReadUart(&command, &response)
+
+	if err != nil {
+		log.Println("axi write read uart error")
+		log.Println(err.Error())
+
+		return
+	}
+
+	fmt.Println("command: ", command)
+	fmt.Println("response: ", response)
+
+}
