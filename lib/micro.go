@@ -44,10 +44,11 @@ import (
 
 func ReadWriteMicro(command string) (string, error) {
 
-	command = command + "\r\n"
-
 	// 1. Write the command to the serial port
 	writeCmd := exec.Command("sh", "-c", fmt.Sprintf("echo '%s' > '%s''", command, AppConfig.Serial.Port))
+
+	fmt.Println(writeCmd.Args)
+
 	if err := writeCmd.Run(); err != nil {
 		fmt.Printf("Failed to write to serial port: %v", err)
 	}
