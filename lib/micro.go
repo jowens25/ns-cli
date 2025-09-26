@@ -4,39 +4,89 @@ import "C"
 import (
 	"bufio"
 	"fmt"
-	"os"
+	"log"
+	"os/exec"
 )
+
+//func ReadWriteMicro(command string) (string, error) {
+//
+//	command = command + "\r\n"
+//
+//	file, err := os.OpenFile(AppConfig.Serial.Port, os.O_RDWR, 0)
+//	if err != nil {
+//		return "unable to open for write", fmt.Errorf("failed to open for write")
+//	}
+//	defer file.Close()
+//
+//	_, err = file.WriteString(command)
+//
+//	if err != nil {
+//		return "unable to write", fmt.Errorf("failed to write")
+//	}
+//
+//	buffer := make([]byte, 1024)
+//
+//	scanner := bufio.NewScanner(file)
+//
+//	for scanner.Scan() {
+//		fmt.Println(scanner.Text())
+//
+//		buffer = append(buffer, scanner.Text()...)
+//
+//		if len(buffer) >= 1000 {
+//			break
+//		}
+//	}
+//	fmt.Println(string(buffer))
+//
+//	return "nothing", nil
+//}
 
 func ReadWriteMicro(command string) (string, error) {
 
 	command = command + "\r\n"
 
-	file, err := os.OpenFile(AppConfig.Serial.Port, os.O_RDWR, 0)
-	if err != nil {
-		return "unable to open for write", fmt.Errorf("failed to open for write")
-	}
-	defer file.Close()
-
-	_, err = file.WriteString(command)
-
-	if err != nil {
-		return "unable to write", fmt.Errorf("failed to write")
+	// 1. Write the command to the serial port
+	writeCmd := exec.Command("sh", "-c", fmt.Sprintf("echo '%s' > '%s''", command, AppConfig.Serial.Port))
+	if err := writeCmd.Run(); err != nil {
+		fmt.Printf("Failed to write to serial port: %v", err)
 	}
 
-	buffer := make([]byte, 1024)
+	// 2. Read from the serial port using `cat`, but limit to 5 lines
+	readCmd := exec.Command("cat", AppConfig.Serial.Port)
 
-	scanner := bufio.NewScanner(file)
+	// Get stdout pipe
+	stdout, err := readCmd.StdoutPipe()
+	if err != nil {
+		fmt.Printf("Failed to get stdout pipe: %v", err)
+	}
 
+	// Start the read command
+	if err := readCmd.Start(); err != nil {
+		fmt.Printf("Failed to start read command: %v", err)
+	}
+
+	// Read lines
+	scanner := bufio.NewScanner(stdout)
+	lineCount := 0
 	for scanner.Scan() {
-		fmt.Println(scanner.Text())
-
-		buffer = append(buffer, scanner.Text()...)
-
-		if len(buffer) >= 1000 {
+		fmt.Printf("%s", scanner.Text())
+		lineCount++
+		if lineCount >= 5 {
 			break
 		}
 	}
-	fmt.Println(string(buffer))
+
+	// Stop the cat process
+	if err := readCmd.Process.Kill(); err != nil {
+		log.Printf("Failed to kill read process: %v", err)
+	} else {
+		log.Println("Read process killed after 5 lines.")
+	}
+
+	if err := scanner.Err(); err != nil {
+		fmt.Println("Scanner error: %v", err)
+	}
 
 	return "nothing", nil
 }

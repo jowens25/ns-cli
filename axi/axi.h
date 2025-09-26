@@ -54,8 +54,6 @@ int readOnly(char *buf, size_t size);
 
 int writeOnly(char *buf, size_t size);
 
-int writeReadUart(char *cmd, char *response);
-
 extern int64_t temp_data;
 extern int64_t temp_addr;
 
