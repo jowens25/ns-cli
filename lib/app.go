@@ -27,7 +27,11 @@ func StartApp() {
 
 	//InitNginxConfig()
 
-	initDataBase()
+	createDefaultUser()
+
+	//loadSystem()
+
+	log.Println("Database initialized successfully")
 
 	startApiServer()
 }
@@ -47,22 +51,7 @@ func StopApp() {
 }
 
 func healthHandler(c *gin.Context) {
-	sqlDB, err := db.DB()
-	if err != nil {
-		c.JSON(http.StatusServiceUnavailable, gin.H{
-			"status": "unhealthy",
-			"error":  "Database connection failed",
-		})
-		return
-	}
 
-	if err := sqlDB.Ping(); err != nil {
-		c.JSON(http.StatusServiceUnavailable, gin.H{
-			"status": "unhealthy",
-			"error":  "Database ping failed",
-		})
-		return
-	}
 	c.JSON(http.StatusOK, gin.H{
 		"status":    "healthy",
 		"timestamp": time.Now(),
