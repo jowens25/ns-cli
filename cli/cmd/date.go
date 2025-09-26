@@ -33,7 +33,18 @@ date <yyyy> <mm> <dd>	# sets new date`,
 	},
 }
 
+var latestCmd = &cobra.Command{
+	Use:   "latest",
+	Short: "get and set time from google.com",
+	Run: func(cmd *cobra.Command, args []string) {
+
+		lib.SetLatest()
+
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(dateCmd)
+	dateCmd.AddCommand(latestCmd)
 
 }
