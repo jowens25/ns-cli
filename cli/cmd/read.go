@@ -22,12 +22,13 @@ var readCmd = &cobra.Command{
 
 		// Define shared memory key and size (must match the creating process)
 		key, _ := strconv.ParseInt(args[0], 10, 64) // Example key
-		size := 25600                               // Example size in bytes
+		size := 24512                               // Example size in bytes
 
 		// Get shared memory segment ID
 		shmid, _, errno := unix.Syscall(unix.SYS_SHMGET, uintptr(key), uintptr(size), uintptr(0666))
 		if errno != 0 {
 			fmt.Printf("shmget failed: %v", errno)
+			return
 		}
 
 		// Attach to the shared memory segment
