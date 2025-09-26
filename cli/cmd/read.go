@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"strconv"
 	"unsafe"
 
 	"github.com/spf13/cobra"
@@ -14,18 +15,14 @@ import (
 // readCmd represents the read command
 var readCmd = &cobra.Command{
 	Use:   "read",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "read shared memory",
+	Args:  cobra.MinimumNArgs(1),
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		// Define shared memory key and size (must match the creating process)
-		key := 672213396 // Example key
-		size := 1024     // Example size in bytes
+		key, _ := strconv.ParseInt(args[0], 10, 64) // Example key
+		size := 25600                               // Example size in bytes
 
 		// Get shared memory segment ID
 		shmid, _, errno := unix.Syscall(unix.SYS_SHMGET, uintptr(key), uintptr(size), uintptr(0666))
