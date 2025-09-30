@@ -105,7 +105,10 @@ func editSystemUser(c *gin.Context) {
 		MakeUserViewer(user.Username)
 	}
 
-	changePassword(user)
+	if user.Password != "" {
+		ChangePassword(user)
+		fmt.Println("password updated")
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "System user modified",
@@ -281,7 +284,7 @@ func AdminNumber() (int, error) {
 	return 0, fmt.Errorf("no admins found")
 }
 
-func changePassword(user User) (string, error) {
+func ChangePassword(user User) (string, error) {
 	thiscmd := exec.Command("chpasswd")
 	thiscmd.Stdin = strings.NewReader(fmt.Sprintf("%s:%s", user.Username, user.Password))
 	output, err := thiscmd.CombinedOutput()
@@ -455,7 +458,7 @@ func createDefaultUser() {
 	addAdminGroup()
 	addUserGroup()
 
-	setPasswordEnforcement(false)
+	SetPasswordEnforcement(false)
 
 	warning, err := addUserToSystem(user)
 	if err != nil {

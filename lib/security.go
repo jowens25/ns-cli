@@ -574,7 +574,7 @@ func setPasswordAgeWarning(days int) error {
 
 }
 
-func setPasswordEnforcement(required bool) error {
+func SetPasswordEnforcement(required bool) error {
 	var err error = nil
 
 	var newLines []string

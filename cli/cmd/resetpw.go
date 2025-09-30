@@ -1,11 +1,10 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
-	"fmt"
+	"NovusTimeServer/lib"
 
 	"github.com/spf13/cobra"
 )
@@ -13,28 +12,21 @@ import (
 // resetpwCmd represents the resetpw command
 var resetpwCmd = &cobra.Command{
 	Use:   "resetpw",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "reset default admin account password",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("resetpw called")
+
+		var user lib.User
+
+		user.Username = lib.AppConfig.User.DefaultUsername
+		user.Password = lib.AppConfig.User.DefaultPassword
+
+		lib.SetPasswordEnforcement(false)
+
+		lib.ChangePassword(user)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(resetpwCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// resetpwCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// resetpwCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
