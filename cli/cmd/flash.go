@@ -38,6 +38,11 @@ var resetFlashCmd = &cobra.Command{
 	Short: "reset settings to default and save to flash",
 	Run: func(cmd *cobra.Command, args []string) {
 
+		if !lib.IsAdminRoot() {
+			fmt.Println("requires admin access")
+			return
+		}
+
 		if AskForConfirmation("Are you sure you want to reset all flash variables?") {
 			response, _ := lib.ReadWriteMicro("$RESETALL")
 			fmt.Println(response)

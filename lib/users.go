@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/user"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -158,6 +159,23 @@ func removeUserFromSystem(user User) error {
 
 	return nil
 
+}
+
+func IsAdminRoot() bool {
+
+	currentUser, err := user.Current()
+	if err != nil {
+		log.Fatalf("Failed to get current user: %v", err)
+	}
+
+	admins := readSystemAdmins()
+
+	for _, cu := range admins {
+		if cu.Username == currentUser.Username {
+			return true
+		}
+	}
+	return false
 }
 
 func deleteSystemUser(c *gin.Context) {

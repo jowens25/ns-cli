@@ -38,6 +38,12 @@ authorized technician.`,
 			fmt.Println(response)
 
 		} else if len(args) == 2 {
+
+			if !lib.IsAdminRoot() {
+				fmt.Println("requires admin access")
+				return
+			}
+
 			response, _ := lib.ReadWriteMicro("$CAL" + args[0] + "=" + args[1])
 			fmt.Println(response)
 		} else {

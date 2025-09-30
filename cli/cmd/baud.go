@@ -28,9 +28,15 @@ var baudrateCmd = &cobra.Command{
 			fmt.Println(response)
 
 		} else if len(args) == 1 {
-			response, _ := lib.ReadWriteMicro("$BAUDNV=" + args[0])
 
+			if !lib.IsAdminRoot() {
+				fmt.Println("requires admin access")
+				return
+			}
+
+			response, _ := lib.ReadWriteMicro("$BAUDNV=" + args[0])
 			fmt.Println(response)
+
 		} else {
 			cmd.Help()
 		}

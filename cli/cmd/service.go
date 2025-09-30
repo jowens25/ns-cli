@@ -19,6 +19,11 @@ var serviceEnableCmd = &cobra.Command{
 	ValidArgs: []string{"all", "ssh", "ftp", "telnet", "http", "dhcp", "dhcp6", "app", "snmp"},
 	Run: func(cmd *cobra.Command, args []string) {
 
+		if !lib.IsAdminRoot() {
+			fmt.Println("requires admin access")
+			return
+		}
+
 		switch args[0] {
 		case "ssh":
 			lib.EnableSsh()
@@ -45,6 +50,11 @@ var serviceDisableCmd = &cobra.Command{
 	ValidArgs: []string{"all", "ssh", "ftp", "telnet", "http", "dhcp", "dhcp6", "app", "snmp"},
 
 	Run: func(cmd *cobra.Command, args []string) {
+
+		if !lib.IsAdminRoot() {
+			fmt.Println("requires admin access")
+			return
+		}
 
 		switch args[0] {
 		case "ssh":

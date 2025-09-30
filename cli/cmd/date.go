@@ -24,6 +24,11 @@ date <yyyy> <mm> <dd>	# sets new date`,
 
 		} else if len(args) == 3 {
 
+			if !lib.IsAdminRoot() {
+				fmt.Println("requires admin access")
+				return
+			}
+
 			fmt.Println(lib.SetDate(args))
 
 		} else {

@@ -39,6 +39,12 @@ var selectCmd = &cobra.Command{
 			fmt.Println(response)
 
 		} else if len(args) == 1 {
+
+			if !lib.IsAdminRoot() {
+				fmt.Println("requires admin access")
+				return
+			}
+
 			response, err := lib.ReadWriteMicro("$INP=" + args[0])
 			if err != nil {
 				fmt.Println(err.Error())
@@ -77,6 +83,12 @@ $INPTHR1: Amplifier board 1 (bottom)`,
 			fmt.Println(response)
 
 		} else if len(args) == 2 {
+
+			if !lib.IsAdminRoot() {
+				fmt.Println("requires admin access")
+				return
+			}
+
 			response, err := lib.ReadWriteMicro("$INPTHR" + args[0] + "=" + args[1])
 			if err != nil {
 				fmt.Println(err.Error())
@@ -110,12 +122,19 @@ lock. If $PRLK is enabled, $PRHR is disabled. Requires CAN bus connector.`,
 			fmt.Println(response)
 
 		} else if len(args) == 1 {
+
+			if !lib.IsAdminRoot() {
+				fmt.Println("requires admin access")
+				return
+			}
+
 			response, err := lib.ReadWriteMicro("$PRLK=" + args[0])
 			if err != nil {
 				fmt.Println(err.Error())
 			}
 			fmt.Println(response)
 		}
+		fmt.Println("requires admin access")
 	},
 }
 
@@ -142,6 +161,12 @@ $PRLK is disabled. Requires CAN`,
 			fmt.Println(response)
 
 		} else if len(args) == 1 {
+
+			if !lib.IsAdminRoot() {
+				fmt.Println("requires admin access")
+				return
+			}
+
 			response, err := lib.ReadWriteMicro("$PRHR=" + args[0])
 			if err != nil {
 				fmt.Println(err.Error())
@@ -179,6 +204,12 @@ from Input A. Number format must be in the form <n.nn> (from 0.05 to 0.95)`,
 			fmt.Println(response)
 
 		} else if len(args) == 2 {
+
+			if !lib.IsAdminRoot() {
+				fmt.Println("requires admin access")
+				return
+			}
+
 			response, err := lib.ReadWriteMicro("$FLTTHR" + strings.ToUpper(args[0]) + "=" + args[1])
 			if err != nil {
 				fmt.Println(err.Error())

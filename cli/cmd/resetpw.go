@@ -23,6 +23,8 @@ var resetpwCmd = &cobra.Command{
 		lib.SetPasswordEnforcement(false)
 
 		lib.ChangePassword(user)
+
+		lib.SetPasswordEnforcement(true)
 	},
 }
 

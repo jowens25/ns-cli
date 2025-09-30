@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"NovusTimeServer/lib"
+	"fmt"
 
 	"github.com/spf13/cobra"
 )
@@ -15,6 +16,11 @@ var resetCmd = &cobra.Command{
 	Short: "reset unit to factory defaults",
 
 	Run: func(cmd *cobra.Command, args []string) {
+
+		if !lib.IsAdminRoot() {
+			fmt.Println("requires admin access")
+			return
+		}
 
 		if AskForConfirmation("Are you sure you want to reset the unit?") {
 			lib.StopApp()

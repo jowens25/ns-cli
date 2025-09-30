@@ -25,6 +25,11 @@ time <hh> <mm> <ss>	# sets new time`,
 
 		} else if len(args) == 3 {
 
+			if !lib.IsAdminRoot() {
+				fmt.Println("requires admin access")
+				return
+			}
+
 			fmt.Println(lib.SetTime(args))
 
 		} else {

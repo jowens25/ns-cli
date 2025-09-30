@@ -25,6 +25,11 @@ var addCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
+		if !lib.IsAdminRoot() {
+			fmt.Println("requires admin access")
+			return
+		}
+
 		ipAddr, ipNet, err := net.ParseCIDR(args[0])
 		if err != nil {
 			fmt.Println("please enter valid address in CIDR form. Ex. 10.1.10.1/24, 10.1.10.1/32")
@@ -46,6 +51,12 @@ var removeCmd = &cobra.Command{
 	Short: "remove a node",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+
+		if !lib.IsAdminRoot() {
+			fmt.Println("requires admin access")
+			return
+		}
+
 		ipAddr, ipNet, err := net.ParseCIDR(args[0])
 		if err != nil {
 			fmt.Println("please enter address in CIDR form. Ex. 10.1.10.1/24, 10.1.10.1/32")
@@ -80,6 +91,7 @@ var showCmd = &cobra.Command{
 		for _, node := range lib.ReadAccessFromFiles() {
 			fmt.Println(node)
 		}
+
 	},
 }
 
