@@ -12,7 +12,7 @@ import (
 // resetCmd represents the reset command
 var resetCmd = &cobra.Command{
 	Use:   "reset",
-	Short: "reset unit to factor defaults",
+	Short: "reset unit to factory defaults",
 
 	Run: func(cmd *cobra.Command, args []string) {
 
