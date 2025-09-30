@@ -364,7 +364,7 @@ int writeOnly(char *buf, size_t size)
     return 0;
 }
 
-int connect(void)
+int axiConnect(void)
 {
     // printf("connect called\n");
 

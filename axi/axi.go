@@ -18,17 +18,13 @@ import (
 	"unsafe"
 )
 
-const (
-	FPGA_PORT = "FPGA_PORT"
-)
-
 var mutex sync.Mutex
 
 const size = C.size_t(64)
 
 func Connect() error {
 	fmt.Println("AXI CONNECT CALLED")
-	err := C.connect()
+	err := C.axiConnect()
 	if err != 0 {
 		return errors.New("failed to connect to serial port")
 	}

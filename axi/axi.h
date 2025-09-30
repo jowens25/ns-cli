@@ -26,7 +26,7 @@
 
 extern struct termios tty;
 
-int connect(void);
+int axiConnect(void);
 
 int serOpen(char fileDescriptor[]);
 int serClose(int fileDescriptor);

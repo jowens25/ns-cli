@@ -40,6 +40,7 @@ type NetworkConfig struct {
 	Dns2                  string `mapstructure:"dns2"`
 	Interface             string `mapstructure:"interface"`
 	DefaultConnectionName string `mapstructure:"default_connection_name"`
+	Config                string `mapstructure:"config"`
 }
 
 type NginxConfig struct {
@@ -91,22 +92,21 @@ func InitConfig() *Config {
 	viper.SetConfigType("toml")
 	viper.AddConfigPath("/etc/ns") // A system-wide path
 
-	viper.SetDefault("app.database", "/etc/ns/app.db")
 	viper.SetDefault("app.config", "/etc/ns/config.toml")
-	viper.SetDefault("app.log", "/tmp/ns.log")
+	viper.SetDefault("app.log", "/var/log/ns.log")
 	viper.SetDefault("api.port", "5000")
 	viper.SetDefault("api.host", "localhost") // production
 	viper.SetDefault("app.default_configs", "/usr/share/ns/configs/")
 	//viper.SetDefault("api.host", "0.0.0.0")   // development
 
 	viper.SetDefault("nginx.config", "/etc/nginx/nginx.conf")
-	//viper.SetDefault("nginx.defconfig", "/etc/nginx/def_nginx.conf")
 	viper.SetDefault("nginx.key", "/etc/nginx/ssl/nginx.key")
 	viper.SetDefault("nginx.cert", "/etc/nginx/ssl/nginx.crt")
 
 	viper.SetDefault("network.ip", "10.1.10.220")
 	viper.SetDefault("network.interface", "eth0")
-	viper.SetDefault("network.default_connection_name", "default")
+	viper.SetDefault("network.default_connection_name", "eth0")
+	viper.SetDefault("network.config", "/etc/network/interfaces")
 	viper.SetDefault("network.dns1", "8.8.8.8")
 	viper.SetDefault("network.dns2", "8.8.4.4")
 

@@ -59,6 +59,12 @@ func healthHandler(c *gin.Context) {
 	})
 }
 
+func timeHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"time": GetTime(),
+	})
+}
+
 func logoutHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Logged out successfully"})
 }

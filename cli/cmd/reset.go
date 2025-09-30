@@ -16,11 +16,13 @@ var resetCmd = &cobra.Command{
 
 	Run: func(cmd *cobra.Command, args []string) {
 
-		AskForConfirmation("Are you sure you want to reset the unit?")
-		lib.StopApp()
-		lib.CopyConfigs()
-		lib.ResetUsers()
-		lib.ResetNetworkConfig(lib.AppConfig.Network.Interface)
+		if AskForConfirmation("Are you sure you want to reset the unit?") {
+			lib.StopApp()
+			lib.CopyConfigs()
+			lib.ResetUsers()
+			lib.ResetNetworkConfig(lib.AppConfig.Network.Interface)
+		}
+
 	},
 }
 

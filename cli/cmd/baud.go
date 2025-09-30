@@ -17,8 +17,7 @@ var baudrateCmd = &cobra.Command{
 	ValidArgs:             []string{"19200", "38400", "57600", "115200", "230400"},
 	DisableFlagsInUseLine: true, // This hides [flags] from the usage line
 
-	Example: `  baud 		# return channel factor
-  baud <rate> 	# sets new rate`,
+	Example: `baud <rate> 	# sets new rate`,
 
 	Run: func(cmd *cobra.Command, args []string) {
 

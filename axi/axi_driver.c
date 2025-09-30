@@ -5,7 +5,7 @@
 int driver() // switch to main to use
 {
 
-    connect();
+    axiConnect();
     // 672213396
     getCores();
 

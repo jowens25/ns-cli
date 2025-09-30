@@ -38,7 +38,7 @@ var latestCmd = &cobra.Command{
 	Short: "get and set time from google.com",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		lib.SetLatest()
+		fmt.Println(lib.SetLatest())
 
 	},
 }
