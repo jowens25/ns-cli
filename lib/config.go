@@ -130,7 +130,7 @@ func InitConfig() *Config {
 
 	viper.SetDefault("cors.host1", "https://localhost")
 	viper.SetDefault("cors.host2", "http://localhost")
-
+	//
 	// Read config file
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
