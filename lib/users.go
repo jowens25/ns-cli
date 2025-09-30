@@ -84,6 +84,35 @@ func writeSystemUser(c *gin.Context) {
 
 }
 
+func editSystemUser(c *gin.Context) {
+
+	var user User
+
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	fmt.Println(user.Username)
+	fmt.Println(user.Password)
+	fmt.Println(user.Role)
+
+	if user.Role == "admin" {
+		MakeUserAdmin(user.Username)
+	}
+
+	if user.Role == "viewer" {
+		MakeUserViewer(user.Username)
+	}
+
+	changePassword(user)
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "System user modified",
+		"user":    user,
+	})
+}
+
 func removeUserFromSystem(user User) error {
 
 	isAdmin := false
@@ -216,7 +245,7 @@ func readSystemViewers() []User {
 
 				var user User
 				user.Username = username
-				user.Role = "user"
+				user.Role = "viewer"
 
 				currentUsers = append(currentUsers, user)
 			}
@@ -330,6 +359,35 @@ func AddAdmin(username string, password string) error {
 	}
 
 	fmt.Printf("Successfully created admin: %s\n", username)
+	return nil
+}
+
+func MakeUserAdmin(username string) error {
+	// Create admin account
+	cmd := exec.Command("usermod", username,
+		"-g", AppConfig.User.AdminGroup,
+		"-G", AppConfig.User.UserGroup+","+AppConfig.User.AdminGroup)
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("failed to mod user %s: %v\nOutput: %s", username, err, string(output))
+	}
+
+	fmt.Printf("Successfully made user admin user: %s\n", username)
+	return nil
+}
+func MakeUserViewer(username string) error {
+	// Create admin account
+	cmd := exec.Command("usermod", username,
+		"-g", AppConfig.User.UserGroup,
+		"-G", AppConfig.User.UserGroup)
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("failed to mod user %s: %v\nOutput: %s", username, err, string(output))
+	}
+
+	fmt.Printf("Successfully mod user: %s\n", username)
 	return nil
 }
 
