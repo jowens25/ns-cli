@@ -168,6 +168,10 @@ func IsAdminRoot() bool {
 		log.Fatalf("Failed to get current user: %v", err)
 	}
 
+	if currentUser.Username == "root" {
+		return true
+	}
+
 	admins := readSystemAdmins()
 
 	for _, cu := range admins {

@@ -134,11 +134,13 @@ type SnmpV3User struct {
 	AuthPassphrase string `json:"auth_passphrase"`
 	PrivType       string `json:"priv_type"`
 	PrivPassphrase string `json:"priv_passphrase"`
-	GroupName      string `json:"group_name"`
+	// permissions
+	GroupName string `json:"group_name"`
 }
 
 type SnmpGroup struct {
 	gorm.Model
+	// permissions
 	GroupName string `json:"group_name"`
 	Version   string `json:"version"`
 	SecName   string `json:"name"`

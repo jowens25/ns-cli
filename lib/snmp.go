@@ -84,10 +84,13 @@ func readSnmpUsersFromFile() ([]SnmpV2User, []SnmpV3User, error) {
 			}
 		}
 
-		for i := range v3Users {
-			//v3Users[i]. = g.SecName
-			v3Users[i].GroupName = g.GroupName
-			v3Users[i].Version = g.Version
+		for i, v3 := range v3Users {
+			if g.SecName == v3.UserName {
+
+				v3Users[i].GroupName = g.GroupName // permissions
+				v3Users[i].Version = g.Version
+			}
+
 		}
 	}
 

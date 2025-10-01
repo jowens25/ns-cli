@@ -72,8 +72,6 @@ func editSnmpV3User(c *gin.Context) {
 		"v3_user": userToEdit,
 	})
 
-	return
-
 }
 
 func deleteSnmpV3User(c *gin.Context) {
