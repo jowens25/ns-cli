@@ -321,7 +321,7 @@ func ChangePassword(user User) (string, error) {
 	}
 
 	return out, nil
-}
+} //
 
 func addUserToSystem(user User) (string, error) {
 	switch user.Role {
