@@ -21,10 +21,12 @@ var hostCmd = &cobra.Command{
 			fmt.Print(response)
 
 		} else if len(args) == 1 {
+
 			if !lib.IsAdminRoot() {
 				fmt.Println("requires admin access")
 				return
 			}
+
 			lib.SetHostname(args[0])
 			response := lib.GetHostname()
 			fmt.Print(response)
