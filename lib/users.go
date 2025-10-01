@@ -307,7 +307,7 @@ func AdminNumber() (int, error) {
 }
 
 func ChangePassword(user User) (string, error) {
-	thiscmd := exec.Command("chpasswd")
+	thiscmd := exec.Command("/usr/sbin/chpasswd")
 	thiscmd.Stdin = strings.NewReader(fmt.Sprintf("%s:%s", user.Username, user.Password))
 	output, err := thiscmd.CombinedOutput()
 	out := string(output)
@@ -338,7 +338,7 @@ func addUserToSystem(user User) (string, error) {
 		log.Println("not viewer or admin user")
 	}
 
-	thiscmd := exec.Command("chpasswd")
+	thiscmd := exec.Command("/usr/sbin/chpasswd")
 	thiscmd.Stdin = strings.NewReader(fmt.Sprintf("%s:%s", user.Username, user.Password))
 	output, err := thiscmd.CombinedOutput()
 

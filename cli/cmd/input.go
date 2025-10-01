@@ -221,7 +221,7 @@ from Input A. Number format must be in the form <n.nn> (from 0.05 to 0.95)`,
 }
 
 func init() {
-	rootCmd.AddCommand(inputCmd)
+	//rootCmd.AddCommand(inputCmd)
 	inputCmd.AddCommand(selectCmd)
 	inputCmd.AddCommand(lowCmd)
 	inputCmd.AddCommand(faultCmd)

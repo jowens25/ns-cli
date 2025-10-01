@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"NovusTimeServer/lib"
+	"fmt"
 
 	"github.com/spf13/cobra"
 )
@@ -25,6 +26,7 @@ var resetpwCmd = &cobra.Command{
 		lib.ChangePassword(user)
 
 		lib.SetPasswordEnforcement(true)
+		fmt.Println("admin password reset")
 	},
 }
 

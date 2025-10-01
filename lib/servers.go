@@ -19,7 +19,7 @@ func startApiServer() {
 	corsConfig.AllowHeaders = []string{"Authorization", "Content-Type", "X-Request-ID"}
 	corsConfig.AllowCredentials = true
 
-	development := false
+	development := true
 
 	if development {
 		corsConfig.AllowAllOrigins = true

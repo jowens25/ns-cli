@@ -56,7 +56,7 @@ var resetFlashCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(flashCmd)
+	//rootCmd.AddCommand(flashCmd)
 	flashCmd.AddCommand(resetFlashCmd)
 	flashCmd.AddCommand(saveFlashCmd)
 	flashCmd.GroupID = "hw"

@@ -45,6 +45,6 @@ var baudrateCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(baudrateCmd)
+	//rootCmd.AddCommand(baudrateCmd)
 	baudrateCmd.GroupID = "hw"
 }

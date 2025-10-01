@@ -54,7 +54,7 @@ authorized technician.`,
 }
 
 func init() {
-	rootCmd.AddCommand(calibrationCmd)
+	//rootCmd.AddCommand(calibrationCmd)
 	calibrationCmd.Flags().BoolVarP(&all, "all", "a", false, "read all calibration factors")
 	calibrationCmd.GroupID = "hw"
 

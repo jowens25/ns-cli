@@ -42,7 +42,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.AddGroup(&cobra.Group{ID: "hw", Title: "Hardware Commands"})
+	//rootCmd.AddGroup(&cobra.Group{ID: "hw", Title: "Hardware Commands"})
 
 }
 
