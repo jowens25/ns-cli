@@ -12,24 +12,24 @@ import (
 
 func startApiServer() {
 	apiRouter := gin.Default()
-	apiRouter.SetTrustedProxies([]string{AppConfig.Api.Host}) // localhost
 
 	corsConfig := cors.DefaultConfig()
 
 	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"}
 	corsConfig.AllowHeaders = []string{"Authorization", "Content-Type", "X-Request-ID"}
 	corsConfig.AllowCredentials = true
-	// offical
-	//corsConfig.AllowOrigins = []string{
-	//
-	//	AppConfig.Cors.Host1,
-	//	AppConfig.Cors.Host2, // production
-	//
-	//	//"https://localhost",
-	//	//"http://localhost", // production
-	//}
 
-	corsConfig.AllowAllOrigins = true // development
+	development := false
+
+	if development {
+		corsConfig.AllowAllOrigins = true
+	} else {
+		apiRouter.SetTrustedProxies([]string{AppConfig.Api.Host})
+		corsConfig.AllowOrigins = []string{
+			AppConfig.Cors.Host1,
+			AppConfig.Cors.Host2,
+		}
+	}
 
 	apiRouter.Use(cors.New(corsConfig))
 
