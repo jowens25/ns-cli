@@ -102,7 +102,13 @@ var networkResetCmd = &cobra.Command{
 	Short: "reset network to defaults",
 
 	Run: func(cmd *cobra.Command, args []string) {
-		lib.ResetNetworkConfig(lib.AppConfig.Network.Interface)
+
+		if AskForConfirmation("Reboot is required to reset network. Proceed?") {
+			lib.ResetNetworkConfig(lib.AppConfig.Network.Interface)
+
+		} else {
+			fmt.Println("canceled")
+		}
 	},
 }
 

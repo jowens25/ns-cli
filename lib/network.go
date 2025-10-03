@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os/exec"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -304,6 +305,14 @@ func SetDns2(i string, dns2 string) {
 
 }
 
+func Reboot() {
+
+	cmd := exec.Command("reboot", "now")
+	err := cmd.Run()
+	if err != nil {
+		log.Printf("Error rebooting: %v", err)
+	}
+}
 func ResetNetworkConfig(i string) {
 
 	DisableNetworking()
@@ -313,6 +322,8 @@ func ResetNetworkConfig(i string) {
 	c, _ := GetConnectionNameFromDevice(i)
 
 	SetNmcliConnectionStatus(c, "up")
+
+	Reboot()
 
 	//SetNmcliConnectionStatus(c, "down")
 	//
