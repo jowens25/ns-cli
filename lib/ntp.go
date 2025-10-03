@@ -9,8 +9,8 @@ import (
 )
 
 func readNtpProperty(c *gin.Context) {
-	serialMutex.Lock()
-	defer serialMutex.Unlock()
+	SerialMutex.Lock()
+	defer SerialMutex.Unlock()
 	property := c.Param("prop")
 	operation := "read"
 	module := "ntp"
@@ -30,8 +30,8 @@ func readNtpProperty(c *gin.Context) {
 }
 
 func writeNtpProperty(c *gin.Context) {
-	serialMutex.Lock()
-	defer serialMutex.Unlock()
+	SerialMutex.Lock()
+	defer SerialMutex.Unlock()
 	var data map[string]string
 	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

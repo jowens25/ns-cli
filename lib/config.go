@@ -117,7 +117,7 @@ func InitConfig() *Config {
 	viper.SetDefault("security.pwquality", "/etc/security/pwquality.conf")
 	viper.SetDefault("security.login", "/etc/login.defs")
 
-	viper.SetDefault("serial.port", "/dev/ttymxc2")
+	viper.SetDefault("serial.port", "/dev/ttyUSB0")
 	viper.SetDefault("serial.baudrate", 115200)
 
 	viper.SetDefault("user.group-admin", "novusadmin")

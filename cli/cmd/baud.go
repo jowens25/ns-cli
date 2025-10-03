@@ -45,6 +45,9 @@ var baudrateCmd = &cobra.Command{
 }
 
 func init() {
-	//rootCmd.AddCommand(baudrateCmd)
-	baudrateCmd.GroupID = "hw"
+	if INC_HW_CMD {
+		rootCmd.AddCommand(baudrateCmd)
+		baudrateCmd.GroupID = "hw"
+	}
+
 }

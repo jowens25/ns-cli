@@ -306,6 +306,8 @@ func SetDns2(i string, dns2 string) {
 
 func ResetNetworkConfig(i string) {
 
+	DisableNetworking()
+
 	MakeDefaultNmcliConnection()
 
 	c, _ := GetConnectionNameFromDevice(i)
@@ -372,8 +374,8 @@ func readNetworkInfo(c *gin.Context) {
 
 func writeNetworkInfo(c *gin.Context) {
 
-	serialMutex.Lock()
-	defer serialMutex.Unlock()
+	SerialMutex.Lock()
+	defer SerialMutex.Unlock()
 
 	property := c.Param("prop")
 
@@ -421,8 +423,8 @@ func writeNetworkInfo(c *gin.Context) {
 
 func writeNetworkReset(c *gin.Context) {
 
-	serialMutex.Lock()
-	defer serialMutex.Unlock()
+	SerialMutex.Lock()
+	defer SerialMutex.Unlock()
 
 	ResetNetworkConfig(AppConfig.Network.Interface)
 	c.JSON(http.StatusOK, gin.H{

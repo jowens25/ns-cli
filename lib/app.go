@@ -18,7 +18,7 @@ const (
 	JWT_SECRET = "your-secret-key"
 )
 
-var serialMutex sync.Mutex
+var SerialMutex sync.Mutex
 
 func StartApp() {
 

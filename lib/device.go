@@ -50,8 +50,8 @@ func setDeviceProperty(property string, value string) {
 }
 
 func writeSerialCommand(c *gin.Context) {
-	serialMutex.Lock()
-	defer serialMutex.Unlock()
+	SerialMutex.Lock()
+	defer SerialMutex.Unlock()
 
 	command := c.Param("cmd")
 
@@ -70,8 +70,8 @@ func writeSerialCommand(c *gin.Context) {
 }
 
 func readDeviceProperty(c *gin.Context) {
-	serialMutex.Lock()
-	defer serialMutex.Unlock()
+	SerialMutex.Lock()
+	defer SerialMutex.Unlock()
 
 	property := c.Param("prop")
 
@@ -86,8 +86,8 @@ func readDeviceProperty(c *gin.Context) {
 }
 
 func writeDeviceProperty(c *gin.Context) {
-	serialMutex.Lock()
-	defer serialMutex.Unlock()
+	SerialMutex.Lock()
+	defer SerialMutex.Unlock()
 
 	var data map[string]string
 	if err := c.ShouldBindJSON(&data); err != nil {

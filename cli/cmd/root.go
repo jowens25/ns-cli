@@ -13,6 +13,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var INC_HW_CMD bool = false
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:     "ns",
@@ -42,7 +44,7 @@ func Execute() {
 }
 
 func init() {
-	//rootCmd.AddGroup(&cobra.Group{ID: "hw", Title: "Hardware Commands"})
+	rootCmd.AddGroup(&cobra.Group{ID: "hw", Title: "Hardware Commands"})
 
 }
 

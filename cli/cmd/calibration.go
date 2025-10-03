@@ -54,8 +54,10 @@ authorized technician.`,
 }
 
 func init() {
-	//rootCmd.AddCommand(calibrationCmd)
-	calibrationCmd.Flags().BoolVarP(&all, "all", "a", false, "read all calibration factors")
-	calibrationCmd.GroupID = "hw"
+	if INC_HW_CMD {
 
+		rootCmd.AddCommand(calibrationCmd)
+		calibrationCmd.Flags().BoolVarP(&all, "all", "a", false, "read all calibration factors")
+		calibrationCmd.GroupID = "hw"
+	}
 }

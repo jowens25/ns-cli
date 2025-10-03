@@ -221,13 +221,17 @@ from Input A. Number format must be in the form <n.nn> (from 0.05 to 0.95)`,
 }
 
 func init() {
-	//rootCmd.AddCommand(inputCmd)
-	inputCmd.AddCommand(selectCmd)
-	inputCmd.AddCommand(lowCmd)
-	inputCmd.AddCommand(faultCmd)
-	inputCmd.AddCommand(onLockCmd)
-	inputCmd.AddCommand(onHoldoverCmd)
+	if INC_HW_CMD {
 
-	inputCmd.GroupID = "hw"
+		rootCmd.AddCommand(inputCmd)
+		inputCmd.AddCommand(selectCmd)
+		inputCmd.AddCommand(lowCmd)
+		inputCmd.AddCommand(faultCmd)
+		inputCmd.AddCommand(onLockCmd)
+		inputCmd.AddCommand(onHoldoverCmd)
+
+		inputCmd.GroupID = "hw"
+
+	}
 
 }

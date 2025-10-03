@@ -102,6 +102,17 @@ func SetNmcliConnectionStatus(c string, s string) {
 
 }
 
+func DisableNetworking() {
+
+	cmd := exec.Command("systemctl", "disable", "networking")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(err.Error())
+
+	}
+	fmt.Println(string(out))
+}
+
 func MakeDefaultNmcliConnection() {
 
 	DeleteDefaultNmcliConnection(AppConfig.Network.DefaultConnectionName)
