@@ -14,12 +14,13 @@ type Config struct {
 	Nginx    NginxConfig       `mapstructure:"nginx"`    // nginx
 	Xinetd   XinetdConfig      `mapstructure:"xinetd"`   // xinetd
 	Security SecurityConfig    `mapstructure:"security"` // pam
-	Serial   SerialConfig      `mapstructure:"serial"`   // serial
-	User     UserConfig        `mapstructure:"user"`     // users
-	Snmp     SnmpConfig        `mapstructure:"snmp"`     // snmp
-	Cors     CorsConfig        `mapstructure:"cors"`
-	Api      ApiConfig         `mapstructure:"api"`
-	Network  NetworkConfig     `mapstructure:"network"`
+	Mcu      SerialConfig      `mapstructure:"mcu"`      // mcu
+	//Fpga     SerialConfig      `mapstructure:"fpga"`     // fpga
+	User    UserConfig    `mapstructure:"user"` // users
+	Snmp    SnmpConfig    `mapstructure:"snmp"` // snmp
+	Cors    CorsConfig    `mapstructure:"cors"`
+	Api     ApiConfig     `mapstructure:"api"`
+	Network NetworkConfig `mapstructure:"network"`
 }
 
 type ApplicationConfig struct {
@@ -117,8 +118,11 @@ func InitConfig() *Config {
 	viper.SetDefault("security.pwquality", "/etc/security/pwquality.conf")
 	viper.SetDefault("security.login", "/etc/login.defs")
 
-	viper.SetDefault("serial.port", "/dev/ttyUSB0")
-	viper.SetDefault("serial.baudrate", 115200)
+	viper.SetDefault("mcu.port", "/dev/ttyUSB0")
+	viper.SetDefault("mcu.baudrate", 115200)
+
+	//viper.SetDefault("fpga.port", "/dev/ttyUSB0")
+	//viper.SetDefault("fpga.baudrate", 115200)
 
 	viper.SetDefault("user.group-admin", "novusadmin")
 	viper.SetDefault("user.group-user", "novususer")

@@ -19,7 +19,7 @@ func startApiServer() {
 	corsConfig.AllowHeaders = []string{"Authorization", "Content-Type", "X-Request-ID"}
 	corsConfig.AllowCredentials = true
 
-	development := false
+	development := true
 
 	if development {
 		corsConfig.AllowAllOrigins = true
@@ -69,7 +69,7 @@ func startApiServer() {
 		snmpGroup.PATCH("/info", writeSnmpInfo)
 		snmpGroup.POST("/reset_config", resetSnmpConfig)
 
-		protected.GET("/ntp/:prop", readNtpProperty)
+		v1.GET("/ntp/:prop", readNtpProperty)
 		protected.POST("/ntp/:prop", writeNtpProperty)
 
 		protected.GET("/device/:prop", readDeviceProperty)

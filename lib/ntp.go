@@ -12,11 +12,10 @@ func readNtpProperty(c *gin.Context) {
 	SerialMutex.Lock()
 	defer SerialMutex.Unlock()
 	property := c.Param("prop")
-	operation := "read"
 	module := "ntp"
 	value := ""
 
-	err := axi.Operation(&operation, &module, &property, &value)
+	err := axi.Read(&module, &property, &value)
 
 	if err != nil {
 		log.Println("axi operate error in ntp read")
@@ -37,13 +36,13 @@ func writeNtpProperty(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	operation := "write"
+
 	module := "ntp"
 	property := c.Param("prop")
 	//value := ""
 	value := data[property]
 
-	err := axi.Operation(&operation, &module, &property, &value)
+	err := axi.Write(&module, &property, &value)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

@@ -10,7 +10,7 @@
 
 int64_t temp_data = 0x00000000;
 int64_t temp_addr = 0x00000000;
-// const char *FPGA_PORT = "FPGA_PORT";
+char *FPGA_PORT = "/dev/ttyUSB0";
 
 #define MAX_NUM_PROP 256
 #define MAX_NUM_MODS 64
@@ -310,40 +310,63 @@ read_write_func timeServer[MAX_NUM_OPS][MAX_NUM_MODS][MAX_NUM_PROP] =
 
 };
 
-int Axi(char *operation, char *core, char *property, char *value)
+int axiInit(void)
 {
-    int op_id = getOperationId(operation);
-    // printf("op id: %d\n", op_id);
+    axiConnect();
+    getCores();
+    // getValues();
+}
 
-    if (op_id < 0)
-    {
-        return -1;
-    }
+int axiRead(char *core, char *property, char *value)
+{
 
     int core_id = getCoreId(core);
-    // printf("core id: %d\n", core_id);
     if (core_id < 0)
     {
-        return -1;
+        return -12;
     }
 
     int property_id = getPropertyId(core_id, property);
-    // printf("property id: %d\n", property_id);
-
     if (property_id < 0)
     {
 
-        return -1;
+        return -13;
     }
 
-    int err = timeServer[op_id][core_id][property_id](value, 64);
-
+    int err = timeServer[Read][core_id][property_id](value, 64);
     if (err != 0)
     {
-        return -1;
+        return -14;
     }
 
-    printf("%s -> %s -> %s -> %s\n", operation, core, property, value);
+    printf("Read: %s -> %s -> %s\n", core, property, value);
+
+    return 0;
+}
+
+int axiWrite(char *core, char *property, char *value)
+{
+
+    int core_id = getCoreId(core);
+    if (core_id < 0)
+    {
+        return -12;
+    }
+
+    int property_id = getPropertyId(core_id, property);
+    if (property_id < 0)
+    {
+
+        return -13;
+    }
+
+    int err = timeServer[Read][core_id][property_id](value, 64);
+    if (err != 0)
+    {
+        return -14;
+    }
+
+    printf("Wrote: %s -> %s -> %s\n", core, property, value);
 
     return 0;
 }
@@ -371,9 +394,6 @@ int axiConnect(void)
     char connectCommand[] = "$CC*00\r\n";
     char writeData[64] = {0};
     char readData[64] = {0};
-
-    // printf("write data array: %s\n", writeData);
-    char *FPGA_PORT = getenv("FPGA_PORT");
 
     int ser = serOpen(FPGA_PORT);
     if (ser == -1)
@@ -415,57 +435,6 @@ int axiConnect(void)
     return 0;
 }
 
-int reset(void)
-{
-    // printf("connect called\n");
-
-    char connectCommand[] = "$SC*10\r\n ";
-    char writeData[64] = {0};
-    char readData[64] = {0};
-
-    // printf("write data array: %s\n", writeData);
-    char *FPGA_PORT = getenv("FPGA_PORT");
-
-    int ser = serOpen(FPGA_PORT);
-    if (ser == -1)
-    {
-
-        printf("c Error opening serial port\n");
-        return -1;
-    }
-
-    strcpy(writeData, connectCommand);
-
-    int err = serWrite(ser, writeData, strlen(writeData));
-    // usleep(2000); //
-
-    if (err != 0)
-    {
-        printf("serWrite error\n");
-        return -1;
-    }
-
-    err = serRead(ser, readData, sizeof(readData));
-    if (err != 0)
-    {
-        printf("connect - serRead error\n");
-        return -1;
-    }
-
-    // serClose(ser);
-
-    if (isChecksumCorrect(readData) != 0)
-    {
-        printf("connect readData: %s\n", readData);
-        printf("connect check sum wrong\n");
-        return -1;
-    }
-
-    // printf("Connect: Success\n");
-
-    return 0;
-}
-
 int RawWrite(char *addr, char *data)
 {
     char *err;
@@ -491,7 +460,6 @@ int RawWrite(char *addr, char *data)
     return 0;
 }
 
-//
 unsigned char calculateChecksum(char *data)
 {
     // char out[3] = {0};
@@ -549,36 +517,6 @@ int isChecksumCorrect(char *message)
     return -1;
 }
 
-int isErrorResponse(char *message)
-{
-    if (strncmp("$ER", message, 3) == 0)
-    {
-        return 1;
-    }
-
-    return 0;
-}
-
-int isReadResponse(char *message)
-{
-    if (strncmp("$RR", message, 3) == 0)
-    {
-        return 1;
-    }
-
-    return 0;
-}
-
-int isWriteResponse(char *message)
-{
-    if (strncmp("$WR", message, 3) == 0)
-    {
-        return 1;
-    }
-
-    return 0;
-}
-
 int readRegister(int64_t addr, int64_t *data)
 {
     char writeData[64] = {0};
@@ -587,8 +525,6 @@ int readRegister(int64_t addr, int64_t *data)
     char hexAddr[64] = {0};
     char hexData[64] = {0};
     char hexChecksum[3] = {0};
-
-    char *FPGA_PORT = getenv("FPGA_PORT");
 
     int ser = serOpen(FPGA_PORT);
     if (ser == -1)
@@ -678,8 +614,6 @@ int writeRegister(int64_t addr, int64_t *data)
     char hexData[64] = {0};
     char hexChecksum[3] = {0};
 
-    char *FPGA_PORT = getenv("FPGA_PORT");
-
     int ser = serOpen(FPGA_PORT);
     if (ser == -1)
     {
@@ -752,6 +686,36 @@ int writeRegister(int64_t addr, int64_t *data)
     }
 
     // printf("Write Response: %s \n", readData);
+
+    return 0;
+}
+
+int isErrorResponse(char *message)
+{
+    if (strncmp("$ER", message, 3) == 0)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+int isReadResponse(char *message)
+{
+    if (strncmp("$RR", message, 3) == 0)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+int isWriteResponse(char *message)
+{
+    if (strncmp("$WR", message, 3) == 0)
+    {
+        return 1;
+    }
 
     return 0;
 }

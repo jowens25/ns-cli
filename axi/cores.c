@@ -136,7 +136,7 @@ int getCores(void)
     return err;
 }
 
-Ucm_CoreConfig cores[64];
+static Ucm_CoreConfig cores[64];
 
 char *coreNames[64] = {
 
@@ -252,20 +252,5 @@ int getPropertyId(int core_id, char *name)
             }
         }
     }
-    return -1;
-}
-
-int getOperationId(char *name)
-{
-    if (strcmp("read", name) == 0)
-    {
-        return 0;
-    }
-
-    if (strcmp("write", name) == 0)
-    {
-        return 1;
-    }
-
     return -1;
 }
