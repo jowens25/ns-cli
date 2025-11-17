@@ -11,6 +11,9 @@ import "C"
 import (
 	"errors"
 	"fmt"
+	"log"
+	"os"
+	"strings"
 	"sync"
 	"unsafe"
 )
@@ -18,6 +21,14 @@ import (
 var mutex sync.Mutex
 
 const size = C.size_t(64)
+
+func Init() error {
+	err := C.axiInit()
+	if err != 0 {
+		return errors.New("failed to init")
+	}
+	return nil
+}
 
 func Connect() error {
 	fmt.Println("AXI CONNECT CALLED")
@@ -28,45 +39,95 @@ func Connect() error {
 	return nil
 }
 
-func Reset() error {
-	//err := C.reset()
-
-	//if err != 0 {
-	//	return errors.New("failed to reset device")
-	//}
-	return nil
-}
-
 func GetCores() error {
 
 	err := C.getCores()
 	if err != 0 {
-
-		return errors.New("failed to read config: " + fmt.Sprint(err))
+		return errors.New("failed to get cores")
 	}
 	return nil
 }
 
-func Operation(operation *string, module *string, property *string, value *string) error {
+func LoadConfig(fileName string) {
 
-	fmt.Println("OPERATE CALLED")
+	fmt.Println("LOAD CONFIG CALLED")
 
-	op := C.CString(*operation)
+	err := Connect()
+	if err != nil {
+		log.Println(err)
+		log.Println("load config failed")
+	}
+
+	data, err := os.ReadFile(fileName)
+	if err != nil {
+		log.Println("file err: ", err)
+	}
+
+	for _, line := range strings.Split(string(data), "\n") {
+		//fmt.Println(line)
+
+		if strings.Contains(line, "--") {
+			// a comment
+			continue
+
+		} else if strings.Contains(line, "$WC") {
+
+			line = strings.Trim(line, "\r\n")
+			lineParts := strings.Split(line, ",")
+
+			addr := C.CString(lineParts[1])
+			data := C.CString(lineParts[2])
+
+			C.RawWrite(addr, data)
+		}
+
+	}
+
+}
+
+func Read(module *string, property *string, value *string) error {
+
+	fmt.Println("Read CALLED")
+
 	mod := C.CString(*module)
 	prop := C.CString(*property)
 	val := C.CString(*value)
 
-	defer C.free(unsafe.Pointer(op))
 	defer C.free(unsafe.Pointer(mod))
 	defer C.free(unsafe.Pointer(prop))
 	defer C.free(unsafe.Pointer(val))
 
-	axiErr := C.Axi(op, mod, prop, val)
+	axiErr := C.axiRead(mod, prop, val)
 
 	*value = C.GoString(val)
 
 	if axiErr != 0 {
-		return errors.New("axi failed")
+
+		return fmt.Errorf("axi failed: %d", axiErr)
+	}
+
+	return nil
+}
+
+func Write(module *string, property *string, value *string) error {
+
+	fmt.Println("Write CALLED")
+
+	mod := C.CString(*module)
+	prop := C.CString(*property)
+	val := C.CString(*value)
+
+	defer C.free(unsafe.Pointer(mod))
+	defer C.free(unsafe.Pointer(prop))
+	defer C.free(unsafe.Pointer(val))
+
+	axiErr := C.axiWrite(mod, prop, val)
+
+	*value = C.GoString(val)
+
+	if axiErr != 0 {
+
+		return fmt.Errorf("axi failed: %d", axiErr)
 	}
 
 	return nil

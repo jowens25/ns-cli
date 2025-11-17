@@ -1,0 +1,42 @@
+/*
+Copyright © 2025 NAME HERE <EMAIL ADDRESS>
+*/
+package cmd
+
+import (
+	"NovusTimeServer/axi"
+	"fmt"
+
+	"github.com/spf13/cobra"
+)
+
+// getcoresCmd represents the getcores command
+var getcoresCmd = &cobra.Command{
+	Use:   "getcores",
+	Short: "A brief description of your command",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("getcores called")
+		fmt.Println(axi.GetCores())
+
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(getcoresCmd)
+
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// getcoresCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// getcoresCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}

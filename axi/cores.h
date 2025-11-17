@@ -96,7 +96,7 @@ typedef struct
     long interrupt_mask;
 } Ucm_CoreConfig;
 
-extern Ucm_CoreConfig cores[];
+static Ucm_CoreConfig cores[64];
 
 extern char **coreProperties[];
 

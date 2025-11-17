@@ -48,7 +48,9 @@ int writeRegister(int64_t addr, int64_t *data);
 int RawWrite(char *addr, char *data);
 
 // int AxiRead(char *core, char *property, char *value);
-int Axi(char *operation, char *core, char *property, char *value);
+int axiRead(char *core, char *property, char *value);
+int axiWrite(char *core, char *property, char *value);
+int axiInit(void);
 
 int readOnly(char *buf, size_t size);
 
@@ -58,5 +60,7 @@ extern int64_t temp_data;
 extern int64_t temp_addr;
 
 typedef int (*read_write_func)(char *value, size_t size);
+
+extern char *FPGA_PORT;
 
 #endif // AXI_H
