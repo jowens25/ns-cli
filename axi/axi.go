@@ -11,9 +11,6 @@ import "C"
 import (
 	"errors"
 	"fmt"
-	"log"
-	"os"
-	"strings"
 	"sync"
 	"unsafe"
 )
@@ -41,49 +38,13 @@ func Reset() error {
 }
 
 func GetCores() error {
+
 	err := C.getCores()
 	if err != 0 {
 
 		return errors.New("failed to read config: " + fmt.Sprint(err))
 	}
 	return nil
-}
-
-func LoadConfig(fileName string) {
-
-	fmt.Println("LOAD CONFIG CALLED")
-
-	err := Connect()
-	if err != nil {
-		log.Println(err)
-		log.Println("load config failed")
-	}
-
-	data, err := os.ReadFile(fileName)
-	if err != nil {
-		log.Println("file err: ", err)
-	}
-
-	for _, line := range strings.Split(string(data), "\n") {
-		//fmt.Println(line)
-
-		if strings.Contains(line, "--") {
-			// a comment
-			continue
-
-		} else if strings.Contains(line, "$WC") {
-
-			line = strings.Trim(line, "\r\n")
-			lineParts := strings.Split(line, ",")
-
-			addr := C.CString(lineParts[1])
-			data := C.CString(lineParts[2])
-
-			C.RawWrite(addr, data)
-		}
-
-	}
-
 }
 
 func Operation(operation *string, module *string, property *string, value *string) error {
