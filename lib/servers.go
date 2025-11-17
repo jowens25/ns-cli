@@ -69,8 +69,8 @@ func startApiServer() {
 		snmpGroup.PATCH("/info", writeSnmpInfo)
 		snmpGroup.POST("/reset_config", resetSnmpConfig)
 
-		v1.GET("/ntp/:prop", readNtpProperty)
-		protected.POST("/ntp/:prop", writeNtpProperty)
+		//v1.GET("/ntl/:module/:property", readNtlProperty)
+		//v1.POST("/ntl/:module/:property", writeNtlProperty)
 
 		protected.GET("/device/:prop", readDeviceProperty)
 		protected.POST("/device/:prop", writeDeviceProperty)

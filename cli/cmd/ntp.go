@@ -10,14 +10,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// ntpCmd represents the ntp command
-var ntpCmd = &cobra.Command{
-	Use: "ntp",
-	Run: func(cmd *cobra.Command, args []string) {
-
-	},
-}
-
 var readNtp = &cobra.Command{
 	Use: "read",
 	Run: func(cmd *cobra.Command, args []string) {

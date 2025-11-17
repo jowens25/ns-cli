@@ -40,6 +40,7 @@ func Connect() error {
 }
 
 func GetCores() error {
+
 	err := C.getCores()
 	if err != 0 {
 		return errors.New("failed to get cores")

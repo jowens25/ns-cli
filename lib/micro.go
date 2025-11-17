@@ -2,6 +2,7 @@ package lib
 
 import "C"
 import (
+	"bufio"
 	"log"
 	"strings"
 	"time"
@@ -20,48 +21,54 @@ func ReadWriteMicro(command string) (string, error) {
 	}
 
 	port, err := serial.Open(AppConfig.Mcu.Port, mode)
+
 	if err != nil {
 		log.Println(AppConfig.Mcu.Port, err)
 		return "port open error", err
 	}
 	defer port.Close()
 
-	err = port.SetReadTimeout(1 * time.Millisecond)
+	port.ResetInputBuffer()
+	port.ResetOutputBuffer()
+
+	_, err = port.Write([]byte(command))
+
+	//fmt.Print(command)
+
+	if err != nil {
+		log.Println(err)
+		return "port write error", err
+
+	}
+
+	err = port.SetReadTimeout(1 * time.Second)
 	if err != nil {
 		log.Println("Failed to set read timeout:", err)
 		return "", err
 	}
 
-	port.ResetInputBuffer()
+	timeout := time.Now().Add(4000 * time.Millisecond)
 
-	_, err = port.Write([]byte(command))
-	if err != nil {
-		log.Println("Write error:", err)
-		return "", err
+	scanner := bufio.NewScanner(port)
+
+	for scanner.Scan() && time.Now().Before(timeout) {
+		line := scanner.Text() // reads line until \n
+		//fmt.Println(line)      // prints full line
+		if strings.Contains(line, "$ER") {
+			return line, nil
+		}
+		if strings.Contains(line, "$RR") {
+			return line, nil
+		}
+		if strings.Contains(line, "$WR") {
+			return line, nil
+		}
+		if strings.Contains(line, "$GPNTL") {
+			return line, nil
+		}
 	}
-
-	var response strings.Builder
-
-	buff := make([]byte, 1024)
-	timeout := time.Now().Add(500 * time.Millisecond) // Overall timeout
-
-	for time.Now().Before(timeout) {
-
-		n, err := port.Read(buff)
-		if err != nil {
-			break
-		}
-		if n > 0 {
-			response.Write(buff[:n])
-		}
-
-		for _, marker := range []string{"$ER", "$CR", "$WR", "$RR"} {
-			if strings.Contains(response.String(), marker) && strings.HasSuffix(response.String(), "\n") {
-				return response.String(), nil
-			}
-		}
-
+	if err := scanner.Err(); err != nil {
+		log.Println("Error reading from serial port:", err)
 	}
-
 	return "timeout", nil
 }
