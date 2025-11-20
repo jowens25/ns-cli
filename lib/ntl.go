@@ -613,7 +613,7 @@ func LoadConfig(fileName string) {
 
 			line = strings.Trim(line, "\r\n")
 
-			rsp, err := ReadWriteMicro(line)
+			rsp, err := ReadWriteSocket(line)
 
 			if strings.HasPrefix(rsp, "$ER") {
 				fmt.Println("config load err")

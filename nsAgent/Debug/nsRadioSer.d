@@ -1,1 +1,0 @@
-nsRadioSer.o: ../nsRadioSer.c
