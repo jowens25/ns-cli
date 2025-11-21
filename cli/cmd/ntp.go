@@ -4,7 +4,6 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"NovusTimeServer/axi"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -16,9 +15,9 @@ var readNtp = &cobra.Command{
 
 		fmt.Println(args[0])
 		val := ""
-		name := ntpCmd.Name()
-		axi.GetCores()
-		axi.Read(&name, &args[0], &val)
+		//name := ntpCmd.Name()
+		//axi.GetCores()
+		//axi.Read(&name, &args[0], &val)
 		fmt.Println(val)
 
 	},

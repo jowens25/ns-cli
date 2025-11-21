@@ -4,7 +4,6 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"NovusTimeServer/axi"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -21,8 +20,8 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("getcores called")
-		fmt.Println(axi.GetCores())
+		fmt.Println("getcores called does notthing")
+		//fmt.Println(axi.GetCores())
 
 	},
 }

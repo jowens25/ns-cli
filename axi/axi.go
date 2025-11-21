@@ -9,17 +9,12 @@ package axi
 */
 import "C"
 import (
-	"errors"
-	"fmt"
-	"log"
-	"os"
-	"strings"
 	"sync"
-	"unsafe"
 )
 
 var mutex sync.Mutex
 
+/*
 const size = C.size_t(64)
 
 func Init() error {
@@ -132,3 +127,4 @@ func Write(module *string, property *string, value *string) error {
 
 	return nil
 }
+*/

@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"NovusTimeServer/axi"
 	"fmt"
 	"log"
 	"net/http"
@@ -29,7 +28,7 @@ func StartApp() {
 	//InitNginxConfig()
 
 	createDefaultUser()
-	axi.Init()
+	//axi.Init()
 	//loadSystem()
 
 	log.Println("Database initialized successfully")
