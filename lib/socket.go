@@ -5,52 +5,32 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"net"
 	"strings"
 	"time"
-
-	"go.bug.st/serial"
 )
 
-func ReadWriteMicro(command string) (string, error) {
+func ReadWriteSocket(command string) (string, error) {
 	command = command + "\r\n"
 
-	mode := &serial.Mode{
-		BaudRate: AppConfig.Mcu.Baudrate,
-		DataBits: 8,
-		Parity:   serial.NoParity,
-		StopBits: serial.OneStopBit,
-	}
-
-	port, err := serial.Open(AppConfig.Mcu.Port, mode)
-
+	sock, err := net.Dial("unix", "/tmp/serial.sock")
 	if err != nil {
-		log.Println(AppConfig.Mcu.Port, err)
+		fmt.Println("socket error?")
 		return "port open error", err
+
 	}
-	defer port.Close()
+	defer sock.Close()
 
-	port.ResetInputBuffer()
-	port.ResetOutputBuffer()
-
-	_, err = port.Write([]byte(command))
-
-	//fmt.Print(command)
+	_, err = sock.Write([]byte(command))
 
 	if err != nil {
 		log.Println(err)
 		return "port write error", err
-
-	}
-
-	err = port.SetReadTimeout(1 * time.Second)
-	if err != nil {
-		log.Println("Failed to set read timeout:", err)
-		return "", err
 	}
 
 	timeout := time.Now().Add(4000 * time.Millisecond)
 
-	scanner := bufio.NewScanner(port)
+	scanner := bufio.NewScanner(sock)
 
 	for scanner.Scan() && time.Now().Before(timeout) {
 		line := scanner.Text() // reads line until \n

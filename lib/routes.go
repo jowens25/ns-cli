@@ -1,86 +1,180 @@
 package lib
 
 import (
-	"fmt"
-	"log"
-	"os/exec"
+	"errors"
+	"net/http"
 	"strings"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
-func AddIpv4Route(i string, address string, gateway string) {
+func startApiServer() {
+	apiRouter := gin.Default()
 
-	if !HasInterface(i) {
-		return
-	}
-	connection, _ := GetConnectionNameFromDevice(i)
+	corsConfig := cors.DefaultConfig()
 
-	route := address + " " + gateway
+	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"}
+	corsConfig.AllowHeaders = []string{"Authorization", "Content-Type", "X-Request-ID"}
+	corsConfig.AllowCredentials = true
 
-	cmd := exec.Command("nmcli", "connection", "modify", connection, "+ipv4.routes", route)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		fmt.Println(string(out))
-	}
+	development := true
 
-}
-
-func RemoveIpv4Route(i string, address string, gateway string) {
-	if !HasInterface(i) {
-		return
-	}
-	connection, _ := GetConnectionNameFromDevice(i)
-
-	route := address + " " + gateway
-
-	cmd := exec.Command("nmcli", "connection", "modify", connection, "-ipv4.routes", route)
-	//fmt.Println("Running command:", strings.Join(cmd.Args, " "))
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		fmt.Println(string(out))
-	}
-
-}
-
-func ShowIpv4Routes(i string) string {
-	if !HasInterface(i) {
-		return "no such interface"
-	}
-	connection, _ := GetConnectionNameFromDevice(i)
-	cmd := exec.Command("nmcli", "-f", "ipv4.routes", "con", "show", connection)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Println(err.Error())
-	}
-
-	for line := range strings.SplitSeq(string(out), "\n") {
-		fields := strings.Split(line, ":")
-
-		if len(fields) == 2 {
-
-			routes := strings.TrimSpace(fields[1])
-
-			if routes == "--" {
-				return routes
-			}
-
-			if strings.Contains(routes, "ip") {
-				myRoutes := "subnet -> gateway\n"
-
-				for route := range strings.SplitSeq(routes, ";") {
-					route = strings.TrimSpace(route)
-
-					route = strings.ReplaceAll(route, "{ ip = ", "")
-					route = strings.ReplaceAll(route, ", nh = ", " -> ")
-					route = strings.ReplaceAll(route, " }", "\n")
-
-					myRoutes += route
-
-				}
-				return myRoutes
-
-			}
-
+	if development {
+		corsConfig.AllowAllOrigins = true
+	} else {
+		apiRouter.SetTrustedProxies([]string{AppConfig.Api.Host})
+		corsConfig.AllowOrigins = []string{
+			AppConfig.Cors.Host1,
+			AppConfig.Cors.Host2,
 		}
 	}
-	return "error"
+
+	apiRouter.Use(cors.New(corsConfig))
+
+	apiRouter.Use(gin.Recovery())
+
+	// api version group
+	v1 := apiRouter.Group("/api/v1")
+
+	// public routes
+	v1.POST("/login", loginHandler)
+	v1.GET("/health", healthHandler)
+	v1.GET("/log", readLogHandler)
+
+	v1.GET("/ntl/:module/:property", readNtlPropertyHandler)
+	v1.POST("/ntl/:module/:property", writeNtlPropertyHandler)
+
+	protected := v1.Group("/")
+	protected.Use(AdminRequired())
+
+	{
+		protected.POST("/logout", logoutHandler)
+
+		protected.GET("/users", readSystemUsers)
+		protected.POST("/users", writeSystemUser)
+		protected.PATCH("/users/:name", editSystemUser)
+		protected.DELETE("/users/:id", deleteSystemUser)
+
+		snmpGroup := protected.Group("/snmp")
+
+		snmpGroup.GET("/v1v2c_user", readSnmpV2Users)
+		snmpGroup.POST("/v1v2c_user", writeSnmpV2User)
+		snmpGroup.PATCH("/v1v2c_user/:id", editSnmpV2User)
+		snmpGroup.DELETE("/v1v2c_user/:id", deleteSnmpV2User)
+
+		snmpGroup.GET("v3_user", readSnmpV3Users)
+		snmpGroup.POST("v3_user", writeSnmpV3User)
+		snmpGroup.PATCH("v3_user/:id", editSnmpV3User)
+		snmpGroup.DELETE("v3_user/:id", deleteSnmpV3User)
+
+		snmpGroup.GET("/info", readSnmpInfo)
+		snmpGroup.PATCH("/info", writeSnmpInfo)
+		snmpGroup.POST("/reset_config", resetSnmpConfig)
+
+		protected.GET("/device/:prop", readDeviceProperty)
+		protected.POST("/device/:prop", writeDeviceProperty)
+		protected.POST("device/serial/:cmd", writeSerialCommand)
+
+		//protected.POST("/device/serial/:value", writeSerialCommand)
+
+		networkGroup := protected.Group("/network")
+
+		networkGroup.GET("/ssh", getSshStatusHandler)
+		networkGroup.PATCH("/ssh", setSshStatusHandler)
+		networkGroup.GET("/ftp", readFtpStatus)
+		networkGroup.PATCH("/ftp", writeFtpStatus)
+		networkGroup.GET("/http", readHttpStatus)
+		networkGroup.PATCH("/http", writeHttpStatus)
+		networkGroup.GET("/telnet", getTelnetStatusHandler)
+		networkGroup.PATCH("/telnet", setTelnetStatusHandler)
+
+		networkGroup.GET("/info", readNetworkInfo)
+		networkGroup.POST("/info/:prop", writeNetworkInfo)
+		networkGroup.POST("/reset", writeNetworkReset)
+
+		networkGroup.GET("/access", readAllowedNodes)
+		networkGroup.POST("/access", writeAllowedNodes)
+		networkGroup.DELETE("/access/:id", deleteAllowedNode)
+		networkGroup.POST("/access/reset", resetNetworkAccess)
+		networkGroup.GET("/health", healthHandler)
+		networkGroup.GET("/time", timeHandler)
+		networkGroup.GET("/date", dateHandler)
+
+		// security group
+		securityGroup := protected.Group("/security")
+		securityGroup.GET("/policy", readSecurityPolicy)
+		securityGroup.POST("/policy", writeSecurityPolicy)
+		//securityGroup.GET("/policy")
+
+		//networkGroup.GET("/reset_network", resetNetworkConfig)
+
+	}
+
+	// 404 handler
+	apiRouter.NoRoute(func(c *gin.Context) {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error":   "Endpoint not found",
+			"path":    c.Request.URL.Path,
+			"method":  c.Request.Method,
+			"message": "The requested resource could not be found",
+		})
+	})
+
+	//apiRouter.Run("0.0.0.0" + API_PORT) // development use localhost for nginx prod
+	apiRouter.Run(AppConfig.Api.Host + ":" + AppConfig.Api.Port) // offical
+}
+
+func AdminRequired() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		method := c.Request.Method
+
+		if method == "GET" {
+			c.Next()
+			return
+		}
+
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header required"})
+			c.Abort()
+			return
+		}
+
+		parts := strings.Split(authHeader, " ")
+		if len(parts) != 2 || parts[0] != "Bearer" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid authorization header format"})
+			c.Abort()
+			return
+		}
+
+		tokenString := parts[1]
+		claims := &Claims{}
+
+		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+			// Verify signing method here, example for HMAC
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, errors.New("unexpected signing method")
+			}
+			// Return your secret key used to sign the JWT
+			return []byte("your-secret-key"), nil
+		})
+
+		if err != nil || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			c.Abort()
+			return
+		}
+
+		if claims.UserRole != "admin" {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Admin access required"})
+			c.Abort()
+			return
+		}
+
+		// Continue to next handler if admin
+		c.Next()
+	}
 }

@@ -3,8 +3,11 @@ package lib
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 const ConfSlaveCoreType int = 1
@@ -398,27 +401,28 @@ func ReadAllTod() {
 	}
 }
 
-//	func readNtlPropertyHandler(c *gin.Context) {
-//		SerialMutex.Lock()
-//		defer SerialMutex.Unlock()
-//
-//		module := c.Param("module")
-//		property := c.Param("property")
-//
-//		if err != nil {
-//			log.Println("axi operate error in ntp read")
-//			log.Println(err.Error())
-//
-//			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-//			return
-//		}
-//
-//		c.JSON(http.StatusOK, gin.H{property: value})
-//	}
+func readNtlPropertyHandler(c *gin.Context) {
+
+	fmt.Println("TESTING")
+
+	module := c.Param("module")
+	property := c.Param("property")
+	fmt.Println("TESTING")
+
+	info, err := ReadNtlProperty(module, property)
+	if err != nil {
+		fmt.Println("ntl operate error in ntp read")
+		fmt.Println(err.Error())
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	fmt.Println("TESTING")
+
+	c.JSON(http.StatusOK, gin.H{property: info[2]})
+}
 
 func ReadNtlProperty(module string, property string) ([3]string, error) {
-	SerialMutex.Lock()
-	defer SerialMutex.Unlock()
 
 	var moduleProperties map[string]int
 	var moduleType int
@@ -458,15 +462,15 @@ func ReadNtlProperty(module string, property string) ([3]string, error) {
 	}
 
 	cmd := fmt.Sprintf("$GPNTL,%d,%d,?", moduleType, prop)
-	response, err := ReadWriteMicro(cmd)
+	response, err := ReadWriteSocket(cmd)
 
 	parts := strings.Split(response, ",")
 
 	value := parts[3]
 
 	if err != nil {
-		log.Println("axi operate error in ntp read")
-		log.Println(err.Error())
+		fmt.Println("axi operate error in ntp read")
+		fmt.Println(err.Error())
 
 		return ret, fmt.Errorf("READ WRITE MIRCO ERROR")
 	}
@@ -475,70 +479,32 @@ func ReadNtlProperty(module string, property string) ([3]string, error) {
 	return ret, nil
 }
 
-//func writeNtlPropertyHandler(c *gin.Context) {
-//	SerialMutex.Lock()
-//	defer SerialMutex.Unlock()
-//
-//	module := c.Param("module")
-//	property := c.Param("property")
-//
-//	var data map[string]string
-//	if err := c.ShouldBindJSON(&data); err != nil {
-//		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-//		return
-//	}
-//	value := data[property]
-//
-//	var moduleProperties map[string]int
-//	var moduleType int
-//
-//	switch module {
-//
-//	case "clk":
-//		moduleType = ClkClockCoreType
-//		moduleProperties = ClkClockProperties
-//	case "ntp":
-//		moduleType = NtpServerCoreType
-//		moduleProperties = NtpServerProperties
-//	case "pps":
-//		moduleType = PpsSlaveCoreType
-//		moduleProperties = PpsSlaveProperties
-//	case "ptp":
-//		moduleType = PtpOrdinaryClockCoreType
-//		moduleProperties = PtpOcProperties
-//	case "tod":
-//		moduleType = TodSlaveCoreType
-//		moduleProperties = TodSlaveProperties
-//
-//	default:
-//		c.JSON(http.StatusBadRequest, gin.H{"error": "no such module"})
-//		return
-//
-//	}
-//
-//	// cmd := "$GPNTL,MM,PP,<value>" -> sets fresh value in fpga
-//
-//	cmd := fmt.Sprintf("$GPNTL,%d,%d,%s", moduleType, moduleProperties[property], value)
-//	response, err := ReadWriteMicro(cmd)
-//
-//	parts := strings.Split(response, ",")
-//
-//	value = parts[3]
-//
-//	if err != nil {
-//		log.Println("axi operate error in ntp read")
-//		log.Println(err.Error())
-//
-//		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-//		return
-//	}
-//
-//	c.JSON(http.StatusOK, gin.H{property: value})
-//}
+func writeNtlPropertyHandler(c *gin.Context) {
+
+	module := c.Param("module")
+	property := c.Param("property")
+
+	var data map[string]string
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	value := data[property]
+
+	info, err := WriteNtlProperty(module, property, value)
+
+	if err != nil {
+		log.Println("axi operate error in ntp read")
+		log.Println(err.Error())
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{property: info[2]})
+}
 
 func WriteNtlProperty(module string, property string, value string) ([3]string, error) {
-	SerialMutex.Lock()
-	defer SerialMutex.Unlock()
 
 	var moduleProperties map[string]int
 	var moduleType int
@@ -576,7 +542,7 @@ func WriteNtlProperty(module string, property string, value string) ([3]string, 
 	}
 
 	cmd := fmt.Sprintf("$GPNTL,%d,%d,%s", moduleType, prop, value)
-	response, err := ReadWriteMicro(cmd)
+	response, err := ReadWriteSocket(cmd)
 	if err != nil {
 		log.Println("axi operate error in ntl write")
 		log.Println(err.Error())

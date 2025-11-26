@@ -1,11 +1,8 @@
 package lib
 
 import (
-	"bufio"
-	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"os/exec"
 	"strings"
 
@@ -24,75 +21,65 @@ func InitFtpConfig() {
 
 }
 
+func CleanFtpSessions() {
+	cmd := exec.Command("pkill", "-f", "pure-ftpd -E")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Println("ftp sessions clean up failed", string(out), err)
+		return
+	}
+
+	log.Println("ftp clean up finished", strings.TrimSpace(string(out)))
+}
+
 func DisableFtp() {
 
-	file, err := os.Open(AppConfig.Xinetd.FtpPath)
-	if err != nil {
-		log.Println("failed to open ftp file", AppConfig.Xinetd.FtpPath)
-	}
-	defer file.Close()
+	conf := AppConfig.Xinetd.FtpPath
 
 	var lines []string
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
+	for _, line := range OpenConfigFile(conf) {
 
 		if strings.Contains(strings.TrimSpace(line), "disable = no") {
 			line = "    disable = yes"
 		}
 		lines = append(lines, line)
 	}
-	err = os.WriteFile(AppConfig.Xinetd.FtpPath, []byte(strings.Join(lines, "\n")+"\n"), 0644)
-	if err != nil {
-		log.Println("failed to hosts file:", err)
-	}
+
+	SaveConfigFile(conf, lines)
+
+	CleanFtpSessions()
 
 	RestartXinetd()
 
-	fmt.Println(GetFtpStatus())
+	log.Println(GetFtpStatus())
 
 }
 
 func EnableFtp() {
-	file, err := os.Open(AppConfig.Xinetd.FtpPath)
-	if err != nil {
-		log.Println("failed to open ftp file", AppConfig.Xinetd.FtpPath)
-	}
-	defer file.Close()
+	conf := AppConfig.Xinetd.FtpPath
 
 	var lines []string
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
+	for _, line := range OpenConfigFile(conf) {
 		if strings.Contains(strings.TrimSpace(line), "disable = yes") {
 			line = "    disable = no"
 		}
 		lines = append(lines, line)
 	}
 
-	err = os.WriteFile(AppConfig.Xinetd.FtpPath, []byte(strings.Join(lines, "\n")+"\n"), 0644)
-	if err != nil {
-		log.Println("failed to ftp file:", err)
-	}
+	SaveConfigFile(conf, lines)
 
 	RestartXinetd()
 
-	fmt.Println(GetFtpStatus())
+	log.Println(GetFtpStatus())
 
 }
 
 func GetFtpStatus() string {
-	file, err := os.Open(AppConfig.Xinetd.FtpPath)
-	if err != nil {
-		log.Println("failed to open ftp file", AppConfig.Xinetd.FtpPath)
-	}
-	defer file.Close()
+	conf := AppConfig.Xinetd.FtpPath
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
+	for _, line := range OpenConfigFile(conf) {
 
 		if strings.Contains(line, "disable = yes") {
 			return "inactive"

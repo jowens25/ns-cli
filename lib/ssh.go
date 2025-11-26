@@ -1,11 +1,9 @@
 package lib
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"os/exec"
 	"strings"
 
@@ -24,56 +22,55 @@ func InitSshConfig() {
 
 }
 
-func DisableSsh() {
-	file, err := os.Open(AppConfig.Xinetd.SshPath)
+func CleanSshSessions() {
+
+	cmd := exec.Command("pkill", "-f", "sshd: [a-zA-Z].*")
+	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Println("failed to open ssh file", AppConfig.Xinetd.SshPath)
+		log.Println("ssh sessions clean up failed", string(out), err)
+		return
 	}
-	defer file.Close()
+
+	log.Println("ssh clean up finished", strings.TrimSpace(string(out)))
+
+}
+
+func DisableSsh() {
+	conf := AppConfig.Xinetd.SshPath
+
 	var lines []string
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
+	for _, line := range OpenConfigFile(conf) {
 
 		if strings.Contains(strings.TrimSpace(line), "disable = no") {
 			line = "    disable = yes"
 		}
 		lines = append(lines, line)
 	}
-	err = os.WriteFile(AppConfig.Xinetd.SshPath, []byte(strings.Join(lines, "\n")+"\n"), 0644)
-	if err != nil {
-		log.Println("failed to hosts file:", err)
-	}
+
+	SaveConfigFile(conf, lines)
+
+	CleanSshSessions()
 
 	RestartXinetd()
 
-	fmt.Println(GetSshStatus())
+	log.Println(GetSshStatus())
 
 }
 
 func EnableSsh() {
-	file, err := os.Open(AppConfig.Xinetd.SshPath)
-	if err != nil {
-		log.Println("failed to open ssh file", AppConfig.Xinetd.SshPath)
-	}
-	defer file.Close()
+	conf := AppConfig.Xinetd.SshPath
 
 	var lines []string
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
+	for _, line := range OpenConfigFile(conf) {
 		if strings.Contains(strings.TrimSpace(line), "disable = yes") {
 			line = "    disable = no"
 		}
 		lines = append(lines, line)
 	}
 
-	err = os.WriteFile(AppConfig.Xinetd.SshPath, []byte(strings.Join(lines, "\n")+"\n"), 0644)
-	if err != nil {
-		log.Println("failed to ssh file:", err)
-	}
+	SaveConfigFile(conf, lines)
 
 	RestartXinetd()
 	fmt.Println(GetSshStatus())
@@ -81,15 +78,10 @@ func EnableSsh() {
 }
 
 func GetSshStatus() string {
-	file, err := os.Open(AppConfig.Xinetd.SshPath)
-	if err != nil {
-		log.Println("failed to open ssh file", AppConfig.Xinetd.SshPath)
-	}
-	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
+	conf := AppConfig.Xinetd.SshPath
+
+	for _, line := range OpenConfigFile(conf) {
 
 		if strings.Contains(line, "disable = yes") {
 			return "inactive"
@@ -100,7 +92,7 @@ func GetSshStatus() string {
 	return "failed to get ssh status"
 }
 
-func readSshStatus(c *gin.Context) {
+func getSshStatusHandler(c *gin.Context) {
 
 	var ssh Ssh
 
@@ -112,7 +104,7 @@ func readSshStatus(c *gin.Context) {
 
 }
 
-func writeSshStatus(c *gin.Context) {
+func setSshStatusHandler(c *gin.Context) {
 	var ssh Ssh
 	if err := c.ShouldBindJSON(&ssh); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

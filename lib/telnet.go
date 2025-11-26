@@ -1,11 +1,9 @@
 package lib
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"os/exec"
 	"strings"
 
@@ -24,57 +22,54 @@ func InitTelnetConfig() {
 
 }
 
-func DisableTelnet() {
-	file, err := os.Open(AppConfig.Xinetd.TelnetPath)
+func CleanTelnetSessions() {
+
+	cmd := exec.Command("pkill", "-f", "telnetd")
+	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Println("failed to open telnet file", AppConfig.Xinetd.TelnetPath)
+		log.Println("telnet sessions clean up failed", string(out), err)
+		return
 	}
-	defer file.Close()
+
+	log.Println("telnet clean up finished", strings.TrimSpace(string(out)))
+}
+
+func DisableTelnet() {
+	conf := AppConfig.Xinetd.TelnetPath
 
 	var lines []string
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
+	for _, line := range OpenConfigFile(conf) {
 
 		if strings.Contains(strings.TrimSpace(line), "disable = no") {
 			line = "    disable = yes"
 		}
 		lines = append(lines, line)
 	}
-	err = os.WriteFile(AppConfig.Xinetd.TelnetPath, []byte(strings.Join(lines, "\n")+"\n"), 0644)
-	if err != nil {
-		log.Println("failed to hosts file:", err)
-	}
+
+	SaveConfigFile(conf, lines)
+
+	CleanTelnetSessions()
 
 	RestartXinetd()
 
-	fmt.Println(GetTelnetStatus())
+	log.Println(GetTelnetStatus())
 
 }
 
 func EnableTelnet() {
-	file, err := os.Open(AppConfig.Xinetd.TelnetPath)
-	if err != nil {
-		log.Println("failed to open telnet file", AppConfig.Xinetd.TelnetPath)
-	}
-	defer file.Close()
+	conf := AppConfig.Xinetd.TelnetPath
 
 	var lines []string
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
+	for _, line := range OpenConfigFile(conf) {
 		if strings.Contains(strings.TrimSpace(line), "disable = yes") {
 			line = "    disable = no"
 		}
 		lines = append(lines, line)
 	}
 
-	err = os.WriteFile(AppConfig.Xinetd.TelnetPath, []byte(strings.Join(lines, "\n")+"\n"), 0644)
-	if err != nil {
-		log.Println("failed to telnet file:", err)
-	}
+	SaveConfigFile(conf, lines)
 
 	RestartXinetd()
 	fmt.Println(GetTelnetStatus())
@@ -83,26 +78,20 @@ func EnableTelnet() {
 
 func GetTelnetStatus() string {
 
-	file, err := os.Open(AppConfig.Xinetd.TelnetPath)
-	if err != nil {
-		log.Println("failed to open telnet file", AppConfig.Xinetd.TelnetPath)
-	}
-	defer file.Close()
+	conf := AppConfig.Xinetd.TelnetPath
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
+	for _, line := range OpenConfigFile(conf) {
 
-		if strings.Contains(strings.TrimSpace(line), "disable = yes") {
+		if strings.Contains(line, "disable = yes") {
 			return "inactive"
-		} else if strings.Contains(strings.TrimSpace(line), "disable = no") {
+		} else if strings.Contains(line, "disable = no") {
 			return "active"
 		}
 	}
 	return "failed to get telnet status"
 }
 
-func readTelnetStatus(c *gin.Context) {
+func getTelnetStatusHandler(c *gin.Context) {
 
 	var telnet Telnet
 
@@ -114,7 +103,7 @@ func readTelnetStatus(c *gin.Context) {
 
 }
 
-func writeTelnetStatus(c *gin.Context) {
+func setTelnetStatusHandler(c *gin.Context) {
 	var telnet Telnet
 	if err := c.ShouldBindJSON(&telnet); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
