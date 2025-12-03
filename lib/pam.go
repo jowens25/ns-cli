@@ -9,35 +9,35 @@ import (
 	"github.com/msteinert/pam"
 )
 
-func Authorize(user string, password string) bool {
-
-	// Start PAM transaction
-	t, err := pam.StartFunc("login", user, func(s pam.Style, msg string) (string, error) {
-		switch s {
-		case pam.PromptEchoOff:
-			return password, nil
-		case pam.PromptEchoOn:
-			return user, nil
-		}
-		return "", nil
-	})
-
-	if err != nil {
-		log.Println("pam failed")
-		return false
-	}
-	defer t.CloseSession(pam.Silent)
-
-	if err = t.Authenticate(0); err != nil {
-		fmt.Println("invalid cred")
-		return false
-	}
-
-	fmt.Println("authentication succeeded")
-
-	return true
-}
-
+//func Authorize(user string, password string) bool {
+//
+//	// Start PAM transaction
+//	t, err := pam.StartFunc("login", user, func(s pam.Style, msg string) (string, error) {
+//		switch s {
+//		case pam.PromptEchoOff:
+//			return password, nil
+//		case pam.PromptEchoOn:
+//			return user, nil
+//		}
+//		return "", nil
+//	})
+//
+//	if err != nil {
+//		log.Println("pam failed")
+//		return false
+//	}
+//	defer t.CloseSession(pam.Silent)
+//
+//	if err = t.Authenticate(0); err != nil {
+//		fmt.Println("invalid cred")
+//		return false
+//	}
+//
+//	fmt.Println("authentication succeeded")
+//
+//	return true
+//}
+//
 func loginHandler(c *gin.Context) {
 	var request LoginRequest
 

@@ -6,156 +6,9 @@ import (
 	"net"
 	"net/http"
 	"os/exec"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
-
-func GetIpv4Address(i string) string {
-
-	addrLine := GetNmcliInterfaceField(i, "IP4.ADDRESS")
-
-	fields := strings.Fields(addrLine)
-	if len(fields) > 1 {
-
-		ipAddr, _, err := net.ParseCIDR(fields[1])
-		if err != nil {
-			log.Printf("Error parsing CIDR: %v", err)
-			return "--"
-
-		}
-
-		return ipAddr.String()
-	}
-
-	return "--"
-}
-
-func GetIpv4NetmaskBits(i string) string {
-
-	addrLine := GetNmcliInterfaceField(i, "IP4.ADDRESS")
-
-	fields := strings.Fields(addrLine)
-	if len(fields) > 1 {
-		_, ipNet, err := net.ParseCIDR(fields[1])
-		_, bits := ipNet.Mask.Size()
-
-		if err != nil {
-			log.Printf("Error parsing CIDR: %v", err)
-			return "--"
-
-		}
-
-		return fmt.Sprintf("%d", bits)
-	}
-
-	return "--"
-}
-
-func GetIpv4NetmaskAddress(i string) string {
-
-	addrLine := GetNmcliInterfaceField(i, "IP4.ADDRESS")
-
-	fields := strings.Fields(addrLine)
-	if len(fields) > 1 {
-
-		_, ipNet, err := net.ParseCIDR(fields[1])
-		if err != nil {
-			log.Printf("Error parsing CIDR: %v", err)
-			return "--"
-
-		}
-
-		return net.IP(ipNet.Mask).String()
-	}
-
-	return "--"
-}
-
-func GetIpv4Gateway(i string) string {
-
-	gwLine := GetNmcliInterfaceField(i, "IP4.GATEWAY")
-
-	fields := strings.Fields(gwLine)
-	if len(fields) > 1 {
-		return strings.TrimSpace(fields[1])
-	}
-
-	return "--"
-}
-
-func GetIpv4MacAddress(i string) string {
-
-	macLine := GetNmcliInterfaceField(i, "GENERAL.HWADDR")
-	fields := strings.Fields(macLine)
-	if len(fields) > 1 {
-		return strings.TrimSpace(fields[1])
-	}
-
-	return "--"
-}
-
-func GetIpv4Dns1(i string) string {
-
-	dnsLines := GetNmcliInterfaceField(i, "IP4.DNS")
-
-	for line := range strings.SplitSeq(dnsLines, "\n") {
-		if strings.Contains(line, "IP4.DNS[1]") {
-			fields := strings.Fields(line)
-
-			if len(fields) > 1 {
-				return strings.TrimSpace(fields[1])
-			}
-		}
-	}
-
-	return "--"
-}
-
-func GetIpv4Dns2(i string) string {
-
-	dnsLines := GetNmcliInterfaceField(i, "IP4.DNS")
-
-	for line := range strings.SplitSeq(dnsLines, "\n") {
-		if strings.Contains(line, "IP4.DNS[2]") {
-			fields := strings.Fields(line)
-
-			if len(fields) > 1 {
-				return strings.TrimSpace(fields[1])
-			}
-		}
-	}
-
-	return "--"
-}
-
-func GetIgnoreAutoDns(i string) string {
-
-	c, _ := GetConnectionNameFromDevice(i)
-
-	ignoreDnsLines := GetNmcliField(c, "ipv4.ignore-auto-dns")
-
-	fields := strings.Fields(ignoreDnsLines)
-	if len(fields) > 1 {
-		return strings.TrimSpace(fields[1])
-	}
-
-	return "--"
-}
-
-func GetIpv4DhcpState(i string) string {
-	c, _ := GetConnectionNameFromDevice(i)
-
-	methodLine := GetNmcliField(c, "ipv4.method")
-
-	fields := strings.Fields(methodLine)
-	if len(fields) > 1 {
-		return strings.TrimSpace(fields[1])
-	}
-
-	return "--"
-
-}
 
 // requires std addr format
 func _combineNetmaskAndAddress(netmaskBits string, address string) string {
@@ -289,22 +142,6 @@ func SetDns(i string, dns ...string) {
 
 }
 
-func SetDns1(i string, dns1 string) {
-
-	dns2 := GetIpv4Dns2(AppConfig.Network.Interface)
-
-	SetDns(AppConfig.Network.Interface, dns1, dns2)
-
-}
-
-func SetDns2(i string, dns2 string) {
-
-	dns1 := GetIpv4Dns1(AppConfig.Network.Interface)
-
-	SetDns(AppConfig.Network.Interface, dns1, dns2)
-
-}
-
 func Reboot() {
 
 	cmd := exec.Command("reboot", "now")
@@ -359,23 +196,23 @@ func SetIgnoreAutoDns(i string, m string) {
 
 }
 
-func readNetworkInfo(c *gin.Context) {
+func getNetworkInfoHandler(c *gin.Context) {
 
 	var myNetwork NetworkInfo
 
-	myNetwork.Port = GetPortPhysicalStatus(AppConfig.Network.Interface)
+	myNetwork.Interface = GetManagedInterfaceName()
 	myNetwork.Hostname = GetHostname()
-	myNetwork.Gateway = GetIpv4Gateway(AppConfig.Network.Interface)
-	myNetwork.Interface = AppConfig.Network.Interface
-	myNetwork.Speed = GetPortSpeed(AppConfig.Network.Interface)
-	myNetwork.Mac = GetIpv4MacAddress(AppConfig.Network.Interface)
-	myNetwork.IpAddr = GetIpv4Address(AppConfig.Network.Interface)
-	myNetwork.Netmask = GetIpv4NetmaskAddress(AppConfig.Network.Interface)
-	myNetwork.Dhcp = GetIpv4DhcpState(AppConfig.Network.Interface)
-	myNetwork.Dns1 = GetIpv4Dns1(AppConfig.Network.Interface)
-	myNetwork.Dns2 = GetIpv4Dns2(AppConfig.Network.Interface)
-	myNetwork.IgnoreAutoDns = GetIgnoreAutoDns(AppConfig.Network.Interface)
-	myNetwork.Connection = GetPortConnectionStatus(AppConfig.Network.Interface)
+	myNetwork.Connection = GetConnectionStatus(myNetwork.Interface)
+
+	//myNetwork.Port = GetPortPhysicalStatus(myNetwork.Interface)
+	myNetwork.Gateway = GetIpv4Gateway(myNetwork.Interface)
+	myNetwork.Speed = GetPortSpeed(myNetwork.Interface)
+	myNetwork.Mac = GetIpv4MacAddress(myNetwork.Interface)
+	myNetwork.IpAddr = GetIpv4Address(myNetwork.Interface)
+	myNetwork.Netmask = GetIpv4Netmask(myNetwork.Interface)
+	myNetwork.Dhcp = GetIpv4DhcpState(myNetwork.Interface)
+	myNetwork.Dns1 = GetIpv4Dns(myNetwork.Interface)
+	myNetwork.IgnoreAutoDns = GetDnsConfigSource(myNetwork.Interface)
 
 	c.JSON(http.StatusOK, gin.H{
 		"info": myNetwork,
@@ -415,10 +252,10 @@ func writeNetworkInfo(c *gin.Context) {
 	case "dhcp":
 		SetDhcp4(AppConfig.Network.Interface, v)
 	case "dns1":
-		SetDns1(AppConfig.Network.Interface, v)
+		//SetDns1(AppConfig.Network.Interface, v)
 
 	case "dns2":
-		SetDns2(AppConfig.Network.Interface, v)
+		//SetDns2(AppConfig.Network.Interface, v)
 
 	case "ignore_auto_dns":
 		SetIgnoreAutoDns(AppConfig.Network.Interface, v)

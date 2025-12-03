@@ -2,7 +2,6 @@ package lib
 
 import (
 	"fmt"
-	"log"
 	"os/exec"
 	"strings"
 )
@@ -85,22 +84,6 @@ func PortDisconnect(device string) error {
 	cmd := exec.Command("nmcli", "device", "disconnect", device)
 	_, err := cmd.CombinedOutput()
 	return err
-}
-
-func GetPortSpeed(i string) string {
-	cmd := exec.Command("nmcli", "-f", "CAPABILITIES.SPEED", "dev", "show", i)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Println(err.Error())
-	}
-
-	fields := strings.Split(string(out), ":")
-
-	if len(fields) == 2 {
-		return strings.TrimSpace(fields[1])
-	}
-
-	return "speed not available"
 }
 
 func HasInterface(i string) bool {

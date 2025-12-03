@@ -48,6 +48,8 @@ func StopApp() {
 		log.Printf("Could not find process: %v", err)
 	}
 	process.Signal(syscall.SIGTERM)
+
+	fmt.Println("stop seemingly stopped")
 }
 
 func healthHandler(c *gin.Context) {

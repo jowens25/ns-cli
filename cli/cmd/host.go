@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"NovusTimeServer/lib"
-	"fmt"
 
 	"github.com/spf13/cobra"
 )
@@ -18,18 +17,18 @@ var hostCmd = &cobra.Command{
 
 		if len(args) == 0 {
 			response := lib.GetHostname()
-			fmt.Print(response)
+			lib.Print("%s", response)
 
 		} else if len(args) == 1 {
 
 			if !lib.IsAdminRoot() {
-				fmt.Println("requires admin access")
+				lib.Print("%s", "setting hostname requires admin access")
 				return
 			}
 
 			lib.SetHostname(args[0])
 			response := lib.GetHostname()
-			fmt.Print(response)
+			lib.Print("%s", response)
 
 		} else {
 			cmd.Help()

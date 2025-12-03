@@ -48,8 +48,8 @@ var dnsCmd = &cobra.Command{
 
 		}
 
-		fmt.Println("DNS1:", lib.GetIpv4Dns1(lib.AppConfig.Network.Interface))
-		fmt.Println("DNS2:", lib.GetIpv4Dns2(lib.AppConfig.Network.Interface))
+		fmt.Println("DNS1:", lib.GetIpv4Dns(lib.AppConfig.Network.Interface))
+		//fmt.Println("DNS2:", lib.GetIpv4Dns2(lib.AppConfig.Network.Interface))
 	},
 }
 
@@ -93,7 +93,7 @@ var nmCmd = &cobra.Command{
 			fmt.Println("netmask set")
 		}
 
-		fmt.Println(lib.GetIpv4NetmaskAddress(lib.AppConfig.Network.Interface))
+		fmt.Println(lib.GetIpv4Netmask(lib.AppConfig.Network.Interface))
 	},
 }
 
@@ -167,12 +167,12 @@ var networkStatusCmd = &cobra.Command{
 		fmt.Println("Interface:        ", lib.AppConfig.Network.Interface, lib.GetPortSpeed(lib.AppConfig.Network.Interface))
 		fmt.Println("MAC:              ", lib.GetIpv4MacAddress(lib.AppConfig.Network.Interface))
 		fmt.Println("IPv4:             ", lib.GetIpv4Address(lib.AppConfig.Network.Interface))
-		fmt.Println("Netmask:          ", lib.GetIpv4NetmaskAddress(lib.AppConfig.Network.Interface))
+		fmt.Println("Netmask:          ", lib.GetIpv4Netmask(lib.AppConfig.Network.Interface))
 		//fmt.Println("Netmask CIDR:     ", lib.GetIpv4NetmaskCIDR(lib.AppConfig.Network.Interface))
 		fmt.Println("DHCPv4:           ", lib.GetIpv4DhcpState(lib.AppConfig.Network.Interface))
-		fmt.Println("IGNORE AUTO DNS:  ", lib.GetIgnoreAutoDns(lib.AppConfig.Network.Interface))
-		fmt.Println("DNS 1:            ", lib.GetIpv4Dns1(lib.AppConfig.Network.Interface))
-		fmt.Println("DNS 2:            ", lib.GetIpv4Dns2(lib.AppConfig.Network.Interface))
+		fmt.Println("IGNORE AUTO DNS:  ", lib.GetDnsConfigSource(lib.AppConfig.Network.Interface))
+		fmt.Println("DNS 1:            ", lib.GetIpv4Dns(lib.AppConfig.Network.Interface))
+		//fmt.Println("DNS 2:            ", lib.GetIpv4Dns2(lib.AppConfig.Network.Interface))
 		fmt.Println("Connection:       ", lib.GetPortConnectionStatus(lib.AppConfig.Network.Interface))
 	},
 }
